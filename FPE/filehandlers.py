@@ -6,12 +6,12 @@ import MySQLdb
 
 
 def _check_options(section, options):
-     
+      
     for option in section.keys():
         if not option in options:
             print('Missing or invalid option name {}'.format(option))
             return(False)
-         
+          
     return(True)
 
 
