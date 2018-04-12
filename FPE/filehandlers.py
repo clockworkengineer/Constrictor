@@ -6,12 +6,21 @@ import MySQLdb
 
 
 def _check_options(section, options):
-      
+    
+    options_found = set()
+    
     for option in section.keys():
         if not option in options:
-            print('Missing or invalid option name {}'.format(option))
-            return(False)
-          
+            print('Invalid option name {}'.format(option))
+        else:
+            options_found.add(option)
+    
+    missing_options = set(options).difference(options_found)
+    
+    if missing_options != set():
+        print('Missing options {}'.format(list(missing_options)))
+        return(False)
+        
     return(True)
 
 
@@ -40,7 +49,7 @@ def create_file_handler(handler_section):
     
 class CopyFileHandler(FileSystemEventHandler):
     
-    options = ['name', 'type', 'watch', 'destination'];
+    options = set(['name', 'type', 'watch', 'destination']);
     
     def __init__(self, handler_section):
 
@@ -68,7 +77,7 @@ class CopyFileHandler(FileSystemEventHandler):
  
 class CSVFileHandler(FileSystemEventHandler):
     
-    options = ['name', 'type', 'watch', 'server', 'user', 'password', 'database', 'table'];
+    options = set(['name', 'type', 'watch', 'server', 'user', 'password', 'database', 'table']);
     
     def __init__(self, handler_section):
         
