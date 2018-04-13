@@ -77,7 +77,7 @@ class CopyFileHandler(FileSystemEventHandler):
  
 class CSVFileHandler(FileSystemEventHandler):
     
-    options = set(['name', 'type', 'watch', 'server', 'user', 'password', 'database', 'table']);
+    options = set(['name', 'type', 'watch', 'server', 'user', 'password', 'database', 'table', 'key']);
     
     def __init__(self, handler_section):
         
@@ -87,42 +87,45 @@ class CSVFileHandler(FileSystemEventHandler):
         self.user_password = handler_section['password']
         self.database_name = handler_section['database']
         self.table_name = handler_section['table']
+        self.key_name = handler_section['key']
 
         _display_details(handler_section)
 
+    @staticmethod
+    def __insert_row(table_name, row):
+            
+        fields = ''
+        values = ''
+        for field in row.keys():
+            fields += '{},'.format(field)
+            values += '\'{}\','.format(row[field].replace("'", "''"))
+ 
+        fields = fields[:-1]
+        values = values[:-1]
+     
+        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, fields, values)
+        
+        print(sql)
+            
+        return (sql)
+
+    @staticmethod
+    def __update_row(table_name, key, row):
+          
+        fields = ''     
+        for field in row.keys():
+            fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
+            
+        fields = fields[:-1]
+        
+        sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name, fields, key, row[key])
+        
+        print(sql)
+        
+        return (sql)
+        
     def on_created(self, event):
         
-        def insert_row(field_names, row):
-            
-            fields = ''    
-            for field in field_names:
-                fields += '{},'.format(field)
-                
-            fields = fields[:-1]
-            
-            values = ''
-         
-            for field in csv_reader.fieldnames:
-                values += '\'{}\','.format(row[field].replace("'", "''"))
-            
-            values = values[:-1]
-     
-            sql = 'INSERT INTO {} ({}) VALUES ({})'.format(self.table_name, fields, values)
-            
-            return (sql)
- 
-        def update_row(field_names, row):
-            
-            fields = ''     
-            for field in field_names:
-                fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
-                
-            fields = fields[:-1]
-            
-            sql = 'UPDATE {} SET {} WHERE id = {}'.format(self.table_name, fields, row['id'])
-            
-            return (sql)
-                   
         db = MySQLdb.connect(self.server, self.user_name, self.user_password, self.database_name)
         
         cursor = db.cursor()
@@ -136,10 +139,14 @@ class CSVFileHandler(FileSystemEventHandler):
             for row in csv_reader:
      
                 try:
-                    sql = insert_row(csv_reader.fieldnames, row)
-                    print(sql)
+                    if self.key_name != '':
+                        sql = self.__update_row(self.table_name, self.key_name, row)
+                    else:
+                        sql = self.__insert_row(self.table_name, row)
+
                     cursor.execute(sql)
                     db.commit()
+                    
                 except (MySQLdb.Error, MySQLdb.Warning) as e:
                     print (sql)
                     print(e)
