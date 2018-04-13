@@ -38,9 +38,9 @@ def create_file_handler(handler_section):
     if handler_section['type'] == CopyFileHandler.__name__:
         if _check_options(handler_section, CopyFileHandler.options):
             file_handler = CopyFileHandler(handler_section)
-    elif handler_section['type'] == CSVFileHandler.__name__:
-        if _check_options(handler_section, CSVFileHandler.options):
-            file_handler = CSVFileHandler(handler_section)
+    elif handler_section['type'] == CSVFileToMySQLHandler.__name__:
+        if _check_options(handler_section, CSVFileToMySQLHandler.options):
+            file_handler = CSVFileToMySQLHandler(handler_section)
     else:
         print ('Invalid file handler type {}.\n{} not started.'.format(handler_section['type'], handler_section['name']))
 
@@ -75,7 +75,7 @@ class CopyFileHandler(FileSystemEventHandler):
                 os.makedirs(destination_path)    
 
  
-class CSVFileHandler(FileSystemEventHandler):
+class CSVFileToMySQLHandler(FileSystemEventHandler):
     
     options = set(['name', 'type', 'watch', 'server', 'user', 'password', 'database', 'table', 'key']);
     
