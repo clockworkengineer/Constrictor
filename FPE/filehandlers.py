@@ -92,6 +92,37 @@ class CSVFileHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         
+        def insert_row(field_names, row):
+            
+            fields = ''    
+            for field in field_names:
+                fields += '{},'.format(field)
+                
+            fields = fields[:-1]
+            
+            values = ''
+         
+            for field in csv_reader.fieldnames:
+                values += '\'{}\','.format(row[field].replace("'", "''"))
+            
+            values = values[:-1]
+     
+            sql = 'INSERT INTO {} ({}) VALUES ({})'.format(self.table_name, fields, values)
+            
+            return (sql)
+ 
+        def update_row(field_names, row):
+            
+            fields = ''     
+            for field in field_names:
+                fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
+                
+            fields = fields[:-1]
+            
+            sql = 'UPDATE {} SET {} WHERE id = {}'.format(self.table_name, fields, row['id'])
+            
+            return (sql)
+                   
         db = MySQLdb.connect(self.server, self.user_name, self.user_password, self.database_name)
         
         cursor = db.cursor()
@@ -101,18 +132,12 @@ class CSVFileHandler(FileSystemEventHandler):
         with open(event.src_path, 'r') as file_handle:
             
             csv_reader = csv.DictReader(file_handle)
-            
+                       
             for row in csv_reader:
-                
-                values = "{}, '{}', '{}', '{}', '{}' ,'{}'".format(row['id'], row['first_name'], \
-                                                                   row['last_name'], row['email'], \
-                                                                   row['gender'], row['ip_address'])
-                
-                fields = 'id, first_name, last_name, email, gender, ip_address'
-                
-                sql = 'INSERT INTO {} ({}) VALUES ({})'.format(self.table_name, fields, values)
-             
+     
                 try:
+                    sql = insert_row(csv_reader.fieldnames, row)
+                    print(sql)
                     cursor.execute(sql)
                     db.commit()
                 except (MySQLdb.Error, MySQLdb.Warning) as e:
