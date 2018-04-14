@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 import ConfigParser
 import filehandlers
@@ -24,16 +26,16 @@ def get_handler_config_section(config, section_name):
     return handler_section
 
 
-def main():
+def main(config_filename):
     
     logging.basicConfig(filename='/home/robt/Database/FPE.log', level=logging.INFO,
                         format='%(asctime)s:%(module)s:%(message)s')
     
-    logging.info('Python File Processing Engine')
+    logging.info('File Processing Engine')
     
     config = ConfigParser.ConfigParser()
-    config.read('/home/robt/config/PFPE.conf')
-    
+    config.read(config_filename)
+
     observers_list = []
     
     for handler_name in config.sections():
@@ -66,5 +68,8 @@ def main():
             observer.join()
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    if (len(sys.argv) == 2) and os.path.exists(sys.argv[1]):
+        main(sys.argv[1])
+    else:
+        print('Error: Either no or non-existant config file passed to FPE')
