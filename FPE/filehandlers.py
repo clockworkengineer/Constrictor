@@ -4,6 +4,7 @@ from watchdog.events import FileSystemEventHandler
 import csv
 import MySQLdb
 import sqlite3
+import logging
 
 
 def create_file_handler(handler_section):
@@ -18,19 +19,19 @@ def create_file_handler(handler_section):
         elif handler_section['type'] == CSVFileToSQLiteHandler.__name__:
             file_handler = CSVFileToSQLiteHandler(handler_section)
         else:
-            print ('\nInvalid file handler type {}.\n{} not started.'.format(handler_section['type'], handler_section['name']))
+            logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
     
     except KeyError as e:
-        print("\nMissing option {}.\n{} not started.".format(e, handler_section['name']))
+        logging.error("Missing option {}.\n{} not started.".format(e, handler_section['name']))
     
     return (file_handler)
 
 
 def _display_details(handler_section):
-    print ('\n{} Handler [{}] running...'.format(handler_section['name'], handler_section['type']))
+    logging.info('{name} Handler [{type}] running...'.format(**handler_section))
     for option in handler_section.keys():
         if option != 'name' and option != 'type':
-            print('{} = {}'.format(option, handler_section[option]))
+            logging.info('{} = {}'.format(option, handler_section[option]))
 
 
 def _insert_row(table_name, row):
@@ -81,16 +82,16 @@ class CopyFileHandler(FileSystemEventHandler):
             if os.path.isfile(event.src_path):            
                 if not os.path.exists(os.path.dirname(destination_path)):
                     os.makedirs(os.path.dirname(destination_path))
-                print ('Copying file {} to {}'.format(event.src_path, destination_path))
+                logging.info ('Copying file {} to {}'.format(event.src_path, destination_path))
                 shutil.copy2(event.src_path, destination_path)
                 
             elif os.path.isdir(event.src_path):           
                 if not os.path.exists(destination_path):
-                    print ('Creating directory {}'.format(event.src_path))
+                    logging.info ('Creating directory {}'.format(event.src_path))
                     os.makedirs(destination_path)    
 
         except Exception as e:
-            print("Error in handler {}: {}".format(self.handler_name, e))
+            logging.error("Error in handler {}: {}".format(self.handler_name, e))
 
  
 class CSVFileToMySQLHandler(FileSystemEventHandler):
@@ -118,7 +119,7 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
             
             cursor = db.cursor()
     
-            print ('Imorting CSV file {}'.format(event.src_path))
+            logging.info ('Imorting CSV file {} to table {}.'.format(event.src_path, self.table_name))
     
             with open(event.src_path, 'r') as file_handle:
                 
@@ -136,11 +137,11 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                         db.commit()
                         
                     except (MySQLdb.Error, MySQLdb.Warning) as e:
-                        print ('{}\n{}'.format(sql, e))
+                        logging.error ('{}\n{}'.format(sql, e))
                         db.rollback()
                         
         except Exception as e:  
-            print("Error in handler {}: {}".format(self.handler_name, e))
+            logging.error("Error in handler {}: {}".format(self.handler_name, e))
         
         else:
             os.remove(event.src_path)
@@ -170,13 +171,13 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
         
             if not os.path.exists(self.database_file):
                 raise IOError("Database file does not exist.")
-                print("Error")
             
             db = sqlite3.connect(self.database_file)
             
             cursor = db.cursor()
     
-            print ('Imorting CSV file {}'.format(event.src_path))
+            logging.info ('Imorting CSV file {} to table {}.'.
+                          format(event.src_path, self.table_name))
     
             with open(event.src_path, 'r') as file_handle:
                 
@@ -194,11 +195,11 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
                         db.commit()
                          
                     except (sqlite3.Error, sqlite3.Warning) as e:
-                        print ('{}\n{}'.format(sql, e))
+                        logging.error('{}\n{}'.format(sql, e))
                         db.rollback()
                         
         except (Exception) as e:  
-            print("Error in handler {}: {}".format(self.handler_name, e))
+            logging.error("Error in handler {}: {}".format(self.handler_name, e))
         
         else:
             os.remove(event.src_path)

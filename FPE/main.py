@@ -1,7 +1,7 @@
 import time
 import ConfigParser
 import filehandlers
-
+import logging
 from watchdog.observers import Observer
 
 
@@ -16,18 +16,21 @@ def get_handler_config_section(config, section_name):
             handler_section[option] = config.get(section_name, option)
                 
         except Exception as e:
-            print('Error on option {}.\n{}'.format(option, e))
+            logging.error('Error on option {}.\n{}'.format(option, e))
             handler_section[option] = None
             
     handler_section['name'] = section_name
         
     return handler_section
 
-    
-if __name__ == "__main__":
-    
-    print ('Python File Processing Engine')
 
+def main():
+    
+    logging.basicConfig(filename='/home/robt/Database/FPE.log', level=logging.INFO,
+                        format='%(asctime)s:%(module)s:%(message)s')
+    
+    logging.info('Python File Processing Engine')
+    
     config = ConfigParser.ConfigParser()
     config.read('/home/robt/config/PFPE.conf')
     
@@ -41,7 +44,7 @@ if __name__ == "__main__":
             file_handler = filehandlers.create_file_handler(handler_section)
                                 
         except Exception as e:
-            print(e)
+            logging.error(e)
             
         else:
             if file_handler != None:
@@ -61,3 +64,7 @@ if __name__ == "__main__":
     finally:
         for observer in observers_list:   
             observer.join()
+
+
+if __name__ == "__main__":
+    main()
