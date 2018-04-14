@@ -6,13 +6,6 @@ import MySQLdb
 import sqlite3
 
 
-def _display_details(handler_section):
-    print ('\n{} Handler [{}] running...'.format(handler_section['name'], handler_section['type']))
-    for option in handler_section.keys():
-        if option != 'name' and option != 'type':
-            print('{} = {}'.format(option, handler_section[option]))
-
-
 def create_file_handler(handler_section):
     
     file_handler = None;
@@ -31,6 +24,41 @@ def create_file_handler(handler_section):
         print("\nMissing option {}.\n{} not started.".format(e, handler_section['name']))
     
     return (file_handler)
+
+
+def _display_details(handler_section):
+    print ('\n{} Handler [{}] running...'.format(handler_section['name'], handler_section['type']))
+    for option in handler_section.keys():
+        if option != 'name' and option != 'type':
+            print('{} = {}'.format(option, handler_section[option]))
+
+
+def _insert_row(table_name, row):
+        
+    fields = ''
+    values = ''
+    for field in row.keys():
+        fields += '{},'.format(field)
+        values += '\'{}\','.format(row[field].replace("'", "''"))
+
+    fields, values = fields[:-1], values[:-1]
+ 
+    sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, fields, values)
+        
+    return (sql)
+
+
+def _update_row(table_name, key, row):
+      
+    fields = ''     
+    for field in row.keys():
+        fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
+        
+    fields = fields[:-1]
+    
+    sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name, fields, key, row[key])
+    
+    return (sql)
 
     
 class CopyFileHandler(FileSystemEventHandler):
@@ -79,36 +107,6 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
         self.key_name = handler_section['key']
 
         _display_details(handler_section)
-
-    @staticmethod
-    def __insert_row(table_name, row):
-            
-        fields = ''
-        values = ''
-        for field in row.keys():
-            fields += '{},'.format(field)
-            values += '\'{}\','.format(row[field].replace("'", "''"))
- 
-        fields, values = fields[:-1], values[:-1]
-     
-        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, fields, values)
-        
-        print(sql)
-            
-        return (sql)
-
-    @staticmethod
-    def __update_row(table_name, key, row):
-          
-        fields = ''     
-        for field in row.keys():
-            fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
-            
-        fields = fields[:-1]
-        
-        sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name, fields, key, row[key])
-        
-        return (sql)
         
     def on_created(self, event):
         
@@ -130,9 +128,9 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
          
                     try:
                         if self.key_name != '':
-                            sql = self.__update_row(self.table_name, self.key_name, row)
+                            sql = _update_row(self.table_name, self.key_name, row)
                         else:
-                            sql = self.__insert_row(self.table_name, row)
+                            sql = _insert_row(self.table_name, row)
     
                         cursor.execute(sql)
                         db.commit()
@@ -164,34 +162,6 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
 
         _display_details(handler_section)
 
-    @staticmethod
-    def __insert_row(table_name, row):
-            
-        fields = ''
-        values = ''
-        for field in row.keys():
-            fields += '{},'.format(field)
-            values += '\'{}\','.format(row[field].replace("'", "''"))
- 
-        fields, values = fields[:-1], values[:-1]
-     
-        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, fields, values)
-            
-        return (sql)
-
-    @staticmethod
-    def __update_row(table_name, key, row):
-          
-        fields = ''     
-        for field in row.keys():
-            fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
-            
-        fields = fields[:-1]
-        
-        sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name, fields, key, row[key])
-        
-        return (sql)
-        
     def on_created(self, event):
         
         try:
@@ -216,9 +186,9 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
          
                     try:
                         if self.key_name != '':
-                            sql = self.__update_row(self.table_name, self.key_name, row)
+                            sql = _update_row(self.table_name, self.key_name, row)
                         else:
-                            sql = self.__insert_row(self.table_name, row)
+                            sql = _insert_row(self.table_name, row)
     
                         cursor.execute(sql)
                         db.commit()
