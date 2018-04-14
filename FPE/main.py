@@ -16,8 +16,7 @@ def get_handler_config_section(config, section_name):
             handler_section[option] = config.get(section_name, option)
                 
         except Exception as e:
-            print('Error on option {}.'.format(option))
-            print(e)
+            print('Error on option {}.\n{}'.format(option, e))
             handler_section[option] = None
             
     handler_section['name'] = section_name
@@ -37,12 +36,10 @@ if __name__ == "__main__":
     for handler_name in config.sections():
          
         try:
+            
             handler_section = get_handler_config_section(config, handler_name)
             file_handler = filehandlers.create_file_handler(handler_section)
-                         
-        except KeyError as e:
-            print("{} error in key {}".format(handler_name, e))
-            
+                                
         except Exception as e:
             print(e)
             
