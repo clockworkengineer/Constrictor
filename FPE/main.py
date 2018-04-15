@@ -5,6 +5,7 @@ import ConfigParser
 import filehandlers
 import logging
 from watchdog.observers import Observer
+from _dbus_bindings import Dictionary
 
 
 def get_handler_config_section(config, section_name):
@@ -26,22 +27,52 @@ def get_handler_config_section(config, section_name):
     return handler_section
 
 
-def main(config_filename):
+def load_config(config_filename):
     
-    logging.basicConfig(filename='/home/robt/Database/FPE.log', level=logging.INFO,
-                        format='%(asctime)s:%(module)s:%(message)s')
-    
-    logging.info('File Processing Engine')
+    # Read in config file
     
     config = ConfigParser.ConfigParser()
     config.read(config_filename)
+    
+    logging_params = {}
+    logging_params['level'] = logging.INFO
+    logging_params['format'] = '%(asctime)s:%(module)s:%(message)s'
+    
+    try :
+        
+        if 'General' in config.sections():
+            section = get_handler_config_section(config, 'General')
+            if 'logfile' in section:
+                logging_params['filename'] = section['logfile']
+            if 'loglevel' in section:
+                logging_params['level'] = section['level']
+            if 'logformat' in section:
+                logging_params['format'] = section['logformat']
+                
+            config.remove_section('General')
+            
+    except Exception as e:
+        logging.error(e)
+    
+    finally:   
+        logging.basicConfig(**logging_params)
+        return(config)
+
+
+def main(config_filename):
+    
+    # Load config
+    
+    config = load_config(config_filename)
+        
+    logging.info('File Processing Engine Started.')
 
     observers_list = []
     
     for handler_name in config.sections():
          
         try:
-            
+                        
             handler_section = get_handler_config_section(config, handler_name)
             file_handler = filehandlers.create_file_handler(handler_section)
                                 
@@ -51,7 +82,7 @@ def main(config_filename):
         else:
             if file_handler != None:
                 observer = Observer()
-                observer.schedule(file_handler, handler_section['watch'], recursive=True) 
+                observer.schedule(file_handler, file_handler.watch_folder, recursive=True) 
                 observer.start()
                 observers_list.append(observer)
         
@@ -72,4 +103,4 @@ if __name__ == '__main__':
     if (len(sys.argv) == 2) and os.path.exists(sys.argv[1]):
         main(sys.argv[1])
     else:
-        print('Error: Either no or non-existant config file passed to FPE')
+        print('Error: Either no or non-existant config file passed to FPE.')
