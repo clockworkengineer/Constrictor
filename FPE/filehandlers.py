@@ -31,6 +31,7 @@ def create_file_handler(handler_section):
 def _display_details(handler_section):
     """Display event handler details and paraneters"""
     
+    logging.info('*' * 80)
     logging.info('{name} Handler [{type}] running...'.format(**handler_section))
     for option in handler_section.keys():
         if option != 'name' and option != 'type':
@@ -75,6 +76,7 @@ class CopyFileHandler(FileSystemEventHandler):
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.destination_folder = handler_section['destination']
+        self.recursive = handler_section['recursive']
         
         _display_details(handler_section)
          
@@ -113,7 +115,8 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
         self.database_name = handler_section['database']
         self.table_name = handler_section['table']
         self.key_name = handler_section['key']
-
+        self.recursive = handler_section['recursive']
+        
         _display_details(handler_section)
         
     def on_created(self, event):
@@ -166,7 +169,8 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
         self.table_name = handler_section['table']
         self.key_name = handler_section['key']
         self.database_file = handler_section['databasefile']
-
+        self.recursive = handler_section['recursive']
+        
         _display_details(handler_section)
 
     def on_created(self, event):

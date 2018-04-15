@@ -1,3 +1,5 @@
+#!/usr/bin/python
+ 
 import os
 import sys
 import time
@@ -16,6 +18,10 @@ def get_config_section(config, section_name):
         
         try:
             config_section[option] = config.get(section_name, option)
+            
+            # Automatically set any boolean values (dont use getBoolean)
+            if config_section[option] in ('True', 'False'):
+                config_section[option] = config_section[option] == 'True'
                 
         except Exception as e:
             logging.error('Error on option {}.\n{}'.format(option, e))
@@ -76,8 +82,14 @@ def main(config_filename):
     for handler_name in config.sections():
          
         try:
-                        
-            handler_section = get_config_section(config, handler_name)
+            
+            # Default values for optional fields
+            
+            handler_section = { 'recursive' : False}
+            
+            # Merge config with default values and create handler
+            
+            handler_section.update(get_config_section(config, handler_name))
             file_handler = filehandlers.create_file_handler(handler_section)
                                 
         except Exception as e:
@@ -86,8 +98,8 @@ def main(config_filename):
         else:
             # Create observer for file handler, startup and add to observers list
             if file_handler != None:
-                observer = Observer()
-                observer.schedule(file_handler, file_handler.watch_folder, recursive=True) 
+                observer = Observer();
+                observer.schedule(file_handler, file_handler.watch_folder, recursive=file_handler.recursive) 
                 observer.start()
                 observers_list.append(observer)
     
@@ -106,6 +118,10 @@ def main(config_filename):
         # Wait for all observer threads to stop
         for observer in observers_list:   
             observer.join()
+
+#####################################################################
+# Start up main program/check for confiuration file being passed in #
+#####################################################################
 
 
 if __name__ == '__main__':
