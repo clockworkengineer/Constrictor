@@ -64,7 +64,7 @@ def _update_row(table_name, key, row):
     fields = fields[:-1]
     
     sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name, fields, key, row[key])
-    
+ 
     return (sql)
 
     
@@ -152,6 +152,8 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
             logging.error("Error in handler {}: {}".format(self.handler_name, e))
         
         else:
+            logging.info ('Finished Imorting file {} to table {}.'.
+                          format(event.src_path, self.table_name))
             os.remove(event.src_path)
             
         finally:
@@ -200,7 +202,7 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
                             sql = _update_row(self.table_name, self.key_name, row)
                         else:
                             sql = _insert_row(self.table_name, row)
-    
+                        
                         cursor.execute(sql)
                         db.commit()
                          
@@ -212,6 +214,8 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
             logging.error("Error in handler {}: {}".format(self.handler_name, e))
         
         else:
+            logging.info ('Finished Imorting file {} to table {}.'.
+                          format(event.src_path, self.table_name))
             os.remove(event.src_path)
             
         finally:
