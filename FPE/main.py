@@ -5,51 +5,51 @@ import ConfigParser
 import filehandlers
 import logging
 from watchdog.observers import Observer
-from _dbus_bindings import Dictionary
 
 
-def get_handler_config_section(config, section_name):
+def get_config_section(config, section_name):
+    """Get configutation file section and return dictionary for it"""
     
-    handler_section = {}
-    handler_options = config.options(section_name)
+    config_section = {}
     
-    for option in handler_options:
+    for option in config.options(section_name):
         
         try:
-            handler_section[option] = config.get(section_name, option)
+            config_section[option] = config.get(section_name, option)
                 
         except Exception as e:
             logging.error('Error on option {}.\n{}'.format(option, e))
-            handler_section[option] = None
-            
-    handler_section['name'] = section_name
+            config_section[option] = None
+    
+    # Save away section name for use
+       
+    config_section['name'] = section_name
         
-    return handler_section
+    return config_section
 
 
 def load_config(config_filename):
+    """Load configuration file and set general run parameters"""
     
     # Read in config file
     
     config = ConfigParser.ConfigParser()
     config.read(config_filename)
     
+    # Default logging parameters
+    
     logging_params = {}
     logging_params['level'] = logging.INFO
     logging_params['format'] = '%(asctime)s:%(module)s:%(message)s'
+
+    # Read in any logging options
     
     try :
         
-        if 'General' in config.sections():
-            section = get_handler_config_section(config, 'General')
-            if 'logfile' in section:
-                logging_params['filename'] = section['logfile']
-            if 'loglevel' in section:
-                logging_params['level'] = section['level']
-            if 'logformat' in section:
-                logging_params['format'] = section['logformat']
-                
-            config.remove_section('General')
+        if 'Logging' in config.sections():
+            logging_params.update(get_config_section(config, 'Logging'))
+            logging_params.pop('name')
+            config.remove_section('Logging')
             
     except Exception as e:
         logging.error(e)
@@ -60,6 +60,7 @@ def load_config(config_filename):
 
 
 def main(config_filename):
+    """Main program entry point"""
     
     # Load config
     
@@ -73,7 +74,7 @@ def main(config_filename):
          
         try:
                         
-            handler_section = get_handler_config_section(config, handler_name)
+            handler_section = get_config_section(config, handler_name)
             file_handler = filehandlers.create_file_handler(handler_section)
                                 
         except Exception as e:

@@ -8,6 +8,7 @@ import logging
 
 
 def create_file_handler(handler_section):
+    """Generate watchdog event handler object for the configuration section passed in"""
     
     file_handler = None;
 
@@ -28,6 +29,8 @@ def create_file_handler(handler_section):
 
 
 def _display_details(handler_section):
+    """Display event handler details and paraneters"""
+    
     logging.info('{name} Handler [{type}] running...'.format(**handler_section))
     for option in handler_section.keys():
         if option != 'name' and option != 'type':
@@ -35,6 +38,7 @@ def _display_details(handler_section):
 
 
 def _insert_row(table_name, row):
+    """Generate SQL for insert row  of fields"""
         
     fields = ''
     values = ''
@@ -50,6 +54,7 @@ def _insert_row(table_name, row):
 
 
 def _update_row(table_name, key, row):
+    """Generate SQL for update row of fields"""
       
     fields = ''     
     for field in row.keys():
@@ -63,6 +68,7 @@ def _update_row(table_name, key, row):
 
     
 class CopyFileHandler(FileSystemEventHandler):
+    """Copy file event handler"""
     
     def __init__(self, handler_section):
 
