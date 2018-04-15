@@ -42,7 +42,7 @@ def load_config(config_filename):
     logging_params['level'] = logging.INFO
     logging_params['format'] = '%(asctime)s:%(module)s:%(message)s'
 
-    # Read in any logging options
+    # Read in any logging options, merge with default and remove logging section
     
     try :
         
@@ -54,7 +54,8 @@ def load_config(config_filename):
     except Exception as e:
         logging.error(e)
     
-    finally:   
+    finally:
+        # Set logging parameters and return config
         logging.basicConfig(**logging_params)
         return(config)
 

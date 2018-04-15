@@ -68,7 +68,7 @@ def _update_row(table_name, key, row):
 
     
 class CopyFileHandler(FileSystemEventHandler):
-    """Copy file event handler"""
+    """Copy file event handler class"""
     
     def __init__(self, handler_section):
 
@@ -101,6 +101,7 @@ class CopyFileHandler(FileSystemEventHandler):
 
  
 class CSVFileToMySQLHandler(FileSystemEventHandler):
+    """Convert CSV file to MySQL table event handler class"""
     
     def __init__(self, handler_section):
         
@@ -158,6 +159,7 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                 
                 
 class CSVFileToSQLiteHandler(FileSystemEventHandler):
+    """Convert CSV file to SQLite table event handler class"""
     
     def __init__(self, handler_section):
         
