@@ -1,10 +1,10 @@
+import MySQLdb
+import csv
+import logging
 import os
 import shutil
-from watchdog.events import FileSystemEventHandler
-import csv
-import MySQLdb
 import sqlite3
-import logging
+from watchdog.events import FileSystemEventHandler
 
 
 def create_file_handler(handler_section):
@@ -120,10 +120,8 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
         
         try:
             
-            db = None
-            
-            db = MySQLdb.connect(self.server, self.user_name, self.user_password, self.database_name)
-            
+            db = None        
+            db = MySQLdb.connect(self.server, self.user_name, self.user_password, self.database_name)          
             cursor = db.cursor()
     
             logging.info ('Imorting CSV file {} to table {}.'.format(event.src_path, self.table_name))

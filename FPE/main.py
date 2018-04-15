@@ -70,7 +70,9 @@ def main(config_filename):
     logging.info('File Processing Engine Started.')
 
     observers_list = []
-    
+
+    # Loop through sections creating file handlers and starting observers for them
+        
     for handler_name in config.sections():
          
         try:
@@ -82,21 +84,26 @@ def main(config_filename):
             logging.error(e)
             
         else:
+            # Create observer for file handler, startup and add to observers list
             if file_handler != None:
                 observer = Observer()
                 observer.schedule(file_handler, file_handler.watch_folder, recursive=True) 
                 observer.start()
                 observers_list.append(observer)
-        
+    
+    # Currently run observers until quit
+       
     try:      
         while True:
             time.sleep(1)
             
     except KeyboardInterrupt:
+        # Stop all observers
         for observer in observers_list:
             observer.stop()
             
     finally:
+        # Wait for all observer threads to stop
         for observer in observers_list:   
             observer.join()
 
