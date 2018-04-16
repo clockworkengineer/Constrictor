@@ -1,12 +1,29 @@
-#!/usr/bin/python
- 
+#!/usr/bin/env python
+
+"""File Processing Engine.
+
+This is a generic file processing engine that sets up a watch folder and waits 
+for files/directories to be copied to it. Any added directories are also watched 
+(if recursive is set) but any added files are be processed using one of its built 
+in file handler classes.
+"""
+
+from FPE import file_handlers
 import os
 import sys
 import time
 import ConfigParser
-import filehandlers
 import logging
 from watchdog.observers import Observer
+
+__author__ = "Rob Tizzard"
+__copyright__ = "Copyright 20018"
+__credits__ = ["Rob Tizzard"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "Rob Tizzard"
+__email__ = "robert_tizzard@hotmail.com"
+__status__ = "Alpha"
 
 
 def get_config_section(config, section_name):
@@ -60,8 +77,7 @@ def load_config(config_filename):
     except Exception as e:
         logging.error(e)
     
-    finally:
-        # Set logging parameters and return config
+    finally:   
         logging.basicConfig(**logging_params)
         return(config)
 
@@ -90,7 +106,7 @@ def main(config_filename):
             # Merge config with default values and create handler
             
             handler_section.update(get_config_section(config, handler_name))
-            file_handler = filehandlers.create_file_handler(handler_section)
+            file_handler = file_handlers.create_file_handler(handler_section)
                                 
         except Exception as e:
             logging.error(e)
