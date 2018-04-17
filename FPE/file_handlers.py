@@ -83,7 +83,7 @@ def _update_row(table_name, key, row):
  
     return (sql)
 
-    
+        
 class CopyFileHandler(FileSystemEventHandler):
     """Copy file event handler.
     
@@ -172,10 +172,10 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
         
         try:
             
-            db = None        
-            db = MySQLdb.connect(self.server, self.user_name,
+            database = None        
+            database = MySQLdb.connect(self.server, self.user_name,
                                  self.user_password, self.database_name)          
-            cursor = db.cursor()
+            cursor = database.cursor()
     
             logging.info ('Imorting CSV file {} to table {}.'.
                           format(event.src_path, self.table_name))
@@ -194,11 +194,11 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                             sql = _insert_row(self.table_name, row)
     
                         cursor.execute(sql)
-                        db.commit()
+                        database.commit()
                         
                     except (MySQLdb.Error, MySQLdb.Warning) as e:
                         logging.error ('{}\n{}'.format(sql, e))
-                        db.rollback()
+                        database.rollback()
                         
         except Exception as e:  
             logging.error("Error in handler {}: {}".
@@ -210,8 +210,8 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
             os.remove(event.src_path)
             
         finally:
-            if db:
-                db.close()
+            if database:
+                database.close()
                 
                 
 class CSVFileToSQLiteHandler(FileSystemEventHandler):
@@ -224,10 +224,7 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
     Attributes:
     hanlder_name : Name of handler object
     watch_folder:  Folder to watch for files
-    server:        SQLite database server
-    user:          SQLite user name
-    password:      SQLite user password
-    database_name: SQLite database name
+    database_file: SQLite database file name
     table_name:    SQLite table name
     key:           Table column key used in updates
     recursive:     Boolean that if true means perform recursive file watch          
@@ -250,14 +247,14 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
                 
         try:
             
-            db = None
+            database = None
         
             if not os.path.exists(self.database_file):
                 raise IOError("Database file does not exist.")
             
-            db = sqlite3.connect(self.database_file)
+            database = sqlite3.connect(self.database_file)
             
-            cursor = db.cursor()
+            cursor = database.cursor()
     
             logging.info ('Imorting CSV file {} to table {}.'.
                           format(event.src_path, self.table_name))
@@ -276,11 +273,11 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
                             sql = _insert_row(self.table_name, row)
                         
                         cursor.execute(sql)
-                        db.commit()
+                        database.commit()
                          
                     except (sqlite3.Error, sqlite3.Warning) as e:
                         logging.error('{}\n{}'.format(sql, e))
-                        db.rollback()
+                        database.rollback()
                         
         except (Exception) as e:  
             logging.error("Error in handler {}: {}".
@@ -292,6 +289,6 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
             os.remove(event.src_path)
             
         finally:
-            if db:
-                db.close()
+            if database:
+                database.close()
 
