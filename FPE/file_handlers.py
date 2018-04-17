@@ -1,7 +1,8 @@
-"""File Event Handlers
+"""File Event Handlers.
 
-File event handler classes and support functions. CreateFileEventHandler is a factory function
-to create an event handler object from the handler config section passed in and return it.
+File event handler classes and support functions. CreateFileEventHandler is a 
+factory function to create an event handler object from the handler config 
+section passed in and return it.
 """
 
 import MySQLdb
@@ -44,7 +45,7 @@ def CreateFileEventHandler(handler_section):
 
 
 def _display_details(handler_section):
-    """Display event handler details and paraneters"""
+    """Display event handler details and paraneters."""
     
     logging.info('*' * 80)
     logging.info('{name} Handler [{type}] running...'.format(**handler_section))
@@ -54,7 +55,7 @@ def _display_details(handler_section):
 
 
 def _insert_row(table_name, row):
-    """Generate SQL for insert row  of fields"""
+    """Generate SQL for insert row  of fields."""
         
     fields = ''
     values = ''
@@ -70,7 +71,7 @@ def _insert_row(table_name, row):
 
 
 def _update_row(table_name, key, row):
-    """Generate SQL for update row of fields"""
+    """Generate SQL for update row of fields."""
       
     fields = ''     
     for field in row.keys():
@@ -84,20 +85,20 @@ def _update_row(table_name, key, row):
 
     
 class CopyFileHandler(FileSystemEventHandler):
-    """Copy file event handler
+    """Copy file event handler.
     
-    Copy files created in watch folder to destination folder keeping any in situ
-    directory structure the same.
+    Copy files created in watch folder to destination folder keeping any in 
+    situ watch folder directory structure the same.
     
     Attributes:
-    handler_name : Name of handler object
+    handler_name:  Name of handler object
     watch_folder:  Folder to watch for files
     destination:   Destination for file copy
     recursive:     Boolean that if true means perform recursive file watch
     """
     
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details"""
+        """ Intialise handler attributes and log details."""
         
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
@@ -107,32 +108,37 @@ class CopyFileHandler(FileSystemEventHandler):
         _display_details(handler_section)
          
     def on_created(self, event):
-        """Copy file from watch folder and destination"""
+        """Copy file from watch folder to destination."""
         try:
             
             destination_path = event.src_path[len(self.watch_folder) + 1:]    
-            destination_path = os.path.join(self.destination_folder, destination_path)
+            destination_path = os.path.join(self.destination_folder,
+                                            destination_path)
                     
             if os.path.isfile(event.src_path):            
                 if not os.path.exists(os.path.dirname(destination_path)):
                     os.makedirs(os.path.dirname(destination_path))
-                logging.info ('Copying file {} to {}'.format(event.src_path, destination_path))
+                logging.info ('Copying file {} to {}'.
+                              format(event.src_path, destination_path))
                 shutil.copy2(event.src_path, destination_path)
                 
             elif os.path.isdir(event.src_path):           
                 if not os.path.exists(destination_path):
-                    logging.info ('Creating directory {}'.format(event.src_path))
+                    logging.info ('Creating directory {}'.
+                                  format(event.src_path))
                     os.makedirs(destination_path)    
 
         except Exception as e:
-            logging.error("Error in handler {}: {}".format(self.handler_name, e))
+            logging.error("Error in handler {}: {}".
+                          format(self.handler_name, e))
 
  
 class CSVFileToMySQLHandler(FileSystemEventHandler):
-    """Convert CSV file to MySQL table event handler
+    """Convert CSV file to MySQL table event handler.
     
     Read in CSV file and insert/update rows within a given MySQL database/table.
-    If no key attribute is specified then the rows are inserted otherwise updated.
+    If no key attribute is specified then the rows are inserted otherwise 
+    updated.
     
     Attributes:
     hanlder_name : Name of handler object
@@ -147,7 +153,7 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
     """
     
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details"""
+        """ Intialise handler attributes and log details."""
                
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
@@ -162,14 +168,17 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
         _display_details(handler_section)
         
     def on_created(self, event):
+        """Import CSV file to MySQL database."""
         
         try:
             
             db = None        
-            db = MySQLdb.connect(self.server, self.user_name, self.user_password, self.database_name)          
+            db = MySQLdb.connect(self.server, self.user_name,
+                                 self.user_password, self.database_name)          
             cursor = db.cursor()
     
-            logging.info ('Imorting CSV file {} to table {}.'.format(event.src_path, self.table_name))
+            logging.info ('Imorting CSV file {} to table {}.'.
+                          format(event.src_path, self.table_name))
     
             with open(event.src_path, 'r') as file_handle:
                 
@@ -179,7 +188,8 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
          
                     try:
                         if self.key_name != '':
-                            sql = _update_row(self.table_name, self.key_name, row)
+                            sql = _update_row(self.table_name,
+                                              self.key_name, row)
                         else:
                             sql = _insert_row(self.table_name, row)
     
@@ -191,7 +201,8 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                         db.rollback()
                         
         except Exception as e:  
-            logging.error("Error in handler {}: {}".format(self.handler_name, e))
+            logging.error("Error in handler {}: {}".
+                          format(self.handler_name, e))
         
         else:
             logging.info ('Finished Imorting file {} to table {}.'.
@@ -204,13 +215,27 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                 
                 
 class CSVFileToSQLiteHandler(FileSystemEventHandler):
-    """Convert CSV file to SQLite table event handler
+    """Import CSV file to SQLite database.
+ 
+    Read in CSV file and insert/update rows within a given SQLite database/table.
+    If no key attribute is specified then the rows are inserted otherwise 
+    updated.
     
-    
+    Attributes:
+    hanlder_name : Name of handler object
+    watch_folder:  Folder to watch for files
+    server:        SQLite database server
+    user:          SQLite user name
+    password:      SQLite user password
+    database_name: SQLite database name
+    table_name:    SQLite table name
+    key:           Table column key used in updates
+    recursive:     Boolean that if true means perform recursive file watch          
     """
     
     def __init__(self, handler_section):
         """ Intialise handler attributes and log details"""
+        
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.table_name = handler_section['table']
@@ -221,7 +246,8 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
         _display_details(handler_section)
 
     def on_created(self, event):
-        
+        """Import CSV file to SQLite database."""
+                
         try:
             
             db = None
@@ -244,7 +270,8 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
          
                     try:
                         if self.key_name != '':
-                            sql = _update_row(self.table_name, self.key_name, row)
+                            sql = _update_row(self.table_name,
+                                              self.key_name, row)
                         else:
                             sql = _insert_row(self.table_name, row)
                         
@@ -256,7 +283,8 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
                         db.rollback()
                         
         except (Exception) as e:  
-            logging.error("Error in handler {}: {}".format(self.handler_name, e))
+            logging.error("Error in handler {}: {}".
+                          format(self.handler_name, e))
         
         else:
             logging.info ('Finished Imorting file {} to table {}.'.
