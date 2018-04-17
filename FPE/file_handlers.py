@@ -2,7 +2,7 @@
 
 File event handler classes and support functions. CreateFileEventHandler is a 
 factory function to create an event handler object from the handler config 
-section passed in and return it.
+section passed in.
 """
 
 import MySQLdb
