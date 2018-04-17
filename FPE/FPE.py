@@ -20,6 +20,7 @@ import time
 import ConfigParser
 import logging
 from watchdog.observers import Observer
+from pyasn1.type.univ import Integer
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -68,14 +69,17 @@ def load_config(config_filename):
     
     logging_params = {}
     logging_params['level'] = logging.INFO
-    logging_params['format'] = '%(asctime)s:%(module)s:%(message)s'
+    logging_params['format'] = '%(asctime)s:%(message)s'
 
     # Read in any logging options, merge with default and remove logging section
+    # If level passed in then convert to int.
     
     try :
         
         if 'Logging' in config.sections():
             logging_params.update(get_config_section(config, 'Logging'))
+            if not logging_params['level'] is int:
+                logging_params['level'] = int(logging_params['level'])
             logging_params.pop('name')
             config.remove_section('Logging')
             

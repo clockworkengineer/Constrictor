@@ -54,33 +54,40 @@ def _display_details(handler_section):
             logging.info('{} = {}'.format(option, handler_section[option]))
 
 
-def _insert_row(table_name, row):
-    """Generate SQL for insert row  of fields."""
-        
-    fields = ''
-    values = ''
-    for field in row.keys():
-        fields += '{},'.format(field)
-        values += '\'{}\','.format(row[field].replace("'", "''"))
-
-    fields, values = fields[:-1], values[:-1]
- 
-    sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, fields, values)
-        
-    return (sql)
-
-
 def _update_row(table_name, key, row):
-    """Generate SQL for update row of fields."""
-      
+    """Generate SQL for update/insert row of fields."""
+  
     fields = ''     
-    for field in row.keys():
-        fields += '{} = \'{}\','.format(field, row[field].replace("'", "''"))
+   
+    # Key provided then doing update
+     
+    if key != '':
         
-    fields = fields[:-1]
+        for field in row.keys():
+            fields += '{} = \'{}\','.format(field,
+                                            row[field].replace("'", "''"))
+            
+        fields = fields[:-1]
+        
+        sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name,
+                                                      fields, key, row[key])
     
-    sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name, fields, key, row[key])
- 
+    # Doing an insert of a new record
+       
+    else:  
+           
+        values = ''
+        for field in row.keys():
+            fields += '{},'.format(field)
+            values += '\'{}\','.format(row[field].replace("'", "''"))
+    
+        fields, values = fields[:-1], values[:-1]
+     
+        sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name,
+                                                       fields, values)
+    
+    logging.debug(sql)
+    
     return (sql)
 
         
@@ -187,12 +194,7 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                 for row in csv_reader:
          
                     try:
-                        if self.key_name != '':
-                            sql = _update_row(self.table_name,
-                                              self.key_name, row)
-                        else:
-                            sql = _insert_row(self.table_name, row)
-    
+                        sql = _update_row(self.table_name, self.key_name, row)
                         cursor.execute(sql)
                         database.commit()
                         
@@ -266,12 +268,7 @@ class CSVFileToSQLiteHandler(FileSystemEventHandler):
                 for row in csv_reader:
          
                     try:
-                        if self.key_name != '':
-                            sql = _update_row(self.table_name,
-                                              self.key_name, row)
-                        else:
-                            sql = _insert_row(self.table_name, row)
-                        
+                        sql = _update_row(self.table_name, self.key_name, row)
                         cursor.execute(sql)
                         database.commit()
                          
