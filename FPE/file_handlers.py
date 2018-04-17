@@ -1,3 +1,9 @@
+"""File Event Handlers
+
+File event handler classes and support functions. CreateFileEventHandler is a factory function
+to create an event handler object from the handler config section passed in and return it.
+"""
+
 import MySQLdb
 import csv
 import logging
@@ -6,9 +12,18 @@ import shutil
 import sqlite3
 from watchdog.events import FileSystemEventHandler
 
+__author__ = "Rob Tizzard"
+__copyright__ = "Copyright 20018"
+__credits__ = ["Rob Tizzard"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "Rob Tizzard"
+__email__ = "robert_tizzard@hotmail.com"
+__status__ = "Pre-Alpha"
 
-def create_file_handler(handler_section):
-    """Generate watchdog event handler object for the configuration section passed in"""
+
+def CreateFileEventHandler(handler_section):
+    """Generate watchdog event handler object for the configuration section passed in."""
     
     file_handler = None;
 
@@ -69,10 +84,21 @@ def _update_row(table_name, key, row):
 
     
 class CopyFileHandler(FileSystemEventHandler):
-    """Copy file event handler class"""
+    """Copy file event handler
+    
+    Copy files created in watch folder to destination folder keeping any in situ
+    directory structure the same.
+    
+    Attributes:
+    handler_name : Name of handler object
+    watch_folder:  Folder to watch for files
+    destination:   Destination for file copy
+    recursive:     Boolean that if true means perform recursive file watch
+    """
     
     def __init__(self, handler_section):
-
+        """ Intialise handler attributes and log details"""
+        
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.destination_folder = handler_section['destination']
@@ -81,7 +107,7 @@ class CopyFileHandler(FileSystemEventHandler):
         _display_details(handler_section)
          
     def on_created(self, event):
-        
+        """Copy file from watch folder and destination"""
         try:
             
             destination_path = event.src_path[len(self.watch_folder) + 1:]    
@@ -103,10 +129,26 @@ class CopyFileHandler(FileSystemEventHandler):
 
  
 class CSVFileToMySQLHandler(FileSystemEventHandler):
-    """Convert CSV file to MySQL table event handler class"""
+    """Convert CSV file to MySQL table event handler
+    
+    Read in CSV file and insert/update rows within a given MySQL database/table.
+    If no key attribute is specified then the rows are inserted otherwise updated.
+    
+    Attributes:
+    hanlder_name : Name of handler object
+    watch_folder:  Folder to watch for files
+    server:        MySQL database server
+    user:          MySQL user name
+    password:      MySQL user password
+    database_name: MySQL database name
+    table_name:    MySQL table name
+    key:           Table column key used in updates
+    recursive:     Boolean that if true means perform recursive file watch   
+    """
     
     def __init__(self, handler_section):
-        
+        """ Intialise handler attributes and log details"""
+               
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.server = handler_section['server']
@@ -162,10 +204,13 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                 
                 
 class CSVFileToSQLiteHandler(FileSystemEventHandler):
-    """Convert CSV file to SQLite table event handler class"""
+    """Convert CSV file to SQLite table event handler
+    
+    
+    """
     
     def __init__(self, handler_section):
-        
+        """ Intialise handler attributes and log details"""
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.table_name = handler_section['table']

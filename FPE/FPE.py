@@ -6,9 +6,14 @@ This is a generic file processing engine that sets up a watch folder and waits
 for files/directories to be copied to it. Any added directories are also watched 
 (if recursive is set) but any added files are be processed using one of its built 
 in file handler classes.
+
+Current built in file handlers:
+1) Copy files/directory
+2) Import CSV file to MySQL database table.
+3) Import CSV file to SQLite database table.
 """
 
-from FPE import file_handlers
+import file_handlers
 import os
 import sys
 import time
@@ -23,7 +28,7 @@ __license__ = "MIT"
 __version__ = "0.0.1"
 __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
-__status__ = "Alpha"
+__status__ = "Pre-Alpha"
 
 
 def get_config_section(config, section_name):
@@ -52,7 +57,7 @@ def get_config_section(config, section_name):
 
 
 def load_config(config_filename):
-    """Load configuration file and set general run parameters"""
+    """Load configuration file and set logging parameters"""
     
     # Read in config file
     
@@ -106,7 +111,7 @@ def main(config_filename):
             # Merge config with default values and create handler
             
             handler_section.update(get_config_section(config, handler_name))
-            file_handler = file_handlers.create_file_handler(handler_section)
+            file_handler = file_handlers.CreateFileEventHandler(handler_section)
                                 
         except Exception as e:
             logging.error(e)
