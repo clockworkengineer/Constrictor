@@ -59,47 +59,50 @@ def get_config_section(config, section_name):
 def load_config(arguments):
     """Load configuration file and set logging parameters"""
     
-    # Read in config file
-    
-    config = ConfigParser.ConfigParser()
-    config.read(arguments.file)
-    
-    # Default logging parameters
-    
-    logging_params = {}
-    logging_params['level'] = logging.INFO
-    logging_params['format'] = '%(asctime)s:%(message)s'
-
-    # Read in any logging options, merge with default and remove logging section
-    
-    try :
+    try:
         
+        # Read in config file
+        
+        config = ConfigParser.ConfigParser()
+        config.read(arguments.file)
+        
+        # Default logging parameters
+        
+        logging_params = {}
+        logging_params['level'] = logging.INFO
+        logging_params['format'] = '%(asctime)s:%(message)s'
+    
+        # Read in any logging options, merge with default and 
+        # remove logging section
+             
         if 'Logging' in config.sections():
             logging_params.update(get_config_section(config, 'Logging'))
             # If level passed in then convert to int.
-            if not logging_params['level'] is int:
+            if  logging_params['level'] is not int:
                 logging_params['level'] = int(logging_params['level'])
             logging_params.pop('name')
             config.remove_section('Logging')
             
-    except Exception as e:
-        logging.error(e)
-    
-    finally:
-        
+        logging.basicConfig(**logging_params)
+               
         # If filehandler set then remove all others from config
+        # Leaving the config empty if the handler doesn't exist
         
         if hasattr(arguments, 'filehandler'):
-            if arguments.filehandler in config.sections():
-                for section in config.sections():
-                    if section != arguments.filehandler:
-                        config.remove_section(section)
-            else:
-                print('Error: Non-existant filehandler. Defaulting to all.')
-        
-        logging.basicConfig(**logging_params)
-                         
-        return(config)
+            
+            if not config.has_section(arguments.filehandler):
+                logging.info('Error: Non-existant filehandler {}.'.
+                             format(arguments.filehandler))
+                
+            for section in config.sections():
+                if section != arguments.filehandler:
+                    config.remove_section(section)
+    
+    except Exception as e:
+        logging.error(e)
+        os._exit(os.EX_CONFIG)
+     
+    return(config)
 
     
 def load_arguments():
@@ -111,6 +114,10 @@ def load_arguments():
     
     arguments = parser.parse_args()
     
+    if not os.path.exists(arguments.file):
+        print('Error: Non-existant config file passed to FPE.')
+        os._exit(os.EX_USAGE)
+
     return(arguments)
 
 ########################
@@ -124,10 +131,6 @@ def main():
     # Load command line arguments
     
     arguments = load_arguments()
-    
-    if not os.path.exists(arguments.file):
-        print('Error: Non-existant config file passed to FPE.')
-        os._exit(os.EX_USAGE)
     
     # Load config
     
