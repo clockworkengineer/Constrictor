@@ -15,7 +15,6 @@ Current built in file handlers:
 
 import file_handlers
 import os
-import sys
 import time
 import ConfigParser
 import logging
@@ -57,13 +56,13 @@ def get_config_section(config, section_name):
     return config_section
 
 
-def load_config(config_filename):
+def load_config(arguments):
     """Load configuration file and set logging parameters"""
     
     # Read in config file
     
     config = ConfigParser.ConfigParser()
-    config.read(config_filename)
+    config.read(arguments.file)
     
     # Default logging parameters
     
@@ -86,15 +85,29 @@ def load_config(config_filename):
     except Exception as e:
         logging.error(e)
     
-    finally:   
+    finally:
+        
+        # If filehandler set then remove all others from config
+        
+        if hasattr(arguments, 'filehandler'):
+            if arguments.filehandler in config.sections():
+                for section in config.sections():
+                    if section != arguments.filehandler:
+                        config.remove_section(section)
+            else:
+                print('Error: Non-existant filehandler. Defaulting to all.')
+        
         logging.basicConfig(**logging_params)
+                         
         return(config)
 
     
 def load_arguments():
+    """Load and parse command line arguments"""
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("file", help="Configration file")
+    parser.add_argument('file', help='Configration file')
+    parser.add_argument('-f', '--filehandler', help="File event handler name")
     
     arguments = parser.parse_args()
     
@@ -114,12 +127,12 @@ def main():
     
     if not os.path.exists(arguments.file):
         print('Error: Non-existant config file passed to FPE.')
-        return
+        os._exit(os.EX_USAGE)
     
     # Load config
     
-    config = load_config(arguments.file)
-        
+    config = load_config(arguments)
+                
     logging.info('File Processing Engine Started.')
 
     observers_list = []
@@ -138,7 +151,7 @@ def main():
             
             handler_section.update(get_config_section(config, handler_name))
             file_handler = file_handlers.CreateFileEventHandler(handler_section)
-                                
+                            
         except Exception as e:
             logging.error(e)
             
@@ -151,20 +164,27 @@ def main():
                 observers_list.append(observer)
     
     # Currently run observers until quit
-       
-    try:      
-        while True:
-            time.sleep(1)
-            
-    except KeyboardInterrupt:
-        # Stop all observers
-        for observer in observers_list:
-            observer.stop()
-            
-    finally:
-        # Wait for all observer threads to stop
-        for observer in observers_list:   
-            observer.join()
+          
+    if len(observers_list):    
+           
+        try:      
+            while True:
+                time.sleep(1)
+                
+        except KeyboardInterrupt:
+            # Stop all observers
+            for observer in observers_list:
+                observer.stop()
+                
+        finally:
+            # Wait for all observer threads to stop
+            for observer in observers_list:   
+                observer.join()
+                
+    else:
+        logging.error('Error: No file handlers configured.')
+   
+    logging.info('File Processing Engine Stopped.')   
 
 
 if __name__ == '__main__':
