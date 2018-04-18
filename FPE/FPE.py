@@ -19,6 +19,7 @@ import sys
 import time
 import ConfigParser
 import logging
+import argparse
 from watchdog.observers import Observer
 
 __author__ = "Rob Tizzard"
@@ -89,13 +90,35 @@ def load_config(config_filename):
         logging.basicConfig(**logging_params)
         return(config)
 
+    
+def load_arguments():
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file", help="Configration file")
+    
+    arguments = parser.parse_args()
+    
+    return(arguments)
 
-def main(config_filename):
+########################
+# FPE Main Entry Point #
+########################
+
+
+def main():
     """Main program entry point"""
+    
+    # Load command line arguments
+    
+    arguments = load_arguments()
+    
+    if not os.path.exists(arguments.file):
+        print('Error: Non-existant config file passed to FPE.')
+        return
     
     # Load config
     
-    config = load_config(config_filename)
+    config = load_config(arguments.file)
         
     logging.info('File Processing Engine Started.')
 
@@ -143,13 +166,6 @@ def main(config_filename):
         for observer in observers_list:   
             observer.join()
 
-#####################################################################
-# Start up main program/check for confiuration file being passed in #
-#####################################################################
-
 
 if __name__ == '__main__':
-    if (len(sys.argv) == 2) and os.path.exists(sys.argv[1]):
-        main(sys.argv[1])
-    else:
-        print('Error: Either no or non-existant config file passed to FPE.')
+    main()
