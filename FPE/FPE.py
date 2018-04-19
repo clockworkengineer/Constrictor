@@ -14,6 +14,7 @@ Current built in file handlers:
 """
 
 import file_handlers
+import sys
 import os
 import time
 import ConfigParser
@@ -32,7 +33,7 @@ __status__ = "Pre-Alpha"
 
 
 def get_config_section(config, section_name):
-    """Get configutation file section and return dictionary for it"""
+    """Get configuration file section and return dictionary for it"""
     
     config_section = {}
     
@@ -100,7 +101,7 @@ def load_config(arguments):
     
     except Exception as e:
         logging.error(e)
-        os._exit(os.EX_CONFIG)
+        sys.exit(1)
      
     return(config)
 
@@ -108,7 +109,7 @@ def load_config(arguments):
 def load_arguments():
     """Load and parse command line arguments"""
     
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Process files copied into watch folder with a custom handler.')
     parser.add_argument('file', help='Configration file')
     parser.add_argument('-f', '--filehandler', help="File event handler name")
     
@@ -116,9 +117,40 @@ def load_arguments():
     
     if not os.path.exists(arguments.file):
         print('Error: Non-existant config file passed to FPE.')
-        os._exit(os.EX_USAGE)
+        sys.exit(1)
 
     return(arguments)
+
+
+def create_observer(config, handler_name):
+    """Create file handler attach to an observer and start watching."""
+    
+    try:
+        
+        # Default values for optional fields
+        
+        handler_section = { 'recursive' : False}
+        
+        # Merge config with default values and create handler
+        
+        handler_section.update(get_config_section(config, handler_name))
+        file_handler = file_handlers.CreateFileEventHandler(handler_section)
+                        
+    except Exception as e:
+        logging.error(e)
+        
+    else:
+        # Create observer with file handler and start watching
+        
+        if file_handler != None:
+            observer = Observer();
+            observer.schedule(file_handler, file_handler.watch_folder,
+                              recursive=file_handler.recursive) 
+            observer.start()
+        else:
+            observer = None;
+            
+    return(observer)
 
 ########################
 # FPE Main Entry Point #
@@ -140,35 +172,17 @@ def main():
 
     observers_list = []
 
-    # Loop through sections creating file handlers and starting observers for them
+    # Loop through sections creating file observers
         
     for handler_name in config.sections():
-         
-        try:
-            
-            # Default values for optional fields
-            
-            handler_section = { 'recursive' : False}
-            
-            # Merge config with default values and create handler
-            
-            handler_section.update(get_config_section(config, handler_name))
-            file_handler = file_handlers.CreateFileEventHandler(handler_section)
-                            
-        except Exception as e:
-            logging.error(e)
-            
-        else:
-            # Create observer for file handler, startup and add to observers list
-            if file_handler != None:
-                observer = Observer();
-                observer.schedule(file_handler, file_handler.watch_folder, recursive=file_handler.recursive) 
-                observer.start()
-                observers_list.append(observer)
+                
+        observer = create_observer(config, handler_name)
+        if observer != None:
+            observers_list.append(observer)
     
     # Currently run observers until quit
           
-    if len(observers_list):    
+    if observers_list:    
            
         try:      
             while True:
