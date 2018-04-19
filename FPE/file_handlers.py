@@ -1,8 +1,15 @@
 """File Event Handlers.
 
-File event handler classes and support functions. CreateFileEventHandler is a 
+File event handler classes and support functions. Uses CreateFileEventHandler  
 factory function to create an event handler object from the handler config 
-section passed in.
+section passed in. These handlers are then passed into a watchdog observer
+specically created for it and used to process files passed to handler method
+on_created().
+
+Current built in file handlers:
+1) Copy files/directory
+2) Import CSV file to MySQL database table.
+3) Import CSV file to SQLite database table.
 """
 
 import MySQLdb

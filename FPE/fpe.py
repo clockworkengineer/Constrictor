@@ -69,9 +69,8 @@ def load_config(arguments):
         
         # Default logging parameters
         
-        logging_params = {}
-        logging_params['level'] = logging.INFO
-        logging_params['format'] = '%(asctime)s:%(message)s'
+        logging_params = { 'level' : logging.INFO,
+                           'format' : '%(asctime)s:%(message)s' }
     
         # Read in any logging options, merge with default and 
         # remove logging section
@@ -84,10 +83,10 @@ def load_config(arguments):
             logging_params.pop('name')
             config.remove_section('Logging')
             
-        logging.basicConfig(**logging_params)
+        logging.basicConfig(**logging_params)  # Set logging options
                
         # If filehandler set then remove all others from config
-        # Leaving the config empty if the handler doesn't exist
+        # leaving the config empty if the handler doesn't exist
         
         if arguments.filehandler != None:
             
@@ -129,7 +128,8 @@ def create_observer(config, handler_name):
         
         # Default values for optional fields
         
-        handler_section = { 'recursive' : False}
+        handler_section = {'recursive' : False,
+                           'deletesource' : False }
         
         # Merge config with default values and create handler
         
@@ -178,11 +178,7 @@ def observe_folders(observers_list):
 def main():
     """Main program entry point"""
     
-    # Load command line arguments
-    
     arguments = load_arguments()
-    
-    # Load config
     
     config = load_config(arguments)
                 
@@ -190,7 +186,7 @@ def main():
 
     observers_list = []
 
-    # Loop through sections creating file observers
+    # Loop through config sections creating file observers
         
     for handler_name in config.sections():
                 
