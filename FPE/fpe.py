@@ -89,7 +89,7 @@ def load_config(arguments):
         # If filehandler set then remove all others from config
         # Leaving the config empty if the handler doesn't exist
         
-        if hasattr(arguments, 'filehandler'):
+        if arguments.filehandler != None:
             
             if not config.has_section(arguments.filehandler):
                 logging.info('Error: Non-existant filehandler {}.'.
@@ -152,6 +152,24 @@ def create_observer(config, handler_name):
             
     return(observer)
 
+
+def observe_folders(observers_list):
+    """Run observers until user quits (eg.Control-C)"""
+    
+    try:      
+        while True:
+            time.sleep(1)
+            
+    except KeyboardInterrupt:
+        # Stop all observers
+        for observer in observers_list:
+            observer.stop()
+            
+    finally:
+        # Wait for all observer threads to stop
+        for observer in observers_list:   
+            observer.join()
+    
 ########################
 # FPE Main Entry Point #
 ########################
@@ -180,24 +198,11 @@ def main():
         if observer != None:
             observers_list.append(observer)
     
-    # Currently run observers until quit
+    # If list not empty observer folders
           
-    if observers_list:    
-           
-        try:      
-            while True:
-                time.sleep(1)
-                
-        except KeyboardInterrupt:
-            # Stop all observers
-            for observer in observers_list:
-                observer.stop()
-                
-        finally:
-            # Wait for all observer threads to stop
-            for observer in observers_list:   
-                observer.join()
-                
+    if observers_list:          
+        observe_folders(observers_list)
+
     else:
         logging.error('Error: No file handlers configured.')
    
