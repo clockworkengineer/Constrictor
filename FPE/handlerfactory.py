@@ -1,6 +1,6 @@
 """Create file event handler object.
   
-Factory function CreateFileEventHandler used to create an event handler object 
+Factory function CreateFileEventHandler used to create an file handler object 
 from the handler config section passed in. These handlers are then passed into 
 a watchdog observer specically created for it and used to process files passed 
 to handler method on_created().
