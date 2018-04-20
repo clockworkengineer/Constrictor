@@ -177,9 +177,9 @@ def observe_folders(observers_list):
 
 def main():
     """Main program entry point"""
-    
+
     arguments = load_arguments()
-    
+ 
     config = load_config(arguments)
                 
     logging.info('File Processing Engine Started.')

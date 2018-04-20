@@ -16,6 +16,7 @@ import MySQLdb
 import csv
 import logging
 import os
+import sys
 import shutil
 import sqlite3
 from watchdog.events import FileSystemEventHandler
@@ -34,20 +35,17 @@ def CreateFileEventHandler(handler_section):
     """Generate watchdog event handler object for the configuration section passed in."""
     
     file_handler = None;
-
-    try:
-        if handler_section['type'] == CopyFileHandler.__name__:
-            file_handler = CopyFileHandler(handler_section)
-        elif handler_section['type'] == CSVFileToMySQLHandler.__name__:
-            file_handler = CSVFileToMySQLHandler(handler_section)
-        elif handler_section['type'] == CSVFileToSQLiteHandler.__name__:
-            file_handler = CSVFileToSQLiteHandler(handler_section)
-        else:
-            logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
     
+    try:
+        
+        handler_class = getattr(sys.modules[__name__], handler_section['type'])
+        file_handler = handler_class(handler_section)
+        
     except KeyError as e:
         logging.error("Missing option {}.\n{} not started.".format(e, handler_section['name']))
-    
+    except Exception:
+        logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
+
     return (file_handler)
 
 
