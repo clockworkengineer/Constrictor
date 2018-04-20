@@ -13,7 +13,7 @@ Current built in file handlers:
 3) Import CSV file to SQLite database table.
 """
 
-import file_handlers
+from handlerfactory import CreateFileEventHandler 
 import sys
 import os
 import time
@@ -134,7 +134,7 @@ def create_observer(config, handler_name):
         # Merge config with default values and create handler
         
         handler_section.update(get_config_section(config, handler_name))
-        file_handler = file_handlers.CreateFileEventHandler(handler_section)
+        file_handler = CreateFileEventHandler(handler_section)
                         
     except Exception as e:
         logging.error(e)

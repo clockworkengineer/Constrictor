@@ -1,3 +1,8 @@
+"""File handler common functions
+
+Common functions used by some/all file event handler classes.
+"""
+
 import logging
 
 __author__ = "Rob Tizzard"

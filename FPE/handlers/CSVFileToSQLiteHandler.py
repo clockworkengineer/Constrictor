@@ -1,3 +1,5 @@
+"""Import CSV file to SQLite file handler."""
+
 from common import _display_details, _update_row
 import csv
 import logging
