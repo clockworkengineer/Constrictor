@@ -16,7 +16,7 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-class CopyFileHandler(FileSystemEventHandler):
+class CopyFile(FileSystemEventHandler):
     """Copy file event handler.
     
     Copy files created in watch folder to destination folder keeping any in 

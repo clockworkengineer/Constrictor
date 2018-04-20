@@ -1,3 +1,3 @@
-from CopyFileHandler import CopyFileHandler
-from CSVFileToMySQLHandler import CSVFileToMySQLHandler
-from CSVFileToSQLiteHandler import CSVFileToSQLiteHandler
+from CopyFile import CopyFile
+from CSVFileToMySQL import CSVFileToMySQL
+from CSVFileToSQLite import CSVFileToSQLite

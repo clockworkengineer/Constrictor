@@ -1,10 +1,10 @@
-"""Import CSV file to MySQL file hander."""
+"""Import CSV file to SQLite file handler."""
 
 from common import _display_details, _update_row
-import MySQLdb
 import csv
 import logging
 import os
+import sqlite3
 from watchdog.events import FileSystemEventHandler
 
 __author__ = "Rob Tizzard"
@@ -17,48 +17,46 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-class CSVFileToMySQLHandler(FileSystemEventHandler):
-    """Convert CSV file to MySQL table event handler.
-    
-    Read in CSV file and insert/update rows within a given MySQL database/table.
+class CSVFileToSQLite(FileSystemEventHandler):
+    """Import CSV file to SQLite database.
+ 
+    Read in CSV file and insert/update rows within a given SQLite database/table.
     If no key attribute is specified then the rows are inserted otherwise 
     updated.
     
     Attributes:
     hanlder_name : Name of handler object
     watch_folder:  Folder to watch for files
-    server:        MySQL database server
-    user:          MySQL user name
-    password:      MySQL user password
-    database_name: MySQL database name
-    table_name:    MySQL table name
+    database_file: SQLite database file name
+    table_name:    SQLite table name
     key:           Table column key used in updates
-    recursive:     Boolean that if true means perform recursive file watch   
+    recursive:     Boolean that if true means perform recursive file watch          
     """
     
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details."""
-               
+        """ Intialise handler attributes and log details"""
+        
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
-        self.server = handler_section['server']
-        self.user_name = handler_section['user']
-        self.user_password = handler_section['password']
-        self.database_name = handler_section['database']
         self.table_name = handler_section['table']
         self.key_name = handler_section['key']
+        self.database_file = handler_section['databasefile']
         self.recursive = handler_section['recursive']
         
         _display_details(handler_section)
-        
+
     def on_created(self, event):
-        """Import CSV file to MySQL database."""
-        
+        """Import CSV file to SQLite database."""
+                
         try:
             
-            database = None        
-            database = MySQLdb.connect(self.server, self.user_name,
-                                 self.user_password, self.database_name)          
+            database = None
+        
+            if not os.path.exists(self.database_file):
+                raise IOError("Database file does not exist.")
+            
+            database = sqlite3.connect(self.database_file)
+            
             cursor = database.cursor()
     
             logging.info ('Imorting CSV file {} to table {}.'.
@@ -74,12 +72,12 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
                         sql = _update_row(self.table_name, self.key_name, row)
                         cursor.execute(sql)
                         database.commit()
-                        
-                    except (MySQLdb.Error, MySQLdb.Warning) as e:
-                        logging.error ('{}\n{}'.format(sql, e))
+                         
+                    except (sqlite3.Error, sqlite3.Warning) as e:
+                        logging.error('{}\n{}'.format(sql, e))
                         database.rollback()
                         
-        except Exception as e:  
+        except (Exception) as e:  
             logging.error("Error in handler {}: {}".
                           format(self.handler_name, e))
         
@@ -91,3 +89,4 @@ class CSVFileToMySQLHandler(FileSystemEventHandler):
         finally:
             if database:
                 database.close()
+
