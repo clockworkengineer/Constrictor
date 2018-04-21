@@ -1,3 +1,4 @@
 from CopyFile import CopyFile
 from CSVFileToMySQL import CSVFileToMySQL
 from CSVFileToSQLite import CSVFileToSQLite
+from SFTPCopyFile import SFTPCopyFile

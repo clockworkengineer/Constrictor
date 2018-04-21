@@ -18,7 +18,7 @@ __status__ = "Pre-Alpha"
 
 
 class CSVFileToMySQL(FileSystemEventHandler):
-    """Convert CSV file to MySQL table event handler.
+    """Import CSV file to MySQL database.
     
     Read in CSV file and insert/update rows within a given MySQL database/table.
     If no key attribute is specified then the rows are inserted otherwise 
@@ -33,8 +33,8 @@ class CSVFileToMySQL(FileSystemEventHandler):
     database_name: MySQL database name
     table_name:    MySQL table name
     key:           Table column key used in updates
-    recursive:     Boolean that if true means perform recursive file watch
-    delete_source: Boolean that if true means delete source file on sucess     
+    recursive:     Boolea == true perform recursive file watch  
+    delete_source: Boolean == true delete source file on sucess  
     """
     
     def __init__(self, handler_section):

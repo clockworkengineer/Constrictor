@@ -30,8 +30,8 @@ class CSVFileToSQLite(FileSystemEventHandler):
     database_file: SQLite database file name
     table_name:    SQLite table name
     key:           Table column key used in updates
-    recursive:     Boolean that if true means perform recursive file watch  
-    delete_source: Boolean that if true means delete source file on sucess        
+    recursive:     Boolea == true perform recursive file watch  
+    delete_source: Boolean == true delete source file on sucess        
     """
     
     def __init__(self, handler_section):

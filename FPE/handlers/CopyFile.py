@@ -17,7 +17,7 @@ __status__ = "Pre-Alpha"
 
 
 class CopyFile(FileSystemEventHandler):
-    """Copy file event handler.
+    """Copy file/directories.
     
     Copy files created in watch folder to destination folder keeping any in 
     situ watch folder directory structure the same.
@@ -26,8 +26,8 @@ class CopyFile(FileSystemEventHandler):
     handler_name:  Name of handler object
     watch_folder:  Folder to watch for files
     destination:   Destination for file copy
-    recursive:     Boolean that if true means perform recursive file watch
-    delete_source: Boolean that if true means delete source file on sucess   
+    recursive:     Boolea == true perform recursive file watch  
+    delete_source: Boolean == true delete source file on sucess   
     """
     
     def __init__(self, handler_section):
