@@ -85,17 +85,17 @@ def load_config(arguments):
             
         logging.basicConfig(**logging_params)  # Set logging options
                
-        # If filehandler set then remove all others from config
+        # If handler name set then remove all others from config
         # leaving the config empty if the handler doesn't exist
         
-        if arguments.filehandler != None:
+        if arguments.name != None:
             
-            if not config.has_section(arguments.filehandler):
-                logging.info('Error: Non-existant filehandler {}.'.
-                             format(arguments.filehandler))
+            if not config.has_section(arguments.name):
+                logging.info('Error: Non-existant file handler {}.'.
+                             format(arguments.name))
                 
             for section in config.sections():
-                if section != arguments.filehandler:
+                if section != arguments.name:
                     config.remove_section(section)
     
     except Exception as e:
@@ -110,7 +110,7 @@ def load_arguments():
     
     parser = argparse.ArgumentParser(description='Process files copied into watch folder with a custom handler.')
     parser.add_argument('file', help='Configration file')
-    parser.add_argument('-f', '--filehandler', help="File event handler name")
+    parser.add_argument('-n', '--name', help="File handler name")
     
     arguments = parser.parse_args()
     

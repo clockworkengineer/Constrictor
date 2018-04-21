@@ -27,6 +27,7 @@ class CopyFile(FileSystemEventHandler):
     watch_folder:  Folder to watch for files
     destination:   Destination for file copy
     recursive:     Boolean that if true means perform recursive file watch
+    delete_source: Boolean that if true means delete source file on sucess   
     """
     
     def __init__(self, handler_section):
@@ -36,6 +37,7 @@ class CopyFile(FileSystemEventHandler):
         self.watch_folder = handler_section['watch']
         self.destination_folder = handler_section['destination']
         self.recursive = handler_section['recursive']
+        self.delete_source = handler_section['deletesource']
         
         _display_details(handler_section)
          
@@ -58,7 +60,10 @@ class CopyFile(FileSystemEventHandler):
                 if not os.path.exists(destination_path):
                     logging.info ('Creating directory {}'.
                                   format(event.src_path))
-                    os.makedirs(destination_path)    
+                    os.makedirs(destination_path)
+                    
+            if self.delete_source:
+                os.remove(event.src_path)
 
         except Exception as e:
             logging.error("Error in handler {}: {}".

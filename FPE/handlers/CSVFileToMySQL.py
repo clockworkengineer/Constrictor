@@ -33,7 +33,8 @@ class CSVFileToMySQL(FileSystemEventHandler):
     database_name: MySQL database name
     table_name:    MySQL table name
     key:           Table column key used in updates
-    recursive:     Boolean that if true means perform recursive file watch   
+    recursive:     Boolean that if true means perform recursive file watch
+    delete_source: Boolean that if true means delete source file on sucess     
     """
     
     def __init__(self, handler_section):
@@ -48,7 +49,8 @@ class CSVFileToMySQL(FileSystemEventHandler):
         self.table_name = handler_section['table']
         self.key_name = handler_section['key']
         self.recursive = handler_section['recursive']
-        
+        self.delete_source = handler_section['deletesource']
+                
         _display_details(handler_section)
         
     def on_created(self, event):
@@ -86,7 +88,8 @@ class CSVFileToMySQL(FileSystemEventHandler):
         else:
             logging.info ('Finished Imorting file {} to table {}.'.
                           format(event.src_path, self.table_name))
-            os.remove(event.src_path)
+            if self.delete_source:
+                os.remove(event.src_path)
             
         finally:
             if database:

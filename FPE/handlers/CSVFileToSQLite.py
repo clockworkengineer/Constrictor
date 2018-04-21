@@ -30,7 +30,8 @@ class CSVFileToSQLite(FileSystemEventHandler):
     database_file: SQLite database file name
     table_name:    SQLite table name
     key:           Table column key used in updates
-    recursive:     Boolean that if true means perform recursive file watch          
+    recursive:     Boolean that if true means perform recursive file watch  
+    delete_source: Boolean that if true means delete source file on sucess        
     """
     
     def __init__(self, handler_section):
@@ -42,6 +43,7 @@ class CSVFileToSQLite(FileSystemEventHandler):
         self.key_name = handler_section['key']
         self.database_file = handler_section['databasefile']
         self.recursive = handler_section['recursive']
+        self.delete_source = handler_section['deletesource']
         
         _display_details(handler_section)
 
@@ -84,7 +86,8 @@ class CSVFileToSQLite(FileSystemEventHandler):
         else:
             logging.info ('Finished Imorting file {} to table {}.'.
                           format(event.src_path, self.table_name))
-            os.remove(event.src_path)
+            if self.delete_source:
+                os.remove(event.src_path)
             
         finally:
             if database:
