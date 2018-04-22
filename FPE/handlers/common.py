@@ -25,32 +25,31 @@ def _display_details(handler_section):
             logging.info('{} = {}'.format(option, handler_section[option]))
             
             
-def _update_row(table_name, key, row):
+def _generate_sql(field_format, table_name, key_name, row_fields):
     """Generate SQL for update/insert row of fields."""
   
     fields = ''     
-   
+    
     # Key provided then doing update
      
-    if key != '':
+    if key_name != '':
         
-        for field in row.keys():
-            fields += '{} = \'{}\','.format(field,
-                                            row[field].replace("'", "''"))
+        for field in row_fields:
+            fields += ('{} = ' + field_format + ',').format(field, field)
             
         fields = fields[:-1]
         
-        sql = 'UPDATE {} SET {} WHERE {} = {}'.format(table_name,
-                                                      fields, key, row[key])
+        sql = ('UPDATE {} SET {} WHERE {} = ' + field_format).format(table_name,
+                                                      fields, key_name, key_name)
     
     # Doing an insert of a new record
        
     else:  
            
         values = ''
-        for field in row.keys():
+        for field in row_fields:
             fields += '{},'.format(field)
-            values += '\'{}\','.format(row[field].replace("'", "''"))
+            values += (field_format + ',').format(field)
     
         fields, values = fields[:-1], values[:-1]
      

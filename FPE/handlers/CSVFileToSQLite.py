@@ -1,6 +1,6 @@
 """Import CSV file to SQLite file handler."""
 
-from common import _display_details, _update_row
+from common import _display_details, _generate_sql
 import csv
 import logging
 import os
@@ -65,19 +65,20 @@ class CSVFileToSQLite(FileSystemEventHandler):
                           format(event.src_path, self.table_name))
     
             with open(event.src_path, 'r') as file_handle:
-                
+            
                 csv_reader = csv.DictReader(file_handle)
+                sql = _generate_sql(':{}', self.table_name, self.key_name,
+                                    csv_reader.fieldnames)
                            
                 for row in csv_reader:
-         
+
                     try:
-                        sql = _update_row(self.table_name, self.key_name, row)
-                        cursor.execute(sql)
-                        database.commit()
-                         
+
+                        with database:
+                            cursor.execute(sql, row)
+                            
                     except (sqlite3.Error, sqlite3.Warning) as e:
                         logging.error('{}\n{}'.format(sql, e))
-                        database.rollback()
                         
         except (Exception) as e:  
             logging.error("Error in handler {}: {}".

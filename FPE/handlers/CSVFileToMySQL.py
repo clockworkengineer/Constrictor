@@ -1,6 +1,6 @@
 """Import CSV file to MySQL file hander."""
 
-from common import _display_details, _update_row
+from common import _display_details, _generate_sql
 import MySQLdb
 import csv
 import logging
@@ -50,6 +50,7 @@ class CSVFileToMySQL(FileSystemEventHandler):
         self.key_name = handler_section['key']
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
+        self.field_format = ':{}'
                 
         _display_details(handler_section)
         
@@ -69,17 +70,18 @@ class CSVFileToMySQL(FileSystemEventHandler):
             with open(event.src_path, 'r') as file_handle:
                 
                 csv_reader = csv.DictReader(file_handle)
+                sql = _generate_sql('%({})s', self.table_name, self.key_name,
+                                    csv_reader.fieldnames)
                            
                 for row in csv_reader:
-         
+
                     try:
-                        sql = _update_row(self.table_name, self.key_name, row)
-                        cursor.execute(sql)
-                        database.commit()
+
+                        with database:
+                            cursor.execute(sql, row)
                         
                     except (MySQLdb.Error, MySQLdb.Warning) as e:
                         logging.error ('{}\n{}'.format(sql, e))
-                        database.rollback()
                         
         except Exception as e:  
             logging.error("Error in handler {}: {}".

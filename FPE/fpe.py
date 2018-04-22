@@ -129,7 +129,7 @@ def create_observer(config, handler_name):
         # Default values for optional fields
         
         handler_section = {'recursive' : False,
-                           'deletesource' : False }
+                           'deletesource' : True }
         
         # Merge config with default values and create handler
         
