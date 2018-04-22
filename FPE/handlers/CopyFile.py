@@ -26,7 +26,7 @@ class CopyFile(FileSystemEventHandler):
     handler_name:  Name of handler object
     watch_folder:  Folder to watch for files
     destination:   Destination for file copy
-    recursive:     Boolea == true perform recursive file watch  
+    recursive:     Boolean == true perform recursive file watch  
     delete_source: Boolean == true delete source file on sucess   
     """
     
