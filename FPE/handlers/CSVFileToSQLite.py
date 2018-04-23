@@ -44,6 +44,7 @@ class CSVFileToSQLite(FileSystemEventHandler):
         self.database_file = handler_section['databasefile']
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
+        self.param_style = 'named'
         
         _display_details(handler_section)
 
@@ -67,7 +68,8 @@ class CSVFileToSQLite(FileSystemEventHandler):
             with open(event.src_path, 'r') as file_handle:
             
                 csv_reader = csv.DictReader(file_handle)
-                sql = _generate_sql(':{}', self.table_name, self.key_name,
+                sql = _generate_sql(self.param_style, self.table_name,
+                                    self.key_name,
                                     csv_reader.fieldnames)
                            
                 for row in csv_reader:

@@ -50,7 +50,7 @@ class CSVFileToMySQL(FileSystemEventHandler):
         self.key_name = handler_section['key']
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
-        self.field_format = ':{}'
+        self.param_style = 'pyformat'
                 
         _display_details(handler_section)
         
@@ -70,16 +70,16 @@ class CSVFileToMySQL(FileSystemEventHandler):
             with open(event.src_path, 'r') as file_handle:
                 
                 csv_reader = csv.DictReader(file_handle)
-                sql = _generate_sql('%({})s', self.table_name, self.key_name,
+                sql = _generate_sql(self.param_style, self.table_name, self.key_name,
                                     csv_reader.fieldnames)
                            
                 for row in csv_reader:
-
+ 
                     try:
-
+ 
                         with database:
                             cursor.execute(sql, row)
-                        
+                         
                     except (MySQLdb.Error, MySQLdb.Warning) as e:
                         logging.error ('{}\n{}'.format(sql, e))
                         
