@@ -43,23 +43,22 @@ def _generate_sql(param_tyle, table_name, key_name, row_fields):
     # Key provided then doing update
      
     if key_name != '':
-        for field in row_fields:
-            fields += ('{} = ' + placeholder + ',').format(field, field)
-             
-        fields = fields[:-1]
+        
+        fields = (('{} = ' + placeholder + ',') * 
+                  len(row_fields)).format(*sorted(row_fields + row_fields))[:-1]
         
         sql = ('UPDATE {} SET {} WHERE {} = ' + placeholder).format(table_name,
                                                       fields, key_name, key_name)
-    
     # Doing an insert of a new record
        
     else:  
         
         fields = ','.join(row_fields)
-        values = ((placeholder + ',') * (len(row_fields))).format(*row_fields)[:-1]
+        values = ((placeholder + ',') * 
+                  (len(row_fields))).format(*row_fields)[:-1]
      
         sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, fields, values)
         
     logging.debug(sql)
-
+    print(sql)
     return (sql)
