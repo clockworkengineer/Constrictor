@@ -66,7 +66,7 @@ class CSVFileToSQLite(FileSystemEventHandler):
                           format(event.src_path, self.table_name))
     
             with open(event.src_path, 'r') as file_handle:
-            
+                          
                 csv_reader = csv.DictReader(file_handle)
                 sql = _generate_sql(self.param_style, self.table_name,
                                     self.key_name,
@@ -75,7 +75,7 @@ class CSVFileToSQLite(FileSystemEventHandler):
                 for row in csv_reader:
 
                     try:
-
+                        
                         with database:
                             cursor.execute(sql, row)
                             
