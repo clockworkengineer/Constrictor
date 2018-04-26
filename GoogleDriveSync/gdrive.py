@@ -1,3 +1,8 @@
+"""Class for accessing google drive.
+
+Class to connect, upload, download and interrogate files on google drive.
+"""
+
 from __future__ import print_function
 from apiclient.discovery import build
 from httplib2 import Http
@@ -5,6 +10,16 @@ from oauth2client import file, client, tools
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
 import os, io
 import magic
+import logging
+
+__author__ = "Rob Tizzard"
+__copyright__ = "Copyright 20018"
+__credits__ = ["Rob Tizzard"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "Rob Tizzard"
+__email__ = "robert_tizzard@hotmail.com"
+__status__ = "Pre-Alpha"
 
 
 class GDrive(object):
@@ -67,16 +82,16 @@ class GDrive(object):
         finally:
             return (files_returned)
         
-    def file_upload(self, file_path, parent_id=None):
+    def file_upload(self, local_file_path, parent_id=None):
         
-        file_metadata = {'name': os.path.basename(file_path)}
+        file_metadata = {'name': os.path.basename(local_file_path)}
         
         if parent_id:
             file_metadata['parents'] = [ parent_id ]
 
-        file_mime_type = magic.from_file(file_path, mime=True)
+        file_mime_type = magic.from_file(local_file_path, mime=True)
         
-        media = MediaFileUpload(file_path,
+        media = MediaFileUpload(local_file_path,
                             mimetype=file_mime_type)
         
         result = self.drive_service.files().create(body=file_metadata,
@@ -90,12 +105,13 @@ class GDrive(object):
         downloader = MediaIoBaseDownload(file_handle, request)
         done = False
         while not done:
-            status, done = downloader.next_chunk()
-            print ("Download %d%%." % int(status.progress() * 100))
-
+            done = downloader.next_chunk()
+            
         with io.open(local_file_path, 'wb') as f:
             file_handle.seek(0)
             f.write(file_handle.read())
+
+        logging.info('Downloaded file {} to {}'.format(file_id, local_file_path))
 
     def folder_create(self, folder_name):
         
@@ -123,12 +139,11 @@ class GDrive(object):
         downloader = MediaIoBaseDownload(file_handle, request)
         done = False
         while not done:
-            status, done = downloader.next_chunk()
-            print ("Download %d%%." % int(status.progress() * 100))
-
-        fn = '{}.{}'.format(os.path.splitext(local_file_path)[0], file_extension)
-        print(fn)
-        with io.open(fn, 'wb') as f:
+            done = downloader.next_chunk()
+            
+        with io.open(local_file_path, 'wb') as f:
             file_handle.seek(0)
             f.write(file_handle.read())
      
+        logging.info('Exported file {} to {}'.format(file_id, local_file_path))
+
