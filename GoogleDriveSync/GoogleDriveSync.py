@@ -36,22 +36,32 @@ _current_fileId_table = {}
 _fileId_cache_file = '/home/robt/fileID_cashe.json'
 
 
+def remove_local_file(file_name):
+    if os.path.isfile(file_name):
+        os.unlink(file_name)
+        logging.info('Deleting file {} removed/renamed/moved from My Drive'.format(file_name))
+    elif os.path.isdir(file_name):
+        os.rmdir(file_name)
+        logging.info('Deleting folder {} removed/renamed/moved from My Drive'.format(file_name))
+                        
+
 def rationalise_local_folder(my_drive):
     
-    if os.path.exists(_fileId_cache_file):
-        with open(_fileId_cache_file, 'r') as json_file:
-            _old_fileId_table = json.load(json_file)
-            
-        for fileId in _old_fileId_table:
-            
-            if fileId not in _current_fileId_table:
-                if os.path.isfile(_old_fileId_table[fileId]):
-                    os.unlink(_old_fileId_table[fileId])
-                    logging.info('Deleting file {} removed from My Drive'.format(_old_fileId_table[fileId]))
-                elif os.path.isdir(_old_fileId_table[fileId]):
-                    os.rmdir(_old_fileId_table[fileId])
-                    logging.info('Deleting folder {} removed from My Drive'.format(_old_fileId_table[fileId]))
-                   
+    try:
+        
+        if os.path.exists(_fileId_cache_file):
+            with open(_fileId_cache_file, 'r') as json_file:
+                _old_fileId_table = json.load(json_file)
+                
+            for fileId in _old_fileId_table:
+                
+                if ((fileId not in _current_fileId_table) or 
+                    (_current_fileId_table[fileId] != _old_fileId_table[fileId])):
+                    remove_local_file(_old_fileId_table[fileId])
+        
+    except Exception as e:
+        logging.error(e)
+                           
     with open(_fileId_cache_file, 'w') as json_file:
         json.dump(_current_fileId_table, json_file, indent=2)
 
