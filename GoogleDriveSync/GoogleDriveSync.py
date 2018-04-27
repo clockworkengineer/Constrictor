@@ -9,11 +9,11 @@ reflected back on the drive.
 from __future__ import print_function
 from  gdrive import GDrive
 import os
-import sys
 import logging
 import datetime
 import argparse
 import pytz
+import json
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -31,6 +31,30 @@ _export_table = { 'application/vnd.google-apps.document' : ('application/pdf', '
 
 _timezone = pytz.timezone('Europe/London')
 
+_current_fileId_table = {}
+
+_fileId_cache_file = '/home/robt/fileID_cashe.json'
+
+
+def rationalise_local_folder(my_drive):
+    
+    if os.path.exists(_fileId_cache_file):
+        with open(_fileId_cache_file, 'r') as json_file:
+            _old_fileId_table = json.load(json_file)
+            
+        for fileId in _old_fileId_table:
+            
+            if fileId not in _current_fileId_table:
+                if os.path.isfile(_old_fileId_table[fileId]):
+                    os.unlink(_old_fileId_table[fileId])
+                    logging.info('Deleting file {} removed from My Drive'.format(_old_fileId_table[fileId]))
+                elif os.path.isdir(_old_fileId_table[fileId]):
+                    os.rmdir(_old_fileId_table[fileId])
+                    logging.info('Deleting folder {} removed from My Drive'.format(_old_fileId_table[fileId]))
+                   
+    with open(_fileId_cache_file, 'w') as json_file:
+        json.dump(_current_fileId_table, json_file, indent=2)
+
 
 def update_file(local_file, modified_time):
     
@@ -40,11 +64,12 @@ def update_file(local_file, modified_time):
             logging.info('File {} does not exist locally.'.format(local_file))
             return(True)
         
-        times_stamp = os.path.getmtime(local_file)
-        local_date_time = _timezone.localize(datetime.datetime.utcfromtimestamp(times_stamp))
+        # Make sure timestamp is in utc for when both are localized and compared
         
+        times_stamp = os.path.getmtime(local_file)
+        local_date_time = _timezone.localize(datetime.datetime.utcfromtimestamp(times_stamp)) 
         remote_date_time = _timezone.localize(datetime.datetime.strptime(modified_time[:-5], '%Y-%m-%dT%H:%M:%S'))
-        print(remote_date_time, local_date_time, local_file)
+
         if remote_date_time > local_date_time:
             logging.info('File {} needs updating locally.'.format(local_file))
         
@@ -76,22 +101,47 @@ def traverse_drive(my_drive, file_list, refresh=False):
                 if not os.path.exists(file_data['name']):
                     os.mkdir(file_data['name'])
                 os.chdir(file_data['name'])
+                _current_fileId_table[file_data['id']] = os.getcwd()
                 traverse_drive(my_drive, list_results, refresh)
                 os.chdir('..')
             elif file_data['mimeType'] in _export_table:
                 export_tuple = _export_table[file_data['mimeType']]
                 local_file = local_file_path(file_data['name'], export_tuple[1])
+                _current_fileId_table[file_data['id']] = local_file
                 if refresh or update_file(local_file, file_data['modifiedTime']):
                     my_drive.file_export(file_data['id'], local_file, export_tuple[0])          
             else:
                 local_file = local_file_path(file_data['name'])
+                _current_fileId_table[file_data['id']] = local_file
                 if refresh or update_file(local_file, file_data['modifiedTime']):
                     my_drive.file_download(file_data['id'], local_file)
                 
         except Exception as e:
             logging.error(e)
 
+# def monitor_drive(my_drive):
+#     
+#     response = my_drive.drive_service.changes().getStartPageToken().execute()
+#     print ('Start token: %s' % response.get('startPageToken'))
+#     saved_start_page_token = response.get('startPageToken')
+# 
+#     while True:
+#         time.sleep(1)
+#         page_token = saved_start_page_token
+#         while page_token is not None:
+#             response = my_drive.drive_service.changes().list(pageToken=page_token,
+#                                                     spaces='drive').execute()
+#             for change in response.get('changes'):
+#     
+# #                 print ('Change {} found for file: {}'.format(change['type'], _fileId_table[change['fileId']]))
+#                 print(change)
+#                 
+#             if 'newStartPageToken' in response:
+#                 saved_start_page_token = response.get('newStartPageToken')
+#                 
+#             page_token = response.get('nextPageToken')
 
+    
 def load_arguments():
     """Load and parse command line arguments"""
     
@@ -139,7 +189,11 @@ def main():
         os.chdir(arguments.folder)
         
         traverse_drive(my_drive, top_level, arguments.refresh)
+        
+        rationalise_local_folder(my_drive)
     
+#         monitor_drive(my_drive)
+        
         logging.info('GooggleDriveSync: End of drive Sync'.format(arguments.folder))
 
     except Exception as e:
