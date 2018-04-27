@@ -2,13 +2,14 @@
 
 """Synchronize google drive with local folder.
 
-At present it only a copies the google drive and local changes are not 
-reflected back on the drive.
+At present it only a copies the google drive ('My Drive') and local changes are 
+not reflected back on the drive.
 """
 
 from __future__ import print_function
 from  gdrive import GDrive
 import os
+import sys
 import logging
 import datetime
 import argparse
@@ -24,19 +25,36 @@ __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
-_export_table = { 'application/vnd.google-apps.document' : ('application/pdf', 'pdf'),
-                  'application/vnd.google-apps.spreadsheet' : ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
-                  'application/vnd.google-apps.presentation' : ('application/vnd.oasis.opendocument.presentation', 'odp')
+################################################################################
+#                                Globals                                       #
+################################################################################
+
+# Mapping table used when exporting google application files
+
+_export_table = { 'application/vnd.google-apps.document' : 
+                  ('application/pdf', 'pdf'),
+                  'application/vnd.google-apps.spreadsheet' : 
+                  ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
+                  'application/vnd.google-apps.presentation' : 
+                  ('application/vnd.oasis.opendocument.presentation', 'odp')
                 }
 
-_timezone = pytz.timezone('Europe/London')
+# Current timezone
+
+_timezone = None;
+
+# Mapping between file id and local file paths
 
 _current_fileId_table = {}
 
-_fileId_cache_file = '/home/robt/fileID_cashe.json'
+# JSON cache file name
+
+_fileId_cache_file = None
 
 
 def remove_local_file(file_name):
+    """ Remove file/directory from local folder"""
+    
     if os.path.isfile(file_name):
         os.unlink(file_name)
         logging.info('Deleting file {} removed/renamed/moved from My Drive'.format(file_name))
@@ -45,7 +63,8 @@ def remove_local_file(file_name):
         logging.info('Deleting folder {} removed/renamed/moved from My Drive'.format(file_name))
                         
 
-def rationalise_local_folder(my_drive):
+def rationalise_local_folder():
+    """Clean up local folder for files removed/renamed/deleted on My Drive"""
     
     try:
         
@@ -67,6 +86,7 @@ def rationalise_local_folder(my_drive):
 
 
 def update_file(local_file, modified_time):
+    """If 'My Drive' file has been created or is newer than local file then update."""
     
     try:
 
@@ -85,11 +105,13 @@ def update_file(local_file, modified_time):
         
     except Exception as e:
         logging.error(e)
+        return(False)
         
     return(remote_date_time > local_date_time)
 
     
 def local_file_path(file_name, file_extension=None):
+    """Create local file name for 'My Drive' file."""
     
     local_file = os.path.join(os.getcwd(), file_name)
     
@@ -100,6 +122,7 @@ def local_file_path(file_name, file_extension=None):
 
     
 def traverse_drive(my_drive, file_list, refresh=False):
+    """Recursively parse 'My Drive' creating folders and downloading files"""
     
     for file_data in file_list:
 
@@ -129,41 +152,36 @@ def traverse_drive(my_drive, file_list, refresh=False):
         except Exception as e:
             logging.error(e)
 
-# def monitor_drive(my_drive):
-#     
-#     response = my_drive.drive_service.changes().getStartPageToken().execute()
-#     print ('Start token: %s' % response.get('startPageToken'))
-#     saved_start_page_token = response.get('startPageToken')
-# 
-#     while True:
-#         time.sleep(1)
-#         page_token = saved_start_page_token
-#         while page_token is not None:
-#             response = my_drive.drive_service.changes().list(pageToken=page_token,
-#                                                     spaces='drive').execute()
-#             for change in response.get('changes'):
-#     
-# #                 print ('Change {} found for file: {}'.format(change['type'], _fileId_table[change['fileId']]))
-#                 print(change)
-#                 
-#             if 'newStartPageToken' in response:
-#                 saved_start_page_token = response.get('newStartPageToken')
-#                 
-#             page_token = response.get('nextPageToken')
-
     
 def load_arguments():
     """Load and parse command line arguments"""
     
-    parser = argparse.ArgumentParser(description='Synchronize Google Drive with a local folder')
-    parser.add_argument('folder', help='Local folder')
-    parser.add_argument('-r', '--refresh', action='store_true', help='Refresh all files.')
-    parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly', help='Google Drive API Scope')
-    parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
-    parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
-
-    arguments = parser.parse_args()
+    global _timezone, _fileId_cache_file
     
+    arguments = None
+    
+    try:
+        
+        parser = argparse.ArgumentParser(description='Synchronize Google Drive with a local folder')
+        parser.add_argument('folder', help='Local folder')
+        parser.add_argument('-r', '--refresh', action='store_true', help='Refresh all files.')
+        parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly', help='Google Drive API Scope')
+        parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
+        parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
+        parser.add_argument('-f', '--fileidcache', default='fileID_cashe.json', help='File id cache json file')
+        parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
+    
+        arguments = parser.parse_args()
+        
+        # Use globals for now
+        
+        _timezone = pytz.timezone(arguments.timezone)
+        _fileId_cache_file = arguments.fileidcache
+    
+    except Exception as e:
+        logging.error(e)
+        sys.exit(1)
+         
     return(arguments)
 
 ####################
@@ -178,8 +196,8 @@ def main():
         logging.basicConfig(level=logging.INFO)
         
         arguments = load_arguments()
-
-        logging.info('GooggleDriveSync: Sychronizing to local folder {}.'.format(arguments.folder))
+        
+        logging.info('GoogleDriveSync: Sychronizing to local folder {}.'.format(arguments.folder))
         
         if arguments.refresh:
             logging.info('Refeshing whole Google drive tree locally.')
@@ -200,11 +218,9 @@ def main():
         
         traverse_drive(my_drive, top_level, arguments.refresh)
         
-        rationalise_local_folder(my_drive)
-    
-#         monitor_drive(my_drive)
+        rationalise_local_folder()
         
-        logging.info('GooggleDriveSync: End of drive Sync'.format(arguments.folder))
+        logging.info('GoogleDriveSync: End of drive Sync'.format(arguments.folder))
 
     except Exception as e:
         logging.error(e)
