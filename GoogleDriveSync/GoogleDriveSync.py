@@ -25,32 +25,6 @@ __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
-################################################################################
-#                                Globals                                       #
-################################################################################
-
-# Mapping table used when exporting google application files
-
-_export_table = { 'application/vnd.google-apps.document' : 
-                  ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'),
-                  'application/vnd.google-apps.spreadsheet' : 
-                  ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
-                  'application/vnd.google-apps.presentation' : 
-                  ('application/vnd.oasis.opendocument.presentation', 'odp')
-                }
-
-# Current timezone
-
-_timezone = None;
-
-# Mapping between file id and local file paths
-
-_current_fileId_table = {}
-
-# JSON cache file name
-
-_fileId_cache_file = None
-
 
 def remove_local_file(file_name):
     """ Remove file/directory from local folder"""
@@ -58,34 +32,35 @@ def remove_local_file(file_name):
     if os.path.isfile(file_name):
         os.unlink(file_name)
         logging.info('Deleting file {} removed/renamed/moved from My Drive'.format(file_name))
+        
     elif os.path.isdir(file_name):
         os.rmdir(file_name)
         logging.info('Deleting folder {} removed/renamed/moved from My Drive'.format(file_name))
                         
 
-def rationalise_local_folder():
+def rationalise_local_folder(context):
     """Clean up local folder for files removed/renamed/deleted on My Drive"""
     
     try:
         
-        if os.path.exists(_fileId_cache_file):
-            with open(_fileId_cache_file, 'r') as json_file:
+        if os.path.exists(context.fileidcache):
+            
+            with open(context.fileidcache, 'r') as json_file:
                 _old_fileId_table = json.load(json_file)
                 
-            for fileId in _old_fileId_table:
-                
-                if ((fileId not in _current_fileId_table) or 
-                    (_current_fileId_table[fileId] != _old_fileId_table[fileId])):
+            for fileId in _old_fileId_table:            
+                if ((fileId not in context.current_fileId_table) or 
+                    (context.current_fileId_table[fileId] != _old_fileId_table[fileId])):
                     remove_local_file(_old_fileId_table[fileId])
         
     except Exception as e:
         logging.error(e)
                            
-    with open(_fileId_cache_file, 'w') as json_file:
-        json.dump(_current_fileId_table, json_file, indent=2)
+    with open(context.fileidcache, 'w') as json_file:
+        json.dump(context.current_fileId_table, json_file, indent=2)
 
 
-def update_file(local_file, modified_time):
+def update_file(local_file, modified_time, local_timezone):
     """If 'My Drive' file has been created or is newer than local file then update."""
     
     try:
@@ -97,8 +72,8 @@ def update_file(local_file, modified_time):
         # Make sure timestamp is in utc for when both are localized and compared
         
         times_stamp = os.path.getmtime(local_file)
-        local_date_time = _timezone.localize(datetime.datetime.utcfromtimestamp(times_stamp)) 
-        remote_date_time = _timezone.localize(datetime.datetime.strptime(modified_time[:-5], '%Y-%m-%dT%H:%M:%S'))
+        local_date_time = local_timezone.localize(datetime.datetime.utcfromtimestamp(times_stamp)) 
+        remote_date_time = local_timezone.localize(datetime.datetime.strptime(modified_time[:-5], '%Y-%m-%dT%H:%M:%S'))
 
         if remote_date_time > local_date_time:
             logging.info('File {} needs updating locally.'.format(local_file))
@@ -121,44 +96,44 @@ def local_file_path(file_name, file_extension=None):
     return(local_file)
 
     
-def traverse_drive(my_drive, file_list, refresh=False):
+def traverse_drive(context, my_drive, file_list):
     """Recursively parse 'My Drive' creating folders and downloading files"""
     
     for file_data in file_list:
 
         try:
             
-            if file_data['mimeType'] == 'application/vnd.google-apps.folder':
+            if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
                 query = "('{}' in parents) and (not trashed)".format(file_data['id'])
                 list_results = my_drive.file_list(query, file_fields='name, id, parents, mimeType, modifiedTime')
                 if not os.path.exists(file_data['name']):
                     os.mkdir(file_data['name'])
                 os.chdir(file_data['name'])
-                _current_fileId_table[file_data['id']] = os.getcwd()
-                traverse_drive(my_drive, list_results, refresh)
+                context.current_fileId_table[file_data['id']] = os.getcwd()
+                traverse_drive(context, my_drive, list_results)
                 os.chdir('..')
-            elif file_data['mimeType'] in _export_table:
-                export_tuple = _export_table[file_data['mimeType']]
+            elif file_data['mimeType'] in context.export_table:
+                export_tuple = context.export_table[file_data['mimeType']]
                 local_file = local_file_path(file_data['name'], export_tuple[1])
-                _current_fileId_table[file_data['id']] = local_file
-                if refresh or update_file(local_file, file_data['modifiedTime']):
+                context.current_fileId_table[file_data['id']] = local_file
+                if context.refresh or update_file(local_file, file_data['modifiedTime'], context.timezone):
                     my_drive.file_export(file_data['id'], local_file, export_tuple[0])          
             else:
                 local_file = local_file_path(file_data['name'])
-                _current_fileId_table[file_data['id']] = local_file
-                if refresh or update_file(local_file, file_data['modifiedTime']):
+                context.current_fileId_table[file_data['id']] = local_file
+                if context.refresh or update_file(local_file, file_data['modifiedTime'], context.timezone):
                     my_drive.file_download(file_data['id'], local_file)
                 
         except Exception as e:
             logging.error(e)
 
     
-def load_arguments():
-    """Load and parse command line arguments"""
+def load_context():
+    """Load and parse command line arguments and create run context"""
     
     global _timezone, _fileId_cache_file
     
-    arguments = None
+    context = None
     
     try:
         
@@ -171,18 +146,26 @@ def load_arguments():
         parser.add_argument('-f', '--fileidcache', default='fileID_cashe.json', help='File id cache json file')
         parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
     
-        arguments = parser.parse_args()
+        context = parser.parse_args()
         
-        # Use globals for now
+        context.timezone = pytz.timezone(context.timezone)
+        context.fileId_cache_file = context.fileidcache
+        context.current_fileId_table = {}
         
-        _timezone = pytz.timezone(arguments.timezone)
-        _fileId_cache_file = arguments.fileidcache
-    
+        context.export_table = { 
+                          'application/vnd.google-apps.document' : 
+                          ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'),
+                          'application/vnd.google-apps.spreadsheet' : 
+                          ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
+                          'application/vnd.google-apps.presentation' : 
+                          ('application/vnd.oasis.opendocument.presentation', 'odp')
+                        }
+         
     except Exception as e:
         logging.error(e)
         sys.exit(1)
          
-    return(arguments)
+    return(context)
 
 ####################
 # Main Entry Point #
@@ -195,14 +178,14 @@ def main():
         
         logging.basicConfig(level=logging.INFO)
         
-        arguments = load_arguments()
+        context = load_context()
         
-        logging.info('GoogleDriveSync: Sychronizing to local folder {}.'.format(arguments.folder))
+        logging.info('GoogleDriveSync: Sychronizing to local folder {}.'.format(context.folder))
         
-        if arguments.refresh:
+        if context.refresh:
             logging.info('Refeshing whole Google drive tree locally.')
      
-        my_drive = GDrive(arguments.scope, arguments.secrets, arguments.credentials)
+        my_drive = GDrive(context.scope, context.secrets, context.credentials)
         
         my_drive.authorize()
         
@@ -211,16 +194,16 @@ def main():
         top_level = my_drive.file_list("('root' in parents) and (not trashed)",
                                           file_fields='name, id, parents, mimeType, modifiedTime')
         
-        if not os.path.exists(arguments.folder):
-            os.makedirs(arguments.folder)
+        if not os.path.exists(context.folder):
+            os.makedirs(context.folder)
             
-        os.chdir(arguments.folder)
+        os.chdir(context.folder)
         
-        traverse_drive(my_drive, top_level, arguments.refresh)
+        traverse_drive(context, my_drive, top_level)
         
-        rationalise_local_folder()
+        rationalise_local_folder(context)
         
-        logging.info('GoogleDriveSync: End of drive Sync'.format(arguments.folder))
+        logging.info('GoogleDriveSync: End of drive Sync'.format(context.folder))
 
     except Exception as e:
         logging.error(e)
