@@ -9,6 +9,7 @@ Current built in file handlers:
 1) Copy files/directory
 2) Import CSV file to MySQL database table.
 3) Import CSV file to SQLite database table.
+4) SFTP copy files/directory to an SSH server.
 """
 
 import handlers
