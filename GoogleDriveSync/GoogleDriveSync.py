@@ -8,6 +8,10 @@ have been removed(trashed), renamed or moved; mirroring any changes in the local
 folder structure. Currently doesn't handle duplicate file names in the same folder 
 well and these should be avoided(for the moment).
 
+For setting up the crentials and secrets for use with the API it is suggsested 
+that googles quickstart guide at "https://developers.google.com/drive/v3/web/quickstart/python"
+be consulted.
+
 usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
                           [-f FILEIDCACHE] [-t TIMEZONE]
                           folder
