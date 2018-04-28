@@ -3,7 +3,32 @@
 """Synchronize google drive with local folder.
 
 At present it only a copies the google drive ('My Drive') and local changes are 
-not reflected back on the drive.
+not reflected back on the drive. I it also can handle files on the drive that 
+have been removed(trashed), renamed or moved; mirroring any changes in the local
+folder structure. It doesn't handle duplicate file names in the same folder well
+and these should be avoided(for the moment).
+
+usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
+                          [-f FILEIDCACHE] [-t TIMEZONE]
+                          folder
+
+Synchronize Google Drive with a local folder
+
+positional arguments:
+  folder                Local folder
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -r, --refresh         Refresh all files.
+  -s SCOPE, --scope SCOPE
+                        Google Drive API Scope
+  -e SECRETS, --secrets SECRETS
+                        Google API secrets file
+  -c CREDENTIALS, --credentials CREDENTIALS
+                        Google API credtials file
+  -f FILEIDCACHE, --fileidcache FILEIDCACHE
+                        File id cache json file
+  -t TIMEZONE, --timezone TIMEZONE
 """
 
 from  gdrive import GDrive

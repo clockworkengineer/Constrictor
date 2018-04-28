@@ -12,6 +12,17 @@ Current built in file handlers:
 2) Import CSV file to MySQL database table.
 3) Import CSV file to SQLite database table.
 4) SFTP copy files/directory to an SSH server.
+
+usage: fpe.py [-h] [-n NAME] file
+
+Process files copied into watch folder with a custom handler.
+
+positional arguments:
+  file                  Configration file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -n NAME, --name NAME  File handler name
 """
 
 from handlerfactory import CreateFileEventHandler 
