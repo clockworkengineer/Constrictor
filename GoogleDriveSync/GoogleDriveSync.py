@@ -32,7 +32,7 @@ __status__ = "Pre-Alpha"
 # Mapping table used when exporting google application files
 
 _export_table = { 'application/vnd.google-apps.document' : 
-                  ('application/pdf', 'pdf'),
+                  ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'),
                   'application/vnd.google-apps.spreadsheet' : 
                   ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
                   'application/vnd.google-apps.presentation' : 
