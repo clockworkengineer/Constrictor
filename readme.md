@@ -30,6 +30,8 @@ Current built in file handlers:
 
 Python program that uses Google Drive Python API so access a users drive and make a copy of it to a local folder.
 
+For setting up the crentials and secrets for use with the API it is suggsested that [googles quickstart guide](https//developers.google.com/drive/v3/web/quickstart/python)  be consulted.
+
 		usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
 		                          [-f FILEIDCACHE] [-t TIMEZONE]
 		                          folder
