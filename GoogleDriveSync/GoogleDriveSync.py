@@ -3,10 +3,10 @@
 """Synchronize google drive with local folder.
 
 At present it only a copies the google drive ('My Drive') and local changes are 
-not reflected back on the drive. I it also can handle files on the drive that 
+not reflected back on the drive. It also can handle files on the drive that 
 have been removed(trashed), renamed or moved; mirroring any changes in the local
-folder structure. It doesn't handle duplicate file names in the same folder well
-and these should be avoided(for the moment).
+folder structure. Currently doesn't handle duplicate file names in the same folder 
+well and these should be avoided(for the moment).
 
 usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
                           [-f FILEIDCACHE] [-t TIMEZONE]
