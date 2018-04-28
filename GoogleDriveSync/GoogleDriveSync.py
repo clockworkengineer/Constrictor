@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """Synchronize google drive with local folder.
 
@@ -6,7 +6,6 @@ At present it only a copies the google drive ('My Drive') and local changes are
 not reflected back on the drive.
 """
 
-from __future__ import print_function
 from  gdrive import GDrive
 import os
 import sys
@@ -103,6 +102,8 @@ def traverse_drive(context, my_drive, file_list):
 
         try:
             
+            # Create any needed folders and parse then recursively
+            
             if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
                 query = "('{}' in parents) and (not trashed)".format(file_data['id'])
                 list_results = my_drive.file_list(query, file_fields='name, id, parents, mimeType, modifiedTime')
@@ -112,12 +113,18 @@ def traverse_drive(context, my_drive, file_list):
                 context.current_fileId_table[file_data['id']] = os.getcwd()
                 traverse_drive(context, my_drive, list_results)
                 os.chdir('..')
+                
+            # Export any google application file
+            
             elif file_data['mimeType'] in context.export_table:
                 export_tuple = context.export_table[file_data['mimeType']]
                 local_file = local_file_path(file_data['name'], export_tuple[1])
                 context.current_fileId_table[file_data['id']] = local_file
                 if context.refresh or update_file(local_file, file_data['modifiedTime'], context.timezone):
-                    my_drive.file_export(file_data['id'], local_file, export_tuple[0])          
+                    my_drive.file_export(file_data['id'], local_file, export_tuple[0])
+                    
+            # Download file as is
+                      
             else:
                 local_file = local_file_path(file_data['name'])
                 context.current_fileId_table[file_data['id']] = local_file
@@ -148,6 +155,8 @@ def load_context():
     
         context = parser.parse_args()
         
+        # Attach extra data to arguments to create runtime context
+        
         context.timezone = pytz.timezone(context.timezone)
         context.fileId_cache_file = context.fileidcache
         context.current_fileId_table = {}
@@ -172,11 +181,13 @@ def load_context():
 ####################
 
 
-def main():
+def Main():
     
     try:
         
         logging.basicConfig(level=logging.INFO)
+        
+        # Creat runtime context
         
         context = load_context()
         
@@ -185,21 +196,31 @@ def main():
         if context.refresh:
             logging.info('Refeshing whole Google drive tree locally.')
      
+        # Create and intialise Google Drive API
+        
         my_drive = GDrive(context.scope, context.secrets, context.credentials)
         
         my_drive.authorize()
         
         my_drive.start_service()
         
+        # Get top level folder contexts
+        
         top_level = my_drive.file_list("('root' in parents) and (not trashed)",
                                           file_fields='name, id, parents, mimeType, modifiedTime')
+        
+        # Create local folder root
         
         if not os.path.exists(context.folder):
             os.makedirs(context.folder)
             
         os.chdir(context.folder)
         
+        # Traverse remote drive data and create local copy
+        
         traverse_drive(context, my_drive, top_level)
+        
+        # Tidy up any unnecessary files left behind
         
         rationalise_local_folder(context)
         
@@ -210,4 +231,4 @@ def main():
 
         
 if __name__ == '__main__':
-    main()
+    Main()

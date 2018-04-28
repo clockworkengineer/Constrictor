@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """File Processing Engine.
 
@@ -175,7 +175,7 @@ def observe_folders(observers_list):
 ########################
 
 
-def main():
+def Main():
     """Main program entry point"""
 
     arguments = load_arguments()
@@ -206,4 +206,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    Main()
