@@ -78,8 +78,8 @@ def rationalise_local_folder(context):
                 
             for fileId in _old_fileId_table:            
                 if ((fileId not in context.current_fileId_table) or 
-                    (context.current_fileId_table[fileId] != _old_fileId_table[fileId])):
-                    remove_local_file(_old_fileId_table[fileId])
+                    (context.current_fileId_table[fileId][0] != _old_fileId_table[fileId][0])):
+                    remove_local_file(_old_fileId_table[fileId][0])
         
     except Exception as e:
         logging.error(e)
@@ -112,25 +112,54 @@ def update_file(local_file, modified_time, local_timezone):
         
     return(remote_date_time > local_date_time)
 
-    
-def local_file_path(file_name, file_extension=None):
-    """Create local file name for 'My Drive' file."""
-    
-    local_file = os.path.join(os.getcwd(), file_name)
-    
-    if file_extension:
-        local_file = '{}.{}'.format(os.path.splitext(local_file)[0], file_extension)
-    
-    return(local_file)
 
+def create_file_cache_data(context, file_data):
+    """Create file id data dictionary entry"""
+ 
+    local_file = os.path.join(os.getcwd(), file_data['name'])
     
+    if file_data['mimeType'] in context.export_table:
+        export_tuple = context.export_table[file_data['mimeType']]
+        local_file = '{}.{}'.format(os.path.splitext(local_file)[0], export_tuple[1])
+    
+    context.current_fileId_table[file_data['id']] = (local_file, file_data['mimeType'], file_data['modifiedTime'])
+
+
+def update_local_folder(context, my_drive):
+    """Update any local files if needed"""
+    
+    for file_id, file_data in context.current_fileId_table.items():
+
+        try:
+                  
+            if context.refresh or update_file(file_data[0], file_data[2], context.timezone):
+                
+                # Export any google application file
+                
+                if file_data[1] in context.export_table:
+                    export_tuple = context.export_table[file_data[1]]
+                    my_drive.file_export(file_id, file_data[0], export_tuple[0])
+                         
+                # Download file as is
+                           
+                else:
+                    my_drive.file_download(file_id, file_data[0])
+                 
+        except Exception as e:
+            logging.error(e)
+                
+                
 def traverse_drive(context, my_drive, file_list):
-    """Recursively parse 'My Drive' creating folders and downloading files"""
+    """Recursively parse 'My Drive' creating folders and file id data dictionary"""
     
     for file_data in file_list:
 
         try:
             
+            # Create file id data
+            
+            create_file_cache_data(context, file_data)
+                            
             # Create any needed folders and parse then recursively
             
             if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
@@ -138,27 +167,10 @@ def traverse_drive(context, my_drive, file_list):
                 list_results = my_drive.file_list(query, file_fields='name, id, parents, mimeType, modifiedTime')
                 if not os.path.exists(file_data['name']):
                     os.mkdir(file_data['name'])
+                create_file_cache_data(context, file_data)
                 os.chdir(file_data['name'])
-                context.current_fileId_table[file_data['id']] = os.getcwd()
                 traverse_drive(context, my_drive, list_results)
                 os.chdir('..')
-                
-            # Export any google application file
-            
-            elif file_data['mimeType'] in context.export_table:
-                export_tuple = context.export_table[file_data['mimeType']]
-                local_file = local_file_path(file_data['name'], export_tuple[1])
-                context.current_fileId_table[file_data['id']] = local_file
-                if context.refresh or update_file(local_file, file_data['modifiedTime'], context.timezone):
-                    my_drive.file_export(file_data['id'], local_file, export_tuple[0])
-                    
-            # Download file as is
-                      
-            else:
-                local_file = local_file_path(file_data['name'])
-                context.current_fileId_table[file_data['id']] = local_file
-                if context.refresh or update_file(local_file, file_data['modifiedTime'], context.timezone):
-                    my_drive.file_download(file_data['id'], local_file)
                 
         except Exception as e:
             logging.error(e)
@@ -245,9 +257,13 @@ def Main():
             
         os.chdir(context.folder)
         
-        # Traverse remote drive data and create local copy
+        # Traverse remote drive data
         
         traverse_drive(context, my_drive, top_level)
+        
+        # Update any local files
+        
+        update_local_folder(context, my_drive)
         
         # Tidy up any unnecessary files left behind
         
