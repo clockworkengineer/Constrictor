@@ -120,22 +120,6 @@ class GDrive(object):
                                         fields='id').execute()
                                         
         return(result)
-        
-#     def file_download(self, file_id, local_file):
-#         """Download google file with id to local file system."""
-#         
-#         request = self.drive_service.files().get_media(fileId=file_id)
-#         file_handle = io.BytesIO()
-#         downloader = MediaIoBaseDownload(file_handle, request)
-#         done = False
-#         while not done:
-#             done = downloader.next_chunk()
-#             
-#         with io.open(local_file, 'wb') as f:
-#             file_handle.seek(0)
-#             f.write(file_handle.read())
-# 
-#         logging.info('Downloaded file {} to {}'.format(file_id, local_file))
 
     def folder_create(self, folder_name, parent_id=None):
         """Create a folder on google drive"""
