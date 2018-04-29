@@ -121,21 +121,21 @@ class GDrive(object):
                                         
         return(result)
         
-    def file_download(self, file_id, local_file):
-        """Download google file with id to local file system."""
-        
-        request = self.drive_service.files().get_media(fileId=file_id)
-        file_handle = io.BytesIO()
-        downloader = MediaIoBaseDownload(file_handle, request)
-        done = False
-        while not done:
-            done = downloader.next_chunk()
-            
-        with io.open(local_file, 'wb') as f:
-            file_handle.seek(0)
-            f.write(file_handle.read())
-
-        logging.info('Downloaded file {} to {}'.format(file_id, local_file))
+#     def file_download(self, file_id, local_file):
+#         """Download google file with id to local file system."""
+#         
+#         request = self.drive_service.files().get_media(fileId=file_id)
+#         file_handle = io.BytesIO()
+#         downloader = MediaIoBaseDownload(file_handle, request)
+#         done = False
+#         while not done:
+#             done = downloader.next_chunk()
+#             
+#         with io.open(local_file, 'wb') as f:
+#             file_handle.seek(0)
+#             f.write(file_handle.read())
+# 
+#         logging.info('Downloaded file {} to {}'.format(file_id, local_file))
 
     def folder_create(self, folder_name, parent_id=None):
         """Create a folder on google drive"""
@@ -160,11 +160,19 @@ class GDrive(object):
         
         return(data)
     
-    def file_export(self, file_id, local_file, mime_type):
-        """Export google application file converting it in the process to local fiel system."""
+    def file_download(self, file_id, local_file, mime_type=None):
+        """Download/Export google drive file with id to local file system."""
         
-        request = self.drive_service.files().export_media(fileId=file_id, mimeType=mime_type)
-
+        # If mime type set then exporting google applciation file so convert
+        
+        if mime_type:
+            request = self.drive_service.files().export_media(fileId=file_id, mimeType=mime_type)
+            
+        # None google file so just download
+        
+        else:
+            request = self.drive_service.files().get_media(fileId=file_id)
+                   
         file_handle = io.BytesIO()
         downloader = MediaIoBaseDownload(file_handle, request)
         done = False
@@ -175,5 +183,5 @@ class GDrive(object):
             file_handle.seek(0)
             f.write(file_handle.read())
      
-        logging.info('Exported file {} to {}'.format(file_id, local_file))
+        logging.info('Downloaded file {} to {}'.format(file_id, local_file))
 

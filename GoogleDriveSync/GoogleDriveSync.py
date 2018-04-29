@@ -55,7 +55,7 @@ __status__ = "Pre-Alpha"
 
 
 def remove_local_file(file_name):
-    """ Remove file/directory from local folder."""
+    """Remove file/directory from local folder."""
     
     if os.path.isfile(file_name):
         os.unlink(file_name)
@@ -138,14 +138,14 @@ def update_local_folder(context, my_drive):
                   
             if context.refresh or update_file(file_data[0], file_data[2], context.timezone):
                 
-                # Export any google application file          
+                # Convert(export) any google application file  otherwise just download
+                      
                 if file_data[1] in context.export_table:
                     export_tuple = context.export_table[file_data[1]]
-                    my_drive.file_export(file_id, file_data[0], export_tuple[0])
-                         
-                # Download file as is                    
                 else:
-                    my_drive.file_download(file_id, file_data[0])
+                    export_tuple = None
+                         
+                my_drive.file_download(file_id, file_data[0], export_tuple)
                  
         except Exception as e:
             logging.error(e)
@@ -176,6 +176,7 @@ def traverse_drive(context, my_drive, file_list):
                 
         except Exception as e:
             logging.error(e)
+            sys.exit(1)
 
     
 def load_context():
