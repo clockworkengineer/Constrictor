@@ -55,7 +55,7 @@ __status__ = "Pre-Alpha"
 
 
 def remove_local_file(file_name):
-    """ Remove file/directory from local folder"""
+    """ Remove file/directory from local folder."""
     
     if os.path.isfile(file_name):
         os.unlink(file_name)
@@ -67,19 +67,19 @@ def remove_local_file(file_name):
                         
 
 def rationalise_local_folder(context):
-    """Clean up local folder for files removed/renamed/deleted on My Drive"""
+    """Clean up local folder for files removed/renamed/deleted on My Drive."""
     
     try:
         
         if os.path.exists(context.fileidcache):
             
             with open(context.fileidcache, 'r') as json_file:
-                _old_fileId_table = json.load(json_file)
+                old_fileId_table = json.load(json_file)
                 
-            for fileId in _old_fileId_table:            
+            for fileId in old_fileId_table:            
                 if ((fileId not in context.current_fileId_table) or 
-                    (context.current_fileId_table[fileId][0] != _old_fileId_table[fileId][0])):
-                    remove_local_file(_old_fileId_table[fileId][0])
+                    (context.current_fileId_table[fileId][0] != old_fileId_table[fileId][0])):
+                    remove_local_file(old_fileId_table[fileId][0])
         
     except Exception as e:
         logging.error(e)
@@ -114,9 +114,13 @@ def update_file(local_file, modified_time, local_timezone):
 
 
 def create_file_cache_data(context, file_data):
-    """Create file id data dictionary entry"""
+    """Create file id data dictionary entry."""
  
+    # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
+    
     local_file = os.path.join(os.getcwd(), file_data['name'])
+    
+    # File mime type incates google app file so change local file extension for export.
     
     if file_data['mimeType'] in context.export_table:
         export_tuple = context.export_table[file_data['mimeType']]
@@ -126,7 +130,7 @@ def create_file_cache_data(context, file_data):
 
 
 def update_local_folder(context, my_drive):
-    """Update any local files if needed"""
+    """Update any local files if needed."""
     
     for file_id, file_data in context.current_fileId_table.items():
 
@@ -134,14 +138,12 @@ def update_local_folder(context, my_drive):
                   
             if context.refresh or update_file(file_data[0], file_data[2], context.timezone):
                 
-                # Export any google application file
-                
+                # Export any google application file          
                 if file_data[1] in context.export_table:
                     export_tuple = context.export_table[file_data[1]]
                     my_drive.file_export(file_id, file_data[0], export_tuple[0])
                          
-                # Download file as is
-                           
+                # Download file as is                    
                 else:
                     my_drive.file_download(file_id, file_data[0])
                  
@@ -150,17 +152,17 @@ def update_local_folder(context, my_drive):
                 
                 
 def traverse_drive(context, my_drive, file_list):
-    """Recursively parse 'My Drive' creating folders and file id data dictionary"""
+    """Recursively parse 'My Drive' creating folders and file id data dictionary."""
     
     for file_data in file_list:
 
         try:
             
-            # Create file id data
+            # Save away current file id data
             
             create_file_cache_data(context, file_data)
                             
-            # Create any needed folders and parse then recursively
+            # Create any needed folders and parse them recursively
             
             if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
                 query = "('{}' in parents) and (not trashed)".format(file_data['id'])
@@ -177,7 +179,7 @@ def traverse_drive(context, my_drive, file_list):
 
     
 def load_context():
-    """Load and parse command line arguments and create run context"""
+    """Load and parse command line arguments and create run context."""
     
     global _timezone, _fileId_cache_file
     
@@ -202,6 +204,8 @@ def load_context():
         context.fileId_cache_file = context.fileidcache
         context.current_fileId_table = {}
         
+        #  Google App file export translation table
+        
         context.export_table = { 
                           'application/vnd.google-apps.document' : 
                           ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'),
@@ -212,7 +216,7 @@ def load_context():
                         }
          
     except Exception as e:
-        logging.error(e)
+        logging.error(e)    
         sys.exit(1)
          
     return(context)
