@@ -39,6 +39,7 @@ class GDrive(object):
     credentials_file: Application credentials file
     credentials:      Application credentials
     drive_srvice:     Drive Service
+    start_page_token: Saved start page token used to get changes
     """
     
     def __init__(self, scope, secrets_file, credentials_file):
@@ -48,7 +49,7 @@ class GDrive(object):
         self.credentials_file = credentials_file
         self.credentials = None
         self.drive_service = None
-        self.saved_start_page_token = None
+        self.start_page_token = None
         
     def authorize(self, reset_credentials=False):
         """Authorize Application to connect to Google API."""
@@ -171,14 +172,15 @@ class GDrive(object):
         logging.info('Downloaded file {} to {}'.format(file_id, local_file))
 
     def retrieve_all_changes(self):
+        """Retrieve list of changes to google drive since last call"""
     
         result = []
         
-        if not self.saved_start_page_token:
+        if not self.start_page_token:
             response = self.drive_service.changes().getStartPageToken().execute()
-            self.saved_start_page_token = response.get('startPageToken')
+            self.start_page_token = response.get('startPageToken')
         
-        page_token = self.saved_start_page_token
+        page_token = self.start_page_token
         
         while page_token is not None:
             
@@ -189,7 +191,7 @@ class GDrive(object):
                 result.append(change)
              
             if 'newStartPageToken' in response:
-                self.saved_start_page_token = response.get('newStartPageToken')
+                self.start_page_token = response.get('newStartPageToken')
              
             page_token = response.get('nextPageToken')
 

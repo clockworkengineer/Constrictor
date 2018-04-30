@@ -183,6 +183,7 @@ def traverse_drive(context, my_drive, file_list):
 
 
 def synchronize_drive(context, my_drive):
+        """Sychronize google drive with local folder"""
     
         # Get top level folder contexts
         
@@ -290,11 +291,11 @@ def Main():
             changes = my_drive.retrieve_all_changes()
             if changes:
                 synchronize_drive(context, my_drive)
-        
-        logging.info('GoogleDriveSync: End of drive Sync'.format(context.folder))
 
     except Exception as e:
         logging.error(e)
+        
+    logging.info('GoogleDriveSync: End of drive Sync'.format(context.folder))
 
         
 if __name__ == '__main__':
