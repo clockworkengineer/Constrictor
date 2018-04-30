@@ -12,6 +12,13 @@ For setting up the crentials and secrets for use with the API it is suggsested
 that googles quickstart guide at "https://developers.google.com/drive/v3/web/quickstart/python"
 be consulted.
 
+TODO:
+1) Have a local upload directory to upload files to google drive.
+2) More efficient handling of http requests (read all file details in one go)
+3) Loggng to file
+4) Use worker threads to download files.
+5) Use changes API better.
+
 usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
                           [-f FILEIDCACHE] [-t TIMEZONE]
                           folder
@@ -283,6 +290,8 @@ def Main():
         os.chdir(context.folder)
         
         # Sychronize with google drive with local folder and keep doing if polling set
+        # It also checks if any changes have been made and only synchronizes if so; it
+        # is not interested in the changes themselves just that they have occured.
         
         synchronize_drive(context, my_drive)
         while context.polltime:

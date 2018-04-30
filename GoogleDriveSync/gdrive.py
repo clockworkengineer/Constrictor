@@ -55,6 +55,7 @@ class GDrive(object):
         """Authorize Application to connect to Google API."""
         
         try :
+            
             store = file.Storage(self.credentials_file)
             self.credentials = store.get()
             if not self.credentials or self.credentials.invalid or reset_credentials:
@@ -67,6 +68,7 @@ class GDrive(object):
         """Build service for drive API."""
         
         try :
+            
             self.drive_service = build('drive', 'v3',
                                        http=self.credentials.authorize(Http()),
                                        cache_discovery=False)
@@ -75,7 +77,8 @@ class GDrive(object):
 
     def file_list(self, query='', max_files=100, file_fields='name, id'):
         """Return list of file metadata for query pasted in."""
-        try:
+        
+        try:       
             
             files_returned = []
             more_files_to_list = True
@@ -107,93 +110,125 @@ class GDrive(object):
     def file_upload(self, local_file, parent_id=None):
         """Upload local file to google drive returning its file id."""
         
-        file_metadata = {'name': os.path.basename(local_file)}
+        try:
+            
+            result = None
+            
+            file_metadata = {'name': os.path.basename(local_file)}
+            
+            if parent_id:
+                file_metadata['parents'] = [ parent_id ]
         
-        if parent_id:
-            file_metadata['parents'] = [ parent_id ]
-
-        file_mime_type = magic.from_file(local_file, mime=True)
+            file_mime_type = magic.from_file(local_file, mime=True)
+            
+            media = MediaFileUpload(local_file,
+                                mimetype=file_mime_type)
+            
+            result = self.drive_service.files().create(body=file_metadata,
+                                            media_body=media,
+                                            fields='id').execute()
+        except Exception as e:
+            logging.error(e)
         
-        media = MediaFileUpload(local_file,
-                            mimetype=file_mime_type)
-        
-        result = self.drive_service.files().create(body=file_metadata,
-                                        media_body=media,
-                                        fields='id').execute()
-                                        
-        return(result)
+        finally:                       
+            return(result)
 
     def folder_create(self, folder_name, parent_id=None):
         """Create a folder on google drive"""
         
-        file_metadata = {
-        'name': folder_name,
-        'mimeType': 'application/vnd.google-apps.folder'
-        }
-
-        if parent_id:
-            file_metadata['parents'] = [ parent_id ]
-
-        folder_data = self.drive_service.files().create(body=file_metadata,
-                                                        fields='id').execute()
-                                            
-        return(folder_data['id'])
+        try:
+            
+            result = None
+            
+            file_metadata = {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder'
+            }
     
+            if parent_id:
+                file_metadata['parents'] = [ parent_id ]
+    
+            folder_data = self.drive_service.files().create(body=file_metadata,
+                                                            fields='id').execute()
+                                                            
+            result = folder_data['id']
+
+        except Exception as e:
+            logging.error(e)
+        
+        finally:                       
+            return(result)                                           
+
     def file_get_metadata(self, file_id, file_fields='name, id'):
         """Return metadata associated with google drivefile."""
         
-        data = self.drive_service.files().get(fileId=file_id, fields=file_fields).execute()
+        try:
+            
+            result = self.drive_service.files().get(fileId=file_id, fields=file_fields).execute()
         
-        return(data)
+        except Exception as e:
+            logging.error(e)
+            
+        return(result)
     
     def file_download(self, file_id, local_file, mime_type=None):
         """Download/Export google drive file with id to local file system."""
         
-        # If mime type set then exporting google applciation file so convert
-        
-        if mime_type:
-            request = self.drive_service.files().export_media(fileId=file_id, mimeType=mime_type[0])
+        try:
             
-        # None google file so just download
-        
-        else:
-            request = self.drive_service.files().get_media(fileId=file_id)
-                   
-        file_handle = io.BytesIO()
-        downloader = MediaIoBaseDownload(file_handle, request)
-        done = False
-        while not done:
-            done = downloader.next_chunk()
+            # If mime type set then exporting google applciation file so convert
             
-        with io.open(local_file, 'wb') as f:
-            file_handle.seek(0)
-            f.write(file_handle.read())
-     
-        logging.info('Downloaded file {} to {}'.format(file_id, local_file))
+            if mime_type:
+                request = self.drive_service.files().export_media(fileId=file_id, mimeType=mime_type[0])
+                
+            # None google file so just download
+            
+            else:
+                request = self.drive_service.files().get_media(fileId=file_id)
+                       
+            file_handle = io.BytesIO()
+            downloader = MediaIoBaseDownload(file_handle, request)
+            done = False
+            while not done:
+                done = downloader.next_chunk()
+                
+            with io.open(local_file, 'wb') as f:
+                file_handle.seek(0)
+                f.write(file_handle.read())
+         
+            logging.info('Downloaded file {} to {}'.format(file_id, local_file))
+        
+        except Exception as e:
+            logging.error(e)
 
     def retrieve_all_changes(self):
         """Retrieve list of changes to google drive since last call"""
     
-        result = []
-        
-        if not self.start_page_token:
-            response = self.drive_service.changes().getStartPageToken().execute()
-            self.start_page_token = response.get('startPageToken')
-        
-        page_token = self.start_page_token
-        
-        while page_token is not None:
+        try:
             
-            response = self.drive_service.changes().list(pageToken=page_token,
-                                                spaces='drive').execute()
-                                                
-            for change in response.get('changes'):
-                result.append(change)
-             
-            if 'newStartPageToken' in response:
-                self.start_page_token = response.get('newStartPageToken')
-             
-            page_token = response.get('nextPageToken')
-
-        return result
+            changes = []
+            
+            if not self.start_page_token:
+                response = self.drive_service.changes().getStartPageToken().execute()
+                self.start_page_token = response.get('startPageToken')
+            
+            page_token = self.start_page_token
+            
+            while page_token is not None:
+                
+                response = self.drive_service.changes().list(pageToken=page_token,
+                                                    spaces='drive').execute()
+                                                    
+                for change in response.get('changes'):
+                    changes.append(change)
+                 
+                if 'newStartPageToken' in response:
+                    self.start_page_token = response.get('newStartPageToken')
+                 
+                page_token = response.get('nextPageToken')
+            
+        except Exception as e:
+            logging.error(e)
+            
+        return(changes)
 
