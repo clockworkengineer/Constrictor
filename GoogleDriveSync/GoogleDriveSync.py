@@ -43,6 +43,7 @@ import datetime
 import argparse
 import pytz
 import json
+import time
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -86,6 +87,8 @@ def rationalise_local_folder(context):
                            
     with open(context.fileidcache, 'w') as json_file:
         json.dump(context.current_fileId_table, json_file, indent=2)
+        
+    context.current_fileId_table.clear()
 
 
 def update_file(local_file, modified_time, local_timezone):
@@ -178,6 +181,26 @@ def traverse_drive(context, my_drive, file_list):
             logging.error(e)
             sys.exit(1)
 
+
+def synchronize_drive(context, my_drive):
+    
+        # Get top level folder contexts
+        
+        top_level = my_drive.file_list("('root' in parents) and (not trashed)",
+                                          file_fields='name, id, parents, mimeType, modifiedTime')
+        
+        # Traverse remote drive data
+        
+        traverse_drive(context, my_drive, top_level)
+        
+        # Update any local files
+        
+        update_local_folder(context, my_drive)
+        
+        # Tidy up any unnecessary files left behind
+        
+        rationalise_local_folder(context)
+
     
 def load_context():
     """Load and parse command line arguments and create run context."""
@@ -190,6 +213,7 @@ def load_context():
         
         parser = argparse.ArgumentParser(description='Synchronize Google Drive with a local folder')
         parser.add_argument('folder', help='Local folder')
+        parser.add_argument('-p', '--polltime', type=int, help='Poll time for drive sychronize in minutes')
         parser.add_argument('-r', '--refresh', action='store_true', help='Refresh all files.')
         parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly', help='Google Drive API Scope')
         parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
@@ -250,11 +274,6 @@ def Main():
         
         my_drive.start_service()
         
-        # Get top level folder contexts
-        
-        top_level = my_drive.file_list("('root' in parents) and (not trashed)",
-                                          file_fields='name, id, parents, mimeType, modifiedTime')
-        
         # Create local folder root
         
         if not os.path.exists(context.folder):
@@ -262,17 +281,15 @@ def Main():
             
         os.chdir(context.folder)
         
-        # Traverse remote drive data
+        # Sychronize with google drive with local folder and keep doing if polling set
         
-        traverse_drive(context, my_drive, top_level)
-        
-        # Update any local files
-        
-        update_local_folder(context, my_drive)
-        
-        # Tidy up any unnecessary files left behind
-        
-        rationalise_local_folder(context)
+        synchronize_drive(context, my_drive)
+        while context.polltime:
+            logging.info('Polling drive ....')
+            time.sleep(context.polltime * 60)
+            changes = my_drive.retrieve_all_changes()
+            if changes:
+                synchronize_drive(context, my_drive)
         
         logging.info('GoogleDriveSync: End of drive Sync'.format(context.folder))
 
