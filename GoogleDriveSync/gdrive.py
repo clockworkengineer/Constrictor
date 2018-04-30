@@ -150,7 +150,7 @@ class GDrive(object):
         # If mime type set then exporting google applciation file so convert
         
         if mime_type:
-            request = self.drive_service.files().export_media(fileId=file_id, mimeType=mime_type)
+            request = self.drive_service.files().export_media(fileId=file_id, mimeType=mime_type[0])
             
         # None google file so just download
         
