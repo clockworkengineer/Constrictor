@@ -15,12 +15,12 @@ be consulted.
 TODO:
 1) Have a local upload directory to upload files to google drive.
 2) More efficient handling of http requests (read all file details in one go)
-3) Loggng to file
-4) Use worker threads to download files.
-5) Use changes API better.
+3) Use worker threads to download files.
+4) Use changes API better.
 
-usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
-                          [-f FILEIDCACHE] [-t TIMEZONE]
+usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
+                          [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
+                          [-l LOGFILE]
                           folder
 
 Synchronize Google Drive with a local folder
@@ -30,6 +30,8 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -p POLLTIME, --polltime POLLTIME
+                        Poll time for drive sychronize in minutes
   -r, --refresh         Refresh all files.
   -s SCOPE, --scope SCOPE
                         Google Drive API Scope
@@ -40,6 +42,9 @@ optional arguments:
   -f FILEIDCACHE, --fileidcache FILEIDCACHE
                         File id cache json file
   -t TIMEZONE, --timezone TIMEZONE
+                        Local timezone (pytz)
+  -l LOGFILE, --logfile LOGFILE
+                        All logging to file
 """
 
 from  gdrive import GDrive
@@ -228,8 +233,20 @@ def load_context():
         parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
         parser.add_argument('-f', '--fileidcache', default='fileID_cashe.json', help='File id cache json file')
         parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
+        parser.add_argument('-l', '--logfile', help='All logging to file')
     
         context = parser.parse_args()
+        
+        # Set logging details
+        
+        logging_params = { 'level': logging.INFO}
+        
+        if context.logfile:
+            logging_params['filename'] = context.logfile
+            if not os.path.exists(os.path.dirname(context.logfile)):
+                os.makedirs(os.path.dirname(context.logfile))
+            
+        logging.basicConfig(**logging_params)
         
         # Attach extra data to arguments to create runtime context
         
@@ -262,8 +279,6 @@ def load_context():
 def Main():
     
     try:
-        
-        logging.basicConfig(level=logging.INFO)
         
         # Creat runtime context
         
