@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-"""Synchronize google drive with local folder.
+"""Synchronize Google drive with local folder.
 
-At present it only a copies the google drive ('My Drive') and local changes are 
+At present it only a copies the Google drive ('My Drive') and local changes are 
 not reflected back on the drive. It also can handle files on the drive that 
 have been removed(trashed), renamed or moved; mirroring any changes in the local
 folder structure. Currently doesn't handle duplicate file names in the same folder 
@@ -13,7 +13,7 @@ that googles quickstart guide at "https://developers.google.com/drive/v3/web/qui
 be consulted.
 
 TODO:
-1) Have a local upload directory to upload files to google drive.
+1) Have a local upload directory to upload files to Google drive.
 2) More efficient handling of http requests (read all file details in one go)
 3) Use worker threads to download files.
 4) Use changes API better.
@@ -105,7 +105,7 @@ def rationalise_local_folder(context):
 
 
 def update_file(local_file, modified_time, local_timezone):
-    """If 'My Drive' file has been created or is newer than local file then update."""
+    """If Google drive file has been created or is newer than local file then update."""
     
     try:
 
@@ -168,7 +168,7 @@ def update_local_folder(context, my_drive):
                 
                 
 def traverse_drive(context, my_drive, file_list):
-    """Recursively parse 'My Drive' creating folders and file id data dictionary."""
+    """Recursively parse Google drive creating folders and file id data dictionary."""
     
     for file_data in file_list:
 
@@ -196,7 +196,7 @@ def traverse_drive(context, my_drive, file_list):
 
 
 def synchronize_drive(context, my_drive):
-        """Sychronize google drive with local folder"""
+        """Sychronize Google drive with local folder"""
     
         # Get top level folder contexts
         
@@ -216,7 +216,7 @@ def synchronize_drive(context, my_drive):
         rationalise_local_folder(context)
 
 
-def setup_signal_handler(context):
+def setup_signal_handlers(context):
     """Set signal handlers for SIGTERM/SIGINT so cleanly exit"""
      
     def signal_handler(signal, frame):
@@ -231,9 +231,7 @@ def setup_signal_handler(context):
     
 def load_context():
     """Load and parse command line arguments and create run context."""
-    
-    global _timezone, _fileId_cache_file
-    
+
     context = None
     
     try:
@@ -300,7 +298,7 @@ def Main():
         
         # Make sure on Ctrl+C program terminates cleanly
         
-        setup_signal_handler(context)
+        setup_signal_handlers(context)
         
         logging.info('GoogleDriveSync: Sychronizing to local folder {}.'.format(context.folder))
         
@@ -322,7 +320,7 @@ def Main():
             
         os.chdir(context.folder)
         
-        # Sychronize with google drive with local folder and keep doing if polling set
+        # Sychronize with Google drive with local folder and keep doing if polling set
         # It also checks if any changes have been made and only synchronizes if so; it
         # is not interested in the changes themselves just that they have occured.
         
