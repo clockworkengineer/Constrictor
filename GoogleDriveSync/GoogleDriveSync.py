@@ -215,6 +215,19 @@ def synchronize_drive(context, my_drive):
         
         rationalise_local_folder(context)
 
+
+def setup_signal_handler(context):
+    """Set signal handlers for SIGTERM/SIGINT so cleanly exit"""
+     
+    def signal_handler(signal, frame):
+        logging.info('Ctrl+C entered or process terminated with kill.\nClosing down cleanly on next poll.')
+        context.stop_polling = True
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    context.stop_polling = False
+
     
 def load_context():
     """Load and parse command line arguments and create run context."""
@@ -271,18 +284,6 @@ def load_context():
         sys.exit(1)
          
     return(context)
-
-
-def setup_signal_handler(context):
-    """Set signal handlers for SIGTERM/SIGINT so cleanly exit"""
-     
-    def signal_handler(signal, frame):
-        logging.info('You pressed Ctrl+C\nClosing down cleanly on next poll.')
-        context.stop_polling = True
-
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-    context.stop_polling = False
 
 ####################
 # Main Entry Point #
