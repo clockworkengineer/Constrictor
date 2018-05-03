@@ -56,6 +56,7 @@ import argparse
 import pytz
 import json
 import time
+import signal
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -271,18 +272,34 @@ def load_context():
          
     return(context)
 
+
+def setup_signal_handler(context):
+    """Set signal handlers for SIGTERM/SIGINT so cleanly exit"""
+     
+    def signal_handler(signal, frame):
+        logging.info('You pressed Ctrl+C\nClosing down cleanly on next poll.')
+        context.stop_polling = True
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+    context.stop_polling = False
+
 ####################
 # Main Entry Point #
 ####################
 
 
 def Main():
-    
+        
     try:
         
-        # Creat runtime context
+        # Create runtime context
         
         context = load_context()
+        
+        # Make sure on Ctrl+C program terminates cleanly
+        
+        setup_signal_handler(context)
         
         logging.info('GoogleDriveSync: Sychronizing to local folder {}.'.format(context.folder))
         
@@ -309,7 +326,7 @@ def Main():
         # is not interested in the changes themselves just that they have occured.
         
         synchronize_drive(context, my_drive)
-        while context.polltime:
+        while context.polltime and not context.stop_polling:
             logging.info('Polling drive ....')
             time.sleep(context.polltime * 60)
             changes = my_drive.retrieve_all_changes()
