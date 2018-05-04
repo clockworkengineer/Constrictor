@@ -105,6 +105,9 @@ class GDrive(object):
             logging.error(e)
          
         finally:
+            
+            logging.debug('List File (Length={}).Items={}'.format(len(files_returned), files_returned))
+            
             return (files_returned)
         
     def file_upload(self, local_file, parent_id=None):

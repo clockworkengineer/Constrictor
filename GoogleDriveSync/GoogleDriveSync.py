@@ -165,8 +165,14 @@ def update_local_folder(context, my_drive):
                  
         except Exception as e:
             logging.error(e)
-                
-                
+
+
+def get_parents_children(context, my_drive, parent_file_id):       
+           
+    query = "('{}' in parents) and (not trashed)".format(parent_file_id)
+    return(my_drive.file_list(query, file_fields='name, id, parents, mimeType, modifiedTime'))
+
+        
 def traverse_drive(context, my_drive, file_list):
     """Recursively parse Google drive creating folders and file id data dictionary."""
     
@@ -181,8 +187,7 @@ def traverse_drive(context, my_drive, file_list):
             # Create any needed folders and parse them recursively
             
             if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
-                query = "('{}' in parents) and (not trashed)".format(file_data['id'])
-                list_results = my_drive.file_list(query, file_fields='name, id, parents, mimeType, modifiedTime')
+                list_results = get_parents_children(context, my_drive, file_data['id'])
                 if not os.path.exists(file_data['name']):
                     os.mkdir(file_data['name'])
                 create_file_cache_data(context, file_data)
@@ -198,10 +203,10 @@ def traverse_drive(context, my_drive, file_list):
 def synchronize_drive(context, my_drive):
         """Sychronize Google drive with local folder"""
     
-        # Get top level folder contexts
+        # Get top level folder contents
         
-        top_level = my_drive.file_list("('root' in parents) and (not trashed)",
-                                          file_fields='name, id, parents, mimeType, modifiedTime')
+        root_folder_id = my_drive.file_get_metadata('root')
+        top_level = get_parents_children(context, my_drive, root_folder_id['id'])
         
         # Traverse remote drive data
         
@@ -251,7 +256,7 @@ def load_context():
         
         # Set logging details
         
-        logging_params = { 'level': logging.INFO}
+        logging_params = { 'level': logging.DEBUG}
         
         if context.logfile:
             logging_params['filename'] = context.logfile
