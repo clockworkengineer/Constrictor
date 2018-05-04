@@ -15,7 +15,9 @@ be consulted.
 TODO:
 1) Have a local upload directory to upload files to Google drive.
 2) Use worker threads to download files.
-3) Use changes API better.
+3) Use changes API better
+4) Compress file id cache file
+5) Better exception handling
 
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
@@ -132,6 +134,7 @@ def create_file_cache_data(context, file_data):
     """Create file id data dictionary entry."""
  
     # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
+    # A dict could by used but a tuple makes it more compact
     
     local_file = os.path.join(os.getcwd(), file_data['name'])
     
@@ -196,7 +199,6 @@ def traverse_drive(context, drive_file_list, file_list):
                 list_results = get_parents_children(context, drive_file_list, file_data['id'])
                 if not os.path.exists(file_data['name']):
                     os.mkdir(file_data['name'])
-                create_file_cache_data(context, file_data)
                 os.chdir(file_data['name'])
                 traverse_drive(context, drive_file_list, list_results)
                 os.chdir('..')
