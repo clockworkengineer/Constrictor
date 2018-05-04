@@ -14,9 +14,8 @@ be consulted.
 
 TODO:
 1) Have a local upload directory to upload files to Google drive.
-2) More efficient handling of http requests (read all file details in one go)
-3) Use worker threads to download files.
-4) Use changes API better.
+2) Use worker threads to download files.
+3) Use changes API better.
 
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
@@ -167,13 +166,20 @@ def update_local_folder(context, my_drive):
             logging.error(e)
 
 
-def get_parents_children(context, my_drive, parent_file_id):       
-           
-    query = "('{}' in parents) and (not trashed)".format(parent_file_id)
-    return(my_drive.file_list(query, file_fields='name, id, parents, mimeType, modifiedTime'))
+def get_parents_children(context, drive_file_list, parent_file_id):       
+    """Create a list of file data for children of of given file id"""
+    
+    children_list = []
+    
+    for file_data in drive_file_list:
+        
+        if parent_file_id in file_data.get('parents', []):
+            children_list.append(file_data)
+             
+    return(children_list)
 
         
-def traverse_drive(context, my_drive, file_list):
+def traverse_drive(context, drive_file_list, file_list):
     """Recursively parse Google drive creating folders and file id data dictionary."""
     
     for file_data in file_list:
@@ -187,12 +193,12 @@ def traverse_drive(context, my_drive, file_list):
             # Create any needed folders and parse them recursively
             
             if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
-                list_results = get_parents_children(context, my_drive, file_data['id'])
+                list_results = get_parents_children(context, drive_file_list, file_data['id'])
                 if not os.path.exists(file_data['name']):
                     os.mkdir(file_data['name'])
                 create_file_cache_data(context, file_data)
                 os.chdir(file_data['name'])
-                traverse_drive(context, my_drive, list_results)
+                traverse_drive(context, drive_file_list, list_results)
                 os.chdir('..')
                 
         except Exception as e:
@@ -203,14 +209,20 @@ def traverse_drive(context, my_drive, file_list):
 def synchronize_drive(context, my_drive):
         """Sychronize Google drive with local folder"""
     
+        # Get full file list for drive
+        
+        drive_file_list = my_drive.file_list(query='not trashed',
+                                             file_fields=
+                                             'name, id, parents, mimeType, modifiedTime')
+    
         # Get top level folder contents
         
         root_folder_id = my_drive.file_get_metadata('root')
-        top_level = get_parents_children(context, my_drive, root_folder_id['id'])
+        top_level = get_parents_children(context, drive_file_list, root_folder_id['id'])
         
         # Traverse remote drive data
         
-        traverse_drive(context, my_drive, top_level)
+        traverse_drive(context, drive_file_list, top_level)
         
         # Update any local files
         
@@ -256,7 +268,7 @@ def load_context():
         
         # Set logging details
         
-        logging_params = { 'level': logging.DEBUG}
+        logging_params = { 'level': logging.INFO}
         
         if context.logfile:
             logging_params['filename'] = context.logfile
@@ -270,6 +282,7 @@ def load_context():
         context.timezone = pytz.timezone(context.timezone)
         context.fileId_cache_file = context.fileidcache
         context.current_fileId_table = {}
+        context.drive_file_list = []
         
         #  Google App file export translation table
         
@@ -283,7 +296,7 @@ def load_context():
                         }
          
     except Exception as e:
-        logging.error(e)    
+        logging.error(e)
         sys.exit(1)
          
     return(context)
