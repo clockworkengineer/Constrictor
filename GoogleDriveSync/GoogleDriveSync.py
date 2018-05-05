@@ -48,7 +48,7 @@ optional arguments:
                         All logging to file
 """
 
-from  gdrive import GDrive
+from  gdrive import GDrive, GAuthorize
 import os
 import sys
 import logging
@@ -325,13 +325,17 @@ def Main():
         if context.refresh:
             logging.info('Refeshing whole Google drive tree locally.')
      
-        # Create and intialise Google Drive API
+        # Authorize application with Google
         
-        my_drive = GDrive(context.scope, context.secrets, context.credentials)
+        credentials = GAuthorize(context.scope, context.secrets, context.credentials)
         
-        my_drive.authorize()
+        if not credentials:
+            logging.error('GoogleDriveSync: Could not perform authorization')
+            sys.exit(1)
+            
+        # Create GDrive
         
-        my_drive.start_service()
+        my_drive = GDrive(credentials)
         
         # Create local folder root
         

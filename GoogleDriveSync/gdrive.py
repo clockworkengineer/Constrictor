@@ -27,53 +27,55 @@ __status__ = "Pre-Alpha"
 
 logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
-   
+
+def GAuthorize(scope, secrets_file, credentials_file):
+    """Function for getting authoization token for accessing Google drive.
+    
+    Get access token from Google using OAuth 2.0.
+    
+    Args:
+        scope:            Google drive API scope
+        secrets_file:     Application secrets file
+        credentials_file: Application credentials file
+    
+    Returns: 
+        Credentials(token) for acccessing Google drive.
+        
+    """
+        
+    try :
+        credentials = None
+        store = file.Storage(credentials_file)
+        credentials = store.get()
+        if not credentials or credentials.invalid:
+            flow = client.flow_from_clientsecrets(secrets_file, scope)
+            credentials = tools.run_flow(flow, store)
+    except Exception as e:
+        logging.error(e)
+        
+    return(credentials)
+
+
 class GDrive(object):
     """Class for accessing Google Drive.
     
-    Open up service to google drive and list/manipulate/upload/download files.
+    Open up service to Google drive to list/manipulate/upload/download files.
     
     Attrubutes:
-    scope:            Google Drive API scope
-    secrets_file:     Application secrets file
-    credentials_file: Application credentials file
-    credentials:      Application credentials
+    credentials:      Application credentials(token) for accessing drive
     drive_srvice:     Drive Service
     start_page_token: Saved start page token used to get changes
     """
     
-    def __init__(self, scope, secrets_file, credentials_file):
+    def __init__(self, credentials):
         
-        self.scope = scope
-        self.secrets_file = secrets_file
-        self.credentials_file = credentials_file
-        self.credentials = None
+        self.credentials = credentials
         self.drive_service = None
         self.start_page_token = None
-        
-    def authorize(self, reset_credentials=False):
-        """Authorize Application to connect to Google API."""
-        
-        try :
-            
-            store = file.Storage(self.credentials_file)
-            self.credentials = store.get()
-            if not self.credentials or self.credentials.invalid or reset_credentials:
-                flow = client.flow_from_clientsecrets(self.secrets_file, self.scope)
-                self.credentials = tools.run_flow(flow, store)
-        except Exception as e:
-            logging.error(e)
-        
-    def start_service(self):
-        """Build service for drive API."""
-        
-        try :
-            
-            self.drive_service = build('drive', 'v3',
-                                       http=self.credentials.authorize(Http()),
-                                       cache_discovery=False)
-        except Exception as e:
-            logging.error(e)
+
+        self.drive_service = build('drive', 'v3',
+                                    http=self.credentials.authorize(Http()),
+                                    cache_discovery=False)
 
     def file_list(self, query='', max_files=100, file_fields='name, id'):
         """Return list of file metadata for query pasted in."""
