@@ -32,25 +32,33 @@ Python program that uses Google Drive Python API so access a users drive and mak
 
 For setting up the crentials and secrets for use with the API it is suggsested that [googles quickstart guide](https://developers.google.com/drive/v3/web/quickstart/python)  be consulted.
 
-		usage: GoogleDriveSync.py [-h] [-r] [-s SCOPE] [-e SECRETS] [-c CREDENTIALS]
-		                          [-f FILEIDCACHE] [-t TIMEZONE]
-		                          folder
-		
-		Synchronize Google Drive with a local folder
-		
-		positional arguments:
-		  folder                Local folder
-		
-		optional arguments:
-		  -h, --help            show this help message and exit
-		  -r, --refresh         Refresh all files.
-		  -s SCOPE, --scope SCOPE
-		                        Google Drive API Scope
-		  -e SECRETS, --secrets SECRETS
-		                        Google API secrets file
-		  -c CREDENTIALS, --credentials CREDENTIALS
-		                        Google API credtials file
-		  -f FILEIDCACHE, --fileidcache FILEIDCACHE
-		                        File id cache json file
-		  -t TIMEZONE, --timezone TIMEZONE
-		                        Local timezone (pytz)
+
+	usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
+	                          [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
+	                          [-l LOGFILE] [-n NUMWORKERS]
+	                          folder
+	
+	Synchronize Google Drive with a local folder
+	
+	positional arguments:
+	  folder                Local folder
+	
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -p POLLTIME, --polltime POLLTIME
+	                        Poll time for drive sychronize in minutes
+	  -r, --refresh         Refresh all files.
+	  -s SCOPE, --scope SCOPE
+	                        Google Drive API Scope
+	  -e SECRETS, --secrets SECRETS
+	                        Google API secrets file
+	  -c CREDENTIALS, --credentials CREDENTIALS
+	                        Google API credtials file
+	  -f FILEIDCACHE, --fileidcache FILEIDCACHE
+	                        File id cache json file
+	  -t TIMEZONE, --timezone TIMEZONE
+	                        Local timezone (pytz)
+	  -l LOGFILE, --logfile LOGFILE
+	                        All logging to file
+	  -n NUMWORKERS, --numworkers NUMWORKERS
+	                        Number of worker threads for downloads
