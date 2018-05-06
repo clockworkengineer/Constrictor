@@ -14,14 +14,13 @@ quickstart/python" be consulted.
 
 TODO:
 1) Have a local upload directory to upload files to Google drive.
-2) Use worker threads to download files.
-3) Use changes API better
-4) Compress file id cache file
-5) Better exception handling
+2) Use changes API better
+3) Compress file id cache file
+4) Better exception handling
 
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
-                          [-l LOGFILE]
+                          [-l LOGFILE] [-n NUMWORKERS]
                           folder
 
 Synchronize Google Drive with a local folder
@@ -46,6 +45,8 @@ optional arguments:
                         Local timezone (pytz)
   -l LOGFILE, --logfile LOGFILE
                         All logging to file
+  -n NUMWORKERS, --numworkers NUMWORKERS
+                        Number of worker threads for downloads
 """
 
 from  gdrive import GDrive, GAuthorize
@@ -151,7 +152,7 @@ def create_file_cache_data(context, file_data):
 def download_worker(my_drive, file_id, local_file, mime_type, sleep_delay=1):
     """Download file worker thread."""
     
-    # For moment create new GDrive as http module used by underling api is
+    # For moment create new GDrive as http module used by underlying api is
     # not multi-thread aware and also add delay in for google 403 error if more
     # than approx 8 requests a second are made.
     #
@@ -191,6 +192,8 @@ def update_local_folder(context, my_drive):
             logging.error(e)
             sys.exit(1)
 
+    # If worker threads > 1 then use otherwise one at a time
+    
     if context.numworkers > 1:
         with ThreadPoolExecutor(max_workers=context.numworkers) as executor:
             for file_to_process in file_list:
