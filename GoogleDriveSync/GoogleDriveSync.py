@@ -5,12 +5,12 @@
 At present it only a copies the Google drive ('My Drive') and local changes are 
 not reflected back on the drive. It also can handle files on the drive that 
 have been removed(trashed), renamed or moved; mirroring any changes in the local
-folder structure. Currently doesn't handle duplicate file names in the same folder 
-well and these should be avoided(for the moment).
+folder structure. Currently doesn't handle duplicate file names in the same Google
+Drive folder well and these should be avoided (for the moment).
 
 For setting up the crentials and secrets for use with the API it is suggsested 
-that googles quickstart guide at "https://developers.google.com/drive/v3/web/quickstart/python"
-be consulted.
+that googles quickstart guide at "https://developers.google.com/drive/v3/web/
+quickstart/python" be consulted.
 
 TODO:
 1) Have a local upload directory to upload files to Google drive.
@@ -49,6 +49,7 @@ optional arguments:
 """
 
 from  gdrive import GDrive, GAuthorize
+from concurrent.futures import ThreadPoolExecutor
 import os
 import sys
 import logging
@@ -147,13 +148,34 @@ def create_file_cache_data(context, file_data):
     context.current_fileId_table[file_data['id']] = (local_file, file_data['mimeType'], file_data['modifiedTime'])
 
 
+def download_worker(my_drive, file_id, local_file, mime_type, sleep_delay=1):
+    """Download file worker thread."""
+    
+    # For moment create new GDrive as http module used by underling api is
+    # not multi-thread aware and also add delay in for google 403 error if more
+    # than approx 8 requests a second are made.
+    #
+    # TO DO: Get rid of delay and GDrive creation for each download.
+    
+    drive = GDrive(my_drive._credentials)
+    drive.file_download(file_id, local_file, mime_type)
+    time.sleep(sleep_delay)
+    
+
 def update_local_folder(context, my_drive):
     """Update any local files if needed."""
+    
+    file_list = []
     
     for file_id, file_data in context.current_fileId_table.items():
 
         try:
                   
+            if file_data[1] == "application/vnd.google-apps.folder":
+                if not os.path.exists(file_data[0]):
+                    os.makedirs(file_data[0])
+                continue
+            
             if context.refresh or update_file(file_data[0], file_data[2], context.timezone):
                 
                 # Convert(export) any google application file  otherwise just download
@@ -163,10 +185,19 @@ def update_local_folder(context, my_drive):
                 else:
                     export_tuple = None
                          
-                my_drive.file_download(file_id, file_data[0], export_tuple)
+                file_list.append((file_id, file_data[0], export_tuple))
                  
         except Exception as e:
             logging.error(e)
+            sys.exit(1)
+
+    if context.numworkers > 1:
+        with ThreadPoolExecutor(max_workers=context.numworkers) as executor:
+            for file_to_process in file_list:
+                future = executor.submit(download_worker, my_drive, *file_to_process)
+    else:
+        for file_to_process in file_list:
+            my_drive.file_download(*file_to_process)
 
 
 def get_parents_children(context, drive_file_list, parent_file_id):       
@@ -265,6 +296,7 @@ def load_context():
         parser.add_argument('-f', '--fileidcache', default='fileID_cashe.json', help='File id cache json file')
         parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
+        parser.add_argument('-n', '--numworkers', type=int, default=4, help='Number of worker threads for downloads')
     
         context = parser.parse_args()
         

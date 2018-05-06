@@ -9,6 +9,7 @@ from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+from googleapiclient.errors import HttpError
 import os
 import io
 import magic
@@ -29,14 +30,14 @@ logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
 
 def GAuthorize(scope, secrets_file, credentials_file):
-    """Function for getting authoization token for accessing Google drive.
+    """Function for getting authoization token for use with Google drive.
     
     Get access token from Google using OAuth 2.0.
     
     Args:
         scope:            Google drive API scope
         secrets_file:     Application secrets file
-        credentials_file: Application _credentials file
+        credentials_file: Application credentials file
     
     Returns: 
         Credentials(token) for acccessing Google drive.
@@ -62,7 +63,7 @@ class GDrive(object):
     Open up service to Google drive to list/manipulate/upload/download files.
     
     Attrubutes:
-    _credentials:      Application _credentials(token) for accessing drive
+    _credentials:      Application credentials(token) for accessing drive
     _drive_srvice:     Drive Service
     _start_page_token: Saved start page token used to get changes
     """
@@ -102,14 +103,13 @@ class GDrive(object):
                 if next_page_token == None:
                     more_files_to_list = False
                 
-        except Exception as e:
+        except HttpError as e:
             logging.error(e)
-         
-        finally:
+            raise(e)
             
-            logging.debug('List File (Length={}).Items={}'.format(len(files_returned), files_returned))
+        logging.debug('List File (Length={}).Items={}'.format(len(files_returned), files_returned))
             
-            return (files_returned)
+        return (files_returned)
 
     def folder_create(self, folder_name, parent_id=None):
         """Create a folder on google drive"""
@@ -131,11 +131,11 @@ class GDrive(object):
                                                             
             result = folder_data['id']
 
-        except Exception as e:
+        except HttpError as e:
             logging.error(e)
-        
-        finally:                       
-            return(result)                                           
+            raise(e)
+                           
+        return(result)                                           
 
     def file_get_metadata(self, file_id, file_fields='name, id'):
         """Return metadata associated with google drivefile."""
@@ -144,9 +144,10 @@ class GDrive(object):
             
             result = self._drive_service.files().get(fileId=file_id, fields=file_fields).execute()
         
-        except Exception as e:
+        except HttpError as e:
             logging.error(e)
-            
+            raise(e)
+                    
         return(result)
     
     def file_download(self, file_id, local_file, mime_type=None):
@@ -176,8 +177,9 @@ class GDrive(object):
          
             logging.info('Downloaded file {} to {}'.format(file_id, local_file))
         
-        except Exception as e:
+        except HttpError as e:
             logging.error(e)
+            raise(e)
 
     def file_upload(self, local_file, parent_id=None):
         """Upload local file to google drive returning its file id."""
@@ -198,12 +200,13 @@ class GDrive(object):
             
             result = self._drive_service.files().create(body=file_metadata,
                                             media_body=media,
-                                            fields='id').execute()
-        except Exception as e:
+                                            fields='id').execute(
+                                                )
+        except HttpError as e:
             logging.error(e)
-        
-        finally:                       
-            return(result)
+            raise(e)
+                     
+        return(result)
         
     def retrieve_all_changes(self):
         """Retrieve list of changes to google drive since last call"""
@@ -231,8 +234,9 @@ class GDrive(object):
                  
                 page_token = response.get('nextPageToken')
             
-        except Exception as e:
+        except HttpError as e:
             logging.error(e)
+            raise(e)
             
         return(changes)
 
