@@ -13,10 +13,9 @@ that googles quickstart guide at "https://developers.google.com/drive/v3/web/
 quickstart/python" be consulted.
 
 TODO:
-1) Have a local upload directory to upload files to Google drive.
-2) Use changes API better
-3) Compress file id cache file
-4) Better exception handling
+1) Use changes API better
+2) Compress file id cache file
+3) Better exception handling
 
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
@@ -49,7 +48,7 @@ optional arguments:
                         Number of worker threads for downloads
 """
 
-from  gdrive import GDrive, GAuthorize
+from  gdrive import GDrive, GAuthorize, GDriveUploader
 from concurrent.futures import ThreadPoolExecutor
 import os
 import sys
@@ -269,6 +268,14 @@ def synchronize_drive(context, my_drive):
         rationalise_local_folder(context)
 
 
+def create_file_uploader(context, credentials):
+    """Create uploader folder for Google Drive"""
+    
+    uploader = GDriveUploader(credentials, context.uploadfolder, os.path.basename(context.uploadfolder))
+    
+    logging.info("Created upload folder {} for Google drive.".format(context.uploadfolder))
+
+
 def setup_signal_handlers(context):
     """Set signal handlers for SIGTERM/SIGINT so cleanly exit"""
      
@@ -300,6 +307,7 @@ def load_context():
         parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
         parser.add_argument('-n', '--numworkers', type=int, default=4, help='Number of worker threads for downloads')
+        parser.add_argument('-u', '--uploadfolder', help='Google upload folder')
     
         context = parser.parse_args()
         
@@ -317,7 +325,6 @@ def load_context():
         # Attach extra data to arguments to create runtime context
         
         context.timezone = pytz.timezone(context.timezone)
-        context.fileId_cache_file = context.fileidcache
         context.current_fileId_table = {}
         context.drive_file_list = []
         
@@ -362,7 +369,7 @@ def Main():
      
         # Authorize application with Google
         
-        credentials = GAuthorize(context.scope, context.secrets, context.credentials)
+        credentials = GAuthorize('https://www.googleapis.com/auth/drive', context.secrets, context.credentials)
         
         if not credentials:
             logging.error('GoogleDriveSync: Could not perform authorization')
@@ -372,6 +379,11 @@ def Main():
         
         my_drive = GDrive(credentials)
         
+        # Create file uploader
+        
+        if context.uploadfolder:
+            create_file_uploader(context, credentials)
+            
         # Create local folder root
         
         if not os.path.exists(context.folder):

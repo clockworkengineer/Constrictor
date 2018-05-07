@@ -5,6 +5,8 @@ To to this it uses google's own python wrapper Drive API which can be read about
 https://developers.google.com/drive/v3/web/quickstart/python.
 """
 
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
@@ -27,6 +29,49 @@ __status__ = "Pre-Alpha"
 # Switch off INFO google logging
 
 logging.getLogger("googleapiclient").setLevel(logging.WARNING)
+
+
+class GDriveUploader(FileSystemEventHandler):
+    
+    def __init__(self, credentials, local_file_path, remote_folder):
+        
+        try:
+            
+            self._credentials = credentials
+            self._local_file_path = local_file_path
+            self._remote_folder = remote_folder
+            
+            if not os.path.exists(local_file_path):
+                os.makedirs(local_file_path)
+    
+            self._drive = GDrive(self._credentials)
+            
+            query = "(name = '{}') and (not trashed)".format(remote_folder)
+            
+            self._upload_folder = self._drive.file_list(query=query,
+                                             file_fields=
+                                             'name, id, parents')
+            
+            if len(self._upload_folder) == 0:
+                self._drive.folder_create(remote_folder)
+                self._upload_folder = self._drive.file_list(query=query,
+                                                 file_fields=
+                                                 'name, id, parents')
+                
+            self._observer = Observer();
+            
+            self._observer.schedule(self, self._local_file_path,
+                              recursive=False) 
+            
+            self._observer.start()
+        
+        except Exception as e:
+            logging.error(e)
+                
+    def on_created(self, event):
+        print(event.src_path)
+        
+        self._drive.file_upload(event.src_path, parent_id=self._upload_folder[0]['id'])
 
 
 def GAuthorize(scope, secrets_file, credentials_file, credentials_refresh=False):

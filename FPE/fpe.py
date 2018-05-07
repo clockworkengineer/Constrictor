@@ -29,7 +29,7 @@ from handlerfactory import CreateFileEventHandler
 import sys
 import os
 import time
-import ConfigParser
+import configparser
 import logging
 import argparse
 from watchdog.observers import Observer
@@ -76,7 +76,7 @@ def load_config(arguments):
         
         # Read in config file
         
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(arguments.file)
         
         # Default logging parameters
