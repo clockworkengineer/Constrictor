@@ -29,7 +29,7 @@ __status__ = "Pre-Alpha"
 logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
 
-def GAuthorize(scope, secrets_file, credentials_file):
+def GAuthorize(scope, secrets_file, credentials_file, credentials_refresh=False):
     """Function for getting authoization token for use with Google drive.
     
     Get access token from Google using OAuth 2.0.
@@ -40,17 +40,16 @@ def GAuthorize(scope, secrets_file, credentials_file):
         credentials_file: Application credentials file
     
     Returns: 
-        Credentials(token) for acccessing Google drive.
-        
+        Credentials(token) for acccessing Google drive.       
     """
         
     try :
         credentials = None
         store = file.Storage(credentials_file)
         credentials = store.get()
-        if not credentials or credentials.invalid:
+        if not credentials or credentials.invalid or credentials_refresh:
             flow = client.flow_from_clientsecrets(secrets_file, scope)
-            credentials = tools.run_flow(flow, store)
+            credentials = tools.run_flow(flow, store, tools.argparser.parse_args(args=[]))
     except Exception as e:
         logging.error(e)
         
