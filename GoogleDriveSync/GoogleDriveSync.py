@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """Synchronize Google drive with local folder.
 
 At present it only a copies the Google drive ('My Drive') and local changes are 
@@ -19,7 +18,7 @@ TODO:
 
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
-                          [-l LOGFILE] [-n NUMWORKERS]
+                          [-l LOGFILE] [-n NUMWORKERS] [-u UPLOADFOLDER]
                           folder
 
 Synchronize Google Drive with a local folder
@@ -46,6 +45,8 @@ optional arguments:
                         All logging to file
   -n NUMWORKERS, --numworkers NUMWORKERS
                         Number of worker threads for downloads
+  -u UPLOADFOLDER, --uploadfolder UPLOADFOLDER
+                        Google upload folder
 """
 
 from  gdrive import GDrive, GAuthorize, GDriveUploader

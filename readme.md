@@ -32,10 +32,9 @@ Python program that uses Google Drive Python API so access a users drive and mak
 
 For setting up the crentials and secrets for use with the API it is suggsested that [googles quickstart guide](https://developers.google.com/drive/v3/web/quickstart/python)  be consulted.
 
-
 	usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
 	                          [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
-	                          [-l LOGFILE] [-n NUMWORKERS]
+	                          [-l LOGFILE] [-n NUMWORKERS] [-u UPLOADFOLDER]
 	                          folder
 	
 	Synchronize Google Drive with a local folder
@@ -62,3 +61,5 @@ For setting up the crentials and secrets for use with the API it is suggsested t
 	                        All logging to file
 	  -n NUMWORKERS, --numworkers NUMWORKERS
 	                        Number of worker threads for downloads
+	  -u UPLOADFOLDER, --uploadfolder UPLOADFOLDER
+	                        Google upload folder
