@@ -131,13 +131,13 @@ def update_file(local_file, modified_time, local_timezone):
     return(remote_date_time > local_date_time)
 
 
-def create_file_cache_data(context, file_data):
+def create_file_cache_data(context, current_directory, file_data):
     """Create file id data dictionary entry."""
  
     # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
     # A dict could by used but a tuple makes it more compact
     
-    local_file = os.path.join(os.getcwd(), file_data['name'])
+    local_file = os.path.join(current_directory, file_data['name'])
     
     # File mime type incates google app file so change local file extension for export.
     
@@ -170,7 +170,9 @@ def update_local_folder(context, my_drive):
     for file_id, file_data in context.current_fileId_table.items():
 
         try:
-                  
+            
+            # Create any folders needed
+            
             if file_data[1] == "application/vnd.google-apps.folder":
                 if not os.path.exists(file_data[0]):
                     os.makedirs(file_data[0])
@@ -215,7 +217,7 @@ def get_parents_children(context, drive_file_list, parent_file_id):
     return(children_list)
 
         
-def traverse_drive(context, drive_file_list, file_list):
+def traverse_drive(context, current_directory, drive_file_list, file_list):
     """Recursively parse Google drive creating folders and file id data dictionary."""
     
     for file_data in file_list:
@@ -224,17 +226,13 @@ def traverse_drive(context, drive_file_list, file_list):
             
             # Save away current file id data
             
-            create_file_cache_data(context, file_data)
+            create_file_cache_data(context, current_directory, file_data)
                             
             # Create any needed folders and parse them recursively
             
             if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
-                list_results = get_parents_children(context, drive_file_list, file_data['id'])
-                if not os.path.exists(file_data['name']):
-                    os.mkdir(file_data['name'])
-                os.chdir(file_data['name'])
-                traverse_drive(context, drive_file_list, list_results)
-                os.chdir('..')
+                siblings_list = get_parents_children(context, drive_file_list, file_data['id'])
+                traverse_drive(context, os.path.join(current_directory, file_data['name']), drive_file_list, siblings_list)
                 
         except Exception as e:
             logging.error(e)
@@ -257,7 +255,7 @@ def synchronize_drive(context, my_drive):
         
         # Traverse remote drive data
         
-        traverse_drive(context, drive_file_list, top_level)
+        traverse_drive(context, context.folder, drive_file_list, top_level)
         
         # Update any local files
         
