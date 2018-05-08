@@ -32,6 +32,7 @@ logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
 
 class GDriveUploader(FileSystemEventHandler):
+    """Class to upload watched folder files to Google drive."""
     
     def __init__(self, credentials, local_file_path, remote_folder):
         
@@ -69,9 +70,17 @@ class GDriveUploader(FileSystemEventHandler):
             logging.error(e)
                 
     def on_created(self, event):
-        print(event.src_path)
         
-        self._drive.file_upload(event.src_path, parent_id=self._upload_folder[0]['id'])
+        try:
+            
+            logging.info("Uploading file '{}' to Google drive folder '{}'.".
+                         format(event.src_path, self._remote_folder))
+            
+            self._drive.file_upload(event.src_path, parent_id=self._upload_folder[0]['id'])
+
+        except HttpError as e:
+            logging.error(e)
+            raise(e)
 
 
 def GAuthorize(scope, secrets_file, credentials_file, credentials_refresh=False):
