@@ -49,16 +49,14 @@ optional arguments:
                         Google upload folder
 """
 
+from localdrive import LocalDrive
 from  gdrive import GDrive, GAuthorize, GDriveUploader
-from concurrent.futures import ThreadPoolExecutor
 import os
 import sys
 import logging
-import datetime
 import argparse
 import pytz
-import json
-import time
+
 import signal
 
 __author__ = "Rob Tizzard"
@@ -71,200 +69,39 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-def remove_local_file(file_name):
-    """Remove file/directory from local folder."""
+class RemoteDrive(GDrive):
     
-    if os.path.isfile(file_name):
-        os.unlink(file_name)
-        logging.info('Deleting file {} removed/renamed/moved from My Drive'.format(file_name))
+    def __init__(self, credentials):
         
-    elif os.path.isdir(file_name):
-        os.rmdir(file_name)
-        logging.info('Deleting folder {} removed/renamed/moved from My Drive'.format(file_name))
-                        
-
-def rationalise_local_folder(context):
-    """Clean up local folder for files removed/renamed/deleted on My Drive."""
-    
-    try:
-        
-        if os.path.exists(context.fileidcache):
-            
-            with open(context.fileidcache, 'r') as json_file:
-                old_fileId_table = json.load(json_file)
-                
-            for fileId in old_fileId_table:            
-                if ((fileId not in context.current_fileId_table) or 
-                    (context.current_fileId_table[fileId][0] != old_fileId_table[fileId][0])):
-                    remove_local_file(old_fileId_table[fileId][0])
-        
-    except Exception as e:
-        logging.error(e)
-                           
-    with open(context.fileidcache, 'w') as json_file:
-        json.dump(context.current_fileId_table, json_file, indent=2)
-        
-    context.current_fileId_table.clear()
-
-
-def update_file(local_file, modified_time, local_timezone):
-    """If Google drive file has been created or is newer than local file then update."""
-    
-    try:
-
-        if not os.path.exists(local_file):
-            logging.info('File {} does not exist locally.'.format(local_file))
-            return(True)
-        
-        # Make sure timestamp is in utc for when both are localized and compared
-        
-        times_stamp = os.path.getmtime(local_file)
-        local_date_time = local_timezone.localize(datetime.datetime.utcfromtimestamp(times_stamp)) 
-        remote_date_time = local_timezone.localize(datetime.datetime.strptime(modified_time[:-5], '%Y-%m-%dT%H:%M:%S'))
-
-        if remote_date_time > local_date_time:
-            logging.info('File {} needs updating locally.'.format(local_file))
-        
-    except Exception as e:
-        logging.error(e)
-        return(False)
-        
-    return(remote_date_time > local_date_time)
-
-
-def create_file_cache_data(context, current_directory, file_data):
-    """Create file id data dictionary entry."""
- 
-    # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
-    # A dict could by used but a tuple makes it more compact
-    
-    local_file = os.path.join(current_directory, file_data['name'])
-    
-    # File mime type incates google app file so change local file extension for export.
-    
-    if file_data['mimeType'] in context.export_table:
-        export_tuple = context.export_table[file_data['mimeType']]
-        local_file = '{}.{}'.format(os.path.splitext(local_file)[0], export_tuple[1])
-    
-    context.current_fileId_table[file_data['id']] = (local_file, file_data['mimeType'], file_data['modifiedTime'])
-
-
-def download_worker(my_drive, file_id, local_file, mime_type, sleep_delay=1):
-    """Download file worker thread."""
-    
-    # For moment create new GDrive as http module used by underlying api is
-    # not multi-thread aware and also add delay in for google 403 error if more
-    # than approx 8 requests a second are made.
-    #
-    # TO DO: Get rid of delay and GDrive creation for each download.
-    
-    drive = GDrive(my_drive._credentials)
-    drive.file_download(file_id, local_file, mime_type)
-    time.sleep(sleep_delay)
-    
-
-def update_local_folder(context, my_drive):
-    """Update any local files if needed."""
-    
-    file_list = []
-    
-    for file_id, file_data in context.current_fileId_table.items():
-
         try:
             
-            # Create any folders needed
+            super().__init__(credentials)
             
-            if file_data[1] == "application/vnd.google-apps.folder":
-                if not os.path.exists(file_data[0]):
-                    os.makedirs(file_data[0])
-                continue
+            self.drive_file_list = self.file_list(query='not trashed',
+                                                 file_fields=
+                                                 'name, id, parents, mimeType, modifiedTime')
             
-            if context.refresh or update_file(file_data[0], file_data[2], context.timezone):
-                
-                # Convert(export) any google application file  otherwise just download
-                      
-                if file_data[1] in context.export_table:
-                    export_tuple = context.export_table[file_data[1]]
-                else:
-                    export_tuple = None
-                         
-                file_list.append((file_id, file_data[0], export_tuple))
-                 
+            self.root_folder_id = self.file_get_metadata('root')
+
         except Exception as e:
             logging.error(e)
-            sys.exit(1)
-
-    # If worker threads > 1 then use otherwise one at a time
-    
-    if context.numworkers > 1:
-        with ThreadPoolExecutor(max_workers=context.numworkers) as executor:
-            for file_to_process in file_list:
-                future = executor.submit(download_worker, my_drive, *file_to_process)
-    else:
-        for file_to_process in file_list:
-            my_drive.file_download(*file_to_process)
 
 
-def get_parents_children(context, drive_file_list, parent_file_id):       
-    """Create a list of file data for children of of given file id"""
-    
-    children_list = []
-    
-    for file_data in drive_file_list:
+def synchronize_drive(context, remote_drive):
+        """Sychronize Google drive with local drive folder"""
         
-        if parent_file_id in file_data.get('parents', []):
-            children_list.append(file_data)
-             
-    return(children_list)
-
+        # Create and build local folder
         
-def traverse_drive(context, current_directory, drive_file_list, file_list):
-    """Recursively parse Google drive creating folders and file id data dictionary."""
-    
-    for file_data in file_list:
-
-        try:
-            
-            # Save away current file id data
-            
-            create_file_cache_data(context, current_directory, file_data)
-                            
-            # Create any needed folders and parse them recursively
-            
-            if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
-                siblings_list = get_parents_children(context, drive_file_list, file_data['id'])
-                traverse_drive(context, os.path.join(current_directory, file_data['name']), drive_file_list, siblings_list)
-                
-        except Exception as e:
-            logging.error(e)
-            sys.exit(1)
-
-
-def synchronize_drive(context, my_drive):
-        """Sychronize Google drive with local folder"""
-    
-        # Get full file list for drive
-        
-        drive_file_list = my_drive.file_list(query='not trashed',
-                                             file_fields=
-                                             'name, id, parents, mimeType, modifiedTime')
-    
-        # Get top level folder contents
-        
-        root_folder_id = my_drive.file_get_metadata('root')
-        top_level = get_parents_children(context, drive_file_list, root_folder_id['id'])
-        
-        # Traverse remote drive data
-        
-        traverse_drive(context, context.folder, drive_file_list, top_level)
+        local_drive = LocalDrive(context, context.folder, remote_drive)    
+        local_drive.build_local()
         
         # Update any local files
         
-        update_local_folder(context, my_drive)
+        local_drive.update_local_folder()
         
         # Tidy up any unnecessary files left behind
         
-        rationalise_local_folder(context)
+        local_drive.rationalise_local_folder()
 
 
 def create_file_uploader(context, credentials):
@@ -324,9 +161,7 @@ def load_context():
         # Attach extra data to arguments to create runtime context
         
         context.timezone = pytz.timezone(context.timezone)
-        context.current_fileId_table = {}
-        context.drive_file_list = []
-        
+
         #  Google App file export translation table
         
         context.export_table = { 
@@ -376,7 +211,7 @@ def Main():
             
         # Create GDrive
         
-        my_drive = GDrive(credentials)
+        remote_drive = RemoteDrive(credentials)
         
         # Create file uploader
         
@@ -394,13 +229,13 @@ def Main():
         # It also checks if any changes have been made and only synchronizes if so; it
         # is not interested in the changes themselves just that they have occured.
         
-        synchronize_drive(context, my_drive)
+        synchronize_drive(context, remote_drive)
         while context.polltime and not context.stop_polling:
             logging.info('Polling drive ....')
             time.sleep(context.polltime * 60)
-            changes = my_drive.retrieve_all_changes()
+            changes = remote_drive.retrieve_all_changes()
             if changes:
-                synchronize_drive(context, my_drive)
+                synchronize_drive(context, remote_drive)
 
     except Exception as e:
         logging.error(e)
@@ -409,4 +244,5 @@ def Main():
 
         
 if __name__ == '__main__':
+
     Main()
