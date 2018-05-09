@@ -3,7 +3,7 @@
 Class to map google drive to local file system.
 """
 
-from  gdrive import GDrive
+from gdrive import GDrive
 from concurrent.futures import ThreadPoolExecutor
 import os
 import sys
@@ -11,6 +11,7 @@ import logging
 import datetime
 import json
 import pytz
+import time
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -72,8 +73,9 @@ class LocalDrive(object):
         self._current_fileId_table = {}
         self._refresh = False
         self._timezone = pytz.timezone('Europe/London')
-        self._numworkers = 8
+        self._numworkers = 4
         self._fileidcache = 'fileID_cache.json'
+        self._download_errors = 0
         
         #  Google App file export translation table
         
@@ -180,17 +182,21 @@ class LocalDrive(object):
 
     def download_worker(self, file_id, local_file, mime_type, sleep_delay=1):
         """Download file worker thread."""
-         
+        
         # For moment create new GDrive as http module used by underlying api is
         # not multi-thread aware and also add delay in for google 403 error if more
         # than approx 8 requests a second are made.
         #
         # TO DO: Get rid of delay and GDrive creation for each download.
-         
-        drive = GDrive(self._remote_drive._credentials)
-        drive.file_download(file_id, local_file, mime_type)
-        time.sleep(sleep_delay)
-    
+        
+        try: 
+            drive = GDrive(self._remote_drive._credentials)
+            drive.file_download(file_id, local_file, mime_type)
+            time.sleep(sleep_delay)
+        except Exception as e:
+            print(e)
+            self._download_errors += 1
+            
     def update(self):
         """Update any local files if needed."""
          
@@ -229,9 +235,17 @@ class LocalDrive(object):
                 for file_to_process in file_list:
                     future = executor.submit(self.download_worker, *file_to_process)
         else:
-            for file_to_process in file_list:
-                self._remote_drive.file_download(*file_to_process)
+            
+            try:
+                for file_to_process in file_list:
+                    self._remote_drive.file_download(*file_to_process)
+            except Exception as e:
+                self._download_errors += 1
  
+        if self._download_errors:
+            logging.info('{} errors during file downloads.'.format(self._download_errors))
+            self._download_errors = 0
+            
     def remove_local_file(self, file_name):
         """Remove file/directory from local folder."""
          
@@ -265,15 +279,17 @@ class LocalDrive(object):
             json.dump(self._current_fileId_table, json_file, indent=2)
              
         self._current_fileId_table.clear()
+    
+    # Get/Set attribute functions
         
     def set_refresh(self, refresh):
         self._refresh = refresh
         
-    def set_timezone(selfs, timezone):
+    def set_timezone(self, timezone):
         self._timezone = pytz.timezone(timezone)
         
-    def set_numworkers(selfself, numworkers):
+    def set_numworkers(self, numworkers):
         self._numworkers = numworkers
         
-    def set_fieldidcache(selfself, fieldidcache):
+    def set_fieldidcache(self, fieldidcache):
         self._fileidcache = fieldidcache
