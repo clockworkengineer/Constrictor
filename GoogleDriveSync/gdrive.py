@@ -115,7 +115,7 @@ class GDrive(object):
     
     Open up service to Google drive to list/manipulate/upload/download files.
     
-    Attrubutes:
+    Attributes:
     _credentials:      Application credentials(token) for accessing drive
     _drive_srvice:     Drive Service
     _start_page_token: Saved start page token used to get changes

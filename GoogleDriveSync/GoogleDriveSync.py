@@ -49,14 +49,12 @@ optional arguments:
                         Google upload folder
 """
 
-from localdrive import LocalDrive
-from  gdrive import GDrive, GAuthorize, GDriveUploader
+from localdrive import LocalDrive, RemoteDrive
+from  gdrive import GAuthorize, GDriveUploader
 import os
 import sys
 import logging
 import argparse
-import pytz
-
 import signal
 
 __author__ = "Rob Tizzard"
@@ -69,39 +67,34 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-class RemoteDrive(GDrive):
-    
-    def __init__(self, credentials):
-        
-        try:
-            
-            super().__init__(credentials)
-            
-            self.drive_file_list = self.file_list(query='not trashed',
-                                                 file_fields=
-                                                 'name, id, parents, mimeType, modifiedTime')
-            
-            self.root_folder_id = self.file_get_metadata('root')
-
-        except Exception as e:
-            logging.error(e)
-
-
 def synchronize_drive(context, remote_drive):
         """Sychronize Google drive with local drive folder"""
         
-        # Create and build local folder
+        # Create and build local folder for Google drive
         
-        local_drive = LocalDrive(context, context.folder, remote_drive)    
-        local_drive.build_local()
+        local_drive = LocalDrive(context.folder, remote_drive)
+          
+        if context.numworkers:
+            local_drive.set_numworkers(context.numworkers)
+        
+        if context.refresh:
+            local_drive.set_refresh(context.refresh)
+            
+        if context.fileidcache:
+            local_drive.set_fileidcache(context.fileidcache)
+            
+        if context.timezone:
+            local_drive.set_timezone(context.timezone)
+            
+        local_drive.build()
         
         # Update any local files
         
-        local_drive.update_local_folder()
+        local_drive.update()
         
         # Tidy up any unnecessary files left behind
         
-        local_drive.rationalise_local_folder()
+        local_drive.rationalise()
 
 
 def create_file_uploader(context, credentials):
@@ -139,10 +132,10 @@ def load_context():
         parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly', help='Google Drive API Scope')
         parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
         parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
-        parser.add_argument('-f', '--fileidcache', default='fileID_cashe.json', help='File id cache json file')
-        parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
+        parser.add_argument('-f', '--fileidcache', help='File id cache json file')
+        parser.add_argument('-t', '--timezone', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
-        parser.add_argument('-n', '--numworkers', type=int, default=4, help='Number of worker threads for downloads')
+        parser.add_argument('-n', '--numworkers', type=int, help='Number of worker threads for downloads')
         parser.add_argument('-u', '--uploadfolder', help='Google upload folder')
     
         context = parser.parse_args()
@@ -157,22 +150,7 @@ def load_context():
                 os.makedirs(os.path.dirname(context.logfile))
             
         logging.basicConfig(**logging_params)
-        
-        # Attach extra data to arguments to create runtime context
-        
-        context.timezone = pytz.timezone(context.timezone)
 
-        #  Google App file export translation table
-        
-        context.export_table = { 
-                          'application/vnd.google-apps.document' : 
-                          ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'),
-                          'application/vnd.google-apps.spreadsheet' : 
-                          ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
-                          'application/vnd.google-apps.presentation' : 
-                          ('application/vnd.oasis.opendocument.presentation', 'odp')
-                        }
-         
     except Exception as e:
         logging.error(e)
         sys.exit(1)
@@ -209,21 +187,14 @@ def Main():
             logging.error('GoogleDriveSync: Could not perform authorization')
             sys.exit(1)
             
-        # Create GDrive
+        # Create RemoteDrive object
         
         remote_drive = RemoteDrive(credentials)
         
-        # Create file uploader
+        # Create file uploader object
         
         if context.uploadfolder:
             create_file_uploader(context, credentials)
-            
-        # Create local folder root
-        
-        if not os.path.exists(context.folder):
-            os.makedirs(context.folder)
-            
-        os.chdir(context.folder)
         
         # Sychronize with Google drive with local folder and keep doing if polling set
         # It also checks if any changes have been made and only synchronizes if so; it
