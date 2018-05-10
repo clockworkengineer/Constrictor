@@ -24,9 +24,9 @@ __status__ = "Pre-Alpha"
 
 
 class RemoteDrive(GDrive):
-    """Class to access Google drive.
+    """Class to access remote drive.
     
-    Access Google drive files (keeping a complete file cache locally).
+    Access remote drive files (keeping a complete file cache locally).
     
     Attrubutes:
     file_cache:         Drive file cache.
@@ -39,12 +39,13 @@ class RemoteDrive(GDrive):
             
             super().__init__(credentials)
             
-            self.root_folder_id = self.file_get_metadata('root')
+            self.root_folder_id = self.file_get_metadata('root').get('id', None)
 
         except Exception as e:
             logging.error(e)
             
     def refresh_file_cache(self):
+        """Refresh remote drive file cache."""
         
         try:
 
@@ -58,18 +59,18 @@ class RemoteDrive(GDrive):
     # Properties
      
     @property
-    def file_cache_id(self):
-        return(self._file_cache_id)
+    def file_cache(self):
+        return(self._file_cache)
     
-    @file_cache_id.setter
-    def file_cache_id(self, file_cache_id):
-        self._file_cache_id = file_cache_id
+    @file_cache.setter
+    def file_cache(self, file_cache):
+        self._file_cache = file_cache
         
     @property
     def root_folder_id(self):
         return(self._root_folder_id)
     
-    @file_cache_id.setter
+    @root_folder_id.setter
     def root_folder_id(self, root_folder_id):
         self._root_folder_id = root_folder_id
 
@@ -177,8 +178,7 @@ class LocalDrive(object):
             
             # Get top level folder contents
              
-            root_folder_id = self._remote_drive.file_get_metadata('root')
-            top_level = self._get_parents_children(root_folder_id['id'])
+            top_level = self._get_parents_children(self._remote_drive.root_folder_id)
              
             # Traverse remote drive file cache
              
@@ -309,6 +309,7 @@ class LocalDrive(object):
         self._current_fileId_table.clear()
         
     def synchronize(self, first=False):
+        """Synchromize local folder from remote drive."""
         
         # Check for remote drive changes
        
