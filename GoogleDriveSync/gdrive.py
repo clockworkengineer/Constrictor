@@ -116,14 +116,14 @@ class GDrive(object):
     Open up service to Google drive to list/manipulate/upload/download files.
     
     Attributes:
-    _credentials:      Application credentials(token) for accessing drive
+    credentials:      Application credentials(token) for accessing drive
     _drive_srvice:     Drive Service
     _start_page_token: Saved start page token used to get changes
     """
     
     def __init__(self, credentials):
         
-        self._credentials = credentials
+        self.credentials = credentials
         self._start_page_token = None
 
         self._drive_service = build('drive', 'v3',
@@ -292,4 +292,14 @@ class GDrive(object):
             raise(e)
             
         return(changes)
+
+    # Properties
+     
+    @property
+    def credentials(self):
+        return(self._credentials)
+    
+    @credentials.setter
+    def credentials(self, credentials):
+        self._credentials = credentials
 

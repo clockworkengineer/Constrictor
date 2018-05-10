@@ -75,16 +75,16 @@ def synchronize_drive(context, remote_drive):
         local_drive = LocalDrive(context.folder, remote_drive)
           
         if context.numworkers:
-            local_drive.set_numworkers(context.numworkers)
+            local_drive.numworkers = context.numworkers
         
         if context.refresh:
-            local_drive.set_refresh(context.refresh)
+            local_drive.refresh = context.refresh
             
         if context.fileidcache:
-            local_drive.set_fileidcache(context.fileidcache)
+            local_drive.fileidcache = context.fileidcache
             
         if context.timezone:
-            local_drive.set_timezone(context.timezone)
+            local_drive.timezone = context.timezone
             
         local_drive.build()
         

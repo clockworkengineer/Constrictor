@@ -3,7 +3,7 @@
 Class to map google drive to local file system.
 """
 
-from gdrive import GDrive
+from  gdrive import GDrive
 from concurrent.futures import ThreadPoolExecutor
 import os
 import sys
@@ -49,6 +49,24 @@ class RemoteDrive(GDrive):
 
         except Exception as e:
             logging.error(e)
+    
+    # Properties
+     
+    @property
+    def file_cache_id(self):
+        return(self._file_cache_id)
+    
+    @file_cache_id.setter
+    def file_cache_id(self, file_cache_id):
+        self._file_cache_id = file_cache_id
+        
+    @property
+    def root_folder_id(self):
+        return(self._root_folder_id)
+    
+    @file_cache_id.setter
+    def root_folder_id(self, root_folder_id):
+        self._root_folder_id = root_folder_id
 
                
 class LocalDrive(object):
@@ -60,10 +78,10 @@ class LocalDrive(object):
     _local_root_path:         Local filesystem root folder
     _remote_drive:            Remote drive object
     _current_fileId_table:    File Id data cache (dictionary)
-    _refresh:                 == True then complete refresh
-    _timezone:                Time zone used in file modified time compares
-    _numworkers:              Number of worker download threads
-    _fileidcache:             File name for file id cache
+    refresh:                 == True then complete refresh
+    timezone:                Time zone used in file modified time compares
+    numworkers:              Number of worker download threads
+    fileidcache:             File name for file id cache
     """
      
     def __init__(self, local_root_path, remote_drive):
@@ -71,11 +89,12 @@ class LocalDrive(object):
         self._local_root_path = local_root_path
         self._remote_drive = remote_drive
         self._current_fileId_table = {}
-        self._refresh = False
-        self._timezone = pytz.timezone('Europe/London')
-        self._numworkers = 4
-        self._fileidcache = 'fileID_cache.json'
         self._download_errors = 0
+              
+        self.refresh = False
+        self.timezone = 'Europe/London'
+        self.numworkers = 4
+        self.fileidcache = 'fileID_cache.json'
         
         #  Google App file export translation table
         
@@ -262,9 +281,9 @@ class LocalDrive(object):
          
         try:
              
-            if os.path.exists(self._fileidcache):
+            if os.path.exists(self.fileidcache):
                  
-                with open(self._fileidcache, 'r') as json_file:
+                with open(self.fileidcache, 'r') as json_file:
                     old_fileId_table = json.load(json_file)
                      
                 for fileId in old_fileId_table:            
@@ -275,21 +294,41 @@ class LocalDrive(object):
         except Exception as e:
             logging.error(e)
                                 
-        with open(self._fileidcache, 'w') as json_file:
+        with open(self.fileidcache, 'w') as json_file:
             json.dump(self._current_fileId_table, json_file, indent=2)
              
         self._current_fileId_table.clear()
     
-    # Get/Set attribute functions
+    # Properties
         
-    def set_refresh(self, refresh):
+    @property
+    def refresh(self):
+        return(self._refresh)
+    
+    @refresh.setter
+    def refresh(self, refresh):
         self._refresh = refresh
-        
-    def set_timezone(self, timezone):
+    
+    @property
+    def timezone(self):
+        return(self._timezone)
+    
+    @timezone.setter
+    def timezone(self, timezone):
         self._timezone = pytz.timezone(timezone)
-        
-    def set_numworkers(self, numworkers):
+    
+    @property
+    def numworkers(self):
+        return(self._numworkers)
+    
+    @numworkers.setter
+    def numworkers(self, numworkers):
         self._numworkers = numworkers
-        
+    
+    @property
+    def fieldidcache(selfs):
+        return(self._fieldidcache)
+    
+    @fieldidcache.setter
     def set_fieldidcache(self, fieldidcache):
         self._fileidcache = fieldidcache
