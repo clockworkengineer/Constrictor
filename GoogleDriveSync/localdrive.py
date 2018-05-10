@@ -39,13 +39,18 @@ class RemoteDrive(GDrive):
             
             super().__init__(credentials)
             
-            # Get all files not in trash for cache
-            
-            self.file_cache = self.file_list(query='not trashed',
-                                                 file_fields=
-                                                 'name, id, parents, mimeType, modifiedTime')
-            
             self.root_folder_id = self.file_get_metadata('root')
+
+        except Exception as e:
+            logging.error(e)
+            
+    def refresh_file_cache(self):
+        
+        try:
+
+            self.file_cache = self.file_list(query='not trashed',
+                                             file_fields=
+                                             'name, id, parents, mimeType, modifiedTime')
 
         except Exception as e:
             logging.error(e)
@@ -112,7 +117,7 @@ class LocalDrive(object):
         if not os.path.exists(self._local_root_path):
             os.makedirs(self._local_root_path)
     
-    def create_file_cache_entry(self, current_directory, file_data):
+    def _create_file_cache_entry(self, current_directory, file_data):
         """Create file id data dictionary entry."""
       
         # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
@@ -128,7 +133,7 @@ class LocalDrive(object):
      
         self._current_fileId_table[file_data['id']] = (local_file, file_data['mimeType'], file_data['modifiedTime'])
      
-    def get_parents_children(self, parent_file_id):       
+    def _get_parents_children(self, parent_file_id):       
         """Create a list of file data for children of of given file id"""
          
         children_list = []
@@ -140,7 +145,7 @@ class LocalDrive(object):
                   
         return(children_list)
              
-    def traverse(self, current_directory, file_list):
+    def _traverse(self, current_directory, file_list):
         """Recursively parse Google drive creating folders and file id data dictionary."""
          
         for file_data in file_list:
@@ -149,38 +154,42 @@ class LocalDrive(object):
                  
                 # Save away current file id data
                  
-                self.create_file_cache_entry(current_directory, file_data)
+                self._create_file_cache_entry(current_directory, file_data)
                                  
                 # If current file a folder then recursivelt parse
                  
                 if file_data['mimeType'] == 'application/vnd.google-apps.folder':               
-                    siblings_list = self.get_parents_children(file_data['id'])
-                    self.traverse(os.path.join(current_directory, file_data['name']), siblings_list)
+                    siblings_list = self._get_parents_children(file_data['id'])
+                    self._traverse(os.path.join(current_directory, file_data['name']), siblings_list)
                      
             except Exception as e:
                 logging.error(e)
                 sys.exit(1) 
          
-    def build(self):
+    def _build(self):
         """Build file Id cache for remote drive."""
         
         try:
-               
+            
+            # Refresh remote drive files
+            
+            self._remote_drive.refresh_file_cache()
+            
             # Get top level folder contents
              
             root_folder_id = self._remote_drive.file_get_metadata('root')
-            top_level = self.get_parents_children(root_folder_id['id'])
+            top_level = self._get_parents_children(root_folder_id['id'])
              
             # Traverse remote drive file cache
              
-            self.traverse(self._local_root_path, top_level)
+            self._traverse(self._local_root_path, top_level)
 
         except Exception as e:
             logging.error(e)
             sys.exit(1) 
                 
-    def update_file(self, local_file, modified_time, local_timezone):
-        """If Google drive file has been created or is newer than local file then update."""
+    def _update_file(self, local_file, modified_time, local_timezone):
+        """If Google drive file has been created or is newer than local file then _update."""
      
         try:
          
@@ -199,7 +208,7 @@ class LocalDrive(object):
              
         return(remote_date_time > local_date_time)
 
-    def download_worker(self, file_id, local_file, mime_type, sleep_delay=1):
+    def _download_worker(self, file_id, local_file, mime_type, sleep_delay=1):
         """Download file worker thread."""
         
         # For moment create new GDrive as http module used by underlying api is
@@ -216,7 +225,7 @@ class LocalDrive(object):
             print(e)
             self._download_errors += 1
             
-    def update(self):
+    def _update(self):
         """Update any local files if needed."""
          
         file_list = []
@@ -232,7 +241,7 @@ class LocalDrive(object):
                         os.makedirs(file_data[0])
                     continue
                  
-                if self._refresh or self.update_file(file_data[0], file_data[2], self._timezone):
+                if self._refresh or self._update_file(file_data[0], file_data[2], self.timezone):
                      
                     # Convert(export) any google application file  otherwise just download
                            
@@ -252,7 +261,7 @@ class LocalDrive(object):
         if self._numworkers > 1:
             with ThreadPoolExecutor(max_workers=self._numworkers) as executor:
                 for file_to_process in file_list:
-                    future = executor.submit(self.download_worker, *file_to_process)
+                    future = executor.submit(self._download_worker, *file_to_process)
         else:
             
             try:
@@ -265,7 +274,7 @@ class LocalDrive(object):
             logging.info('{} errors during file downloads.'.format(self._download_errors))
             self._download_errors = 0
             
-    def remove_local_file(self, file_name):
+    def _remove_local_file(self, file_name):
         """Remove file/directory from local folder."""
          
         if os.path.isfile(file_name):
@@ -276,7 +285,7 @@ class LocalDrive(object):
             os.rmdir(file_name)
             logging.info('Deleting folder {} removed/renamed/moved from My Drive'.format(file_name))
      
-    def rationalise(self):
+    def _rationalise(self):
         """Clean up local folder for files removed/renamed/deleted on My Drive."""
          
         try:
@@ -289,7 +298,7 @@ class LocalDrive(object):
                 for fileId in old_fileId_table:            
                     if ((fileId not in self._current_fileId_table) or 
                         (self._current_fileId_table[fileId][0] != old_fileId_table[fileId][0])):
-                        remove_local_file(old_fileId_table[fileId][0])
+                        self._remove_local_file(old_fileId_table[fileId][0])
              
         except Exception as e:
             logging.error(e)
@@ -298,7 +307,26 @@ class LocalDrive(object):
             json.dump(self._current_fileId_table, json_file, indent=2)
              
         self._current_fileId_table.clear()
-    
+        
+    def synchronize(self, first=False):
+        
+        # Check for remote drive changes
+       
+        changes = self._remote_drive.retrieve_all_changes()
+        if changes or first:
+ 
+            # Build file Id cache
+            
+            self._build()
+            
+            # Update any local files
+            
+            self._update()
+            
+            # Tidy up any unnecessary files left behind
+            
+            self._rationalise()
+        
     # Properties
         
     @property

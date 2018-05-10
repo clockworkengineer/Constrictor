@@ -56,6 +56,7 @@ import sys
 import logging
 import argparse
 import signal
+import time
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -65,36 +66,6 @@ __version__ = "0.0.1"
 __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
-
-
-def synchronize_drive(context, remote_drive):
-        """Sychronize Google drive with local drive folder"""
-        
-        # Create and build local folder for Google drive
-        
-        local_drive = LocalDrive(context.folder, remote_drive)
-          
-        if context.numworkers:
-            local_drive.numworkers = context.numworkers
-        
-        if context.refresh:
-            local_drive.refresh = context.refresh
-            
-        if context.fileidcache:
-            local_drive.fileidcache = context.fileidcache
-            
-        if context.timezone:
-            local_drive.timezone = context.timezone
-            
-        local_drive.build()
-        
-        # Update any local files
-        
-        local_drive.update()
-        
-        # Tidy up any unnecessary files left behind
-        
-        local_drive.rationalise()
 
 
 def create_file_uploader(context, credentials):
@@ -181,32 +152,42 @@ def Main():
      
         # Authorize application with Google
         
-        credentials = GAuthorize('https://www.googleapis.com/auth/drive', context.secrets, context.credentials)
+        credentials = GAuthorize(context.scope, context.secrets, context.credentials)
         
         if not credentials:
             logging.error('GoogleDriveSync: Could not perform authorization')
             sys.exit(1)
             
-        # Create RemoteDrive object
+        # Create RemoteDrive/LocalDrive objects
         
         remote_drive = RemoteDrive(credentials)
+
+        local_drive = LocalDrive(context.folder, remote_drive)
+          
+        if context.numworkers:
+            local_drive.numworkers = context.numworkers
         
+        if context.refresh:
+            local_drive.refresh = context.refresh
+            
+        if context.fileidcache:
+            local_drive.fileidcache = context.fileidcache
+            
+        if context.timezone:
+            local_drive.timezone = context.timezone
+            
         # Create file uploader object
         
         if context.uploadfolder:
             create_file_uploader(context, credentials)
         
         # Sychronize with Google drive with local folder and keep doing if polling set
-        # It also checks if any changes have been made and only synchronizes if so; it
-        # is not interested in the changes themselves just that they have occured.
         
-        synchronize_drive(context, remote_drive)
+        local_drive.synchronize(first=True)
         while context.polltime and not context.stop_polling:
             logging.info('Polling drive ....')
             time.sleep(context.polltime * 60)
-            changes = remote_drive.retrieve_all_changes()
-            if changes:
-                synchronize_drive(context, remote_drive)
+            local_drive.synchronize()
 
     except Exception as e:
         logging.error(e)
