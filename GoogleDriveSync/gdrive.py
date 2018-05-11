@@ -124,8 +124,8 @@ class GDrive(object):
     def __init__(self, credentials):
         
         self.credentials = credentials
+        
         self._start_page_token = None
-
         self._drive_service = build('drive', 'v3',
                                     http=self._credentials.authorize(Http()),
                                     cache_discovery=False)

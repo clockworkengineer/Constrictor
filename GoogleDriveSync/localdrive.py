@@ -81,13 +81,14 @@ class LocalDrive(object):
     Create mirror Google drive on local file system.
      
     Attributes:
-    _local_root_path:         Local filesystem root folder
-    _remote_drive:            Remote drive object
-    _current_fileId_table:    File Id data cache (dictionary)
+    _local_root_path:        Local filesystem root folder
+    _remote_drive:           Remote drive object
+    _current_fileId_table:   File Id data cache (dictionary)
     refresh:                 == True then complete refresh
     timezone:                Time zone used in file modified time compares
     numworkers:              Number of worker download threads
     fileidcache:             File name for file id cache
+    ignorelist:              Local files/path not included in any synchronize
     """
      
     def __init__(self, local_root_path, remote_drive):
@@ -101,6 +102,7 @@ class LocalDrive(object):
         self.timezone = 'Europe/London'
         self.numworkers = 4
         self.fileidcache = 'fileID_cache.json'
+        self.ignorelist = []
         
         #  Google App file export translation table
         
@@ -125,6 +127,13 @@ class LocalDrive(object):
         # A dict could by used but a tuple makes it more compact
          
         local_file = os.path.join(current_directory, file_data['name'])
+        
+        # Ignore local folder paths on ignore list (ie. upload folder;so that contents don't get copied).
+        
+        for ignore_file in self._ignorelist:
+            if local_file.startswith(ignore_file):
+                logging.debug("Ignoring file {}.".format(local_file))
+                return
          
         # File mime type incates google app file so change local file extension for export.
          
@@ -355,9 +364,17 @@ class LocalDrive(object):
         self._numworkers = numworkers
     
     @property
-    def fieldidcache(selfs):
+    def fieldidcache(self):
         return(self._fieldidcache)
     
     @fieldidcache.setter
-    def set_fieldidcache(self, fieldidcache):
+    def fieldidcache(self, fieldidcache):
         self._fileidcache = fieldidcache
+        
+    @property
+    def ignorelist(self):
+        return(self.ignorelist)
+    
+    @ignorelist.setter
+    def ignorelist(self, ignorelist):
+        self._ignorelist = ignorelist

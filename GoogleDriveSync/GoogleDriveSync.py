@@ -19,6 +19,7 @@ TODO:
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
                           [-l LOGFILE] [-n NUMWORKERS] [-u UPLOADFOLDER]
+                          [-i IGNORELIST [IGNORELIST ...]]
                           folder
 
 Synchronize Google Drive with a local folder
@@ -47,6 +48,7 @@ optional arguments:
                         Number of worker threads for downloads
   -u UPLOADFOLDER, --uploadfolder UPLOADFOLDER
                         Google upload folder
+  -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORE
 """
 
 from localdrive import LocalDrive, RemoteDrive
@@ -108,6 +110,7 @@ def load_context():
         parser.add_argument('-l', '--logfile', help='All logging to file')
         parser.add_argument('-n', '--numworkers', type=int, help='Number of worker threads for downloads')
         parser.add_argument('-u', '--uploadfolder', help='Google upload folder')
+        parser.add_argument('-i', '--ignorelist', nargs='+', help='Ignore file/path list')
     
         context = parser.parse_args()
         
@@ -175,6 +178,9 @@ def Main():
             
         if context.timezone:
             local_drive.timezone = context.timezone
+        
+        if context.ignorelist:
+            local_drive.ignorelist = context.ignorelist
             
         # Create file uploader object
         
