@@ -54,6 +54,7 @@ TODO:
 3) Better exception handling
 4) Make drive uploader part of remote drive class.
 5) Improved logging.
+6) Make export table configurable and for uploads too.
 """
 
 from localdrive import LocalDrive
@@ -134,7 +135,8 @@ def load_context():
 ####################
 
 
-def Main():
+def GoogleDriveSync():
+    """GoogleDriveSync main program entry point."""
         
     try:
         
@@ -202,4 +204,4 @@ def Main():
         
 if __name__ == '__main__':
 
-    Main()
+    GoogleDriveSync()

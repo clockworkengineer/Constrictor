@@ -1,6 +1,6 @@
 """Class for accessing google drive.
 
-Class to connect, upload, download, maipulate and interrogate files on google drive.
+Class to connect, upload, download, maipulate and interrogate files on Google drive.
 To to this it uses google's own python wrapper Drive API which can be read about at URL
 https://developers.google.com/drive/v3/web/quickstart/python.
 """
@@ -32,36 +32,48 @@ logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
 
 class GDriveUploader(FileSystemEventHandler):
-    """Class to upload watched folder files to Google drive."""
+    """Class to upload watched folder files to Google drive.
     
-    def __init__(self, credentials, local_file_path, remote_folder):
-        
+    Child class of FileSystemEventHandle that creates its own watchdog observer
+    and sets itself as the file handler. Its on_created method is overridden to upload
+    any files created to a specific folder on Google drive.
+    
+    Attributes:
+        _credentails:             Token returned during Google drive authorization  
+        _local_upload_path:       Local upload folder path
+        _remote_upload_folder:    Remote upload folder
+    """
+    
+    def __init__(self, credentials, local_upload_path, remote_upload_folder):
+        """Set attributes, create file observer and start watching it."""
         try:
             
             self._credentials = credentials
-            self._local_file_path = local_file_path
-            self._remote_folder = remote_folder
+            self._local_upload_path = local_upload_path
+            self._remote_upload_folder = remote_upload_folder
             
-            if not os.path.exists(local_file_path):
-                os.makedirs(local_file_path)
+            if not os.path.exists(local_upload_path):
+                os.makedirs(local_upload_path)
     
             self._drive = GDrive(self._credentials)
             
-            query = "(name = '{}') and (not trashed)".format(remote_folder)
+            # If remote folder does not exist create it off root
+                        
+            query = "(name = '{}') and (not trashed)".format(remote_upload_folder)
             
             self._upload_folder = self._drive.file_list(query=query,
                                              file_fields=
                                              'name, id, parents')
             
             if len(self._upload_folder) == 0:
-                self._drive.folder_create(remote_folder)
+                self._drive.folder_create(remote_upload_folder)
                 self._upload_folder = self._drive.file_list(query=query,
                                                  file_fields=
                                                  'name, id, parents')
                 
             self._observer = Observer();
             
-            self._observer.schedule(self, self._local_file_path,
+            self._observer.schedule(self, self._local_upload_path,
                               recursive=False) 
             
             self._observer.start()
@@ -70,11 +82,11 @@ class GDriveUploader(FileSystemEventHandler):
             logging.error(e)
                 
     def on_created(self, event):
-        
+        """Upload file to Google drive."""
         try:
             
             logging.info("Uploading file '{}' to Google drive folder '{}'.".
-                         format(event.src_path, self._remote_folder))
+                         format(event.src_path, self._remote_upload_folder))
             
             self._drive.file_upload(event.src_path, parent_id=self._upload_folder[0]['id'])
 
