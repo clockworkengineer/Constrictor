@@ -5,18 +5,16 @@ At present it only a copies the Google drive ('My Drive') and local changes are
 not reflected back on the drive. It also can handle files on the drive that 
 have been removed(trashed), renamed or moved; mirroring any changes in the local
 folder structure. Currently doesn't handle duplicate file names in the same Google
-Drive folder well and these should be avoided (for the moment).
+Drive folder well and these should be avoided (for the moment). Note: When referencing
+the comments Remote drive and Google drive are the same thing.
 
 For setting up the crentials and secrets for use with the API it is suggsested 
 that googles quickstart guide at "https://developers.google.com/drive/v3/web/
 quickstart/python" be consulted.
 
-TODO:
-1) Use changes API better
-2) Compress file id cache file
-3) Better exception handling
+USAGE: 
 
-usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
+GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
                           [-l LOGFILE] [-n NUMWORKERS] [-u UPLOADFOLDER]
                           [-i IGNORELIST [IGNORELIST ...]]
@@ -49,9 +47,16 @@ optional arguments:
   -u UPLOADFOLDER, --uploadfolder UPLOADFOLDER
                         Google upload folder
   -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORE
+  
+TODO:
+1) Use changes API better
+2) Compress file id cache file
+3) Better exception handling
+4) Make drive uploader part of remote drive class.
 """
 
-from localdrive import LocalDrive, RemoteDrive
+from localdrive import LocalDrive
+from remotedrive import RemoteDrive
 from  gdrive import GAuthorize, GDriveUploader
 import os
 import sys
@@ -68,14 +73,6 @@ __version__ = "0.0.1"
 __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
-
-
-def create_file_uploader(context, credentials):
-    """Create uploader folder for Google Drive"""
-    
-    uploader = GDriveUploader(credentials, context.uploadfolder, os.path.basename(context.uploadfolder))
-    
-    logging.info("Created upload folder {} for Google drive.".format(context.uploadfolder))
 
 
 def setup_signal_handlers(context):
@@ -185,7 +182,8 @@ def Main():
         # Create file uploader object
         
         if context.uploadfolder:
-            create_file_uploader(context, credentials)
+            uploader = GDriveUploader(credentials, context.uploadfolder, os.path.basename(context.uploadfolder))
+            logging.info("Created upload folder {} for Google drive.".format(context.uploadfolder))
         
         # Sychronize with Google drive with local folder and keep doing if polling set
         
