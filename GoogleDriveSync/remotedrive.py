@@ -1,6 +1,7 @@
 """Class for accessing remote drive.
 
-
+This is a child class of GDevice that caches the remote  Google drive contents
+for performance and reduce the number of http requests,
 """
 
 from  gdrive import GDrive
