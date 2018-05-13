@@ -7,6 +7,7 @@ https://developers.google.com/drive/v3/web/quickstart/python.
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+# noinspection PyUnresolvedReferences
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
@@ -95,7 +96,7 @@ class GDriveUploader(FileSystemEventHandler):
             raise e
 
 
-def GAuthorize(scope, secrets_file, credentials_file, credentials_refresh=False):
+def g_authorize(scope, secrets_file, credentials_file, credentials_refresh=False):
     """Function for getting authoization token for use with Google drive.
     
     Get access token from Google using OAuth 2.0.

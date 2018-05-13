@@ -6,6 +6,7 @@ structure.
 
 from gdrive import GDrive
 from concurrent.futures import ThreadPoolExecutor
+from googleapiclient.errors import HttpError
 import os
 import sys
 import logging
@@ -227,7 +228,7 @@ class LocalDrive(object):
             try:
                 for file_to_process in file_list:
                     self._remote_drive.file_download(*file_to_process)
-            except Exception:
+            except HttpError:
                 self._download_errors += 1
 
         if self._download_errors:

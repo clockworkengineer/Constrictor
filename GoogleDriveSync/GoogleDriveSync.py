@@ -59,7 +59,7 @@ TODO:
 
 from localdrive import LocalDrive
 from remotedrive import RemoteDrive
-from gdrive import GAuthorize, GDriveUploader
+from gdrive import g_authorize, GDriveUploader
 import os
 import sys
 import logging
@@ -152,7 +152,7 @@ def load_context():
 ####################
 
 
-def GoogleDriveSync():
+def google_drive_sync():
     """GoogleDriveSync main program entry point."""
 
     try:
@@ -172,7 +172,7 @@ def GoogleDriveSync():
      
         # Authorize application with Google
         
-        credentials = GAuthorize(context.scope, context.secrets, context.credentials)
+        credentials = g_authorize(context.scope, context.secrets, context.credentials)
         
         if not credentials:
             logging.error('GoogleDriveSync: Could not perform authorization')
@@ -221,4 +221,4 @@ def GoogleDriveSync():
         
 if __name__ == '__main__':
 
-    GoogleDriveSync()
+    google_drive_sync()
