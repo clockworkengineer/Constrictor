@@ -30,14 +30,14 @@ class LocalDrive(object):
     Create mirror Google drive on local file system.
      
     Attributes:
-    _local_root_path:        Local filesystem root folder
-    _remote_drive:           Remote drive object
-    _current_fileId_table:   File Id data cache (dictionary)
-    refresh:                 == True then complete refresh
-    timezone:                Time zone used in file modified time compares
-    numworkers:              Number of worker download threads
-    fileidcache:             File name for file id cache
-    ignorelist:              Local files/path not included in any synchronize
+        _local_root_path:        Local filesystem root folder
+        _remote_drive:           Remote drive object
+        _current_fileId_table:   File Id data cache (dictionary)
+        refresh:                 == True then complete refresh
+        timezone:                Time zone used in file modified time compares
+        numworkers:              Number of worker download threads
+        fileidcache:             File name for file id cache
+        ignorelist:              Local files/path not included in any synchronize
     """
      
     def __init__(self, local_root_path, remote_drive):

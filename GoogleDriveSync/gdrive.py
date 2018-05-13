@@ -101,9 +101,10 @@ def GAuthorize(scope, secrets_file, credentials_file, credentials_refresh=False)
     Get access token from Google using OAuth 2.0.
     
     Args:
-        scope:            Google drive API scope
-        secrets_file:     Application secrets file
-        credentials_file: Application credentials file
+        scope:                Google drive API scope
+        secrets_file:         Application secrets file
+        credentials_file:     Application credentials file
+        credentails_refresh:  Refresh credentials
     
     Returns: 
         Credentials(token) for acccessing Google drive.       
@@ -128,9 +129,9 @@ class GDrive(object):
     Open up service to Google drive to list/manipulate/upload/download files.
     
     Attributes:
-    credentials:      Application credentials(token) for accessing drive
-    _drive_srvice:     Drive Service
-    _start_page_token: Saved start page token used to get changes
+        credentials:       Application credentials(token) for accessing drive
+        _drive_srvice:     Drive Service
+        _start_page_token: Saved start page token used to get changes
     """
     
     def __init__(self, credentials):

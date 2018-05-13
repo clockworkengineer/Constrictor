@@ -29,8 +29,8 @@ class RemoteDrive(GDrive):
     Access remote drive files (keeping a complete file cache locally).
     
     Attrubutes:
-    file_cache:         Drive file cache.
-    root_folder_id:     File ID for root folder.
+        file_cache:        Drive file cache.
+        root_folder_id:    File ID for root folder.
     """
     
     def __init__(self, credentials):
