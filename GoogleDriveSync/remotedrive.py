@@ -4,14 +4,9 @@ This is a child class of GDevice that caches the remote  Google drive contents
 for performance and reduce the number of http requests,
 """
 
-from  gdrive import GDrive
-import os
-import sys
 import logging
-import datetime
-import json
-import pytz
-import time
+
+from gdrive import GDrive
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -60,7 +55,7 @@ class RemoteDrive(GDrive):
      
     @property
     def file_cache(self):
-        return(self._file_cache)
+        return self._file_cache
     
     @file_cache.setter
     def file_cache(self, file_cache):
@@ -68,7 +63,7 @@ class RemoteDrive(GDrive):
         
     @property
     def root_folder_id(self):
-        return(self._root_folder_id)
+        return self._root_folder_id
     
     @root_folder_id.setter
     def root_folder_id(self, root_folder_id):

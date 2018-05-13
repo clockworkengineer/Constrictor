@@ -59,7 +59,7 @@ TODO:
 
 from localdrive import LocalDrive
 from remotedrive import RemoteDrive
-from  gdrive import GAuthorize, GDriveUploader
+from gdrive import GAuthorize, GDriveUploader
 import os
 import sys
 import logging
@@ -78,9 +78,17 @@ __status__ = "Pre-Alpha"
 
 
 def setup_signal_handlers(context):
-    """Set signal handlers for SIGTERM/SIGINT so cleanly exit"""
+    """Set signal handlers for SIGTERM/SIGINT so cleanly exit.
+    
+    Redirect Control-C and kill process to set global flag stop polling and thus cleanly
+    exit program on next synchronize poll loop.
+    
+    Arguments:
+        context:    runtime context (globlals/arguments)
+        
+    """
      
-    def signal_handler(signal, frame):
+    def signal_handler(signal_number, frame):
         logging.info('Ctrl+C entered or process terminated with kill.\nClosing down cleanly on next poll.')
         context.stop_polling = True
 
@@ -91,7 +99,15 @@ def setup_signal_handlers(context):
 
     
 def load_context():
-    """Load and parse command line arguments and create run context."""
+    """Load and parse command line arguments and create runtime context.
+    
+    Parse command line arguments and create runtime context. Also set any
+    logging parameters passed in (just to file for the moment).
+    
+    Returns:
+        context:    runtime parameters,
+    
+    """
 
     context = None
     
@@ -101,7 +117,8 @@ def load_context():
         parser.add_argument('folder', help='Local folder')
         parser.add_argument('-p', '--polltime', type=int, help='Poll time for drive sychronize in minutes')
         parser.add_argument('-r', '--refresh', action='store_true', help='Refresh all files.')
-        parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly', help='Google Drive API Scope')
+        parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly',
+                            help='Google Drive API Scope')
         parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
         parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
         parser.add_argument('-f', '--fileidcache', help='File id cache json file')
@@ -115,7 +132,7 @@ def load_context():
         
         # Set logging details
         
-        logging_params = { 'level': logging.INFO}
+        logging_params = {'level': logging.INFO}
         
         if context.logfile:
             logging_params['filename'] = context.logfile
@@ -128,7 +145,7 @@ def load_context():
         logging.error(e)
         sys.exit(1)
          
-    return(context)
+    return context
 
 ####################
 # Main Entry Point #
@@ -137,7 +154,7 @@ def load_context():
 
 def GoogleDriveSync():
     """GoogleDriveSync main program entry point."""
-        
+
     try:
         
         # Create runtime context
@@ -199,7 +216,7 @@ def GoogleDriveSync():
     except Exception as e:
         logging.error(e)
         
-    logging.info('GoogleDriveSync: End of drive Sync'.format(context.folder))
+    logging.info('GoogleDriveSync: End of drive Sync.')
 
         
 if __name__ == '__main__':
