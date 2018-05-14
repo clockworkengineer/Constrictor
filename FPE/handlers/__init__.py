@@ -1,12 +1,12 @@
 # Make sure handler directory is on sys.path
 
-import sys
-import os
+# import sys
+# import os
+#
+# if os.path.join(os.getcwd(), 'handlers') not in sys.path:
+#     sys.path.insert(1, os.path.join(os.getcwd(), 'handlers'))
 
-if os.path.join(os.getcwd(), 'handlers') not in sys.path:
-    sys.path.insert(1, os.path.join(os.getcwd(), 'handlers'))
-
-from CopyFile import CopyFile
-from CSVFileToMySQL import CSVFileToMySQL
-from CSVFileToSQLite import CSVFileToSQLite
-from SFTPCopyFile import SFTPCopyFile
+from handlers.CopyFile import CopyFile
+from handlers.CSVFileToMySQL import CSVFileToMySQL
+from handlers.CSVFileToSQLite import CSVFileToSQLite
+from handlers.SFTPCopyFile import SFTPCopyFile

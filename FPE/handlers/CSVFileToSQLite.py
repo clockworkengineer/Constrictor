@@ -1,6 +1,6 @@
 """Import CSV file to SQLite file handler."""
 
-from common import display_details, generate_sql
+from handlers.common import display_details, generate_sql
 import csv
 import logging
 import os
@@ -25,18 +25,18 @@ class CSVFileToSQLite(FileSystemEventHandler):
     updated.
     
     Attributes:
-        hanlder_name : Name of handler object
+        handler_name : Name of handler object
         watch_folder:  Folder to watch for files
         database_file: SQLite database file name
         table_name:    SQLite table name
-        key:           Table column key used in updates
+        key_name:      Table column key used in updates
         recursive:     Boolea == true perform recursive file watch  
         delete_source: Boolean == true delete source file on sucess        
     """
-    
+
     def __init__(self, handler_section):
         """ Intialise handler attributes and log details"""
-        
+
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.table_name = handler_section['table']
@@ -45,54 +45,53 @@ class CSVFileToSQLite(FileSystemEventHandler):
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
         self.param_style = 'named'
-        
+
         display_details(handler_section)
 
     def on_created(self, event):
         """Import CSV file to SQLite database."""
-                
+
         try:
-            
+
             database = None
-        
+
             if not os.path.exists(self.database_file):
                 raise IOError("Database file does not exist.")
-            
+
             database = sqlite3.connect(self.database_file)
-            
+
             cursor = database.cursor()
-    
-            logging.info ('Imorting CSV file {} to table {}.'.
-                          format(event.src_path, self.table_name))
-    
+
+            logging.info('Imorting CSV file {} to table {}.'.
+                         format(event.src_path, self.table_name))
+
             with open(event.src_path, 'r') as file_handle:
-                          
+
                 csv_reader = csv.DictReader(file_handle)
                 sql = generate_sql(self.param_style, self.table_name,
-                                    self.key_name,
-                                    csv_reader.fieldnames)
-                           
+                                   self.key_name,
+                                   csv_reader.fieldnames)
+
                 for row in csv_reader:
 
                     try:
-                        
+
                         with database:
                             cursor.execute(sql, row)
-                            
+
                     except (sqlite3.Error, sqlite3.Warning) as e:
                         logging.error('{}\n{}'.format(sql, e))
-                        
+
         except Exception as e:
             logging.error("Error in handler {}: {}".
                           format(self.handler_name, e))
             database = None
-        
+
         else:
-            logging.info ('Finished Imorting file {} to table {}.'.
-                          format(event.src_path, self.table_name))
+            logging.info('Finished Imorting file {} to table {}.'.
+                         format(event.src_path, self.table_name))
             if self.delete_source:
                 os.remove(event.src_path)
 
         if database:
             database.close()
-

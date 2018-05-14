@@ -1,6 +1,6 @@
 """SFTP Copy file handler."""
 
-from common import display_details
+from handlers.common import display_details
 import logging
 import os
 import pysftp

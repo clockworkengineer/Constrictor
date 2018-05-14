@@ -12,8 +12,8 @@ Current built in file handlers:
 4) SFTP copy files/directory to an SSH server.
 """
 
-import handlers
 import logging
+import handlers
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -29,7 +29,7 @@ def create_event_handler(handler_section):
     """Generate watchdog event handler object for the configuration section passed in."""
     
     file_handler = None
-    
+
     try:
 
         handler_class = getattr(handlers, handler_section['type'])
@@ -39,6 +39,6 @@ def create_event_handler(handler_section):
         logging.error("Missing option {}.\n{} not started.".format(e, handler_section['name']))
     except Exception as e:
         logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
-
+        
     return file_handler
 

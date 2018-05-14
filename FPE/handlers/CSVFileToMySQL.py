@@ -1,6 +1,6 @@
 """Import CSV file to MySQL file hander."""
 
-from common import display_details, generate_sql
+from handlers.common import display_details, generate_sql
 import MySQLdb
 import csv
 import logging
@@ -25,21 +25,21 @@ class CSVFileToMySQL(FileSystemEventHandler):
     updated.
     
     Attributes:
-        hanlder_name : Name of handler object
+        handler_name : Name of handler object
         watch_folder:  Folder to watch for files
         server:        MySQL database server
-        user:          MySQL user name
-        password:      MySQL user password
+        user_name:     MySQL user name
+        user_password: MySQL user password
         database_name: MySQL database name
         table_name:    MySQL table name
-        key:           Table column key used in updates
+        key_name:      Table column key used in updates
         recursive:     Boolea == true perform recursive file watch  
         delete_source: Boolean == true delete source file on sucess  
     """
-    
+
     def __init__(self, handler_section):
         """ Intialise handler attributes and log details."""
-               
+
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']
         self.server = handler_section['server']
@@ -51,45 +51,45 @@ class CSVFileToMySQL(FileSystemEventHandler):
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
         self.param_style = 'pyformat'
-                
+
         display_details(handler_section)
-        
+
     def on_created(self, event):
         """Import CSV file to MySQL database."""
-        
+
         try:
 
             database = MySQLdb.connect(self.server, self.user_name,
-                                 self.user_password, self.database_name)          
+                                       self.user_password, self.database_name)
             cursor = database.cursor()
-    
-            logging.info ('Imorting CSV file {} to table {}.'.
-                          format(event.src_path, self.table_name))
-    
+
+            logging.info('Imorting CSV file {} to table {}.'.
+                         format(event.src_path, self.table_name))
+
             with open(event.src_path, 'r') as file_handle:
-                
+
                 csv_reader = csv.DictReader(file_handle)
                 sql = generate_sql(self.param_style, self.table_name, self.key_name,
-                                    csv_reader.fieldnames)
-                           
+                                   csv_reader.fieldnames)
+
                 for row in csv_reader:
- 
+
                     try:
- 
+
                         with database:
                             cursor.execute(sql, row)
-                         
+
                     except (MySQLdb.Error, MySQLdb.Warning) as e:
-                        logging.error ('{}\n{}'.format(sql, e))
-                        
-        except Exception as e:  
+                        logging.error('{}\n{}'.format(sql, e))
+
+        except Exception as e:
             logging.error("Error in handler {}: {}".
                           format(self.handler_name, e))
             database = None
-        
+
         else:
-            logging.info ('Finished Imorting file {} to table {}.'.
-                          format(event.src_path, self.table_name))
+            logging.info('Finished Imorting file {} to table {}.'.
+                         format(event.src_path, self.table_name))
             if self.delete_source:
                 os.remove(event.src_path)
 
