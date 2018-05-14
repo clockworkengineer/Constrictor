@@ -25,7 +25,7 @@ optional arguments:
   -n NAME, --name NAME  File handler name
 """
 
-from handlerfactory import CreateFileEventHandler 
+from handlerfactory import create_event_handler
 import sys
 import os
 import time
@@ -100,7 +100,7 @@ def load_config(arguments):
         # If handler name set then remove all others from config
         # leaving the config empty if the handler doesn't exist
         
-        if arguments.name != None:
+        if arguments.name is not None:
             
             if not config.has_section(arguments.name):
                 logging.info('Error: Non-existant file handler {}.'.
@@ -114,7 +114,7 @@ def load_config(arguments):
         logging.error(e)
         sys.exit(1)
      
-    return(config)
+    return config
 
     
 def load_arguments():
@@ -130,7 +130,7 @@ def load_arguments():
         print('Error: Non-existant config file passed to FPE.')
         sys.exit(1)
 
-    return(arguments)
+    return arguments
 
 
 def create_observer(config, handler_name):
@@ -146,23 +146,24 @@ def create_observer(config, handler_name):
         # Merge config with default values and create handler
         
         handler_section.update(get_config_section(config, handler_name))
-        file_handler = CreateFileEventHandler(handler_section)
+        file_handler = create_event_handler(handler_section)
                         
     except Exception as e:
         logging.error(e)
+        observer = None
         
     else:
         # Create observer with file handler and start watching
         
-        if file_handler != None:
-            observer = Observer();
+        if file_handler is not None:
+            observer = Observer()
             observer.schedule(file_handler, file_handler.watch_folder,
                               recursive=file_handler.recursive) 
             observer.start()
         else:
-            observer = None;
+            observer = None
             
-    return(observer)
+    return observer
 
 
 def observe_folders(observers_list):
@@ -187,7 +188,7 @@ def observe_folders(observers_list):
 ########################
 
 
-def Main():
+def fpe():
     """Main program entry point"""
 
     arguments = load_arguments()
@@ -203,7 +204,7 @@ def Main():
     for handler_name in config.sections():
                 
         observer = create_observer(config, handler_name)
-        if observer != None:
+        if observer is not None:
             observers_list.append(observer)
     
     # If list not empty observer folders
@@ -218,4 +219,4 @@ def Main():
 
 
 if __name__ == '__main__':
-    Main()
+    fpe()

@@ -1,4 +1,4 @@
-# Make sure handler directory is on sys,path
+# Make sure handler directory is on sys.path
 
 import sys
 import os

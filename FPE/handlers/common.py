@@ -15,7 +15,7 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
  
-def _display_details(handler_section): 
+def display_details(handler_section):
     """Display event handler details and paraneters."""
     
     try:
@@ -30,7 +30,7 @@ def _display_details(handler_section):
         logging.error(e)
 
    
-def _generate_sql(param_tyle, table_name, key_name, row_fields):
+def generate_sql(param_tyle, table_name, key_name, row_fields):
     """Generate SQL for update/insert row of fields."""
     
     try:
@@ -42,7 +42,7 @@ def _generate_sql(param_tyle, table_name, key_name, row_fields):
         elif param_tyle == 'named':
             placeholder = ':{}'
         else:
-            logging.error('Unsupported paramstyle {}'.format(placeholder))
+            logging.error('Unsupported paramstyle {}'.format(param_tyle))
             placeholder = ''
         
         fields = ''
@@ -68,7 +68,8 @@ def _generate_sql(param_tyle, table_name, key_name, row_fields):
 
     except Exception as e:
         logging.error(e)
-        
+        sql = None
+
     logging.debug(sql)
-     
-    return (sql)
+
+    return sql

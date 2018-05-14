@@ -1,6 +1,6 @@
 """Create file event handler object.
   
-Factory function CreateFileEventHandler used to create an file handler object 
+Factory function create_event_handler used to create an file handler object
 from the handler config section passed in. These handlers are then passed into 
 a watchdog observer specically created for it and used to process files passed 
 to handler method on_created().
@@ -25,10 +25,10 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-def CreateFileEventHandler(handler_section):
+def create_event_handler(handler_section):
     """Generate watchdog event handler object for the configuration section passed in."""
     
-    file_handler = None;
+    file_handler = None
     
     try:
 
@@ -38,8 +38,7 @@ def CreateFileEventHandler(handler_section):
     except KeyError as e:
         logging.error("Missing option {}.\n{} not started.".format(e, handler_section['name']))
     except Exception as e:
-        print(e)
         logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
 
-    return (file_handler)
+    return file_handler
 

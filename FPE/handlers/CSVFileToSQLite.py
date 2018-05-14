@@ -1,6 +1,6 @@
 """Import CSV file to SQLite file handler."""
 
-from common import _display_details, _generate_sql
+from common import display_details, generate_sql
 import csv
 import logging
 import os
@@ -25,13 +25,13 @@ class CSVFileToSQLite(FileSystemEventHandler):
     updated.
     
     Attributes:
-    hanlder_name : Name of handler object
-    watch_folder:  Folder to watch for files
-    database_file: SQLite database file name
-    table_name:    SQLite table name
-    key:           Table column key used in updates
-    recursive:     Boolea == true perform recursive file watch  
-    delete_source: Boolean == true delete source file on sucess        
+        hanlder_name : Name of handler object
+        watch_folder:  Folder to watch for files
+        database_file: SQLite database file name
+        table_name:    SQLite table name
+        key:           Table column key used in updates
+        recursive:     Boolea == true perform recursive file watch  
+        delete_source: Boolean == true delete source file on sucess        
     """
     
     def __init__(self, handler_section):
@@ -46,7 +46,7 @@ class CSVFileToSQLite(FileSystemEventHandler):
         self.delete_source = handler_section['deletesource']
         self.param_style = 'named'
         
-        _display_details(handler_section)
+        display_details(handler_section)
 
     def on_created(self, event):
         """Import CSV file to SQLite database."""
@@ -68,7 +68,7 @@ class CSVFileToSQLite(FileSystemEventHandler):
             with open(event.src_path, 'r') as file_handle:
                           
                 csv_reader = csv.DictReader(file_handle)
-                sql = _generate_sql(self.param_style, self.table_name,
+                sql = generate_sql(self.param_style, self.table_name,
                                     self.key_name,
                                     csv_reader.fieldnames)
                            
@@ -82,17 +82,17 @@ class CSVFileToSQLite(FileSystemEventHandler):
                     except (sqlite3.Error, sqlite3.Warning) as e:
                         logging.error('{}\n{}'.format(sql, e))
                         
-        except (Exception) as e:  
+        except Exception as e:
             logging.error("Error in handler {}: {}".
                           format(self.handler_name, e))
+            database = None
         
         else:
             logging.info ('Finished Imorting file {} to table {}.'.
                           format(event.src_path, self.table_name))
             if self.delete_source:
                 os.remove(event.src_path)
-            
-        finally:
-            if database:
-                database.close()
+
+        if database:
+            database.close()
 

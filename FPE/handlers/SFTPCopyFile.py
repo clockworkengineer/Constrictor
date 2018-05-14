@@ -1,9 +1,8 @@
 """SFTP Copy file handler."""
 
-from common import _display_details
+from common import display_details
 import logging
 import os
-# import paramiko
 import pysftp
 from watchdog.events import FileSystemEventHandler
 
@@ -24,14 +23,14 @@ class SFTPCopyFile(FileSystemEventHandler):
     server keeping any in situ watch folder directory structure the same.
     
     Attributes:
-    handler_name:  Name of handler object
-    watch_folder:  Folder to watch for files
-    ssh_server:    SSH Server
-    ssh_user:      SSH Server user name
-    ssh_password   SSH Server user password
-    destination    Destination for copy
-    recursive:     Boolean == true perform recursive file watch  
-    delete_source: Boolean == true delete source file on sucess   
+        handler_name:  Name of handler object
+        watch_folder:  Folder to watch for files
+        ssh_server:    SSH Server
+        ssh_user:      SSH Server user name
+        ssh_password   SSH Server user password
+        destination    Destination for copy
+        recursive:     Boolean == true perform recursive file watch  
+        delete_source: Boolean == true delete source file on sucess   
     """
     
     def __init__(self, handler_section):
@@ -46,7 +45,7 @@ class SFTPCopyFile(FileSystemEventHandler):
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
         
-        _display_details(handler_section)
+        display_details(handler_section)
         
         logging.getLogger("paramiko").setLevel(logging.WARNING)
          

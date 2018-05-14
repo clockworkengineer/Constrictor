@@ -1,6 +1,6 @@
 """Copy file handler."""
 
-from common import _display_details
+from common import display_details
 import logging
 import os
 import shutil
@@ -23,11 +23,11 @@ class CopyFile(FileSystemEventHandler):
     situ watch folder directory structure the same.
     
     Attributes:
-    handler_name:  Name of handler object
-    watch_folder:  Folder to watch for files
-    destination:   Destination for file copy
-    recursive:     Boolean == true perform recursive file watch  
-    delete_source: Boolean == true delete source file on sucess   
+        handler_name:  Name of handler object
+        watch_folder:  Folder to watch for files
+        destination:   Destination for file copy
+        recursive:     Boolean == true perform recursive file watch  
+        delete_source: Boolean == true delete source file on sucess   
     """
     
     def __init__(self, handler_section):
@@ -39,7 +39,7 @@ class CopyFile(FileSystemEventHandler):
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
         
-        _display_details(handler_section)
+        display_details(handler_section)
          
     def on_created(self, event):
         """Copy file from watch folder to destination."""
