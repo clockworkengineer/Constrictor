@@ -35,9 +35,9 @@ def create_event_handler(handler_section):
         handler_class = getattr(handlers, handler_section['type'])
         file_handler = handler_class(handler_section)
         
-    except KeyError as e:
+    except KeyError:
         logging.error("Missing option {}.\n{} not started.".format(e, handler_section['name']))
-    except Exception as e:
+    except AttributeError:
         logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
         
     return file_handler
