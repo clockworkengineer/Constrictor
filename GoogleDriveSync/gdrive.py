@@ -249,7 +249,7 @@ class GDrive(object):
             logging.error(e)
             raise e
 
-    def file_upload(self, local_file, parent_id=None):
+    def file_upload(self, local_file, parent_id=None, mime_type=None):
         """Upload local file to google drive returning its file id."""
 
         try:
@@ -258,13 +258,17 @@ class GDrive(object):
 
             file_metadata = {'name': os.path.basename(local_file)}
 
+            if mime_type:
+                file_metadata['mimeType'] = mime_type
+
             if parent_id:
                 file_metadata['parents'] = [parent_id]
 
             file_mime_type = magic.from_file(local_file, mime=True)
 
             media = MediaFileUpload(local_file,
-                                    mimetype=file_mime_type)
+                                    mimetype=file_mime_type,
+                                    resumable=True)
 
             result = self._drive_service.files().create(body=file_metadata,
                                                         media_body=media,
