@@ -88,8 +88,7 @@ class LocalDrive(object):
         # File mime type incates google app file so change local file extension for export.
 
         if file_data['mimeType'] in self._export_table:
-            export_tuple = self._export_table[file_data['mimeType']]
-            local_file = '{}.{}'.format(os.path.splitext(local_file)[0], export_tuple[1])
+            local_file = '{}.{}'.format(os.path.splitext(local_file)[0], self._export_table[file_data['mimeType']][1])
 
         self._current_file_id_table[file_data['id']] = (local_file, file_data['mimeType'], file_data['modifiedTime'])
 
@@ -207,11 +206,11 @@ class LocalDrive(object):
                     # Convert(export) any google application file  otherwise just download
 
                     if file_data[1] in self._export_table:
-                        export_tuple = self._export_table[file_data[1]]
+                        mime_type = self._export_table[file_data[1]][0]
                     else:
-                        export_tuple = None
+                        mime_type = None
 
-                    file_list.append((file_id, file_data[0], export_tuple))
+                    file_list.append((file_id, file_data[0], mime_type))
 
             except Exception as e:
                 logging.error(e)

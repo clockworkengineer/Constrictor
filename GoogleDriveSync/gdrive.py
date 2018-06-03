@@ -7,7 +7,6 @@ https://developers.google.com/drive/v3/web/quickstart/python.
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-# noinspection PyUnresolvedReferences
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
@@ -226,7 +225,7 @@ class GDrive(object):
             # If mime type set then exporting google applciation file so export (convert)
 
             if mime_type:
-                request = self._drive_service.files().export_media(fileId=file_id, mimeType=mime_type[0])
+                request = self._drive_service.files().export_media(fileId=file_id, mimeType=mime_type)
 
             # None google file so just download
 
