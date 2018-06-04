@@ -14,6 +14,7 @@ import datetime
 import json
 import pytz
 import time
+import collections
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -33,7 +34,9 @@ class LocalDrive(object):
     Attributes:
         _local_root_path:        Local filesystem root folder
         _remote_drive:           Remote drive object
-        _current_file_id_table:   File Id data cache (dictionary)
+        _current_file_id_table:  File Id data cache (dictionary)
+        _File_Data:              Named tuple forfile cache data
+        _file_translator         File translator object
         refresh:                 == True then complete refresh
         timezone:                Time zone used in file modified time compares
         numworkers:              Number of worker download threads
@@ -41,29 +44,20 @@ class LocalDrive(object):
         ignorelist:              Local files/path not included in any synchronize
     """
 
-    def __init__(self, local_root_path, remote_drive):
+    def __init__(self, local_root_path, remote_drive, file_translator):
 
         self._local_root_path = local_root_path
         self._remote_drive = remote_drive
         self._current_file_id_table = {}
         self._download_errors = 0
+        self._File_Data = collections.namedtuple('File_Data', 'file_name mime_type modified_time')
+        self._file_translator = file_translator
 
         self.refresh = False
         self.timezone = 'Europe/London'
         self.numworkers = 4
         self.fileidcache = 'fileID_cache.json'
         self.ignorelist = []
-
-        #  Google App file export translation table
-
-        self._export_table = {
-            'application/vnd.google-apps.document':
-                ('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'),
-            'application/vnd.google-apps.spreadsheet':
-                ('application/vnd.oasis.opendocument.spreadsheet', 'ods'),
-            'application/vnd.google-apps.presentation':
-                ('application/vnd.oasis.opendocument.presentation', 'odp')
-        }
 
         # Create local folder root
 
@@ -87,10 +81,13 @@ class LocalDrive(object):
 
         # File mime type incates google app file so change local file extension for export.
 
-        if file_data['mimeType'] in self._export_table:
-            local_file = '{}.{}'.format(os.path.splitext(local_file)[0], self._export_table[file_data['mimeType']][1])
+        if self._file_translator.file_mappable(file_data['mimeType']):
+            local_file = '{}.{}'.format(os.path.splitext(local_file)[0],
+                                        self._file_translator.get_extension(file_data['mimeType']))
 
-        self._current_file_id_table[file_data['id']] = (local_file, file_data['mimeType'], file_data['modifiedTime'])
+        self._current_file_id_table[file_data['id']] = self._File_Data(file_name=local_file,
+                                                                       mime_type=file_data['mimeType'],
+                                                                       modified_time=file_data['modifiedTime'])
 
     def _get_parents_children(self, parent_file_id):
         """Create a list of file data for children of of given file id"""
@@ -196,21 +193,21 @@ class LocalDrive(object):
 
                 # Create any folders needed
 
-                if file_data[1] == "application/vnd.google-apps.folder":
-                    if not os.path.exists(file_data[0]):
-                        os.makedirs(file_data[0])
+                if file_data.mime_type == "application/vnd.google-apps.folder":
+                    if not os.path.exists(file_data.file_name):
+                        os.makedirs(file_data.file_name)
                     continue
 
-                if self._refresh or self._update_file(file_data[0], file_data[2], self.timezone):
+                if self._refresh or self._update_file(file_data.file_name, file_data.modified_time, self.timezone):
 
                     # Convert(export) any google application file  otherwise just download
 
-                    if file_data[1] in self._export_table:
-                        mime_type = self._export_table[file_data[1]][0]
+                    if self._file_translator.file_mappable(file_data.mime_type):
+                        mime_type = self._file_translator.get_mime_type(file_data.mime_type)
                     else:
                         mime_type = None
 
-                    file_list.append((file_id, file_data[0], mime_type))
+                    file_list.append((file_id, file_data.file_name, mime_type))
 
             except Exception as e:
                 logging.error(e)
@@ -258,7 +255,7 @@ class LocalDrive(object):
 
                 for fileId in old_file_id_table:
                     if ((fileId not in self._current_file_id_table) or
-                            (self._current_file_id_table[fileId][0] != old_file_id_table[fileId][0])):
+                            (self._current_file_id_table[fileId].file_name != old_file_id_table[fileId][0])):
                         self._remove_local_file(old_file_id_table[fileId][0])
 
         except Exception as e:

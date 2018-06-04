@@ -24,16 +24,19 @@ class RemoteDrive(GDrive):
     Access remote drive files (keeping a complete file cache locally).
     
     Attrubutes:
+        _file_translator   File translator object
         file_cache:        Drive file cache.
         root_folder_id:    File ID for root folder.
     """
-    
-    def __init__(self, credentials):
+
+    def __init__(self, credentials, file_translator):
         
         try:
             
             super().__init__(credentials)
-            
+
+            self._file_translator = file_translator
+
             self.root_folder_id = self.file_get_metadata('root').get('id', None)
 
         except Exception as e:

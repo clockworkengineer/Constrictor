@@ -66,6 +66,7 @@ import logging
 import argparse
 import signal
 import time
+import filetranslate
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -105,7 +106,7 @@ def load_context():
     logging parameters passed in (just to file for the moment).
     
     Returns:
-        context:    runtime parameters,
+        context:    runtime parameters
     
     """
 
@@ -177,12 +178,16 @@ def google_drive_sync():
         if not credentials:
             logging.error('GoogleDriveSync: Could not perform authorization')
             sys.exit(1)
-            
-        # Create RemoteDrive/LocalDrive objects
-        
-        remote_drive = RemoteDrive(credentials)
 
-        local_drive = LocalDrive(context.folder, remote_drive)
+        # Create file translator
+
+        file_translator = filetranslate.FileTranslate()
+
+        # Create RemoteDrive/LocalDrive objects
+
+        remote_drive = RemoteDrive(credentials, file_translator)
+
+        local_drive = LocalDrive(context.folder, remote_drive, file_translator)
           
         if context.numworkers:
             local_drive.numworkers = context.numworkers
