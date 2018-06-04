@@ -81,7 +81,7 @@ class LocalDrive(object):
 
         # File mime type incates google app file so change local file extension for export.
 
-        if self._file_translator.file_mappable(file_data['mimeType']):
+        if self._file_translator.file_mapped(file_data['mimeType']):
             local_file = '{}.{}'.format(os.path.splitext(local_file)[0],
                                         self._file_translator.get_extension(file_data['mimeType']))
 
@@ -202,7 +202,7 @@ class LocalDrive(object):
 
                     # Convert(export) any google application file  otherwise just download
 
-                    if self._file_translator.file_mappable(file_data.mime_type):
+                    if self._file_translator.file_mapped(file_data.mime_type):
                         mime_type = self._file_translator.get_mime_type(file_data.mime_type)
                     else:
                         mime_type = None

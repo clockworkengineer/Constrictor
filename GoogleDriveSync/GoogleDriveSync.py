@@ -66,7 +66,7 @@ import logging
 import argparse
 import signal
 import time
-import filetranslate
+import filetranslator
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -181,7 +181,7 @@ def google_drive_sync():
 
         # Create file translator
 
-        file_translator = filetranslate.FileTranslate()
+        file_translator = filetranslator.FileTranslator()
 
         # Create RemoteDrive/LocalDrive objects
 
@@ -207,7 +207,8 @@ def google_drive_sync():
         # Create file uploader object
         
         if context.uploadfolder:
-            uploader = GDriveUploader(credentials, context.uploadfolder, os.path.basename(context.uploadfolder))
+            uploader = GDriveUploader(credentials, context.uploadfolder, os.path.basename(context.uploadfolder),
+                                      file_translator)
             logging.info("Created upload folder {} for Google drive.".format(context.uploadfolder))
         
         # Sychronize with Google drive with local folder and keep doing if polling set

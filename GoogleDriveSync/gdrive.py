@@ -42,15 +42,17 @@ class GDriveUploader(FileSystemEventHandler):
         _credentials:             Token returned during Google drive authorization
         _local_upload_path:       Local upload folder path
         _remote_upload_folder:    Remote upload folder
+        _file_translator          File translator object
     """
 
-    def __init__(self, credentials, local_upload_path, remote_upload_folder):
+    def __init__(self, credentials, local_upload_path, remote_upload_folder, file_translator):
         """Set attributes, create file observer and start watching it."""
         try:
 
             self._credentials = credentials
             self._local_upload_path = local_upload_path
             self._remote_upload_folder = remote_upload_folder
+            self._file_translator = file_translator
 
             if not os.path.exists(local_upload_path):
                 os.makedirs(local_upload_path)
@@ -88,7 +90,13 @@ class GDriveUploader(FileSystemEventHandler):
             logging.info("Uploading file '{}' to Google drive folder '{}'.".
                          format(event.src_path, self._remote_upload_folder))
 
-            self._drive.file_upload(event.src_path, parent_id=self._upload_folder[0]['id'])
+            file_extension = os.path.splitext(event.src_path)[1][1:]
+
+            mime_types = None
+            if self._file_translator.extension_mapped(file_extension):
+                mime_types = self._file_translator.get_upload_mime_types(file_extension)
+
+            self._drive.file_upload(event.src_path, self._upload_folder[0]['id'], mime_types)
 
         except HttpError as e:
             logging.error(e)
@@ -248,7 +256,7 @@ class GDrive(object):
             logging.error(e)
             raise e
 
-    def file_upload(self, local_file, parent_id=None, mime_type=None):
+    def file_upload(self, local_file, parent_id=None, mime_types=None):
         """Upload local file to google drive returning its file id."""
 
         try:
@@ -257,13 +265,16 @@ class GDrive(object):
 
             file_metadata = {'name': os.path.basename(local_file)}
 
-            if mime_type:
-                file_metadata['mimeType'] = mime_type
+            if mime_types:
+                file_mime_type = mime_types[0]
+                file_metadata['mimeType'] = mime_types[1]
+            else:
+                file_mime_type = magic.from_file(local_file, mime=True)
 
             if parent_id:
                 file_metadata['parents'] = [parent_id]
 
-            file_mime_type = magic.from_file(local_file, mime=True)
+            # file_mime_type = magic.from_file(local_file, mime=True)
 
             media = MediaFileUpload(local_file,
                                     mimetype=file_mime_type,
