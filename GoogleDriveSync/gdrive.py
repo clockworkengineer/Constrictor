@@ -93,8 +93,8 @@ class GDriveUploader(FileSystemEventHandler):
             file_extension = os.path.splitext(event.src_path)[1][1:]
 
             mime_types = None
-            if self._file_translator.extension_mapped(file_extension):
-                mime_types = self._file_translator.get_upload_mime_types(file_extension)
+            if self._file_translator.local_file_extension_mapped(file_extension):
+                mime_types = self._file_translator.get_remote_mime_types(file_extension)
 
             self._drive.file_upload(event.src_path, self._upload_folder[0]['id'], mime_types)
 
