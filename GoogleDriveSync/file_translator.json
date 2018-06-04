@@ -1,0 +1,22 @@
+{
+  "uploads": {
+    "csv": [
+      "text/csv",
+      "application/vnd.google-apps.spreadsheet"
+    ]
+  },
+  "downloads": {
+    "application/vnd.google-apps.spreadsheet": [
+      "ods",
+      "application/vnd.oasis.opendocument.spreadsheet"
+    ],
+    "application/vnd.google-apps.presentation": [
+      "odp",
+      "application/vnd.oasis.opendocument.presentation"
+    ],
+    "application/vnd.google-apps.document": [
+      "docx",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ]
+  }
+}

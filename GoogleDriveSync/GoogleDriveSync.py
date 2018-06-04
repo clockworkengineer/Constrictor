@@ -181,7 +181,7 @@ def google_drive_sync():
 
         # Create file translator
 
-        file_translator = filetranslator.FileTranslator()
+        file_translator = filetranslator.FileTranslator('file_translator.json')
 
         # Create RemoteDrive/LocalDrive objects
 
