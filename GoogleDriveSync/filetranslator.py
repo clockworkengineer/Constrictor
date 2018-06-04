@@ -1,9 +1,8 @@
 """Class for performing file mime type and extension translation for upload/download.
 
-Perform any file extension / mime type mapping between the local and remote drives.
+Perform any file extension / mime type mapping between the local and remote drives. The two translation
+tables are loaded from a json file but if an error occurs suitable default built-in tables are used.
 
-TODO:
-1) Make  configurable instead of hard encoded.
 """
 
 import logging
@@ -25,6 +24,9 @@ class FileTranslator(object):
 
         try:
 
+            if not translator_json_file:
+                translator_json_file = 'file_translator.json'
+
             # Try to read translator json file
 
             with open(translator_json_file, 'r') as json_file:
@@ -36,14 +38,18 @@ class FileTranslator(object):
 
             # Fallback on built-in tables
 
+            # Indexed by remote mime type. Entry[0] = local file extension, entry[1] = local file mime type
+
             self._download_table = {
                 'application/vnd.google-apps.document':
-                    ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'docx'],
+                    ['docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
                 'application/vnd.google-apps.spreadsheet':
-                    ['application/vnd.oasis.opendocument.spreadsheet', 'ods'],
+                    ['ods', 'application/vnd.oasis.opendocument.spreadsheet'],
                 'application/vnd.google-apps.presentation':
-                    ['application/vnd.oasis.opendocument.presentation', 'odp']
+                    ['odp', 'application/vnd.oasis.opendocument.presentation']
             }
+
+            # Indexed by local file extenson. Entry[0] = local mime type, entry[1] = remote mime type
 
             self._upload_table = {
                 'csv':

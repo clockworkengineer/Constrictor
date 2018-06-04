@@ -12,12 +12,10 @@ For setting up the crentials and secrets for use with the API it is suggsested
 that googles quickstart guide at "https://developers.google.com/drive/v3/web/
 quickstart/python" be consulted.
 
-USAGE: 
-
-GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
+usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
-                          [-l LOGFILE] [-n NUMWORKERS] [-u UPLOADFOLDER]
-                          [-i IGNORELIST [IGNORELIST ...]]
+                          [-l LOGFILE] [-a TRANSLATOR] [-n NUMWORKERS]
+                          [-u UPLOADFOLDER] [-i IGNORELIST [IGNORELIST ...]]
                           folder
 
 Synchronize Google Drive with a local folder
@@ -42,11 +40,14 @@ optional arguments:
                         Local timezone (pytz)
   -l LOGFILE, --logfile LOGFILE
                         All logging to file
+  -a TRANSLATOR, --translator TRANSLATOR
+                        File translator json file
   -n NUMWORKERS, --numworkers NUMWORKERS
                         Number of worker threads for downloads
   -u UPLOADFOLDER, --uploadfolder UPLOADFOLDER
                         Google upload folder
-  -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORE
+  -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORELIST ...]
+                        Ignore file/path list
   
 TODO:
 1) Use changes API better
@@ -54,7 +55,6 @@ TODO:
 3) Better exception handling
 4) Make drive uploader part of remote drive class.
 5) Improved logging.
-6) Make export table configurable and for uploads too.
 """
 
 from localdrive import LocalDrive
@@ -125,6 +125,7 @@ def load_context():
         parser.add_argument('-f', '--fileidcache', help='File id cache json file')
         parser.add_argument('-t', '--timezone', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
+        parser.add_argument('-a', '--translator', help='File translator json file')
         parser.add_argument('-n', '--numworkers', type=int, help='Number of worker threads for downloads')
         parser.add_argument('-u', '--uploadfolder', help='Google upload folder')
         parser.add_argument('-i', '--ignorelist', nargs='+', help='Ignore file/path list')
@@ -181,7 +182,7 @@ def google_drive_sync():
 
         # Create file translator
 
-        file_translator = filetranslator.FileTranslator('file_translator.json')
+        file_translator = filetranslator.FileTranslator(context.translator)
 
         # Create RemoteDrive/LocalDrive objects
 
