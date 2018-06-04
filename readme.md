@@ -34,8 +34,8 @@ For setting up the crentials and secrets for use with the API it is suggsested t
 
 	usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
 	                          [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
-	                          [-l LOGFILE] [-n NUMWORKERS] [-u UPLOADFOLDER]
-	                          [-i IGNORELIST [IGNORELIST ...]]
+	                          [-l LOGFILE] [-a TRANSLATOR] [-n NUMWORKERS]
+	                          [-u UPLOADFOLDER] [-i IGNORELIST [IGNORELIST ...]]
 	                          folder
 	
 	Synchronize Google Drive with a local folder
@@ -60,8 +60,12 @@ For setting up the crentials and secrets for use with the API it is suggsested t
 	                        Local timezone (pytz)
 	  -l LOGFILE, --logfile LOGFILE
 	                        All logging to file
+	  -a TRANSLATOR, --translator TRANSLATOR
+	                        File translator json file
 	  -n NUMWORKERS, --numworkers NUMWORKERS
 	                        Number of worker threads for downloads
 	  -u UPLOADFOLDER, --uploadfolder UPLOADFOLDER
 	                        Google upload folder
-	  -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORE
+	  -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORELIST ...]
+	                        Ignore file/path list
+
