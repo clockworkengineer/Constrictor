@@ -25,13 +25,16 @@ class FileTranslator(object):
 
         try:
 
+            # Try to read translator json file
+
             with open(translator_json_file, 'r') as json_file:
                 translator = json.load(json_file)
-
-            self._download_table = dict(translator['downloads'])
-            self._upload_table = dict(translator['uploads'])
+                self._download_table = dict(translator['downloads'])
+                self._upload_table = dict(translator['uploads'])
 
         except Exception:
+
+            # Fallback on built-in tables
 
             self._download_table = {
                 'application/vnd.google-apps.document':
