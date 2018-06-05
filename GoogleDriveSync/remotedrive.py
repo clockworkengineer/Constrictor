@@ -92,6 +92,7 @@ class _RemoteUploader(FileSystemEventHandler):
             logging.error(e)
             raise e
 
+
 class RemoteDrive(GDrive):
     """Class to access remote drive.
     
@@ -104,9 +105,9 @@ class RemoteDrive(GDrive):
     """
 
     def __init__(self, credentials, local_upload_path, file_translator):
-        
+
         try:
-            
+
             super().__init__(credentials)
 
             self._file_translator = file_translator
@@ -121,10 +122,10 @@ class RemoteDrive(GDrive):
 
         except Exception as e:
             logging.error(e)
-            
+
     def refresh_file_cache(self):
         """Refresh remote drive file cache."""
-        
+
         try:
 
             self.file_cache = self.file_list(query='not trashed',
@@ -133,21 +134,21 @@ class RemoteDrive(GDrive):
 
         except Exception as e:
             logging.error(e)
-    
+
     # Properties
-     
+
     @property
     def file_cache(self):
         return self._file_cache
-    
+
     @file_cache.setter
     def file_cache(self, file_cache):
         self._file_cache = file_cache
-        
+
     @property
     def root_folder_id(self):
         return self._root_folder_id
-    
+
     @root_folder_id.setter
     def root_folder_id(self, root_folder_id):
         self._root_folder_id = root_folder_id

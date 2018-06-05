@@ -66,20 +66,20 @@ class FileTranslator(object):
 
     def remote_mime_type_mapped(self, mime_type):
         """Remote file mime type has a local mapping."""
-        return (mime_type in self._download_table)
+        return mime_type in self._download_table
 
     def get_local_file_extension(self, mime_type):
         """Return file extension mapping for remote file."""
-        return (self._download_table[mime_type][0])
+        return self._download_table[mime_type][0]
 
     def get_local_mime_type(self, mime_type):
         """Return mime type mapping for remote file."""
-        return (self._download_table[mime_type][1])
+        return self._download_table[mime_type][1]
 
     def local_file_extension_mapped(self, file_extension):
         """Local file extension has a remote mapping."""
-        return (file_extension in self._upload_table)
+        return file_extension in self._upload_table
 
     def get_remote_mime_types(self, file_extension):
         """Return remote mime type translation tuple (local mime, remote mime)."""
-        return (self._upload_table[file_extension])
+        return self._upload_table[file_extension]
