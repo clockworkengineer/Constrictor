@@ -89,6 +89,9 @@ class LocalDrive(object):
                                                                        mime_type=file_data['mimeType'],
                                                                        modified_time=file_data['modifiedTime'])
 
+        logging.debug(
+            'Created file cache entry {} : {}.'.format(file_data['id'], self._current_file_id_table[file_data['id']]))
+
     def _get_parents_children(self, parent_file_id):
         """Create a list of file data for children of of given file id"""
 

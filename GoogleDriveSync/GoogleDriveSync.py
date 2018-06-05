@@ -54,7 +54,6 @@ TODO:
 2) Compress file id cache file
 3) Better exception handling
 4) Make drive uploader part of remote drive class.
-5) Improved logging.
 """
 
 from localdrive import LocalDrive
@@ -125,7 +124,8 @@ def load_context():
         parser.add_argument('-f', '--fileidcache', help='File id cache json file')
         parser.add_argument('-t', '--timezone', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
-        parser.add_argument('-a', '--translator', help='File translator json file')
+        parser.add_argument('-o', '--loglevel', default=logging.INFO, type=int, help='Logging Level')
+        parser.add_argument('-a', '--translator', default='file_translator.json', help='File translator json file')
         parser.add_argument('-n', '--numworkers', type=int, help='Number of worker threads for downloads')
         parser.add_argument('-u', '--uploadfolder', help='Google upload folder')
         parser.add_argument('-i', '--ignorelist', nargs='+', help='Ignore file/path list')
@@ -133,8 +133,8 @@ def load_context():
         context = parser.parse_args()
         
         # Set logging details
-        
-        logging_params = {'level': logging.INFO}
+
+        logging_params = {'level': context.loglevel}
         
         if context.logfile:
             logging_params['filename'] = context.logfile
@@ -142,6 +142,8 @@ def load_context():
                 os.makedirs(os.path.dirname(context.logfile))
             
         logging.basicConfig(**logging_params)
+
+        logging.info('Logging intialised with parameters({}).'.format(logging_params))
 
     except Exception as e:
         logging.error(e)
@@ -166,8 +168,8 @@ def google_drive_sync():
         # Make sure on Ctrl+C program terminates cleanly
         
         setup_signal_handlers(context)
-        
-        logging.info('GoogleDriveSync: Sychronizing to local folder {}.'.format(context.folder))
+
+        logging.info('Sychronizing to local folder {}.'.format(context.folder))
         
         if context.refresh:
             logging.info('Refeshing whole Google drive tree locally.')
@@ -177,8 +179,10 @@ def google_drive_sync():
         credentials = g_authorize(context.scope, context.secrets, context.credentials)
         
         if not credentials:
-            logging.error('GoogleDriveSync: Could not perform authorization')
+            logging.error('Could not perform authorization')
             sys.exit(1)
+
+        logging.info('Authorization sucess.')
 
         # Create file translator
 
@@ -222,8 +226,8 @@ def google_drive_sync():
 
     except Exception as e:
         logging.error(e)
-        
-    logging.info('GoogleDriveSync: End of drive Sync.')
+
+    logging.info('End of drive Sync.')
 
         
 if __name__ == '__main__':

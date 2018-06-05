@@ -24,19 +24,19 @@ class FileTranslator(object):
 
         try:
 
-            if not translator_json_file:
-                translator_json_file = 'file_translator.json'
-
             # Try to read translator json file
 
             with open(translator_json_file, 'r') as json_file:
                 translator = json.load(json_file)
                 self._download_table = dict(translator['downloads'])
                 self._upload_table = dict(translator['uploads'])
+                logging.info("Translator data read from file {}.".format(translator_json_file))
 
         except Exception:
 
             # Fallback on built-in tables
+
+            logging.warning("Translator file {} not found defaulting to built-in.".format(translator_json_file))
 
             # Indexed by remote mime type. Entry[0] = local file extension, entry[1] = local file mime type
 
@@ -60,6 +60,9 @@ class FileTranslator(object):
 
         for mime_type, file_mapping in self._download_table.items():
             self._upload_table[file_mapping[0]] = [file_mapping[1], mime_type]
+
+        logging.debug('Download Translator Table: {}'.format(self._download_table))
+        logging.debug('Upload Translator Table: {}'.format(self._upload_table))
 
     def remote_mime_type_mapped(self, mime_type):
         """Remote file mime type has a local mapping."""
