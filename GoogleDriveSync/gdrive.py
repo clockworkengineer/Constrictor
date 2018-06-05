@@ -5,8 +5,6 @@ To to this it uses google's own python wrapper Drive API which can be read about
 https://developers.google.com/drive/v3/web/quickstart/python.
 """
 
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
@@ -29,78 +27,6 @@ __status__ = "Pre-Alpha"
 # Switch off INFO google logging
 
 logging.getLogger("googleapiclient").setLevel(logging.WARNING)
-
-
-class GDriveUploader(FileSystemEventHandler):
-    """Class to upload watched folder files to Google drive.
-    
-    Child class of FileSystemEventHandle that creates its own watchdog observer
-    and sets itself as the file handler. Its on_created method is overridden to upload
-    any files created to a specific folder on Google drive.
-    
-    Attributes:
-        _credentials:             Token returned during Google drive authorization
-        _local_upload_path:       Local upload folder path
-        _remote_upload_folder:    Remote upload folder
-        _file_translator          File translator object
-    """
-
-    def __init__(self, credentials, local_upload_path, remote_upload_folder, file_translator):
-        """Set attributes, create file observer and start watching it."""
-        try:
-
-            self._credentials = credentials
-            self._local_upload_path = local_upload_path
-            self._remote_upload_folder = remote_upload_folder
-            self._file_translator = file_translator
-
-            if not os.path.exists(local_upload_path):
-                os.makedirs(local_upload_path)
-
-            self._drive = GDrive(self._credentials)
-
-            # If remote folder does not exist create it off root
-
-            file_query = "(name = '{}') and (not trashed)".format(remote_upload_folder)
-
-            self._upload_folder = self._drive.file_list(query=file_query,
-                                                        file_fields=
-                                                        'name, id, parents')
-
-            if len(self._upload_folder) == 0:
-                self._drive.folder_create(remote_upload_folder)
-                self._upload_folder = self._drive.file_list(query=file_query,
-                                                            file_fields=
-                                                            'name, id, parents')
-
-            self._observer = Observer()
-
-            self._observer.schedule(self, self._local_upload_path,
-                                    recursive=False)
-
-            self._observer.start()
-
-        except Exception as e:
-            logging.error(e)
-
-    def on_created(self, event):
-        """Upload file to Google drive."""
-        try:
-
-            logging.info("Uploading file '{}' to Google drive folder '{}'.".
-                         format(event.src_path, self._remote_upload_folder))
-
-            file_extension = os.path.splitext(event.src_path)[1][1:]
-
-            mime_types = None
-            if self._file_translator.local_file_extension_mapped(file_extension):
-                mime_types = self._file_translator.get_remote_mime_types(file_extension)
-
-            self._drive.file_upload(event.src_path, self._upload_folder[0]['id'], mime_types)
-
-        except HttpError as e:
-            logging.error(e)
-            raise e
 
 
 def g_authorize(scope, secrets_file, credentials_file, credentials_refresh=False):

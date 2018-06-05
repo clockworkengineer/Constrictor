@@ -58,7 +58,7 @@ TODO:
 
 from localdrive import LocalDrive
 from remotedrive import RemoteDrive
-from gdrive import g_authorize, GDriveUploader
+from gdrive import g_authorize
 import os
 import sys
 import logging
@@ -190,7 +190,7 @@ def google_drive_sync():
 
         # Create RemoteDrive/LocalDrive objects
 
-        remote_drive = RemoteDrive(credentials, file_translator)
+        remote_drive = RemoteDrive(credentials, context.uploadfolder, file_translator)
 
         local_drive = LocalDrive(context.folder, remote_drive, file_translator)
           
@@ -208,13 +208,6 @@ def google_drive_sync():
         
         if context.ignorelist:
             local_drive.ignorelist = context.ignorelist
-            
-        # Create file uploader object
-        
-        if context.uploadfolder:
-            uploader = GDriveUploader(credentials, context.uploadfolder, os.path.basename(context.uploadfolder),
-                                      file_translator)
-            logging.info("Created upload folder {} for Google drive.".format(context.uploadfolder))
         
         # Sychronize with Google drive with local folder and keep doing if polling set
         

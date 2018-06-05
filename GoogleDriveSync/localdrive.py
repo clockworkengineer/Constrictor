@@ -36,7 +36,7 @@ class LocalDrive(object):
         _remote_drive:           Remote drive object
         _current_file_id_table:  File Id data cache (dictionary)
         _File_Data:              Named tuple forfile cache data
-        _file_translator         File translator object
+        _file_translator         File translator
         refresh:                 == True then complete refresh
         timezone:                Time zone used in file modified time compares
         numworkers:              Number of worker download threads
