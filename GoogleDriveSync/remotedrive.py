@@ -1,7 +1,8 @@
 """Class for accessing remote drive.
 
 This is a child class of GDevice that caches the remote  Google drive contents
-for performance and reduce the number of http requests,
+for performance and reduce the number of http requests. It also creates an uploader
+object if it is specified so that local files can bu uploaded to the remote drive.
 """
 
 from gdrive import GDrive
@@ -22,7 +23,7 @@ __status__ = "Pre-Alpha"
 
 
 class _RemoteUploader(FileSystemEventHandler):
-    """Class to upload watched folder files to Google drive.
+    """Private class to upload watched folder files to Google drive.
 
     Child class of FileSystemEventHandle that creates its own watchdog observer
     and sets itself as the file handler. Its on_created method is overridden to upload
@@ -63,11 +64,10 @@ class _RemoteUploader(FileSystemEventHandler):
                                                             file_fields=
                                                             'name, id, parents')
 
+            # Create observer and start watching folder
+
             self._observer = Observer()
-
-            self._observer.schedule(self, self._local_upload_path,
-                                    recursive=False)
-
+            self._observer.schedule(self, self._local_upload_path, recursive=False)
             self._observer.start()
 
         except Exception as e:
@@ -98,12 +98,12 @@ class RemoteDrive(GDrive):
     Access remote drive files (keeping a complete file cache locally).
     
     Attrubutes:
-        _file_translator   File translator object
+        _file_translator   File translator
         file_cache:        Drive file cache.
         root_folder_id:    File ID for root folder.
     """
 
-    def __init__(self, credentials, upload_folder, file_translator):
+    def __init__(self, credentials, local_upload_path, file_translator):
         
         try:
             
@@ -115,9 +115,9 @@ class RemoteDrive(GDrive):
 
             # Create file uploader object
 
-            if upload_folder:
-                uploader = _RemoteUploader(credentials, upload_folder, file_translator)
-                logging.info("Created upload folder {} for Google drive.".format(upload_folder))
+            if local_upload_path:
+                uploader = _RemoteUploader(credentials, local_upload_path, file_translator)
+                logging.info("Created upload folder {} for Google drive.".format(local_upload_path))
 
         except Exception as e:
             logging.error(e)

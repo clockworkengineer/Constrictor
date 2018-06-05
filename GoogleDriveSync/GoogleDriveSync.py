@@ -53,7 +53,6 @@ TODO:
 1) Use changes API better
 2) Compress file id cache file
 3) Better exception handling
-4) Make drive uploader part of remote drive class.
 """
 
 from localdrive import LocalDrive
@@ -85,7 +84,6 @@ def setup_signal_handlers(context):
     
     Arguments:
         context:    runtime context (globlals/arguments)
-        
     """
      
     def signal_handler(signal_number, frame):
@@ -106,7 +104,6 @@ def load_context():
     
     Returns:
         context:    runtime parameters
-    
     """
 
     context = None
@@ -224,5 +221,4 @@ def google_drive_sync():
 
         
 if __name__ == '__main__':
-
     google_drive_sync()
