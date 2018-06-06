@@ -78,7 +78,7 @@ class GDrive(object):
                                     http=self._credentials.authorize(Http()),
                                     cache_discovery=False)
 
-    def file_list(self, query='', max_files=100, file_fields='name, id'):
+    def file_list(self, query='', max_files=1000, file_fields='name, id'):
         """Return list of file metadata for query pasted in."""
 
         try:
@@ -179,6 +179,7 @@ class GDrive(object):
             logging.info('Downloaded file {} to {}'.format(file_id, local_file))
 
         except HttpError as e:
+            logging.error('Failed to download file {} to {}'.format(file_id, local_file))
             logging.error(e)
             raise e
 

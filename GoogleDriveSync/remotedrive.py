@@ -130,7 +130,7 @@ class RemoteDrive(GDrive):
 
             self.file_cache = self.file_list(query='not trashed',
                                              file_fields=
-                                             'name, id, parents, mimeType, modifiedTime')
+                                             'name, id, parents, size, mimeType, modifiedTime')
 
         except Exception as e:
             logging.error(e)

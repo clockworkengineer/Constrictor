@@ -131,7 +131,8 @@ def load_context():
         
         # Set logging details
 
-        logging_params = {'level': context.loglevel}
+        logging_params = {'level': context.loglevel,
+                          'format': '%(asctime)s:%(message)s'}
         
         if context.logfile:
             logging_params['filename'] = context.logfile

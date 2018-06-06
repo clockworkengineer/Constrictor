@@ -50,7 +50,7 @@ class LocalDrive(object):
         self._remote_drive = remote_drive
         self._current_file_id_table = {}
         self._download_errors = 0
-        self._File_Data = collections.namedtuple('File_Data', 'file_name mime_type modified_time')
+        self._File_Data = collections.namedtuple('File_Data', 'file_name mime_type modified_time, file_size')
         self._file_translator = file_translator
 
         self.refresh = False
@@ -87,7 +87,8 @@ class LocalDrive(object):
 
         self._current_file_id_table[file_data['id']] = self._File_Data(file_name=local_file,
                                                                        mime_type=file_data['mimeType'],
-                                                                       modified_time=file_data['modifiedTime'])
+                                                                       modified_time=file_data['modifiedTime'],
+                                                                       file_size=int(file_data.get('size', 0)))
 
         logging.debug(
             'Created file cache entry {} : {}.'.format(file_data['id'], self._current_file_id_table[file_data['id']]))
@@ -189,6 +190,7 @@ class LocalDrive(object):
         """Update any local files if needed."""
 
         file_list = []
+        empty_file_list = []
 
         for file_id, file_data in self._current_file_id_table.items():
 
@@ -203,14 +205,21 @@ class LocalDrive(object):
 
                 if self._refresh or self._update_file(file_data.file_name, file_data.modified_time, self.timezone):
 
-                    # Convert(export) any google application file  otherwise just download
+                    # Do not download empty files
 
-                    if self._file_translator.remote_mime_type_mapped(file_data.mime_type):
-                        mime_type = self._file_translator.get_local_mime_type(file_data.mime_type)
+                    if file_data.file_size != 0:
+
+                        # Convert(export) any google application file  otherwise just download
+
+                        if self._file_translator.remote_mime_type_mapped(file_data.mime_type):
+                            mime_type = self._file_translator.get_local_mime_type(file_data.mime_type)
+                        else:
+                            mime_type = None
+
+                        file_list.append((file_id, file_data.file_name, mime_type))
+
                     else:
-                        mime_type = None
-
-                    file_list.append((file_id, file_data.file_name, mime_type))
+                        empty_file_list.append(file_data.file_name)
 
             except Exception as e:
                 logging.error(e)
@@ -219,9 +228,11 @@ class LocalDrive(object):
         # If worker threads > 1 then use otherwise one at a time
 
         if self._numworkers > 1:
+
             with ThreadPoolExecutor(max_workers=self._numworkers) as executor:
                 for file_to_process in file_list:
                     executor.submit(self._download_worker, *file_to_process)
+
         else:
 
             try:
@@ -229,6 +240,13 @@ class LocalDrive(object):
                     self._remote_drive.file_download(*file_to_process)
             except HttpError:
                 self._download_errors += 1
+
+        # Empty files are not downloaded but created locally as placeholders
+
+        if empty_file_list:
+            for empty_file in empty_file_list:
+                open(empty_file, 'w').close()
+                logging.info('Created empty local file {}.'.format(empty_file))
 
         if self._download_errors:
             logging.info('{} errors during file downloads.'.format(self._download_errors))
