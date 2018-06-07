@@ -4,9 +4,8 @@ Map google drive to local file system folder keeping there remote file directory
 structure.
 """
 
-from gdrive import GDrive
+from gdrive import GDrive, GDriveError
 from concurrent.futures import ThreadPoolExecutor
-from googleapiclient.errors import HttpError
 import os
 import sys
 import logging
@@ -182,7 +181,7 @@ class LocalDrive(object):
             drive = GDrive(self._remote_drive.credentials)
             drive.file_download(file_id, local_file, mime_type)
             time.sleep(sleep_delay)
-        except Exception as e:
+        except GDriveError as e:
             print(e)
             self._download_errors += 1
 
@@ -238,7 +237,7 @@ class LocalDrive(object):
             try:
                 for file_to_process in file_list:
                     self._remote_drive.file_download(*file_to_process)
-            except HttpError:
+            except GDriveError:
                 self._download_errors += 1
 
         # Empty files are not downloaded but created locally as placeholders

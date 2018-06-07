@@ -5,12 +5,11 @@ for performance and reduce the number of http requests. It also creates an uploa
 object if it is specified so that local files can bu uploaded to the remote drive.
 """
 
-from gdrive import GDrive
+from gdrive import GDrive, GDriveError
 import logging
 import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from googleapiclient.errors import HttpError
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -70,8 +69,9 @@ class _RemoteUploader(FileSystemEventHandler):
             self._observer.schedule(self, self._local_upload_path, recursive=False)
             self._observer.start()
 
-        except Exception as e:
+        except (Exception, GDriveError) as e:
             logging.error(e)
+            raise e
 
     def on_created(self, event):
         """Upload file to Google drive."""
@@ -88,7 +88,7 @@ class _RemoteUploader(FileSystemEventHandler):
 
             self._drive.file_upload(event.src_path, self._upload_folder[0]['id'], mime_types)
 
-        except HttpError as e:
+        except (Exception, GDriveError) as e:
             logging.error(e)
             raise e
 
@@ -120,8 +120,9 @@ class RemoteDrive(GDrive):
                 uploader = _RemoteUploader(credentials, local_upload_path, file_translator)
                 logging.info("Created upload folder {} for Google drive.".format(local_upload_path))
 
-        except Exception as e:
+        except (Exception, GDriveError) as e:
             logging.error(e)
+            raise e
 
     def refresh_file_cache(self):
         """Refresh remote drive file cache."""
@@ -132,8 +133,9 @@ class RemoteDrive(GDrive):
                                              file_fields=
                                              'name, id, parents, size, mimeType, modifiedTime')
 
-        except Exception as e:
+        except (Exception, GDriveError) as e:
             logging.error(e)
+            raise e
 
     # Properties
 

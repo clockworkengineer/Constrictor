@@ -52,12 +52,11 @@ optional arguments:
 TODO:
 1) Use changes API better
 2) Compress file id cache file
-3) Better exception handling
 """
 
 from localdrive import LocalDrive
 from remotedrive import RemoteDrive
-from gdrive import g_authorize
+from gdrive import g_authorize, GDriveError
 import os
 import sys
 import logging
@@ -132,7 +131,7 @@ def load_context():
         # Set logging details
 
         logging_params = {'level': context.loglevel,
-                          'format': '%(asctime)s:%(message)s'}
+                          'format': '%(asctime)s:GoogleDriveSync:%(message)s'}
         
         if context.logfile:
             logging_params['filename'] = context.logfile
@@ -215,7 +214,7 @@ def google_drive_sync():
             time.sleep(context.polltime * 60)
             local_drive.synchronize()
 
-    except Exception as e:
+    except (Exception, GDriveError) as e:
         logging.error(e)
 
     logging.info('End of drive Sync.')

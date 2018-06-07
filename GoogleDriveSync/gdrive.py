@@ -29,6 +29,14 @@ __status__ = "Pre-Alpha"
 logging.getLogger("googleapiclient").setLevel(logging.WARNING)
 
 
+class GDriveError(Exception):
+    """GDrive exceptions."""
+
+    def __init__(self, message, original_exception):
+        super(GDriveError, self).__init__('{} : {}'.format(message, original_exception))
+        self.original_exception = original_exception
+
+
 def g_authorize(scope, secrets_file, credentials_file, credentials_refresh=False):
     """Function for getting authoization token for use with Google drive.
     
@@ -53,7 +61,7 @@ def g_authorize(scope, secrets_file, credentials_file, credentials_refresh=False
             flow = client.flow_from_clientsecrets(secrets_file, scope)
             credentials = tools.run_flow(flow, store, tools.argparser.parse_args(args=[]))
     except Exception as e:
-        logging.error(e)
+        raise GDriveError('Error during authtorization request', e)
 
     return credentials
 
@@ -65,7 +73,7 @@ class GDrive(object):
     
     Attributes:
         credentials:       Application credentials(token) for accessing drive
-        _drive_service:     Drive Service
+        _drive_service:    Drive Service
         _start_page_token: Saved start page token used to get changes
     """
 
@@ -105,8 +113,7 @@ class GDrive(object):
                     more_files_to_list = False
 
         except HttpError as e:
-            logging.error(e)
-            raise e
+            raise GDriveError('Error during file list request', e)
 
         logging.debug('List File (Length={}).Items={}'.format(len(files_returned), files_returned))
 
@@ -133,8 +140,7 @@ class GDrive(object):
             result = folder_data['id']
 
         except HttpError as e:
-            logging.error(e)
-            raise e
+            raise GDriveError('Error during folder create request', e)
 
         return result
 
@@ -146,8 +152,7 @@ class GDrive(object):
             result = self._drive_service.files().get(fileId=file_id, fields=file_fields).execute()
 
         except HttpError as e:
-            logging.error(e)
-            raise e
+            raise GDriveError('Error during get file metadata request', e)
 
         return result
 
@@ -180,8 +185,7 @@ class GDrive(object):
 
         except HttpError as e:
             logging.error('Failed to download file {} to {}'.format(file_id, local_file))
-            logging.error(e)
-            raise e
+            raise GDriveError('Error during file download request', e)
 
     def file_upload(self, local_file, parent_id=None, mime_types=None):
         """Upload local file to google drive returning its file id."""
@@ -209,11 +213,10 @@ class GDrive(object):
 
             result = self._drive_service.files().create(body=file_metadata,
                                                         media_body=media,
-                                                        fields='id').execute(
-            )
+                                                        fields='id').execute()
+
         except HttpError as e:
-            logging.error(e)
-            raise e
+            raise GDriveError('Error during file upload request', e)
 
         return result
 
@@ -244,8 +247,7 @@ class GDrive(object):
                 page_token = response.get('nextPageToken')
 
         except HttpError as e:
-            logging.error(e)
-            raise e
+            raise GDriveError('Error during get drive changes request', e)
 
         return changes
 
