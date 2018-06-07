@@ -249,6 +249,8 @@ class GDrive(object):
         except HttpError as e:
             raise GDriveError('Error during get drive changes request', e)
 
+        logging.info('GDrive changes: {} '.format(changes))
+
         return changes
 
     # Properties

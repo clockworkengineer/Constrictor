@@ -63,6 +63,22 @@ class LocalDrive(object):
         if not os.path.exists(self._local_root_path):
             os.makedirs(self._local_root_path)
 
+    def _set_file_data(self, local_file, file_data):
+        """Create file data cache object"""
+
+        file_size = int(file_data.get('size', 0))
+
+        # Google docs have zero size so fake so they are downloaded and not created like normal zero sized files.
+
+        if file_size == 0 and file_data['mimeType'].startswith('application/vnd.google-apps'):
+            file_size = -1
+
+        return self._File_Data(file_name=local_file,
+                               mime_type=file_data['mimeType'],
+                               modified_time=file_data['modifiedTime'],
+                               file_size=file_size)
+
+
     def _create_file_cache_entry(self, current_directory, file_data):
         """Create file id data dictionary entry."""
 
@@ -84,10 +100,7 @@ class LocalDrive(object):
             local_file = '{}.{}'.format(os.path.splitext(local_file)[0],
                                         self._file_translator.get_local_file_extension(file_data['mimeType']))
 
-        self._current_file_id_table[file_data['id']] = self._File_Data(file_name=local_file,
-                                                                       mime_type=file_data['mimeType'],
-                                                                       modified_time=file_data['modifiedTime'],
-                                                                       file_size=int(file_data.get('size', 0)))
+        self._current_file_id_table[file_data['id']] = self._set_file_data(local_file, file_data)
 
         logging.debug(
             'Created file cache entry {} : {}.'.format(file_data['id'], self._current_file_id_table[file_data['id']]))
