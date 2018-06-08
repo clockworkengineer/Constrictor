@@ -74,17 +74,17 @@ class GDrive(object):
     Attributes:
         credentials:       Application credentials(token) for accessing drive
         _drive_service:    Drive Service
-        _start_page_token: Saved start page token used to get changes
+        start_page_token:  Saved start page token used to get changes
     """
 
     def __init__(self, credentials):
 
-        self.credentials = credentials
-
-        self._start_page_token = None
         self._drive_service = build('drive', 'v3',
                                     http=self._credentials.authorize(Http()),
                                     cache_discovery=False)
+
+        self.credentials = credentials
+        self.start_page_token = None
 
     def file_list(self, query='', max_files=1000, file_fields='name, id'):
         """Return list of file metadata for query pasted in."""
@@ -227,29 +227,26 @@ class GDrive(object):
 
             changes = []
 
-            if not self._start_page_token:
-                response = self._drive_service.changes().getStartPageToken().execute()
-                self._start_page_token = response.get('startPageToken')
-
-            page_token = self._start_page_token
+            page_token = self.start_page_token
 
             while page_token is not None:
 
                 response = self._drive_service.changes().list(pageToken=page_token,
-                                                              spaces='drive').execute()
+                                                              spaces='drive',
+                                                              restrictToMyDrive=True).execute()
 
                 for change in response.get('changes'):
                     changes.append(change)
+                    logging.info('GDrive change: {}. '.format(change))
 
                 if 'newStartPageToken' in response:
-                    self._start_page_token = response.get('newStartPageToken')
+                    self.start_page_token = response.get('newStartPageToken', None)
+                    logging.info('New changes start token = {} '.format(self.start_page_token))
 
-                page_token = response.get('nextPageToken')
+                page_token = response.get('nextPageToken', None)
 
         except HttpError as e:
             raise GDriveError('Error during get drive changes request', e)
-
-        logging.info('GDrive changes: {} '.format(changes))
 
         return changes
 
@@ -262,3 +259,19 @@ class GDrive(object):
     @credentials.setter
     def credentials(self, credentials):
         self._credentials = credentials
+
+    @property
+    def start_page_token(self):
+        """If no start page token set then get from server."""
+        try:
+            if self._start_page_token is None:
+                response = self._drive_service.changes().getStartPageToken().execute()
+                self._start_page_token = response.get('startPageToken', None)
+        except HttpError as e:
+            raise GDriveError('Error during get start oage token request', e)
+
+        return self._start_page_token
+
+    @start_page_token.setter
+    def start_page_token(self, start_page_token):
+        self._start_page_token = start_page_token

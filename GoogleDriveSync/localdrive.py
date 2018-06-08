@@ -143,10 +143,6 @@ class LocalDrive(object):
 
         try:
 
-            # Refresh remote drive files
-
-            self._remote_drive.refresh_file_cache()
-
             # Get top level folder contents
 
             top_level = self._get_parents_children(self._remote_drive.root_folder_id)
@@ -300,12 +296,14 @@ class LocalDrive(object):
         self._current_file_id_table.clear()
 
     def synchronize(self, first=False):
-        """Synchromize local folder from remote drive."""
+        """Synchronize local folder from remote drive."""
 
         # Check for remote drive changes
 
-        changes = self._remote_drive.retrieve_all_changes()
-        if changes or first:
+        if first or self._remote_drive.has_changed():
+
+            logging.info('Syncing changes....')
+
             # Build file Id cache
 
             self._build()
@@ -317,6 +315,9 @@ class LocalDrive(object):
             # Tidy up any unnecessary files left behind
 
             self._rationalise()
+
+        else:
+            logging.info('No changes present.')
 
     # Properties
 

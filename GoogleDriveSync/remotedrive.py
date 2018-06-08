@@ -114,6 +114,8 @@ class RemoteDrive(GDrive):
 
             self.root_folder_id = self.file_get_metadata('root').get('id', None)
 
+            self._refresh_file_cache()
+
             # Create file uploader object
 
             if local_upload_path:
@@ -124,7 +126,7 @@ class RemoteDrive(GDrive):
             logging.error(e)
             raise e
 
-    def refresh_file_cache(self):
+    def _refresh_file_cache(self):
         """Refresh remote drive file cache."""
 
         try:
@@ -136,6 +138,22 @@ class RemoteDrive(GDrive):
         except (Exception, GDriveError) as e:
             logging.error(e)
             raise e
+
+    def has_changed(self):
+        """Has remote drive changed."""
+
+        try:
+
+            drive_changes = self.retrieve_all_changes()
+
+            if len(drive_changes) > 0:
+                self._refresh_file_cache()
+
+        except (Exception, GDriveError) as e:
+            logging.error(e)
+            raise e
+
+        return len(drive_changes) > 0
 
     # Properties
 
