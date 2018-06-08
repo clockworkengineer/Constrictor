@@ -80,7 +80,7 @@ class GDrive(object):
     def __init__(self, credentials):
 
         self._drive_service = build('drive', 'v3',
-                                    http=self._credentials.authorize(Http()),
+                                    http=credentials.authorize(Http()),
                                     cache_discovery=False)
 
         self.credentials = credentials
