@@ -14,8 +14,9 @@ quickstart/python" be consulted.
 
 usage: GoogleDriveSync.py [-h] [-p POLLTIME] [-r] [-s SCOPE] [-e SECRETS]
                           [-c CREDENTIALS] [-f FILEIDCACHE] [-t TIMEZONE]
-                          [-l LOGFILE] [-a TRANSLATOR] [-n NUMWORKERS]
-                          [-u UPLOADFOLDER] [-i IGNORELIST [IGNORELIST ...]]
+                          [-l LOGFILE] [-o LOGLEVEL] [-a TRANSLATOR]
+                          [-n NUMWORKERS] [-u UPLOADFOLDER]
+                          [-i IGNORELIST [IGNORELIST ...]] [-b]
                           folder
 
 Synchronize Google Drive with a local folder
@@ -40,6 +41,8 @@ optional arguments:
                         Local timezone (pytz)
   -l LOGFILE, --logfile LOGFILE
                         All logging to file
+  -o LOGLEVEL, --loglevel LOGLEVEL
+                        Logging Level
   -a TRANSLATOR, --translator TRANSLATOR
                         File translator json file
   -n NUMWORKERS, --numworkers NUMWORKERS
@@ -48,10 +51,11 @@ optional arguments:
                         Google upload folder
   -i IGNORELIST [IGNORELIST ...], --ignorelist IGNORELIST [IGNORELIST ...]
                         Ignore file/path list
+  -b, --forcerefresh    Force refresh of remote file cache on each poll.
   
 TODO:
-1) Use changes API better
-2) Compress file id cache file
+1) Compress file id cache file
+2) If changes API used then only update file cache and not complete refresh.
 """
 
 from localdrive import LocalDrive
