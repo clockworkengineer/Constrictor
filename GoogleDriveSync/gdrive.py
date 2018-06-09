@@ -232,8 +232,7 @@ class GDrive(object):
             while page_token is not None:
 
                 response = self._drive_service.changes().list(pageToken=page_token,
-                                                              spaces='drive',
-                                                              restrictToMyDrive=True).execute()
+                                                              spaces='drive').execute()
 
                 for change in response.get('changes'):
                     changes.append(change)

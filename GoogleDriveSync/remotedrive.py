@@ -96,22 +96,25 @@ class _RemoteUploader(FileSystemEventHandler):
 class RemoteDrive(GDrive):
     """Class to access remote drive.
     
-    Access remote drive files (keeping a complete file cache locally).
+    Access remote drive files (keeping a complete file cache locally). The force_refresh parameter
+    is used to force a remote file cache update and not rely on the changes API as these can take
+    minutes to filter back and is used when more immediate local updates are required.
     
     Attrubutes:
         _file_translator   File translator
+        _forece_refresh    == True then refresh file cache oneach has_chaneged().
         file_cache:        Drive file cache.
         root_folder_id:    File ID for root folder.
     """
 
-    def __init__(self, credentials, local_upload_path, file_translator):
+    def __init__(self, credentials, local_upload_path, file_translator, force_refresh=False):
 
         try:
 
             super().__init__(credentials)
 
             self._file_translator = file_translator
-
+            self._force_refresh = force_refresh
             self.root_folder_id = self.file_get_metadata('root').get('id', None)
 
             self._refresh_file_cache()
@@ -119,8 +122,8 @@ class RemoteDrive(GDrive):
             # Create file uploader object
 
             if local_upload_path:
-                uploader = _RemoteUploader(credentials, local_upload_path, file_translator)
-                logging.info("Created upload folder {} for Google drive.".format(local_upload_path))
+                self._uploader = _RemoteUploader(credentials, local_upload_path, file_translator)
+                logging.info("Created upload folder {} for Google Drive.".format(local_upload_path))
 
         except (Exception, GDriveError) as e:
             logging.error(e)
@@ -146,14 +149,14 @@ class RemoteDrive(GDrive):
 
             drive_changes = self.retrieve_all_changes()
 
-            if len(drive_changes) > 0:
+            if self._force_refresh or len(drive_changes) > 0:
                 self._refresh_file_cache()
 
         except (Exception, GDriveError) as e:
             logging.error(e)
             raise e
 
-        return len(drive_changes) > 0
+        return self._force_refresh or (len(drive_changes) > 0)
 
     # Properties
 

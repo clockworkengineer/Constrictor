@@ -112,19 +112,21 @@ def load_context():
         parser = argparse.ArgumentParser(description='Synchronize Google Drive with a local folder')
         parser.add_argument('folder', help='Local folder')
         parser.add_argument('-p', '--polltime', type=int, help='Poll time for drive sychronize in minutes')
-        parser.add_argument('-r', '--refresh', action='store_true', help='Refresh all files.')
+        parser.add_argument('-r', '--refresh', action='store_true', default=False, help='Refresh all files.')
         parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly',
                             help='Google Drive API Scope')
         parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
         parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
-        parser.add_argument('-f', '--fileidcache', help='File id cache json file')
-        parser.add_argument('-t', '--timezone', help='Local timezone (pytz)')
+        parser.add_argument('-f', '--fileidcache', default='fileID_cache.json', help='File id cache json file')
+        parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
         parser.add_argument('-o', '--loglevel', default=logging.INFO, type=int, help='Logging Level')
         parser.add_argument('-a', '--translator', default='file_translator.json', help='File translator json file')
-        parser.add_argument('-n', '--numworkers', type=int, help='Number of worker threads for downloads')
+        parser.add_argument('-n', '--numworkers', type=int, default=4, help='Number of worker threads for downloads')
         parser.add_argument('-u', '--uploadfolder', help='Google upload folder')
-        parser.add_argument('-i', '--ignorelist', nargs='+', help='Ignore file/path list')
+        parser.add_argument('-i', '--ignorelist', nargs='+', default=[], help='Ignore file/path list')
+        parser.add_argument('-b', '--forcerefresh', action='store_true', default=False,
+                            help='Force refresh of remote file cache on each poll.')
     
         context = parser.parse_args()
         
@@ -185,26 +187,17 @@ def google_drive_sync():
 
         file_translator = filetranslator.FileTranslator(context.translator)
 
-        # Create RemoteDrive/LocalDrive objects
+        # Create RemoteDrive / LocalDrive objects
 
-        remote_drive = RemoteDrive(credentials, context.uploadfolder, file_translator)
+        remote_drive = RemoteDrive(credentials, context.uploadfolder, file_translator, context.forcerefresh)
 
         local_drive = LocalDrive(context.folder, remote_drive, file_translator)
-          
-        if context.numworkers:
-            local_drive.numworkers = context.numworkers
-        
-        if context.refresh:
-            local_drive.refresh = context.refresh
-            
-        if context.fileidcache:
-            local_drive.fileidcache = context.fileidcache
-            
-        if context.timezone:
-            local_drive.timezone = context.timezone
-        
-        if context.ignorelist:
-            local_drive.ignorelist = context.ignorelist
+
+        local_drive.numworkers = context.numworkers
+        local_drive.refresh = context.refresh
+        local_drive.fileidcache = context.fileidcache
+        local_drive.timezone = context.timezone
+        local_drive.ignorelist = context.ignorelist
         
         # Sychronize with Google drive with local folder and keep doing if polling set
         

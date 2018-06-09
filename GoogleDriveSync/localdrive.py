@@ -48,20 +48,30 @@ class LocalDrive(object):
         self._local_root_path = local_root_path
         self._remote_drive = remote_drive
         self._current_file_id_table = {}
+        self._old_file_id_table = {}
         self._download_errors = 0
         self._File_Data = collections.namedtuple('File_Data', 'file_name mime_type modified_time, file_size')
         self._file_translator = file_translator
-
-        self.refresh = False
-        self.timezone = 'Europe/London'
-        self.numworkers = 4
-        self.fileidcache = 'fileID_cache.json'
-        self.ignorelist = []
 
         # Create local folder root
 
         if not os.path.exists(self._local_root_path):
             os.makedirs(self._local_root_path)
+
+    def _load_file_id_cache_from_file(self):
+        """Load old file id cache."""
+
+        if os.path.exists(self.fileidcache):
+            with open(self.fileidcache, 'r') as json_file:
+                self._old_file_id_table = json.load(json_file)
+
+    def _write_file_id_cache_to_file(self):
+        """Save current file id cache."""
+
+        with open(self.fileidcache, 'w') as json_file:
+            json.dump(self._current_file_id_table, json_file, indent=2)
+
+
 
     def _set_file_data(self, local_file, file_data):
         """Create file data cache object"""
@@ -277,23 +287,15 @@ class LocalDrive(object):
 
         try:
 
-            if os.path.exists(self.fileidcache):
+            if self._old_file_id_table:
 
-                with open(self.fileidcache, 'r') as json_file:
-                    old_file_id_table = json.load(json_file)
-
-                for fileId in old_file_id_table:
+                for fileId in self._old_file_id_table:
                     if ((fileId not in self._current_file_id_table) or
-                            (self._current_file_id_table[fileId].file_name != old_file_id_table[fileId][0])):
-                        self._remove_local_file(old_file_id_table[fileId][0])
+                            (self._current_file_id_table[fileId].file_name != self._old_file_id_table[fileId][0])):
+                        self._remove_local_file(self._old_file_id_table[fileId][0])
 
         except Exception as e:
             logging.error(e)
-
-        with open(self.fileidcache, 'w') as json_file:
-            json.dump(self._current_file_id_table, json_file, indent=2)
-
-        self._current_file_id_table.clear()
 
     def synchronize(self, first=False):
         """Synchronize local folder from remote drive."""
@@ -303,6 +305,10 @@ class LocalDrive(object):
         if first or self._remote_drive.has_changed():
 
             logging.info('Syncing changes....')
+
+            # Load file id cache
+
+            self._load_file_id_cache_from_file()
 
             # Build file Id cache
 
@@ -315,6 +321,15 @@ class LocalDrive(object):
             # Tidy up any unnecessary files left behind
 
             self._rationalise()
+
+            # Save new file id cache
+
+            self._write_file_id_cache_to_file()
+
+            #  Clear file id caches
+
+            self._current_file_id_table.clear()
+            self._old_file_id_table.clear()
 
         else:
             logging.info('No changes present.')
