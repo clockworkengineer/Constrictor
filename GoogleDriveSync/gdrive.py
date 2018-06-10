@@ -236,11 +236,11 @@ class GDrive(object):
 
                 for change in response.get('changes'):
                     changes.append(change)
-                    logging.info('GDrive change: {}. '.format(change))
+                    logging.debug('GDrive change: {}. '.format(change))
 
                 if 'newStartPageToken' in response:
                     self.start_page_token = response.get('newStartPageToken', None)
-                    logging.info('New changes start token = {} '.format(self.start_page_token))
+                    logging.debug('New changes start token = {} '.format(self.start_page_token))
 
                 page_token = response.get('nextPageToken', None)
 

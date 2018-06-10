@@ -125,22 +125,52 @@ class RemoteDrive(GDrive):
                 self._uploader = _RemoteUploader(credentials, local_upload_path, file_translator)
                 logging.info("Created upload folder {} for Google Drive.".format(local_upload_path))
 
+            logging.debug('Remote Drive force refresh = {}.'.format(self._force_refresh))
+
         except (Exception, GDriveError) as e:
             logging.error(e)
             raise e
 
-    def _refresh_file_cache(self):
+    def _refresh_file_cache(self, cache_changes=[]):
         """Refresh remote drive file cache."""
 
         try:
 
-            self.file_cache = self.file_list(query='not trashed',
-                                             file_fields=
-                                             'name, id, parents, size, mimeType, modifiedTime')
+            if not cache_changes:
+                self.file_cache = self.file_list(query='not trashed',
+                                                 file_fields=
+                                                 'name, id, parents, size, mimeType, modifiedTime, trashed')
+            else:
+                for change in cache_changes:
+                    for index in range(len(self.file_cache)):
+                        if self.file_cache[index]['id'] == change['id']:
+                            if not change['trashed']:
+                                self.file_cache[index] = change
+                                logging.debug('Replacing entry {}'.format(change['id']))
+                            else:
+                                del (self.file_cache[index])
+                                logging.debug('Deleting entry {}'.format(change['id']))
+                            break
+                    else:
+                        self.file_cache.append(change)
+                        logging.debug('Adding  entry {}'.format(change['id']))
 
         except (Exception, GDriveError) as e:
             logging.error(e)
             raise e
+
+    def _build_changes(self, drive_changes):
+        """Build changes list compatible with file id cache entry"""
+
+        changes = []
+
+        for change_data in drive_changes:
+            file_data = self.file_get_metadata(change_data['fileId'],
+                                               file_fields=
+                                               'name, id, parents, size, mimeType, modifiedTime, trashed')
+            changes.append(file_data)
+
+        return (changes)
 
     def has_changed(self):
         """Has remote drive changed."""
@@ -150,7 +180,7 @@ class RemoteDrive(GDrive):
             drive_changes = self.retrieve_all_changes()
 
             if self._force_refresh or len(drive_changes) > 0:
-                self._refresh_file_cache()
+                self._refresh_file_cache(self._build_changes(drive_changes))
 
         except (Exception, GDriveError) as e:
             logging.error(e)

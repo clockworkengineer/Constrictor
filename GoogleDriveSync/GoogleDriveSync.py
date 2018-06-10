@@ -55,7 +55,6 @@ optional arguments:
   
 TODO:
 1) Compress file id cache file
-2) If changes API used then only update file cache and not complete refresh.
 """
 
 from localdrive import LocalDrive
