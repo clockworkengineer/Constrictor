@@ -88,9 +88,8 @@ class LocalDrive(object):
                                modified_time=file_data['modifiedTime'],
                                file_size=file_size)
 
-
-    def _create_file_cache_entry(self, current_directory, file_data):
-        """Create file id data dictionary entry."""
+    def _create_file_id_table_entry(self, current_directory, file_data):
+        """Create file id table entry."""
 
         # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
         # A dict could by used but a tuple makes it more compact
@@ -113,7 +112,8 @@ class LocalDrive(object):
         self._current_file_id_table[file_data['id']] = self._set_file_data(local_file, file_data)
 
         logging.debug(
-            'Created file cache entry {} : {}.'.format(file_data['id'], self._current_file_id_table[file_data['id']]))
+            'Created file id table entry {} : {}.'.format(file_data['id'],
+                                                          self._current_file_id_table[file_data['id']]))
 
     def _get_parents_children(self, parent_file_id):
         """Create a list of file data for children of of given file id"""
@@ -136,7 +136,7 @@ class LocalDrive(object):
 
                 # Save away current file id data
 
-                self._create_file_cache_entry(current_directory, file_data)
+                self._create_file_id_table_entry(current_directory, file_data)
 
                 # If current file a folder then recursivelt parse
 

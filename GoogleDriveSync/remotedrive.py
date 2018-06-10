@@ -136,39 +136,45 @@ class RemoteDrive(GDrive):
 
         try:
 
+            # Complete refresh
+
             if not cache_changes:
                 self.file_cache = self.file_list(query='not trashed',
                                                  file_fields=
                                                  'name, id, parents, size, mimeType, modifiedTime, trashed')
+
+            # Updadte from passed in changes
+
             else:
                 for change in cache_changes:
                     for index in range(len(self.file_cache)):
                         if self.file_cache[index]['id'] == change['id']:
                             if not change['trashed']:
                                 self.file_cache[index] = change
-                                logging.debug('Replacing entry {}'.format(change['id']))
+                                logging.debug('Replacing remote file cache entry {}'.format(change['id']))
                             else:
                                 del (self.file_cache[index])
-                                logging.debug('Deleting entry {}'.format(change['id']))
+                                logging.debug('Deleting file cache entry {}'.format(change['id']))
                             break
                     else:
                         self.file_cache.append(change)
-                        logging.debug('Adding  entry {}'.format(change['id']))
+                        logging.debug('Adding file cache entry {}'.format(change['id']))
 
         except (Exception, GDriveError) as e:
             logging.error(e)
             raise e
 
     def _build_changes(self, drive_changes):
-        """Build changes list compatible with file id cache entry"""
+        """Build changes list compatible with file cache entry"""
 
         changes = []
 
         for change_data in drive_changes:
-            file_data = self.file_get_metadata(change_data['fileId'],
+            if not change_data['removed']:
+                file_data = self.file_get_metadata(change_data['fileId'],
                                                file_fields=
                                                'name, id, parents, size, mimeType, modifiedTime, trashed')
-            changes.append(file_data)
+                changes.append(file_data)
 
         return (changes)
 
