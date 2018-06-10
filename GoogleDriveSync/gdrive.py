@@ -1,6 +1,6 @@
 """Class for accessing google drive.
 
-Class to connect, upload, download, maipulate and interrogate files on Google drive.
+Class to connect, upload, download, manipulate and interrogate files on Google drive.
 To to this it uses google's own python wrapper Drive API which can be read about at URL
 https://developers.google.com/drive/v3/web/quickstart/python.
 """

@@ -55,6 +55,8 @@ optional arguments:
   
 TODO:
 1) Compress file id cache file
+2) Expand file translation table.
+3) Unix daemonize.
 """
 
 from localdrive import LocalDrive
