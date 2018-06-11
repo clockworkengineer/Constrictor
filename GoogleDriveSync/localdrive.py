@@ -10,7 +10,6 @@ import os
 import sys
 import logging
 import datetime
-import json
 import pytz
 import time
 import collections
@@ -59,19 +58,18 @@ class LocalDrive(object):
         if not os.path.exists(self._local_root_path):
             os.makedirs(self._local_root_path)
 
-    def _load_file_id_cache_from_file(self):
+    def load_file_id_cache_from_file(self):
         """Load old file id cache."""
 
         if os.path.exists(self.fileidcache):
             with open(self.fileidcache, 'rb') as file_id_cache_file:
                 self._old_file_id_table = cloudpickle.load(file_id_cache_file)
 
-
-    def _write_file_id_cache_to_file(self):
+    def write_file_id_cache_to_file(self):
         """Save current file id cache."""
 
         with open(self.fileidcache, 'wb') as file_id_cache_file:
-            cloudpickle.dump(self._current_file_id_table, file_id_cache_file)
+            cloudpickle.dump(self._old_file_id_table, file_id_cache_file)
 
 
 
@@ -154,6 +152,10 @@ class LocalDrive(object):
         """Build file Id cache for remote drive."""
 
         try:
+
+            # Clear current file id table
+
+            self._current_file_id_table.clear()
 
             # Get top level folder contents
 
@@ -300,18 +302,14 @@ class LocalDrive(object):
         except Exception as e:
             logging.error(e)
 
-    def synchronize(self, first=False):
+    def synchronize(self):
         """Synchronize local folder from remote drive."""
 
-        # Check for remote drive changes
+        # Check for remote drive changes (_current_file_id_table == {} then first synchronize)
 
-        if first or self._remote_drive.has_changed():
+        if (not self._current_file_id_table) or self._remote_drive.has_changed():
 
             logging.info('Syncing changes....')
-
-            # Load file id cache
-
-            self._load_file_id_cache_from_file()
 
             # Build file Id cache
 
@@ -325,14 +323,9 @@ class LocalDrive(object):
 
             self._rationalise()
 
-            # Save new file id cache
+            #  Copy current file id table
 
-            self._write_file_id_cache_to_file()
-
-            #  Clear file id caches
-
-            self._current_file_id_table.clear()
-            self._old_file_id_table.clear()
+            self._old_file_id_table = self._current_file_id_table.copy()
 
         else:
             logging.info('No changes present.')

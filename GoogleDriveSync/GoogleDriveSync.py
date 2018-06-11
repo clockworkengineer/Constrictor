@@ -91,12 +91,10 @@ def setup_signal_handlers(context):
      
     def signal_handler(signal_number, frame):
         logging.info('Ctrl+C entered or process terminated with kill.\nClosing down cleanly on next poll.')
-        context.stop_polling = True
+        context.continue_polling = False
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-
-    context.stop_polling = False
 
     
 def load_context():
@@ -133,7 +131,11 @@ def load_context():
                             help='Force refresh of remote file cache on each poll.')
     
         context = parser.parse_args()
-        
+
+        # If poltime zero then only synchronize once
+
+        context.continue_polling = (context.polltime != 0)
+
         # Set logging details
 
         logging_params = {'level': context.loglevel,
@@ -202,14 +204,17 @@ def google_drive_sync():
         local_drive.fileidcache = context.fileidcache
         local_drive.timezone = context.timezone
         local_drive.ignorelist = context.ignorelist
-        
-        # Sychronize with Google drive with local folder and keep doing if polling set
-        
-        local_drive.synchronize(first=True)
-        while context.polltime and not context.stop_polling:
+        local_drive.load_file_id_cache_from_file()
+
+        # Sychronize Google Drive with local folder and keep doing if polling enabled
+
+        local_drive.synchronize()
+        while context.continue_polling:
             logging.info('Polling drive ....')
             time.sleep(context.polltime * 60)
             local_drive.synchronize()
+
+        local_drive.write_file_id_cache_to_file()
 
     except (Exception, GDriveError) as e:
         logging.error(e)
