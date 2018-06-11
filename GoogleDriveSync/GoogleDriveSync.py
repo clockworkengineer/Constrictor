@@ -36,7 +36,7 @@ optional arguments:
   -c CREDENTIALS, --credentials CREDENTIALS
                         Google API credtials file
   -f FILEIDCACHE, --fileidcache FILEIDCACHE
-                        File id cache json file
+                        File id cache pickle file
   -t TIMEZONE, --timezone TIMEZONE
                         Local timezone (pytz)
   -l LOGFILE, --logfile LOGFILE

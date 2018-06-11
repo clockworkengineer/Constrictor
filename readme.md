@@ -56,7 +56,7 @@ For setting up the crentials and secrets for use with the API it is suggsested t
 	  -c CREDENTIALS, --credentials CREDENTIALS
 	                        Google API credtials file
 	  -f FILEIDCACHE, --fileidcache FILEIDCACHE
-	                        File id cache json file
+	                        File id cache pickle file
 	  -t TIMEZONE, --timezone TIMEZONE
 	                        Local timezone (pytz)
 	  -l LOGFILE, --logfile LOGFILE
