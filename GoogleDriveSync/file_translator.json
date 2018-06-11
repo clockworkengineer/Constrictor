@@ -3,6 +3,10 @@
     "csv": [
       "text/csv",
       "application/vnd.google-apps.spreadsheet"
+    ],
+    "pdf": [
+      "application/pdf",
+      "application/vnd.google-apps.document"
     ]
   },
   "downloads": {

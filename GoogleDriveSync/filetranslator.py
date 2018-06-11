@@ -3,6 +3,7 @@
 Perform any file extension / mime type mapping between the local and remote drives. The two translation
 tables are loaded from a json file but if an error occurs suitable default built-in tables are used.
 
+Note: Google Application files take up no space so it makes pratical sense to convert files when uploading.
 """
 
 import logging
@@ -53,7 +54,9 @@ class FileTranslator(object):
 
             self._upload_table = {
                 'csv':
-                    ['text/csv', 'application/vnd.google-apps.spreadsheet']
+                    ['text/csv', 'application/vnd.google-apps.spreadsheet'],
+                'pdf':
+                    ['application/pdf', 'application/vnd.google-apps.document']
             }
 
         # Add download table to upload
