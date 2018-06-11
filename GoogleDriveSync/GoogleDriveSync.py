@@ -54,9 +54,8 @@ optional arguments:
   -b, --forcerefresh    Force refresh of remote file cache on each poll.
   
 TODO:
-1) Compress file id cache file
-2) Expand file translation table.
-3) Unix daemonize.
+1) Expand file translation table.
+2) Unix daemonize.
 """
 
 from localdrive import LocalDrive
@@ -122,7 +121,7 @@ def load_context():
                             help='Google Drive API Scope')
         parser.add_argument('-e', '--secrets', default='client_secret.json', help='Google API secrets file')
         parser.add_argument('-c', '--credentials', default='credentials.json', help='Google API credtials file')
-        parser.add_argument('-f', '--fileidcache', default='fileID_cache.json', help='File id cache json file')
+        parser.add_argument('-f', '--fileidcache', default='fileID_cache.P', help='File id cache pickle file')
         parser.add_argument('-t', '--timezone', default='Europe/London', help='Local timezone (pytz)')
         parser.add_argument('-l', '--logfile', help='All logging to file')
         parser.add_argument('-o', '--loglevel', default=logging.INFO, type=int, help='Logging Level')

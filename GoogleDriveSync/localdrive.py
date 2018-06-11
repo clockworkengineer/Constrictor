@@ -14,6 +14,7 @@ import json
 import pytz
 import time
 import collections
+import cloudpickle
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -62,14 +63,15 @@ class LocalDrive(object):
         """Load old file id cache."""
 
         if os.path.exists(self.fileidcache):
-            with open(self.fileidcache, 'r') as json_file:
-                self._old_file_id_table = json.load(json_file)
+            with open(self.fileidcache, 'rb') as file_id_cache_file:
+                self._old_file_id_table = cloudpickle.load(file_id_cache_file)
+
 
     def _write_file_id_cache_to_file(self):
         """Save current file id cache."""
 
-        with open(self.fileidcache, 'w') as json_file:
-            json.dump(self._current_file_id_table, json_file, indent=2)
+        with open(self.fileidcache, 'wb') as file_id_cache_file:
+            cloudpickle.dump(self._current_file_id_table, file_id_cache_file)
 
 
 
@@ -291,8 +293,9 @@ class LocalDrive(object):
 
                 for fileId in self._old_file_id_table:
                     if ((fileId not in self._current_file_id_table) or
-                            (self._current_file_id_table[fileId].file_name != self._old_file_id_table[fileId][0])):
-                        self._remove_local_file(self._old_file_id_table[fileId][0])
+                            (self._current_file_id_table[fileId].file_name != self._old_file_id_table[
+                                fileId].file_name)):
+                        self._remove_local_file(self._old_file_id_table[fileId].file_name)
 
         except Exception as e:
             logging.error(e)
