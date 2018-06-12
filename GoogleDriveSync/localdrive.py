@@ -33,8 +33,9 @@ class LocalDrive(object):
     Attributes:
         _local_root_path:        Local filesystem root folder
         _remote_drive:           Remote drive object
-        _current_file_id_table:  File Id data cache (dictionary)
-        _File_Data:              Named tuple forfile cache data
+        _current_file_id_cache:  Current file Id data cache (dictionary)
+        _old_file_id_cache:      Old file Id data cache (dictionary)
+        _File_Data:              Named tuple for file cache data
         _file_translator         File translator
         refresh:                 == True then complete refresh
         timezone:                Time zone used in file modified time compares
@@ -47,8 +48,8 @@ class LocalDrive(object):
 
         self._local_root_path = local_root_path
         self._remote_drive = remote_drive
-        self._current_file_id_table = {}
-        self._old_file_id_table = {}
+        self._current_file_id_cache = {}
+        self._old_file_id_cache = {}
         self._download_errors = 0
         self._File_Data = collections.namedtuple('File_Data', 'file_name mime_type modified_time, file_size')
         self._file_translator = file_translator
@@ -63,18 +64,16 @@ class LocalDrive(object):
 
         if os.path.exists(self.fileidcache):
             with open(self.fileidcache, 'rb') as file_id_cache_file:
-                self._old_file_id_table = cloudpickle.load(file_id_cache_file)
+                self._old_file_id_cache = cloudpickle.load(file_id_cache_file)
 
     def write_file_id_cache_to_file(self):
         """Save current file id cache."""
 
         with open(self.fileidcache, 'wb') as file_id_cache_file:
-            cloudpickle.dump(self._old_file_id_table, file_id_cache_file)
+            cloudpickle.dump(self._old_file_id_cache, file_id_cache_file)
 
-
-
-    def _set_file_data(self, local_file, file_data):
-        """Create file data cache object"""
+    def _set_file_cache_data(self, local_file, file_data):
+        """Create file id data cache object"""
 
         file_size = int(file_data.get('size', 0))
 
@@ -88,11 +87,10 @@ class LocalDrive(object):
                                modified_time=file_data['modifiedTime'],
                                file_size=file_size)
 
-    def _create_file_id_table_entry(self, current_directory, file_data):
-        """Create file id table entry."""
+    def _create_file_id_cache_entry(self, current_directory, file_data):
+        """Create file id cache entry."""
 
-        # File data consists of a tuple (local file name, remote file mime type, remote file modification time)
-        # A dict could by used but a tuple makes it more compact
+        # Create local path name
 
         local_file = os.path.join(current_directory, file_data['name'])
 
@@ -109,11 +107,11 @@ class LocalDrive(object):
             local_file = '{}.{}'.format(os.path.splitext(local_file)[0],
                                         self._file_translator.get_local_file_extension(file_data['mimeType']))
 
-        self._current_file_id_table[file_data['id']] = self._set_file_data(local_file, file_data)
+        self._current_file_id_cache[file_data['id']] = self._set_file_cache_data(local_file, file_data)
 
         logging.debug(
-            'Created file id table entry {} : {}.'.format(file_data['id'],
-                                                          self._current_file_id_table[file_data['id']]))
+            'Created file id cache entry {} : {}.'.format(file_data['id'],
+                                                          self._current_file_id_cache[file_data['id']]))
 
     def _get_parents_children(self, parent_file_id):
         """Create a list of file data for children of of given file id"""
@@ -136,7 +134,7 @@ class LocalDrive(object):
 
                 # Save away current file id data
 
-                self._create_file_id_table_entry(current_directory, file_data)
+                self._create_file_id_cache_entry(current_directory, file_data)
 
                 # If current file a folder then recursivelt parse
 
@@ -153,9 +151,9 @@ class LocalDrive(object):
 
         try:
 
-            # Clear current file id table
+            # Clear current file id cache
 
-            self._current_file_id_table.clear()
+            self._current_file_id_cache.clear()
 
             # Get top level folder contents
 
@@ -205,7 +203,7 @@ class LocalDrive(object):
             drive.file_download(file_id, local_file, mime_type)
             time.sleep(sleep_delay)
         except GDriveError as e:
-            print(e)
+            logging.error(e)
             self._download_errors += 1
 
     def _update(self):
@@ -214,7 +212,7 @@ class LocalDrive(object):
         file_list = []
         empty_file_list = []
 
-        for file_id, file_data in self._current_file_id_table.items():
+        for file_id, file_data in self._current_file_id_cache.items():
 
             try:
 
@@ -291,13 +289,13 @@ class LocalDrive(object):
 
         try:
 
-            if self._old_file_id_table:
+            if self._old_file_id_cache:
 
-                for fileId in self._old_file_id_table:
-                    if ((fileId not in self._current_file_id_table) or
-                            (self._current_file_id_table[fileId].file_name != self._old_file_id_table[
+                for fileId in self._old_file_id_cache:
+                    if ((fileId not in self._current_file_id_cache) or
+                            (self._current_file_id_cache[fileId].file_name != self._old_file_id_cache[
                                 fileId].file_name)):
-                        self._remove_local_file(self._old_file_id_table[fileId].file_name)
+                        self._remove_local_file(self._old_file_id_cache[fileId].file_name)
 
         except Exception as e:
             logging.error(e)
@@ -305,9 +303,9 @@ class LocalDrive(object):
     def synchronize(self):
         """Synchronize local folder from remote drive."""
 
-        # Check for remote drive changes (_current_file_id_table == {} then first synchronize)
+        # Check for remote drive changes (_current_file_id_cache == {} then first synchronize)
 
-        if (not self._current_file_id_table) or self._remote_drive.has_changed():
+        if (not self._current_file_id_cache) or self._remote_drive.has_changed():
 
             logging.info('Syncing changes....')
 
@@ -323,9 +321,9 @@ class LocalDrive(object):
 
             self._rationalise()
 
-            #  Copy current file id table
+            #  Copy current file id cache
 
-            self._old_file_id_table = self._current_file_id_table.copy()
+            self._old_file_id_cache = self._current_file_id_cache.copy()
 
         else:
             logging.info('No changes present.')
