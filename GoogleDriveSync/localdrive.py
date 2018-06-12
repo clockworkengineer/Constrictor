@@ -65,12 +65,14 @@ class LocalDrive(object):
         if os.path.exists(self.fileidcache):
             with open(self.fileidcache, 'rb') as file_id_cache_file:
                 self._old_file_id_cache = cloudpickle.load(file_id_cache_file)
+                logging.info('File id cache read from file {}.'.format(self.fileidcache))
 
     def write_file_id_cache_to_file(self):
         """Save current file id cache."""
 
         with open(self.fileidcache, 'wb') as file_id_cache_file:
             cloudpickle.dump(self._old_file_id_cache, file_id_cache_file)
+            logging.info('File id cache written to file {}.'.format(self.fileidcache))
 
     def _set_file_cache_data(self, local_file, file_data):
         """Create file id data cache object"""
