@@ -79,12 +79,18 @@ class GDrive(object):
 
     def __init__(self, credentials):
 
-        self._drive_service = build('drive', 'v3',
+        try:
+
+            self._drive_service = build('drive', 'v3',
                                     http=credentials.authorize(Http()),
                                     cache_discovery=False)
 
-        self.credentials = credentials
-        self.start_page_token = None
+            self.credentials = credentials
+
+            self._start_page_token = None
+
+        except HttpError as e:
+            raise GDriveError('Error during object intialisation', e)
 
     def file_list(self, query='', max_files=1000, file_fields='name, id'):
         """Return list of file metadata for query pasted in."""
@@ -266,6 +272,7 @@ class GDrive(object):
             if self._start_page_token is None:
                 response = self._drive_service.changes().getStartPageToken().execute()
                 self._start_page_token = response.get('startPageToken', None)
+                logging.info("Getting intial start page token from server = {}.".format(self._start_page_token))
         except HttpError as e:
             raise GDriveError('Error during get start oage token request', e)
 

@@ -12,8 +12,7 @@ import logging
 import datetime
 import pytz
 import time
-import collections
-import cloudpickle
+import pickle
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -51,7 +50,6 @@ class LocalDrive(object):
         self._current_file_id_cache = {}
         self._old_file_id_cache = {}
         self._download_errors = 0
-        self._File_Data = collections.namedtuple('File_Data', 'file_name mime_type modified_time, file_size')
         self._file_translator = file_translator
 
         # Create local folder root
@@ -64,14 +62,16 @@ class LocalDrive(object):
 
         if os.path.exists(self.fileidcache):
             with open(self.fileidcache, 'rb') as file_id_cache_file:
-                self._old_file_id_cache = cloudpickle.load(file_id_cache_file)
+                self._old_file_id_cache = pickle.load(file_id_cache_file)
                 logging.info('File id cache read from file {}.'.format(self.fileidcache))
+        else:
+            self.refresh = True
 
     def write_file_id_cache_to_file(self):
         """Save current file id cache."""
 
         with open(self.fileidcache, 'wb') as file_id_cache_file:
-            cloudpickle.dump(self._old_file_id_cache, file_id_cache_file)
+            pickle.dump(self._old_file_id_cache, file_id_cache_file)
             logging.info('File id cache written to file {}.'.format(self.fileidcache))
 
     def _set_file_cache_data(self, local_file, file_data):
@@ -84,10 +84,10 @@ class LocalDrive(object):
         if file_size == 0 and file_data['mimeType'].startswith('application/vnd.google-apps'):
             file_size = -1
 
-        return self._File_Data(file_name=local_file,
-                               mime_type=file_data['mimeType'],
-                               modified_time=file_data['modifiedTime'],
-                               file_size=file_size)
+        return {'FileName': local_file,
+                'MimeType': file_data['mimeType'],
+                'ModifiedTime': file_data['modifiedTime'],
+                'FileSize': file_size}
 
     def _create_file_id_cache_entry(self, current_directory, file_data):
         """Create file id cache entry."""
@@ -220,28 +220,28 @@ class LocalDrive(object):
 
                 # Create any folders needed
 
-                if file_data.mime_type == "application/vnd.google-apps.folder":
-                    if not os.path.exists(file_data.file_name):
-                        os.makedirs(file_data.file_name)
+                if file_data['MimeType'] == "application/vnd.google-apps.folder":
+                    if not os.path.exists(file_data['FileName']):
+                        os.makedirs(file_data['FileName'])
                     continue
 
-                if self._refresh or self._update_file(file_data.file_name, file_data.modified_time, self.timezone):
+                if self._refresh or self._update_file(file_data['FileName'], file_data['ModifiedTime'], self.timezone):
 
                     # Do not download empty files
 
-                    if file_data.file_size != 0:
+                    if file_data['FileSize'] != 0:
 
                         # Convert(export) any google application file  otherwise just download
 
-                        if self._file_translator.remote_mime_type_mapped(file_data.mime_type):
-                            mime_type = self._file_translator.get_local_mime_type(file_data.mime_type)
+                        if self._file_translator.remote_mime_type_mapped(file_data['MimeType']):
+                            mime_type = self._file_translator.get_local_mime_type(file_data['MimeType'])
                         else:
                             mime_type = None
 
-                        file_list.append((file_id, file_data.file_name, mime_type))
+                        file_list.append((file_id, file_data['FileName'], mime_type))
 
                     else:
-                        empty_file_list.append(file_data.file_name)
+                        empty_file_list.append(file_data['FileName'])
 
             except Exception as e:
                 logging.error(e)
@@ -295,9 +295,9 @@ class LocalDrive(object):
 
                 for fileId in self._old_file_id_cache:
                     if ((fileId not in self._current_file_id_cache) or
-                            (self._current_file_id_cache[fileId].file_name != self._old_file_id_cache[
-                                fileId].file_name)):
-                        self._remove_local_file(self._old_file_id_cache[fileId].file_name)
+                            (self._current_file_id_cache[fileId]['FileName'] != self._old_file_id_cache[
+                                fileId]['FileName'])):
+                        self._remove_local_file(self._old_file_id_cache[fileId]['FileName'])
 
         except Exception as e:
             logging.error(e)

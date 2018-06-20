@@ -56,6 +56,7 @@ optional arguments:
 TODO:
 1) Expand file translation table.
 2) Unix daemonize.
+3) PyInstaller (?)
 """
 
 from localdrive import LocalDrive
@@ -95,7 +96,6 @@ def setup_signal_handlers(context):
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-
     
 def load_context():
     """Load and parse command line arguments and create runtime context.
@@ -113,7 +113,7 @@ def load_context():
         
         parser = argparse.ArgumentParser(description='Synchronize Google Drive with a local folder')
         parser.add_argument('folder', help='Local folder')
-        parser.add_argument('-p', '--polltime', type=int, help='Poll time for drive sychronize in minutes')
+        parser.add_argument('-p', '--polltime', type=int, default=0, help='Poll time for drive sychronize in minutes')
         parser.add_argument('-r', '--refresh', action='store_true', default=False, help='Refresh all files.')
         parser.add_argument('-s', '--scope', default='https://www.googleapis.com/auth/drive.readonly',
                             help='Google Drive API Scope')
