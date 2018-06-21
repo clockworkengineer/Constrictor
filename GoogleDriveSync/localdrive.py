@@ -24,6 +24,22 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
+def _set_file_cache_data(local_file, file_data):
+    """Create file id data cache object"""
+
+    file_size = int(file_data.get('size', 0))
+
+    # Google docs have zero size so fake so they are downloaded and not created like normal zero sized files.
+
+    if file_size == 0 and file_data['mimeType'].startswith('application/vnd.google-apps'):
+        file_size = -1
+
+    return {'FileName': local_file,
+            'MimeType': file_data['mimeType'],
+            'ModifiedTime': file_data['modifiedTime'],
+            'FileSize': file_size}
+
+
 class LocalDrive(object):
     """Class representing local file system mirrior of Google drive.
     
@@ -34,7 +50,6 @@ class LocalDrive(object):
         _remote_drive:           Remote drive object
         _current_file_id_cache:  Current file Id data cache (dictionary)
         _old_file_id_cache:      Old file Id data cache (dictionary)
-        _File_Data:              Named tuple for file cache data
         _file_translator         File translator
         refresh:                 == True then complete refresh
         timezone:                Time zone used in file modified time compares
@@ -74,21 +89,6 @@ class LocalDrive(object):
             pickle.dump(self._old_file_id_cache, file_id_cache_file)
             logging.info('File id cache written to file {}.'.format(self.fileidcache))
 
-    def _set_file_cache_data(self, local_file, file_data):
-        """Create file id data cache object"""
-
-        file_size = int(file_data.get('size', 0))
-
-        # Google docs have zero size so fake so they are downloaded and not created like normal zero sized files.
-
-        if file_size == 0 and file_data['mimeType'].startswith('application/vnd.google-apps'):
-            file_size = -1
-
-        return {'FileName': local_file,
-                'MimeType': file_data['mimeType'],
-                'ModifiedTime': file_data['modifiedTime'],
-                'FileSize': file_size}
-
     def _create_file_id_cache_entry(self, current_directory, file_data):
         """Create file id cache entry."""
 
@@ -109,7 +109,7 @@ class LocalDrive(object):
             local_file = '{}.{}'.format(os.path.splitext(local_file)[0],
                                         self._file_translator.get_local_file_extension(file_data['mimeType']))
 
-        self._current_file_id_cache[file_data['id']] = self._set_file_cache_data(local_file, file_data)
+        self._current_file_id_cache[file_data['id']] = _set_file_cache_data(local_file, file_data)
 
         logging.debug(
             'Created file id cache entry {} : {}.'.format(file_data['id'],
@@ -357,12 +357,12 @@ class LocalDrive(object):
         self._numworkers = numworkers
 
     @property
-    def fieldidcache(self):
+    def fileidcache(self):
         return self._fileidcache
 
-    @fieldidcache.setter
-    def fieldidcache(self, fieldidcache):
-        self._fileidcache = fieldidcache
+    @fileidcache.setter
+    def fileidcache(self, fileidcache):
+        self._fileidcache = fileidcache
 
     @property
     def ignorelist(self):

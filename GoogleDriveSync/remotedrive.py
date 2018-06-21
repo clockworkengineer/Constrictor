@@ -131,10 +131,13 @@ class RemoteDrive(GDrive):
             logging.error(e)
             raise e
 
-    def _refresh_file_cache(self, cache_changes=[]):
+    def _refresh_file_cache(self, cache_changes=None):
         """Refresh remote drive file cache."""
 
         try:
+
+            if cache_changes is None:
+                cache_changes = []
 
             # Complete refresh
 
@@ -172,8 +175,8 @@ class RemoteDrive(GDrive):
         for change_data in drive_changes:
             if not change_data['removed']:
                 file_data = self.file_get_metadata(change_data['fileId'],
-                                               file_fields=
-                                               'name, id, parents, size, mimeType, modifiedTime, trashed')
+                                                   file_fields=
+                                                   'name, id, parents, size, mimeType, modifiedTime, trashed')
                 changes.append(file_data)
 
         return (changes)

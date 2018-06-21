@@ -89,14 +89,15 @@ def setup_signal_handlers(context):
     Arguments:
         context:    runtime context (globlals/arguments)
     """
-     
+
     def signal_handler(signal_number, frame):
         logging.info('Ctrl+C entered or process terminated with kill.\nClosing down cleanly on next poll.')
         context.continue_polling = False
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    
+
+
 def load_context():
     """Load and parse command line arguments and create runtime context.
     
@@ -108,9 +109,9 @@ def load_context():
     """
 
     context = None
-    
+
     try:
-        
+
         parser = argparse.ArgumentParser(description='Synchronize Google Drive with a local folder')
         parser.add_argument('folder', help='Local folder')
         parser.add_argument('-p', '--polltime', type=int, default=0, help='Poll time for drive sychronize in minutes')
@@ -129,7 +130,7 @@ def load_context():
         parser.add_argument('-i', '--ignorelist', nargs='+', default=[], help='Ignore file/path list')
         parser.add_argument('-b', '--forcerefresh', action='store_true', default=False,
                             help='Force refresh of remote file cache on each poll.')
-    
+
         context = parser.parse_args()
 
         # If poltime zero then only synchronize once
@@ -140,12 +141,12 @@ def load_context():
 
         logging_params = {'level': context.loglevel,
                           'format': '%(asctime)s:GoogleDriveSync:%(message)s'}
-        
+
         if context.logfile:
             logging_params['filename'] = context.logfile
             if not os.path.exists(os.path.dirname(context.logfile)):
                 os.makedirs(os.path.dirname(context.logfile))
-            
+
         logging.basicConfig(**logging_params)
 
         logging.info('Logging intialised with parameters({}).'.format(logging_params))
@@ -153,8 +154,9 @@ def load_context():
     except Exception as e:
         logging.error(e)
         sys.exit(1)
-         
+
     return context
+
 
 ####################
 # Main Entry Point #
@@ -165,24 +167,24 @@ def google_drive_sync():
     """GoogleDriveSync main program entry point."""
 
     try:
-        
+
         # Create runtime context
-        
+
         context = load_context()
-        
+
         # Make sure on Ctrl+C program terminates cleanly
-        
+
         setup_signal_handlers(context)
 
         logging.info('Sychronizing to local folder {}.'.format(context.folder))
-        
+
         if context.refresh:
             logging.info('Refeshing whole Google drive tree locally.')
-     
+
         # Authorize application with Google
-        
+
         credentials = g_authorize(context.scope, context.secrets, context.credentials)
-        
+
         if not credentials:
             logging.error('Could not perform authorization')
             sys.exit(1)
@@ -221,6 +223,6 @@ def google_drive_sync():
 
     logging.info('End of drive Sync.')
 
-        
+
 if __name__ == '__main__':
     google_drive_sync()
