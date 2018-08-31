@@ -75,25 +75,22 @@ with open('robs_applied_for.csv', 'w') as csv_file:
     csv_writer = csv.writer(csv_file)
     csv_writer.writerow(['title', 'location', 'recruiter', 'contact/ref.', 'date applied)'])
 
+    applied_for_jobs = []
+
     with open('reed.html') as html_file:
+        print("Reed Applied Jobs...")
         for job in ReedJobDetails.fetch_raw_jobs(html_file):
-            reed_job = ReedJobDetails(job)
-            csv_writer.writerow(
-                [reed_job.title, reed_job.location, reed_job.recruiter, reed_job.contact, reed_job.applied])
-            print(reed_job.title)
+            applied_for_jobs.append(ReedJobDetails(job))
 
     with open('cwjobs.html') as html_file:
+        print("Computer Weekly Applied Jobs...")
         for job in CWJobDetails.fetch_raw_jobs(html_file):
-            cvlibrary_job = CWJobDetails(job)
-            csv_writer.writerow(
-                [cvlibrary_job.title, cvlibrary_job.location, cvlibrary_job.recruiter, cvlibrary_job.contact,
-                 cvlibrary_job.applied])
-            print(cvlibrary_job.title)
+            applied_for_jobs.append(CWJobDetails(job))
 
     with open('cvlibrary.html') as html_file:
+        print("CV Library Applied Jobs...")
         for job in CVLibraryJobDetails.fetch_raw_jobs(html_file):
-            cvlibrary_job = CVLibraryJobDetails(job)
-            csv_writer.writerow(
-                [cvlibrary_job.title, cvlibrary_job.location, cvlibrary_job.recruiter, cvlibrary_job.contact,
-                 cvlibrary_job.applied])
-            print(cvlibrary_job.title)
+            applied_for_jobs.append(CVLibraryJobDetails(job))
+
+    for job in applied_for_jobs:
+        csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
