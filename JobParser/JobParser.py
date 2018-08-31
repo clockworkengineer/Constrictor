@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 import csv
-
+from datetime import datetime
+from datetime import timedelta
 
 class JobDetails(object):
     def __int__(self):
@@ -19,12 +20,22 @@ class ReedJobDetails(JobDetails):
         self.location = job.find('div', class_='job-location').text
         self.recruiter = job.find('span', {'data-bind': 'html: Recruiter'}).text
         self.contact = job.find('span', {'data-bind': 'html: ApplicationEmail'}).text
-        self.applied = job.find('span', {'data-bind': 'text: AppliedOn'}).text
+        self.applied = ReedJobDetails.convert_date(job.find('span', {'data-bind': 'text: AppliedOn'}).text)
 
     @staticmethod
     def fetch_raw_jobs(html_file):
         html_source = BeautifulSoup(html_file, 'html5lib')
         return (html_source.find_all('article', class_='job row'))
+
+    @staticmethod
+    def convert_date(date):
+        if 'days ago' in date:
+            applied_date = datetime.today();
+            applied_date = applied_date - timedelta(days=int(date.split(' ')[0]))
+            return (applied_date.strftime("%d/%m/%Y"))
+        else:
+            applied_date = datetime.strptime(date, '%d %B %Y')
+            return (applied_date.strftime("%d/%m/%Y"))
 
 
 class CWJobDetails(JobDetails):
@@ -59,32 +70,30 @@ class CVLibraryJobDetails(JobDetails):
         return (html_source.find_all('div', class_='app-card'))
 
 
-with open('reed.html') as html_file:
-    csv_file = open('reed.csv', 'w')
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['title', 'location', 'recruiter', 'contact/ref.', 'date applied)'])
-    for job in ReedJobDetails.fetch_raw_jobs(html_file):
-        reed_job = ReedJobDetails(job)
-        csv_writer.writerow([reed_job.title, reed_job.location, reed_job.recruiter, reed_job.contact, reed_job.applied])
-        print(reed_job.title)
-    csv_file.close()
+with open('robs_applied_for.csv', 'w') as csv_file:
 
-with open('cwjobs.html') as html_file:
-    csv_file = open('cwjobs.csv', 'w')
     csv_writer = csv.writer(csv_file)
     csv_writer.writerow(['title', 'location', 'recruiter', 'contact/ref.', 'date applied)'])
-    for job in CWJobDetails.fetch_raw_jobs(html_file):
-        cw_job = CWJobDetails(job)
-        csv_writer.writerow([cw_job.title, cw_job.location, cw_job.recruiter, cw_job.contact, cw_job.applied])
-        print(cw_job.title)
-    csv_file.close()
 
-with open('cvlibrary.html') as html_file:
-    csv_file = open('cvlibrary.csv', 'w')
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['title', 'location', 'recruiter', 'contact/ref.', 'date applied)'])
-    for job in CVLibraryJobDetails.fetch_raw_jobs(html_file):
-        cw_job = CVLibraryJobDetails(job)
-        csv_writer.writerow([cw_job.title, cw_job.location, cw_job.recruiter, cw_job.contact, cw_job.applied])
-        print(cw_job.title)
-    csv_file.close()
+    with open('reed.html') as html_file:
+        for job in ReedJobDetails.fetch_raw_jobs(html_file):
+            reed_job = ReedJobDetails(job)
+            csv_writer.writerow(
+                [reed_job.title, reed_job.location, reed_job.recruiter, reed_job.contact, reed_job.applied])
+            print(reed_job.title)
+
+    with open('cwjobs.html') as html_file:
+        for job in CWJobDetails.fetch_raw_jobs(html_file):
+            cvlibrary_job = CWJobDetails(job)
+            csv_writer.writerow(
+                [cvlibrary_job.title, cvlibrary_job.location, cvlibrary_job.recruiter, cvlibrary_job.contact,
+                 cvlibrary_job.applied])
+            print(cvlibrary_job.title)
+
+    with open('cvlibrary.html') as html_file:
+        for job in CVLibraryJobDetails.fetch_raw_jobs(html_file):
+            cvlibrary_job = CVLibraryJobDetails(job)
+            csv_writer.writerow(
+                [cvlibrary_job.title, cvlibrary_job.location, cvlibrary_job.recruiter, cvlibrary_job.contact,
+                 cvlibrary_job.applied])
+            print(cvlibrary_job.title)
