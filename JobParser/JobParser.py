@@ -70,27 +70,76 @@ class CVLibraryJobDetails(JobDetails):
         return (html_source.find_all('div', class_='app-card'))
 
 
-with open('robs_applied_for.csv', 'w') as csv_file:
+class FindAJobDetails(JobDetails):
+    def __init__(self, job):
+        super().__init__()
+        job_details = job.find_all('td')
+        self.title = job_details[1].text.split('(')[0].strip()
+        self.location = job_details[1].text.split('(')[1].split(',')[0].strip()
+        self.recruiter = job_details[1].text.split('(')[1].split(',')[-1][:-1].strip()
+        self.contact = "N/A"
+        self.applied = FindAJobDetails.convert_date(job_details[0].text)
 
-    csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['title', 'location', 'recruiter', 'contact/ref.', 'date applied)'])
+    def fetch_raw_jobs(html_file):
+        html_source = BeautifulSoup(html_file, 'html5lib')
+        jobs_body = html_source.find('tbody')
+        return (jobs_body.find_all('tr'))
 
-    applied_for_jobs = []
+    @staticmethod
+    def convert_date(date):
+        applied_date = datetime.strptime(date.split(',')[0], '%d %b %Y')
+        return (applied_date.strftime("%d/%m/%Y"))
 
-    with open('reed.html') as html_file:
-        print("Reed Applied Jobs...")
-        for job in ReedJobDetails.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(ReedJobDetails(job))
 
-    with open('cwjobs.html') as html_file:
-        print("Computer Weekly Applied Jobs...")
-        for job in CWJobDetails.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(CWJobDetails(job))
+class LinkedInJobDetails(JobDetails):
+    def __init__(self, job):
+        super().__init__()
+        self.title = ""
+        self.location = ""
+        self.recruiter = ""
+        self.contact = ""
+        self.applied = ""
 
-    with open('cvlibrary.html') as html_file:
-        print("CV Library Applied Jobs...")
-        for job in CVLibraryJobDetails.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(CVLibraryJobDetails(job))
+    def fetch_raw_jobs(self, html_file):
+        html_source = BeautifulSoup(html_file, 'html5lib')
+        return (None)
 
-    for job in applied_for_jobs:
-        csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
+
+def get_applied_for_jobs():
+    with open('robs_applied_for.csv', 'w') as csv_file:
+
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(['title', 'location', 'recruiter', 'contact/ref.', 'date applied)'])
+
+        applied_for_jobs = []
+
+        with open('reed.html') as html_file:
+            print("Reed Applied Jobs...")
+            for job in ReedJobDetails.fetch_raw_jobs(html_file):
+                applied_for_jobs.append(ReedJobDetails(job))
+
+        with open('cwjobs.html') as html_file:
+            print("Computer Weekly Applied Jobs...")
+            for job in CWJobDetails.fetch_raw_jobs(html_file):
+                applied_for_jobs.append(CWJobDetails(job))
+
+        with open('cvlibrary.html') as html_file:
+            print("CV Library Applied Jobs...")
+            for job in CVLibraryJobDetails.fetch_raw_jobs(html_file):
+                applied_for_jobs.append(CVLibraryJobDetails(job))
+
+        # Read linked in
+
+        with open('findajob.html') as html_file:
+            print("Find A Job Applied Jobs...")
+            for job in FindAJobDetails.fetch_raw_jobs(html_file):
+                applied_for_jobs.append(FindAJobDetails(job))
+
+        # Sort list here!
+
+        for job in applied_for_jobs:
+            csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
+
+
+if __name__ == '__main__':
+    get_applied_for_jobs()
