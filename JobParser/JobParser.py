@@ -12,6 +12,12 @@ class JobDetails(object):
         self.contact = ""
         self.applied = ""
 
+    def __lt__(self, other):
+
+        if datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y"):
+            return (True)
+        else:
+            return (False)
 
 class ReedJobDetails(JobDetails):
     def __init__(self, job):
@@ -136,6 +142,7 @@ def get_applied_for_jobs():
                 applied_for_jobs.append(FindAJobDetails(job))
 
         # Sort list here!
+        applied_for_jobs.sort(reverse=True)
 
         for job in applied_for_jobs:
             csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
