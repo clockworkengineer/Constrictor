@@ -124,50 +124,56 @@ class LinkedIn(JobDetails):
             lis = job.find('li')
             for li in lis.find_next_siblings('li'):
                 print(li.a.h3.span.text.strip())
+                print(li.div.h4.text)
         return (jobs)
 
 
 def get_applied_for_jobs():
-    with open('robs_applied_for.csv', 'w') as csv_file:
+    try:
 
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Date Applied'])
+        with open('robs_applied_for.csv', 'w') as csv_file:
 
-        applied_for_jobs = []
+            csv_writer = csv.writer(csv_file)
+            csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Date Applied'])
 
-        with open('reed.html') as html_file:
-            print("Reed Applied Jobs...")
-            for job in Reed.fetch_raw_jobs(html_file):
-                applied_for_jobs.append(Reed(job))
+            applied_for_jobs = []
 
-        with open('cwjobs.html') as html_file:
-            print("Computer Weekly Applied Jobs...")
-            for job in ComputerWeekly.fetch_raw_jobs(html_file):
-                applied_for_jobs.append(ComputerWeekly(job))
+            with open('reed.html') as html_file:
+                print("Reed Applied Jobs...")
+                for job in Reed.fetch_raw_jobs(html_file):
+                    applied_for_jobs.append(Reed(job))
 
-        with open('cvlibrary.html') as html_file:
-            print("CV Library Applied Jobs...")
-            for job in CVLibrary.fetch_raw_jobs(html_file):
-                applied_for_jobs.append(CVLibrary(job))
+            with open('cwjobs.html') as html_file:
+                print("Computer Weekly Applied Jobs...")
+                for job in ComputerWeekly.fetch_raw_jobs(html_file):
+                    applied_for_jobs.append(ComputerWeekly(job))
 
-        with open('findajob.html') as html_file:
-            print("Find A Job Applied Jobs...")
-            for job in FindAJob.fetch_raw_jobs(html_file):
-                applied_for_jobs.append(FindAJob(job))
+            with open('cvlibrary.html') as html_file:
+                print("CV Library Applied Jobs...")
+                for job in CVLibrary.fetch_raw_jobs(html_file):
+                    applied_for_jobs.append(CVLibrary(job))
 
-        # with open('linkedin.html') as html_file:
-        #     print("Linked In Applied Jobs...")
-        #     for job in LinkedIn.fetch_raw_jobs(html_file):
-        #         applied_for_jobs.append(LinkedIn(job))
+            with open('findajob.html') as html_file:
+                print("Find A Job Applied Jobs...")
+                for job in FindAJob.fetch_raw_jobs(html_file):
+                    applied_for_jobs.append(FindAJob(job))
 
-        print("Sorting Jobs...")
-        applied_for_jobs.sort(reverse=True)
+            # with open('linkedin.html') as html_file:
+            #     print("Linked In Applied Jobs...")
+            #     for job in LinkedIn.fetch_raw_jobs(html_file):
+            #         applied_for_jobs.append(LinkedIn(job))
 
-        print("Writing Jobs To CSV File...")
-        for job in applied_for_jobs:
-            csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
+            print("Sorting Jobs...")
+            applied_for_jobs.sort(reverse=True)
 
-        print("Ended.")
+            print("Writing Jobs To CSV File...")
+            for job in applied_for_jobs:
+                csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
+
+    except Exception:
+        print("Error processing an input file.")
+
+    print("Ended.")
 
 if __name__ == '__main__':
     get_applied_for_jobs()
