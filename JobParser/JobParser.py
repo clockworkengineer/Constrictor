@@ -5,12 +5,12 @@ from datetime import datetime
 from datetime import timedelta
 
 class JobDetails(object):
-    def __int__(self):
-        self.title = ""
-        self.location = ""
-        self.recruiter = ""
-        self.contact = ""
-        self.applied = ""
+    def __init__(self):
+        self.title = "N/A"
+        self.location = "N/A"
+        self.recruiter = "N/A"
+        self.contact = "N/A"
+        self.applied = "N/A"
 
     def __lt__(self, other):
         return (datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y"))
@@ -58,9 +58,7 @@ class ComputerWeekly(JobDetails):
         super().__init__()
         job_details = job.find_all('div', class_='col-xs-7')
         self.title = job.find('a').text
-        self.location = "N/A"
         self.recruiter = job_details[2].p.text
-        self.contact = "N/A"
         self.applied = job_details[1].p.text.split(' ')[0]
 
     @classmethod
@@ -92,7 +90,6 @@ class FindAJob(JobDetails):
         self.title = job_details[1].text.split('(')[0].strip()
         self.location = job_details[1].text.split('(')[1].split(',')[0].strip()
         self.recruiter = job_details[1].text.split('(')[1].split(',')[-1][:-1].strip()
-        self.contact = "N/A"
         self.applied = FindAJob.convert_date(job_details[0].text)
 
     @classmethod
@@ -110,11 +107,6 @@ class FindAJob(JobDetails):
 class LinkedIn(JobDetails):
     def __init__(self, job):
         super().__init__()
-        self.title = ""
-        self.location = ""
-        self.recruiter = ""
-        self.contact = ""
-        self.applied = ""
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
@@ -170,8 +162,9 @@ def get_applied_for_jobs():
             for job in applied_for_jobs:
                 csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
 
-    except Exception:
+    except Exception as e:
         print("Error processing an input file.")
+        print(e)
 
     print("Ended.")
 
