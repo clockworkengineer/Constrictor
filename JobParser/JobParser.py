@@ -107,7 +107,8 @@ class FindAJob(JobDetails):
         return (applied_date.strftime("%d/%m/%Y"))
 
 
-def get_jobs():
+def get_applied_for_jobs():
+    
     print("Getting applied for jobs.")
 
     applied_for_jobs = []
@@ -136,6 +137,7 @@ def get_jobs():
 
 
 def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
+
     print("Writing Jobs To CSV File...")
 
     with open('robs_applied_for.csv', 'w') as csv_file:
@@ -147,11 +149,12 @@ def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
             if datetime.strptime(job.applied, "%d/%m/%Y") > cutoff_date:
                 csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
 
-def get_applied_for_jobs():
+
+def main():
 
     try:
 
-        applied_for_jobs = get_jobs()
+        applied_for_jobs = get_applied_for_jobs()
 
         random.shuffle(applied_for_jobs)
 
@@ -164,4 +167,4 @@ def get_applied_for_jobs():
     print("Ended.")
 
 if __name__ == '__main__':
-    get_applied_for_jobs()
+    main()
