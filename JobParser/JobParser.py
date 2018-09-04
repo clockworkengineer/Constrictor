@@ -3,6 +3,7 @@ import random
 import csv
 from datetime import datetime
 from datetime import timedelta
+import os
 
 class JobDetails(object):
     def __init__(self):
@@ -107,31 +108,34 @@ class FindAJob(JobDetails):
         return (applied_date.strftime("%d/%m/%Y"))
 
 
-def get_applied_for_jobs():
-    
+def get_applied_for_jobs(source_directory):
+
     print("Getting applied for jobs.")
 
     applied_for_jobs = []
 
-    with open('reed.html') as html_file:
-        print("Reed Applied Jobs...")
-        for job in Reed.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(Reed(job))
+    file_names = [file_name for file_name in os.listdir(source_directory)
+                  if any(file_name.endswith(extention) for extention in 'html')]
 
-    with open('cwjobs.html') as html_file:
-        print("Computer Weekly Applied Jobs...")
-        for job in ComputerWeekly.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(ComputerWeekly(job))
+    for file_name in file_names:
 
-    with open('cvlibrary.html') as html_file:
-        print("CV Library Applied Jobs...")
-        for job in CVLibrary.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(CVLibrary(job))
+        if 'reed' in file_name:
+            job_site = Reed
+        elif 'cwjobs' in file_name:
+            job_site = ComputerWeekly
+        elif 'cvlibrary' in file_name:
+            job_site = CVLibrary
+        elif 'findajob' in file_name:
+            job_site = FindAJob
+        else:
+            job_site = None
 
-    with open('findajob.html') as html_file:
-        print("Find A Job Applied Jobs...")
-        for job in FindAJob.fetch_raw_jobs(html_file):
-            applied_for_jobs.append(FindAJob(job))
+        if job_site:
+            with open(file_name) as html_file:
+                print("Processing {}...".format(file_name))
+                for job in job_site.fetch_raw_jobs(html_file):
+                    applied_for_jobs.append(job_site(job))
+
 
     return (applied_for_jobs)
 
@@ -154,7 +158,7 @@ def main():
 
     try:
 
-        applied_for_jobs = get_applied_for_jobs()
+        applied_for_jobs = get_applied_for_jobs(os.getcwd())
 
         random.shuffle(applied_for_jobs)
 
