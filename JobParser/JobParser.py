@@ -5,8 +5,8 @@ Scrape downloaded web pages for applied to jobs over a period, add to a list, so
 CSV file suitable for loading into a spreedsheet. To avoid having to login into the individal recruiter
 web sites the relevant pages are manually downloaded and placed into a local directory for processing.
 
-Currently 4  web sites are supported Reed, CV Library, CW Jobs and the DWP Find a job. It is not intended
-for public use but a private tool to use by myself but it is being placed unrder GitHub anyways.
+Currently 4  web sites are supported Reed, CV Library, CW Jobs and the DWP Find a job. This code is not intended
+for public use but a private tool to use for myself but it is being placed unrder GitHub anyways.
 
 """
 
@@ -26,8 +26,10 @@ __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
+
 class JobDetails(object):
     """Base Job Details class."""
+
     def __init__(self):
         self.title = "N/A"
         self.location = "N/A"
@@ -37,7 +39,23 @@ class JobDetails(object):
 
     def __lt__(self, other):
         """Used in sorting."""
-        return (datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y"))
+        return datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y")
+
+    @classmethod
+    def get_job_site(cls, file_name):
+        """Get job site derived class from html file name."""
+        if 'reed' in file_name:
+            job_site = Reed
+        elif 'cwjobs' in file_name:
+            job_site = ComputerWeekly
+        elif 'cvlibrary' in file_name:
+            job_site = CVLibrary
+        elif 'findajob' in file_name:
+            job_site = FindAJob
+        else:
+            job_site = None
+
+        return job_site
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
@@ -47,6 +65,7 @@ class JobDetails(object):
 
 class Reed(JobDetails):
     """Reed job site."""
+
     def __init__(self, job):
         super().__init__()
         self.title = job.a['title']
@@ -58,33 +77,34 @@ class Reed(JobDetails):
     @classmethod
     def fetch_raw_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, 'html5lib')
-        return (html_source.find_all('article', class_='job row'))
+        return html_source.find_all('article', class_='job row')
 
     @staticmethod
     def convert_date(date):
         """Convert applied date to DD/MM/YYYY format."""
         if 'Today' in date:
-            applied_date = datetime.today();
-            return (applied_date.strftime("%d/%m/%Y"))
+            applied_date = datetime.today()
+            return applied_date.strftime("%d/%m/%Y")
         elif 'Yesterday' in date:
-            applied_date = datetime.today();
+            applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=1)
-            return (applied_date.strftime("%d/%m/%Y"))
+            return applied_date.strftime("%d/%m/%Y")
         elif 'days ago' in date:
-            applied_date = datetime.today();
+            applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=int(date.split(' ')[0]))
-            return (applied_date.strftime("%d/%m/%Y"))
+            return applied_date.strftime("%d/%m/%Y")
         elif '1 week ago' in date:
-            applied_date = datetime.today();
+            applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=7)
-            return (applied_date.strftime("%d/%m/%Y"))
+            return applied_date.strftime("%d/%m/%Y")
         else:
             applied_date = datetime.strptime(date, '%d %B %Y')
-            return (applied_date.strftime("%d/%m/%Y"))
+            return applied_date.strftime("%d/%m/%Y")
 
 
 class ComputerWeekly(JobDetails):
     """Computer Weekly job site."""
+
     def __init__(self, job):
         super().__init__()
         job_details = job.find_all('div', class_='col-xs-7')
@@ -95,11 +115,12 @@ class ComputerWeekly(JobDetails):
     @classmethod
     def fetch_raw_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, 'html5lib')
-        return (html_source.find_all('div', class_='col-xs-12 col-sm-9'))
+        return html_source.find_all('div', class_='col-xs-12 col-sm-9')
 
 
 class CVLibrary(JobDetails):
     """CV Library Job site."""
+
     def __init__(self, job):
         super().__init__()
         job_details = job.find_all('span')
@@ -112,11 +133,12 @@ class CVLibrary(JobDetails):
     @classmethod
     def fetch_raw_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, 'html5lib')
-        return (html_source.find_all('div', class_='app-card'))
+        return html_source.find_all('div', class_='app-card')
 
 
 class FindAJob(JobDetails):
     """DWP find a job site."""
+
     def __init__(self, job):
         super().__init__()
         job_details = job.find_all('td')
@@ -129,13 +151,13 @@ class FindAJob(JobDetails):
     def fetch_raw_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, 'html5lib')
         jobs_body = html_source.find('tbody')
-        return (jobs_body.find_all('tr'))
+        return jobs_body.find_all('tr')
 
     @staticmethod
     def convert_date(date):
         """Convert applied date to DD/MM/YYYY format."""
         applied_date = datetime.strptime(date.split(',')[0], '%d %b %Y')
-        return (applied_date.strftime("%d/%m/%Y"))
+        return applied_date.strftime("%d/%m/%Y")
 
 
 def get_applied_for_jobs(source_directory):
@@ -150,16 +172,7 @@ def get_applied_for_jobs(source_directory):
 
     for file_name in file_names:
 
-        if 'reed' in file_name:
-            job_site = Reed
-        elif 'cwjobs' in file_name:
-            job_site = ComputerWeekly
-        elif 'cvlibrary' in file_name:
-            job_site = CVLibrary
-        elif 'findajob' in file_name:
-            job_site = FindAJob
-        else:
-            job_site = None
+        job_site = JobDetails.get_job_site(file_name)
 
         if job_site:
             with open(file_name) as html_file:
@@ -167,7 +180,7 @@ def get_applied_for_jobs(source_directory):
                 for job in job_site.fetch_raw_jobs(html_file):
                     applied_for_jobs.append(job_site(job))
 
-    return (applied_for_jobs)
+    return applied_for_jobs
 
 
 def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
@@ -190,7 +203,6 @@ def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
 ####################
 
 def main():
-
     try:
 
         applied_for_jobs = get_applied_for_jobs(os.getcwd())
@@ -202,6 +214,7 @@ def main():
         print(e)
 
     print("Ended.")
+
 
 if __name__ == '__main__':
     main()
