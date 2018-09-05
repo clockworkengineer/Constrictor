@@ -1,3 +1,15 @@
+#!/usr/bin/env python3
+""" Scrape applied for jobs from recruiter web pages.
+
+Scrape downloaded web pages for applied to jobs over a period, add to a list, sort and write to a
+CSV file suitable for loading into a spreedsheet. To avoid having to login into the individal recruiter
+web sites the relevant pages are manually downloaded and placed into a local directory for processing.
+
+Currently 4  web sites are supported Reed, CV Library, CW Jobs and the DWP Find a job. It is not intended
+for public use but a private tool to use by myself but it is being placed unrder GitHub anyways.
+
+"""
+
 from bs4 import BeautifulSoup
 import random
 import csv
@@ -5,7 +17,17 @@ from datetime import datetime
 from datetime import timedelta
 import os
 
+__author__ = "Rob Tizzard"
+__copyright__ = "Copyright 20018"
+__credits__ = ["Rob Tizzard"]
+__license__ = "MIT"
+__version__ = "0.0.1"
+__maintainer__ = "Rob Tizzard"
+__email__ = "robert_tizzard@hotmail.com"
+__status__ = "Pre-Alpha"
+
 class JobDetails(object):
+    """Base Job Details class."""
     def __init__(self):
         self.title = "N/A"
         self.location = "N/A"
@@ -14,14 +36,17 @@ class JobDetails(object):
         self.applied = "N/A"
 
     def __lt__(self, other):
+        """Used in sorting."""
         return (datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y"))
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
+        """Create a list of job HTML job details from beautiful soup to be processed."""
         raise NotImplementedError
 
 
 class Reed(JobDetails):
+    """Reed job site."""
     def __init__(self, job):
         super().__init__()
         self.title = job.a['title']
@@ -37,6 +62,7 @@ class Reed(JobDetails):
 
     @staticmethod
     def convert_date(date):
+        """Convert applied date to DD/MM/YYYY format."""
         if 'Today' in date:
             applied_date = datetime.today();
             return (applied_date.strftime("%d/%m/%Y"))
@@ -58,6 +84,7 @@ class Reed(JobDetails):
 
 
 class ComputerWeekly(JobDetails):
+    """Computer Weekly job site."""
     def __init__(self, job):
         super().__init__()
         job_details = job.find_all('div', class_='col-xs-7')
@@ -72,6 +99,7 @@ class ComputerWeekly(JobDetails):
 
 
 class CVLibrary(JobDetails):
+    """CV Library Job site."""
     def __init__(self, job):
         super().__init__()
         job_details = job.find_all('span')
@@ -88,6 +116,7 @@ class CVLibrary(JobDetails):
 
 
 class FindAJob(JobDetails):
+    """DWP find a job site."""
     def __init__(self, job):
         super().__init__()
         job_details = job.find_all('td')
@@ -104,11 +133,13 @@ class FindAJob(JobDetails):
 
     @staticmethod
     def convert_date(date):
+        """Convert applied date to DD/MM/YYYY format."""
         applied_date = datetime.strptime(date.split(',')[0], '%d %b %Y')
         return (applied_date.strftime("%d/%m/%Y"))
 
 
 def get_applied_for_jobs(source_directory):
+    """Process HTML job files in turn."""
 
     print("Getting applied for jobs.")
 
@@ -136,11 +167,11 @@ def get_applied_for_jobs(source_directory):
                 for job in job_site.fetch_raw_jobs(html_file):
                     applied_for_jobs.append(job_site(job))
 
-
     return (applied_for_jobs)
 
 
 def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
+    """Write away CSV file."""
 
     print("Writing Jobs To CSV File...")
 
@@ -154,14 +185,16 @@ def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
                 csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
 
 
+####################
+# Main Entry Point #
+####################
+
 def main():
 
     try:
 
         applied_for_jobs = get_applied_for_jobs(os.getcwd())
-
         random.shuffle(applied_for_jobs)
-
         write_applied_for_jobs_to_file(applied_for_jobs, datetime.today() - timedelta(weeks=2))
 
     except Exception as e:
