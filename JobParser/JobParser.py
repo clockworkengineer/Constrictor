@@ -27,8 +27,8 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-class JobDetails(object):
-    """Base Job Details class."""
+class JobSite(object):
+    """Base Job Site class."""
 
     def __init__(self):
         self.title = "N/A"
@@ -63,7 +63,7 @@ class JobDetails(object):
         raise NotImplementedError
 
 
-class Reed(JobDetails):
+class Reed(JobSite):
     """Reed job site."""
 
     def __init__(self, job):
@@ -102,7 +102,7 @@ class Reed(JobDetails):
             return applied_date.strftime("%d/%m/%Y")
 
 
-class ComputerWeekly(JobDetails):
+class ComputerWeekly(JobSite):
     """Computer Weekly job site."""
 
     def __init__(self, job):
@@ -118,7 +118,7 @@ class ComputerWeekly(JobDetails):
         return html_source.find_all('div', class_='col-xs-12 col-sm-9')
 
 
-class CVLibrary(JobDetails):
+class CVLibrary(JobSite):
     """CV Library Job site."""
 
     def __init__(self, job):
@@ -136,7 +136,7 @@ class CVLibrary(JobDetails):
         return html_source.find_all('div', class_='app-card')
 
 
-class FindAJob(JobDetails):
+class FindAJob(JobSite):
     """DWP find a job site."""
 
     def __init__(self, job):
@@ -172,7 +172,7 @@ def get_applied_for_jobs(source_directory):
 
     for file_name in file_names:
 
-        job_site = JobDetails.get_job_site(file_name)
+        job_site = JobSite.get_job_site(file_name)
 
         if job_site:
             with open(file_name) as html_file:
@@ -210,8 +210,7 @@ def main():
         write_applied_for_jobs_to_file(applied_for_jobs, datetime.today() - timedelta(weeks=2))
 
     except Exception as e:
-        print("Error processing an input file.")
-        print(e)
+        print("Error processing an input file: {}".format(e))
 
     print("Ended.")
 
