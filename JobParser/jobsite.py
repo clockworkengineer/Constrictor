@@ -1,21 +1,10 @@
 #!/usr/bin/env python3
-""" Scrape applied for jobs from recruiter web pages.
-
-Scrape downloaded web pages for applied to jobs over a period, add to a list, sort and write to a
-CSV file suitable for loading into a spreedsheet. To avoid having to login into the individal recruiter
-web sites the relevant pages are manually downloaded and placed into a local directory for processing.
-
-Currently 4  web sites are supported Reed, CV Library, CW Jobs and the DWP Find a job. This code is not intended
-for public use but a private tool to use for myself but it is being placed unrder GitHub anyways.
-
+"""
 """
 
 from bs4 import BeautifulSoup
-import random
-import csv
 from datetime import datetime
 from datetime import timedelta
-import os
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -30,6 +19,9 @@ __status__ = "Pre-Alpha"
 class JobSite(object):
     """Base Job Site class."""
 
+    _date_format = '%d/%m/%Y'
+    _html_parser = 'html5lib'
+
     def __init__(self):
         self.title = "N/A"
         self.location = "N/A"
@@ -39,7 +31,8 @@ class JobSite(object):
 
     def __lt__(self, other):
         """Used in sorting."""
-        return datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y")
+        return datetime.strptime(self.applied, JobSite._date_format) < datetime.strptime(other.applied,
+                                                                                         JobSite._date_format)
 
     @classmethod
     def get_job_site(cls, file_name):
@@ -76,7 +69,7 @@ class Reed(JobSite):
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
-        html_source = BeautifulSoup(html_file, 'html5lib')
+        html_source = BeautifulSoup(html_file, JobSite._html_parser)
         return html_source.find_all('article', class_='job row')
 
     @staticmethod
@@ -84,22 +77,22 @@ class Reed(JobSite):
         """Convert applied date to DD/MM/YYYY format."""
         if 'Today' in date:
             applied_date = datetime.today()
-            return applied_date.strftime("%d/%m/%Y")
+            return applied_date.strftime(JobSite._date_format)
         elif 'Yesterday' in date:
             applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=1)
-            return applied_date.strftime("%d/%m/%Y")
+            return applied_date.strftime(JobSite._date_format)
         elif 'days ago' in date:
             applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=int(date.split(' ')[0]))
-            return applied_date.strftime("%d/%m/%Y")
+            return applied_date.strftime(JobSite._date_format)
         elif '1 week ago' in date:
             applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=7)
-            return applied_date.strftime("%d/%m/%Y")
+            return applied_date.strftime(JobSite._date_format)
         else:
             applied_date = datetime.strptime(date, '%d %B %Y')
-            return applied_date.strftime("%d/%m/%Y")
+            return applied_date.strftime(JobSite._date_format)
 
 
 class ComputerWeekly(JobSite):
@@ -114,7 +107,7 @@ class ComputerWeekly(JobSite):
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
-        html_source = BeautifulSoup(html_file, 'html5lib')
+        html_source = BeautifulSoup(html_file, JobSite._html_parser)
         return html_source.find_all('div', class_='col-xs-12 col-sm-9')
 
 
@@ -132,7 +125,7 @@ class CVLibrary(JobSite):
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
-        html_source = BeautifulSoup(html_file, 'html5lib')
+        html_source = BeautifulSoup(html_file, JobSite._html_parser)
         return html_source.find_all('div', class_='app-card')
 
 
@@ -149,7 +142,7 @@ class FindAJob(JobSite):
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
-        html_source = BeautifulSoup(html_file, 'html5lib')
+        html_source = BeautifulSoup(html_file, JobSite._html_parser)
         jobs_body = html_source.find('tbody')
         return jobs_body.find_all('tr')
 
@@ -157,63 +150,4 @@ class FindAJob(JobSite):
     def convert_date(date):
         """Convert applied date to DD/MM/YYYY format."""
         applied_date = datetime.strptime(date.split(',')[0], '%d %b %Y')
-        return applied_date.strftime("%d/%m/%Y")
-
-
-def get_applied_for_jobs(source_directory):
-    """Process HTML job files in turn."""
-
-    print("Getting applied for jobs.")
-
-    applied_for_jobs = []
-
-    file_names = [file_name for file_name in os.listdir(source_directory)
-                  if any(file_name.endswith(extention) for extention in 'html')]
-
-    for file_name in file_names:
-
-        job_site = JobSite.get_job_site(file_name)
-
-        if job_site:
-            with open(file_name) as html_file:
-                print("Processing {}...".format(file_name))
-                for job in job_site.fetch_raw_jobs(html_file):
-                    applied_for_jobs.append(job_site(job))
-
-    return applied_for_jobs
-
-
-def write_applied_for_jobs_to_file(applied_for_jobs, cutoff_date):
-    """Write away CSV file."""
-
-    print("Writing Jobs To CSV File...")
-
-    with open('robs_applied_for.csv', 'w') as csv_file:
-
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Date Applied'])
-
-        for job in applied_for_jobs:
-            if datetime.strptime(job.applied, "%d/%m/%Y") > cutoff_date:
-                csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
-
-
-####################
-# Main Entry Point #
-####################
-
-def main():
-    try:
-
-        applied_for_jobs = get_applied_for_jobs(os.getcwd())
-        random.shuffle(applied_for_jobs)
-        write_applied_for_jobs_to_file(applied_for_jobs, datetime.today() - timedelta(weeks=2))
-
-    except Exception as e:
-        print("Error processing an input file: {}".format(e))
-
-    print("Ended.")
-
-
-if __name__ == '__main__':
-    main()
+        return applied_date.strftime(JobSite._date_format)
