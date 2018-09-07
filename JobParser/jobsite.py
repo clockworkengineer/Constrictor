@@ -82,22 +82,22 @@ class Reed(JobSite):
         """Convert applied date to DD/MM/YYYY format."""
         if 'Today' in date:
             applied_date = datetime.today()
-            return applied_date.strftime(JobSite._date_format)
+            return JobSite.convert_from_datetime(applied_date)
         elif 'Yesterday' in date:
             applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=1)
-            return applied_date.strftime(JobSite._date_format)
+            return JobSite.convert_from_datetime(applied_date)
         elif 'days ago' in date:
             applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=int(date.split(' ')[0]))
-            return applied_date.strftime(JobSite._date_format)
+            return JobSite.convert_from_datetime(applied_date)
         elif '1 week ago' in date:
             applied_date = datetime.today()
             applied_date = applied_date - timedelta(days=7)
-            return applied_date.strftime(JobSite._date_format)
+            return JobSite.convert_from_datetime(applied_date)
         else:
             applied_date = datetime.strptime(date, '%d %B %Y')
-            return applied_date.strftime(JobSite._date_format)
+            return JobSite.convert_from_datetime(applied_date)
 
 
 class ComputerWeekly(JobSite):
@@ -155,4 +155,4 @@ class FindAJob(JobSite):
     def convert_date(date):
         """Convert applied date to DD/MM/YYYY format."""
         applied_date = datetime.strptime(date.split(',')[0], '%d %b %Y')
-        return applied_date.strftime(JobSite._date_format)
+        return JobSite.convert_from_datetime(applied_date)
