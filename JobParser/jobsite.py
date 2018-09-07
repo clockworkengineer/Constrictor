@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 """
 
@@ -29,10 +28,8 @@ class JobSite(object):
         self.contact = "N/A"
         self.applied = "N/A"
 
-    def __lt__(self, other):
-        """Used in sorting."""
-        return datetime.strptime(self.applied, JobSite._date_format) < datetime.strptime(other.applied,
-                                                                                         JobSite._date_format)
+    def get_applied_datetime(self):
+        return (self.convert_to_datetime(self.applied))
 
     @classmethod
     def get_job_site(cls, file_name):
@@ -54,6 +51,14 @@ class JobSite(object):
     def fetch_raw_jobs(cls, html_file):
         """Create a list of job HTML job details from beautiful soup to be processed."""
         raise NotImplementedError
+
+    @classmethod
+    def convert_to_datetime(cls, date):
+        return (datetime.strptime(date, JobSite._date_format))
+
+    @classmethod
+    def convert_from_datetime(cls, date):
+        return (date.strftime(JobSite._date_format))
 
 
 class Reed(JobSite):

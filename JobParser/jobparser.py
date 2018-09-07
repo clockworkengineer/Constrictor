@@ -63,10 +63,13 @@ def write_applied_for_jobs_to_file(context, applied_for_jobs):
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Date Applied'])
 
+        number_of_jobs = 0;
         for job in applied_for_jobs:
-            if datetime.strptime(job.applied, JobSite._date_format) >= datetime.strptime(context.cutoff,
-                                                                                         JobSite._date_format):
+            if job.get_applied_datetime() >= context.cutoff:
                 csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
+                number_of_jobs += 1
+
+        print("{} jobs applied for over the period.".format(number_of_jobs))
 
 
 def load_context():
@@ -86,14 +89,17 @@ def load_context():
         parser = argparse.ArgumentParser(description='crape applied for jobs from recruiter web pages')
         parser.add_argument('-s', '--source', default=os.getcwd(), help='Source folder')
         parser.add_argument('-c', '--cutoff',
-                            default=(datetime.today() - timedelta(weeks=2)).strftime(JobSite._date_format),
+                            default=JobSite.convert_from_datetime(datetime.today() - timedelta(weeks=2)),
                             help='Cutoff date')
         parser.add_argument('-o', '--output', default='jobs_applied_for.csv', help='CSV output file')
 
         context = parser.parse_args()
 
+        context.cutoff = JobSite.convert_to_datetime(context.cutoff)
+
     except Exception as e:
         print(e)
+        raise e
 
     return context
 
@@ -106,9 +112,7 @@ def main():
     try:
 
         context = load_context()
-
         applied_for_jobs = get_applied_for_jobs(context)
-
         write_applied_for_jobs_to_file(context, applied_for_jobs)
 
     except Exception as e:
