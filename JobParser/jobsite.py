@@ -1,4 +1,7 @@
-"""
+"""Job Site classes.
+
+Base JobSite class and indiviual job site parent classes for supported sites.
+
 """
 
 from bs4 import BeautifulSoup
@@ -51,8 +54,8 @@ class JobSite(object):
         return job_site
 
     @classmethod
-    def fetch_raw_jobs(cls, html_file):
-        """Create a list of job HTML job details from beautiful soup to be processed."""
+    def fetch_jobs(cls, html_file):
+        """Create a list of job HTML details from beautiful soup to be processed."""
         raise NotImplementedError
 
     @classmethod
@@ -73,15 +76,15 @@ class Reed(JobSite):
         self.location = job.find('div', class_='job-location').text
         self.recruiter = job.find('span', {'data-bind': 'html: Recruiter'}).text
         self.contact = job.find('span', {'data-bind': 'html: ApplicationEmail'}).text
-        self.applied = Reed.convert_date(job.find('span', {'data-bind': 'text: AppliedOn'}).text)
+        self.applied = Reed._convert_date(job.find('span', {'data-bind': 'text: AppliedOn'}).text)
 
     @classmethod
-    def fetch_raw_jobs(cls, html_file):
+    def fetch_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, JobSite._html_parser)
         return html_source.find_all('article', class_='job row')
 
     @staticmethod
-    def convert_date(date):
+    def _convert_date(date):
         """Convert applied date to DD/MM/YYYY format."""
         if 'Today' in date:
             applied_date = datetime.today()
@@ -114,7 +117,7 @@ class ComputerWeekly(JobSite):
         self.applied = job_details[1].p.text.split(' ')[0]
 
     @classmethod
-    def fetch_raw_jobs(cls, html_file):
+    def fetch_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, JobSite._html_parser)
         return html_source.find_all('div', class_='col-xs-12 col-sm-9')
 
@@ -131,7 +134,7 @@ class CVLibrary(JobSite):
             self.location = job_details[2].text if job_details[2].text else 'N/A'
             self.contact = job_details[3].text
             self.applied = job_details[4].text.split(' ')[0]
-        elif len(job_details) == 4:
+        elif len(job_details) == 4:  # Missing salary
             self.recruiter = job_details[0].text
             self.location = job_details[1].text if job_details[2].text else 'N/A'
             self.contact = job_details[2].text
@@ -140,7 +143,7 @@ class CVLibrary(JobSite):
             raise InvalidJobRecord("Invalid number of fields in record job record.")
 
     @classmethod
-    def fetch_raw_jobs(cls, html_file):
+    def fetch_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, JobSite._html_parser)
         return html_source.find_all('div', class_='app-card')
 
@@ -154,16 +157,16 @@ class FindAJob(JobSite):
         self.title = job_details[1].text.split('(')[0].strip()
         self.location = job_details[1].text.split('(')[1].split(',')[0].strip()
         self.recruiter = job_details[1].text.split('(')[1].split(',')[-1][:-1].strip()
-        self.applied = FindAJob.convert_date(job_details[0].text)
+        self.applied = FindAJob._convert_date(job_details[0].text)
 
     @classmethod
-    def fetch_raw_jobs(cls, html_file):
+    def fetch_jobs(cls, html_file):
         html_source = BeautifulSoup(html_file, JobSite._html_parser)
         jobs_body = html_source.find('tbody')
         return jobs_body.find_all('tr')
 
     @staticmethod
-    def convert_date(date):
+    def _convert_date(date):
         """Convert applied date to DD/MM/YYYY format."""
         applied_date = datetime.strptime(date.split(',')[0], '%d %b %Y')
         return JobSite.convert_from_datetime(applied_date)

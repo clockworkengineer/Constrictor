@@ -16,7 +16,7 @@ from datetime import datetime
 from datetime import timedelta
 import os
 import random
-from jobsite import JobSite
+from jobsite import JobSite, InvalidJobRecord
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 20018"
@@ -45,8 +45,12 @@ def get_applied_for_jobs(context):
         if job_site:
             with open(file_name) as html_file:
                 print("Processing {}...".format(file_name))
-                for job in job_site.fetch_raw_jobs(html_file):
-                    applied_for_jobs.append(job_site(job))
+                for job in job_site.fetch_jobs(html_file):
+                    try:
+                        applied_for_jobs.append(job_site(job))
+                    except InvalidJobRecord as e:
+                        print(e)
+                        print("Reading next record...")
 
     return applied_for_jobs
 
