@@ -15,10 +15,13 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
+class InvalidJobRecord(Exception):
+    def __init__(self, message):
+        super().__init__(message)
+
 class JobSite(object):
     """Base Job Site class."""
 
-    _date_format = '%d/%m/%Y'
     _html_parser = 'html5lib'
 
     def __init__(self):
@@ -54,11 +57,11 @@ class JobSite(object):
 
     @classmethod
     def convert_to_datetime(cls, date):
-        return (datetime.strptime(date, JobSite._date_format))
+        return (datetime.strptime(date, '%d/%m/%Y'))
 
     @classmethod
     def convert_from_datetime(cls, date):
-        return (date.strftime(JobSite._date_format))
+        return (date.strftime('%d/%m/%Y'))
 
 
 class Reed(JobSite):
@@ -123,10 +126,18 @@ class CVLibrary(JobSite):
         super().__init__()
         job_details = job.find_all('span')
         self.title = job.find('a', class_='apps-job-title').text
-        self.recruiter = job_details[1].text
-        self.location = job_details[2].text if job_details[2].text else 'N/A'
-        self.contact = job_details[3].text
-        self.applied = job_details[4].text.split(' ')[0]
+        if len(job_details) == 5:
+            self.recruiter = job_details[0].text
+            self.location = job_details[2].text if job_details[2].text else 'N/A'
+            self.contact = job_details[3].text
+            self.applied = job_details[4].text.split(' ')[0]
+        elif len(job_details) == 4:
+            self.recruiter = job_details[0].text
+            self.location = job_details[1].text if job_details[2].text else 'N/A'
+            self.contact = job_details[2].text
+            self.applied = job_details[3].text.split(' ')[0]
+        else:
+            raise InvalidJobRecord("Invalid number of fields in record job record.")
 
     @classmethod
     def fetch_raw_jobs(cls, html_file):
