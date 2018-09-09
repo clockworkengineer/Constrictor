@@ -1,6 +1,6 @@
 """Job Site classes.
 
-Base JobSite class and indiviual job site parent classes for supported sites.
+Base JobSite class and indiviual job site child classes for supported sites.
 
 """
 
@@ -19,6 +19,7 @@ __status__ = "Pre-Alpha"
 
 
 class InvalidJobRecord(Exception):
+    """Invalid Job Record."""
     def __init__(self, message):
         super().__init__(message)
 
@@ -35,6 +36,7 @@ class JobSite(object):
         self.applied = "N/A"
 
     def get_applied_datetime(self):
+        """Return datetime for applied date string."""
         return (self.convert_to_datetime(self.applied))
 
     @classmethod
@@ -60,12 +62,55 @@ class JobSite(object):
 
     @classmethod
     def convert_to_datetime(cls, date):
+        """Convert job date string format (DD/MM/YYYY) to datetime object."""
         return (datetime.strptime(date, '%d/%m/%Y'))
 
     @classmethod
     def convert_from_datetime(cls, date):
+        """Convert to job date format string (DD/MM/YYYY) from datetime object."""
         return (date.strftime('%d/%m/%Y'))
 
+    # Properties
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, title):
+        self._title = title
+
+    @property
+    def location(self):
+        return self._location
+
+    @location.setter
+    def location(self, location):
+        self._location = location
+
+    @property
+    def recruiter(self):
+        return self._recruiter
+
+    @recruiter.setter
+    def recruiter(self, recruiter):
+        self._recruiter = recruiter
+
+    @property
+    def contact(self):
+        return self._contact
+
+    @contact.setter
+    def contact(self, contact):
+        self._contact = contact
+
+    @property
+    def applied(self):
+        return self._applied
+
+    @applied.setter
+    def applied(self, applied):
+        self._applied = applied
 
 class Reed(JobSite):
     """Reed job site."""
