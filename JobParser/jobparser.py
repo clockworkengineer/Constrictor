@@ -52,6 +52,9 @@ def get_applied_for_jobs(context):
                         print(e)
                         print("Reading next record...")
 
+        else:
+            print("Invalid job file {}.".format(file_name))
+
     return applied_for_jobs
 
 
