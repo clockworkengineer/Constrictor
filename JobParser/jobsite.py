@@ -34,10 +34,14 @@ class JobSite(object):
         self.recruiter = "N/A"
         self.contact = "N/A"
         self.applied = "N/A"
+        self.site = "N/A"
 
     def get_applied_datetime(self):
         """Return datetime for applied date string."""
         return (self.convert_to_datetime(self.applied))
+
+    def __lt__(self, other):
+        return (datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y"))
 
     @classmethod
     def get_job_site(cls, file_name):
@@ -117,6 +121,7 @@ class Reed(JobSite):
 
     def __init__(self, job):
         super().__init__()
+        self.site = "Reed"
         self.title = job.a['title']
         self.location = job.find('div', class_='job-location').text
         self.recruiter = job.find('span', {'data-bind': 'html: Recruiter'}).text
@@ -156,6 +161,7 @@ class ComputerWeekly(JobSite):
 
     def __init__(self, job):
         super().__init__()
+        self.site = "Computer Weekly"
         job_details = job.find_all('div', class_='col-xs-7')
         self.title = job.find('a').text
         self.recruiter = job_details[2].p.text
@@ -172,6 +178,7 @@ class CVLibrary(JobSite):
 
     def __init__(self, job):
         super().__init__()
+        self.site = "CV Library"
         job_details = job.find_all('span')
         self.title = job.find('a', class_='apps-job-title').text
         if len(job_details) == 5:
@@ -198,6 +205,7 @@ class FindAJob(JobSite):
 
     def __init__(self, job):
         super().__init__()
+        self.site = "Find A Job"
         job_details = job.find_all('td')
         self.title = job_details[1].text.split('(')[0].strip()
         self.location = job_details[1].text.split('(')[1].split(',')[0].strip()

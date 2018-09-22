@@ -15,7 +15,6 @@ import csv
 from datetime import datetime
 from datetime import timedelta
 import os
-import random
 from jobsite import JobSite, InvalidJobRecord
 
 __author__ = "Rob Tizzard"
@@ -43,7 +42,7 @@ def get_applied_for_jobs(context):
         job_site = JobSite.get_job_site(file_name)
 
         if job_site:
-            with open(file_name) as html_file:
+            with open(os.path.join(context.source, file_name)) as html_file:
                 print("Processing {}...".format(file_name))
                 for job in job_site.fetch_jobs(html_file):
                     try:
@@ -63,17 +62,19 @@ def write_applied_for_jobs_to_file(context, applied_for_jobs):
 
     print("Writing Jobs To CSV File...")
 
-    random.shuffle(applied_for_jobs)  # Shuffle things
+    # random.shuffle(applied_for_jobs)  # Shuffle things
+
+    applied_for_jobs.sort(reverse=True)
 
     with open(context.output, 'w') as csv_file:
 
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Date Applied'])
+        csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Job Site', 'Date Applied'])
 
         number_of_jobs = 0;
         for job in applied_for_jobs:
             if job.get_applied_datetime() >= context.cutoff:
-                csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.applied])
+                csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.site, job.applied])
                 number_of_jobs += 1
 
         print("{} jobs applied for over the period.".format(number_of_jobs))
