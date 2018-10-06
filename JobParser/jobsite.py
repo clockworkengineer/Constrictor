@@ -181,6 +181,8 @@ class CVLibrary(JobSite):
         self.site = "CV Library"
         job_details = job.find_all('span')
         self.title = job.find('a', class_='apps-job-title').text
+        if job_details[0].text == 'Job expired':
+            job_details.pop(0)
         if len(job_details) == 5:
             self.recruiter = job_details[0].text
             self.location = job_details[2].text if job_details[2].text else 'N/A'
@@ -188,7 +190,7 @@ class CVLibrary(JobSite):
             self.applied = job_details[4].text.split(' ')[0]
         elif len(job_details) == 4:  # Missing salary
             self.recruiter = job_details[0].text
-            self.location = job_details[1].text if job_details[2].text else 'N/A'
+            self.location = job_details[1].text if job_details[1].text else 'N/A'
             self.contact = job_details[2].text
             self.applied = job_details[3].text.split(' ')[0]
         else:
