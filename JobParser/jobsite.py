@@ -43,6 +43,13 @@ class JobSite(object):
     def __lt__(self, other):
         return (datetime.strptime(self.applied, "%d/%m/%Y") < datetime.strptime(other.applied, "%d/%m/%Y"))
 
+    def __eq__(self, other):
+        return self.title == other.title and self.location == other.location and self.recruiter == other.recruiter and self.contact == other.contact and self.applied == other.applied and self.site == other.site
+
+    def __hash__(self):
+        return hash(self.title) + hash(self.location) + hash(self.title) + hash(self.recruiter) + hash(
+            self.contact) + hash(self.applied) + hash(self.site)
+
     @classmethod
     def get_job_site(cls, file_name):
         """Get job site derived class from html file name."""

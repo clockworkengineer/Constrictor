@@ -60,12 +60,12 @@ def get_applied_for_jobs(context):
 def read_fixed_applied_for_list(context, applied_for_jobs):
     """Read fixed jobs applied for from CSV file (hand crafted)"""
 
-    print("Reading Jobs from CSV File {} ...".format('fixed_jobs_applied.csv'))
+    print("Reading Jobs from Local CSV File {} ...".format('fixed_jobs_applied.csv'))
 
     with open('fixed_jobs_applied.csv', 'r') as f:
         reader = csv.reader(f)
         fixed_jobs_list = list(reader)
-        for job_details in fixed_jobs_list[1:-1]:
+        for job_details in fixed_jobs_list[1:]:
             job = JobSite()
             job.title = job_details[0].strip()
             job.location = job_details[1].strip()
@@ -75,13 +75,12 @@ def read_fixed_applied_for_list(context, applied_for_jobs):
             job.site = job_details[4].strip()
             applied_for_jobs.append(job)
 
-
-
 def write_applied_for_jobs_to_file(context, applied_for_jobs):
     """Write away CSV file."""
 
     print("Writing Jobs To CSV File...")
 
+    applied_for_jobs = list(set(applied_for_jobs))
     applied_for_jobs.sort(reverse=True)
 
     with open(context.output, 'w') as csv_file:
