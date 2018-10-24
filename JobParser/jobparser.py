@@ -57,12 +57,30 @@ def get_applied_for_jobs(context):
     return applied_for_jobs
 
 
+def read_fixed_applied_for_list(context, applied_for_jobs):
+    """Read fixed jobs applied for from CSV file (hand crafted)"""
+
+    print("Reading Jobs from CSV File {} ...".format('fixed_jobs_applied.csv'))
+
+    with open('fixed_jobs_applied.csv', 'r') as f:
+        reader = csv.reader(f)
+        fixed_jobs_list = list(reader)
+        for job_details in fixed_jobs_list[1:-1]:
+            job = JobSite()
+            job.title = job_details[0].strip()
+            job.location = job_details[1].strip()
+            job.recruiter = job_details[2].strip()
+            job.contact = job_details[3].strip()
+            job.applied = job_details[5].strip()
+            job.site = job_details[4].strip()
+            applied_for_jobs.append(job)
+
+
+
 def write_applied_for_jobs_to_file(context, applied_for_jobs):
     """Write away CSV file."""
 
     print("Writing Jobs To CSV File...")
-
-    # random.shuffle(applied_for_jobs)  # Shuffle things
 
     applied_for_jobs.sort(reverse=True)
 
@@ -121,6 +139,7 @@ def main():
 
         context = load_context()
         applied_for_jobs = get_applied_for_jobs(context)
+        read_fixed_applied_for_list(context, applied_for_jobs)
         write_applied_for_jobs_to_file(context, applied_for_jobs)
 
     except Exception as e:
