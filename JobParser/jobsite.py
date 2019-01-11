@@ -35,6 +35,7 @@ class JobSite(object):
         self.contact = "N/A"
         self.applied = "N/A"
         self.site = "N/A"
+        self.feedback = "None"
 
     def get_applied_datetime(self):
         """Return datetime for applied date string."""
@@ -132,7 +133,8 @@ class Reed(JobSite):
         self.title = job.a['title']
         self.location = job.find('div', class_='job-location').text
         self.recruiter = job.find('span', {'data-bind': 'html: Recruiter'}).text
-        self.contact = job.find('span', {'data-bind': 'html: ApplicationEmail'}).text
+        if job.find('span', {'data-bind': 'html: ApplicationEmail'}):
+            self.contact = job.find('span', {'data-bind': 'html: ApplicationEmail'}).text
         self.applied = Reed._convert_date(job.find('span', {'data-bind': 'text: AppliedOn'}).text)
 
     @classmethod

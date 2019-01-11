@@ -86,12 +86,13 @@ def write_applied_for_jobs_to_file(context, applied_for_jobs):
     with open(context.output, 'w') as csv_file:
 
         csv_writer = csv.writer(csv_file)
-        csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Job Site', 'Date Applied'])
+        csv_writer.writerow(['Title', 'Location', 'Recruiter', 'Contact/Ref.', 'Job Site', 'Date Applied', 'Feedback'])
 
         number_of_jobs = 0;
         for job in applied_for_jobs:
             if job.get_applied_datetime() >= context.cutoff:
-                csv_writer.writerow([job.title, job.location, job.recruiter, job.contact, job.site, job.applied])
+                csv_writer.writerow(
+                    [job.title, job.location, job.recruiter, job.contact, job.site, job.applied, job.feedback])
                 number_of_jobs += 1
 
         print("{} jobs applied for over the period.".format(number_of_jobs))
