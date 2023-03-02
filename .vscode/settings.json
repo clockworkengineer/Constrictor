@@ -7,7 +7,10 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/__pycache__": true,
-    "**/.vscode": true
+    "**/.vscode": true,
+    "FPE": "explorerExcludedFiles",
+    "GoogleDriveSync": "explorerExcludedFiles",
+    ".vscode/settings.json": "explorerExcludedFiles"
   },
   "explorerExclude.backup": {}
 }
