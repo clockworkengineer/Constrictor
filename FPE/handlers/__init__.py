@@ -7,6 +7,6 @@
 #     sys.path.insert(1, os.path.join(os.getcwd(), 'handlers'))
 
 from handlers.CopyFile import CopyFile
-# from handlers.CSVFileToMySQL import CSVFileToMySQL
+from handlers.CSVFileToMySQL import CSVFileToMySQL
 from handlers.CSVFileToSQLite import CSVFileToSQLite
 from handlers.SFTPCopyFile import SFTPCopyFile

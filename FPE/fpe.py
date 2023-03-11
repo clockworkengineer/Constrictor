@@ -43,7 +43,7 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-def load_arguments():
+def load_arguments() -> argparse.Namespace:
     """Load and parse command line arguments"""
 
     parser = argparse.ArgumentParser(
@@ -65,12 +65,10 @@ def load_arguments():
 ########################
 
 
-def fpe():
+def fpe() -> None:
     """Main program entry point"""
 
-    arguments = load_arguments()
-
-    config = load_config(arguments)
+    config = load_config(load_arguments())
 
     logging.info('File Processing Engine Started.')
 

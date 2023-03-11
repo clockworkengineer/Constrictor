@@ -1,4 +1,4 @@
-"""Import CSV file to SQLite file handler."""
+"""Import CSV file to SQLite file Handler."""
 
 import csv
 import logging
