@@ -8,5 +8,5 @@
 
 from handlers.CopyFile import CopyFile
 # from handlers.CSVFileToMySQL import CSVFileToMySQL
-# from handlers.CSVFileToSQLite import CSVFileToSQLite
-# from handlers.SFTPCopyFile import SFTPCopyFile
+from handlers.CSVFileToSQLite import CSVFileToSQLite
+from handlers.SFTPCopyFile import SFTPCopyFile

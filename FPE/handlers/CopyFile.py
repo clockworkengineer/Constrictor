@@ -1,10 +1,11 @@
 """Copy file handler."""
 
-from handlers.common import display_details
 import logging
 import os
 import shutil
 from watchdog.events import FileSystemEventHandler
+from handlers.common import display_details
+
 
 class CopyFile(FileSystemEventHandler):
     """Copy file/directories.
@@ -17,11 +18,11 @@ class CopyFile(FileSystemEventHandler):
         watch_folder:         Folder to watch for files
         destination_folder:   Destination for file copy
         recursive:            Boolean == true perform recursive file watch
-        delete_source:        Boolean == true delete source file on sucess
+        delete_source:        Boolean == true delete source file on success
     """
 
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details."""
+        """ Initialise handler attributes and log details."""
 
         self.handler_name = handler_section['name']
         self.watch_folder = handler_section['watch']

@@ -5,6 +5,7 @@ import sys
 import configparser
 import logging
 
+
 def get_config_section(config, section_name):
     """Get configuration file section and return dictionary for it"""
 
@@ -15,7 +16,7 @@ def get_config_section(config, section_name):
         try:
             config_section[option] = config.get(section_name, option)
 
-            # Automatically set any boolean values (dont use getBoolean)
+            # Automatically set any boolean values (don't use getBoolean)
             if config_section[option] in ('True', 'False'):
                 config_section[option] = config_section[option] == 'True'
 
@@ -64,7 +65,7 @@ def load_config(arguments):
         if arguments.name is not None:
 
             if not config.has_section(arguments.name):
-                logging.info('Error: Non-existant file handler {}.'.
+                logging.info('Error: Non-existent file handler {}.'.
                              format(arguments.name))
 
             for section in config.sections():

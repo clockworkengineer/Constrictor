@@ -7,7 +7,7 @@ import logging
 
 
 def display_details(handler_section):
-    """Display event handler details and paraneters."""
+    """Display event handler details and parameters."""
 
     try:
 

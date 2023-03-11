@@ -18,7 +18,7 @@ usage: fpe.py [-h] [-n NAME] file
 Process files copied into watch folder with a custom handler.
 
 positional arguments:
-  file                  Configration file
+  file                  Configuration file
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -31,8 +31,7 @@ import logging
 import argparse
 
 from observer import create_observer, observe_folders
-from config import load_config, get_config_section
-from factory import create_event_handler
+from config import load_config
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -49,13 +48,13 @@ def load_arguments():
 
     parser = argparse.ArgumentParser(
         description='Process files copied into watch folder with a custom handler.')
-    parser.add_argument('file', help='Configration file')
+    parser.add_argument('file', help='Configuration file')
     parser.add_argument('-n', '--name', help="File handler name")
 
     arguments = parser.parse_args()
 
     if not os.path.exists(arguments.file):
-        print('Error: Non-existant config file passed to FPE.')
+        print('Error: Non-existent config file passed to FPE.')
         sys.exit(1)
 
     return arguments

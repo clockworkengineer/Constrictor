@@ -1,14 +1,15 @@
 """Create file event handler object.
   
-Factory function create_event_handler used to create an file handler object
+Factory function create_event_handler used to create a file handler object
 from the handler config section passed in. These handlers are then passed into 
-a watchdog observer specically created for it and used to process files passed 
+a watchdog observer specially created for it and used to process files passed
 to handler method on_created().
 
 """
 
 import logging
 import handlers
+
 
 def create_event_handler(handler_section):
     """Generate watchdog event handler object for the configuration section passed in."""

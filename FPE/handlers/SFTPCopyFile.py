@@ -1,10 +1,12 @@
 """SFTP Copy file handler."""
 
-from handlers.common import display_details
+
 import logging
 import os
 import pysftp
 from watchdog.events import FileSystemEventHandler
+from handlers.common import display_details
+
 
 class SFTPCopyFile(FileSystemEventHandler):
     """SFTP Copy file/directories.
