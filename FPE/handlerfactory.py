@@ -27,7 +27,7 @@ __status__ = "Pre-Alpha"
 
 def create_event_handler(handler_section):
     """Generate watchdog event handler object for the configuration section passed in."""
-    
+
     file_handler = None
 
     try:
@@ -36,9 +36,10 @@ def create_event_handler(handler_section):
         file_handler = handler_class(handler_section)
 
     except KeyError as e:
-        logging.error("Missing option {}.\n{} not started.".format(e, handler_section['name']))
+        logging.error("Missing option {}.\n{} not started.".format(
+            e, handler_section['name']))
     except AttributeError:
-        logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(**handler_section))
-        
-    return file_handler
+        logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(
+            **handler_section))
 
+    return file_handler
