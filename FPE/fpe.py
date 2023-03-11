@@ -4,7 +4,7 @@
 
 This is a generic file processing engine that sets up a watch folder and waits 
 for files/directories to be copied to it. Any added directories are also watched 
-(if recursive is set) but any added files are be processed using one of its built 
+(if recursive is set) and any added files are be processed using one of its built 
 in file handler classes.
 
 Current built in file handler types:
@@ -34,9 +34,8 @@ from observer import create_observer, observe_folders
 from config import load_config, get_config_section
 from factory import create_event_handler
 
-
 __author__ = "Rob Tizzard"
-__copyright__ = "Copyright 20018"
+__copyright__ = "Copyright 2023"
 __credits__ = ["Rob Tizzard"]
 __license__ = "MIT"
 __version__ = "0.0.1"

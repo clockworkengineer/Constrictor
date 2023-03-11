@@ -10,16 +10,6 @@ to handler method on_created().
 import logging
 import handlers
 
-__author__ = "Rob Tizzard"
-__copyright__ = "Copyright 20018"
-__credits__ = ["Rob Tizzard"]
-__license__ = "MIT"
-__version__ = "0.0.1"
-__maintainer__ = "Rob Tizzard"
-__email__ = "robert_tizzard@hotmail.com"
-__status__ = "Pre-Alpha"
-
-
 def create_event_handler(handler_section):
     """Generate watchdog event handler object for the configuration section passed in."""
 

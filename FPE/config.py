@@ -5,17 +5,6 @@ import sys
 import configparser
 import logging
 
-
-__author__ = "Rob Tizzard"
-__copyright__ = "Copyright 20018"
-__credits__ = ["Rob Tizzard"]
-__license__ = "MIT"
-__version__ = "0.0.1"
-__maintainer__ = "Rob Tizzard"
-__email__ = "robert_tizzard@hotmail.com"
-__status__ = "Pre-Alpha"
-
-
 def get_config_section(config, section_name):
     """Get configuration file section and return dictionary for it"""
 

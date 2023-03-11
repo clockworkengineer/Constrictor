@@ -6,22 +6,12 @@ import os
 import shutil
 from watchdog.events import FileSystemEventHandler
 
-__author__ = "Rob Tizzard"
-__copyright__ = "Copyright 20018"
-__credits__ = ["Rob Tizzard"]
-__license__ = "MIT"
-__version__ = "0.0.1"
-__maintainer__ = "Rob Tizzard"
-__email__ = "robert_tizzard@hotmail.com"
-__status__ = "Pre-Alpha"
-
-
 class CopyFile(FileSystemEventHandler):
     """Copy file/directories.
-    
+
     Copy files created in watch folder to destination folder keeping any in 
     situ watch folder directory structure the same.
-    
+
     Attributes:
         handler_name:         Name of handler object
         watch_folder:         Folder to watch for files

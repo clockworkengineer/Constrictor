@@ -1,23 +1,12 @@
 """File Observer handling code.
 """
 
-
 import time
 import logging
 
 from watchdog.observers import Observer
 from config import load_config, get_config_section
 from factory import create_event_handler
-
-
-__author__ = "Rob Tizzard"
-__copyright__ = "Copyright 20018"
-__credits__ = ["Rob Tizzard"]
-__license__ = "MIT"
-__version__ = "0.0.1"
-__maintainer__ = "Rob Tizzard"
-__email__ = "robert_tizzard@hotmail.com"
-__status__ = "Pre-Alpha"
 
 
 def create_observer(config, handler_name):

@@ -7,16 +7,6 @@
 # import os
 # from watchdog.events import FileSystemEventHandler
 
-# __author__ = "Rob Tizzard"
-# __copyright__ = "Copyright 20018"
-# __credits__ = ["Rob Tizzard"]
-# __license__ = "MIT"
-# __version__ = "0.0.1"
-# __maintainer__ = "Rob Tizzard"
-# __email__ = "robert_tizzard@hotmail.com"
-# __status__ = "Pre-Alpha"
-
-
 # class CSVFileToMySQL(FileSystemEventHandler):
 #     """Import CSV file to MySQL database.
 
