@@ -4,7 +4,7 @@ import logging
 import os
 import shutil
 from watchdog.events import FileSystemEventHandler
-from handlers.common import display_details
+from handler_common import display_details
 
 
 class CopyFile(FileSystemEventHandler):

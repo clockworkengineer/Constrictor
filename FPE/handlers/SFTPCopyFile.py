@@ -5,7 +5,7 @@ import logging
 import os
 import pysftp
 from watchdog.events import FileSystemEventHandler
-from handlers.common import display_details
+from handler_common import display_details
 
 
 class SFTPCopyFile(FileSystemEventHandler):

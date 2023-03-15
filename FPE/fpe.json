@@ -1,0 +1,16 @@
+{
+    "handlers": [
+        "CopyFile",
+        "CSVFileToSQLite",
+        "CSVFileToMySQL",
+        "SFTPCopyFile"
+    ],
+    "watchers": [
+        {
+            "name" : "File Coper",
+            "type": "CopyFile",
+            "watch": "c:\\temp\\watch\\",
+            "destination": "c:\\temp\\desintation"
+        }
+    ]
+}

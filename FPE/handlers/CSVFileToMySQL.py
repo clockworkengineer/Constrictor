@@ -1,4 +1,4 @@
-"""Import CSV file to MySQL file Handler."""
+"""Import CSV file to MySQL file handler."""
 
 
 import mysql
@@ -6,7 +6,8 @@ import csv
 import logging
 import os
 from watchdog.events import FileSystemEventHandler
-from handlers.common import display_details, generate_sql
+from handler_common import display_details, generate_sql
+
 
 class CSVFileToMySQL(FileSystemEventHandler):
     """Import CSV file to MySQL database.
@@ -51,7 +52,7 @@ class CSVFileToMySQL(FileSystemEventHandler):
         try:
 
             database = mysql.connect(self.server, self.user_name,
-                                       self.user_password, self.database_name)
+                                     self.user_password, self.database_name)
             cursor = database.cursor()
 
             logging.info('Imorting CSV file {} to table {}.'.

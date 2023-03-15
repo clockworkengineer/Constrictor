@@ -3,6 +3,7 @@
 
 import sys
 import configparser
+import json
 import logging
 
 
@@ -38,9 +39,14 @@ def load_config(arguments):
 
         # Read in config file
 
-        config = configparser.ConfigParser()
-        config.read(arguments.file)
-
+        with open(arguments.file) as json_file:
+            config = json.load(json_file)
+      
+        if not 'handlers' in config:
+            raise ValueError("Missing config handlers key'.")
+        if not 'watchers' in config:
+            raise ValueError("Missing config watchers key'.")
+        
         # Default logging parameters
 
         logging_params = {'level': logging.INFO,
@@ -49,28 +55,17 @@ def load_config(arguments):
         # Read in any logging options, merge with default and
         # remove logging section
 
-        if 'Logging' in config.sections():
+        if 'Logging' in config:
             logging_params.update(get_config_section(config, 'Logging'))
             # If level passed in then convert to int.
             if logging_params['level'] is not int:
                 logging_params['level'] = int(logging_params['level'])
             logging_params.pop('name')
-            config.remove_section('Logging')
+            config.pop('Logging')
 
         logging.basicConfig(**logging_params)  # Set logging options
 
-        # If handler name set then remove all others from config
-        # leaving the config empty if the handler doesn't exist
 
-        if arguments.name is not None:
-
-            if not config.has_section(arguments.name):
-                logging.info('Error: Non-existent file handler {}.'.
-                             format(arguments.name))
-
-            for section in config.sections():
-                if section != arguments.name:
-                    config.remove_section(section)
 
     except Exception as e:
         logging.error(e)

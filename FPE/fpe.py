@@ -13,7 +13,7 @@ Current built in file handler types:
 3) Import CSV file to SQLite database table.
 4) SFTP copy files/directory to an SSH server.
 
-usage: fpe.py [-h] [-n NAME] file
+usage: fpe.py [-h] file
 
 Process files copied into watch folder with a custom handler.
 
@@ -22,7 +22,6 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n NAME, --name NAME  File handler name
 """
 
 import sys
@@ -49,7 +48,7 @@ def load_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description='Process files copied into watch folder with a custom handler.')
     parser.add_argument('file', help='Configuration file')
-    parser.add_argument('-n', '--name', help="File handler name")
+    # parser.add_argument('-n', '--name', help="File handler name")
 
     arguments = parser.parse_args()
 
@@ -74,11 +73,11 @@ def fpe() -> None:
 
     observers_list = []
 
-    # Loop through config sections creating file observers
+    # Loop through watchers array creating file observers for each
 
-    for handler_name in config.sections():
+    for handler_config in config['watchers']:
 
-        observer = create_observer(config, handler_name)
+        observer = create_observer(handler_config)
         if observer is not None:
             observers_list.append(observer)
 

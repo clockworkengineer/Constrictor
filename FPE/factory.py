@@ -11,21 +11,21 @@ import logging
 import handlers
 
 
-def create_event_handler(handler_section):
+def create_event_handler(handler_config):
     """Generate watchdog event handler object for the configuration section passed in."""
 
     file_handler = None
 
     try:
 
-        handler_class = getattr(handlers, handler_section['type'])
-        file_handler = handler_class(handler_section)
+        handler_class = getattr(handlers, handler_config['type'])
+        file_handler = handler_class(handler_config)
 
     except KeyError as e:
         logging.error("Missing option {}.\n{} not started.".format(
-            e, handler_section['name']))
+            e, handler_config['name']))
     except AttributeError:
         logging.error('Invalid file handler type [{type}].\n{name} not started.'.format(
-            **handler_section))
+            **handler_config))
 
     return file_handler

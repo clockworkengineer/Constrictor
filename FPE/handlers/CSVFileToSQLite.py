@@ -1,11 +1,11 @@
-"""Import CSV file to SQLite file Handler."""
+"""Import CSV file to SQLite file handler."""
 
 import csv
 import logging
 import os
 import sqlite3
 from watchdog.events import FileSystemEventHandler
-from handlers.common import display_details, generate_sql
+from handler_common import display_details, generate_sql
 
 
 class CSVFileToSQLite(FileSystemEventHandler):
