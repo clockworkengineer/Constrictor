@@ -31,6 +31,7 @@ import argparse
 
 from observer import create_observer, observe_folders
 from config import load_config
+from arguments import load_arguments
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -40,23 +41,6 @@ __version__ = "0.0.1"
 __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
-
-
-def load_arguments() -> argparse.Namespace:
-    """Load and parse command line arguments"""
-
-    parser = argparse.ArgumentParser(
-        description='Process files copied into watch folder with a custom handler(s).')
-    parser.add_argument('file', help='Configuration file')
-
-    arguments = parser.parse_args()
-
-    if not os.path.exists(arguments.file):
-        print('Error: Non-existent config file passed to FPE.')
-        sys.exit(1)
-
-    return arguments
-
 
 ########################
 # FPE Main Entry Point #

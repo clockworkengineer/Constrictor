@@ -34,8 +34,7 @@ def load_config(arguments):
         logging_params = {'level': logging.INFO,
                           'format': '%(asctime)s:%(message)s'}
 
-        # Read in any logging options, merge with default and
-        # remove logging section
+        # Read in any logging options, merge with default
 
         if 'logging' in config:
             logging_params.update(config['logging'])
