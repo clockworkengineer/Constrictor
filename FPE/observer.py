@@ -5,7 +5,7 @@ import time
 import logging
 
 from watchdog.observers import Observer
-from config import get_config_section
+# from config import get_config_section
 from factory import create_event_handler
 
 

@@ -46,9 +46,8 @@ def load_arguments() -> argparse.Namespace:
     """Load and parse command line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Process files copied into watch folder with a custom handler.')
+        description='Process files copied into watch folder with a custom handler(s).')
     parser.add_argument('file', help='Configuration file')
-    # parser.add_argument('-n', '--name', help="File handler name")
 
     arguments = parser.parse_args()
 

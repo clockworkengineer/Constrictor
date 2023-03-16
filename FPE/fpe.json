@@ -7,10 +7,14 @@
     ],
     "watchers": [
         {
-            "name" : "File Coper",
+            "name": "File Coper",
             "type": "CopyFile",
             "watch": "c:\\temp\\watch\\",
             "destination": "c:\\temp\\desintation"
         }
-    ]
+    ],
+    "logging": {
+        "level": 20,
+        "format": "%(asctime)s:%(message)s"
+    }
 }
