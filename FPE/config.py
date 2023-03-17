@@ -23,10 +23,10 @@ def load_config(arguments):
         if not 'watchers' in config:
             raise ValueError("Missing config watchers key'.")
 
-        for handler_config in config['watchers']:
-            if not 'name' in handler_config:
+        for watcher_config in config['watchers']:
+            if not 'name' in watcher_config:
                 raise ValueError("Missing config handler name key'.")
-            if not 'type' in handler_config:
+            if not 'type' in watcher_config:
                 raise ValueError("Missing config watchers type key'.")
 
         # Default logging parameters

@@ -4,11 +4,11 @@
 import logging
 import os
 import pysftp
-from watchdog.events import FileSystemEventHandler
+from watcher import Watcher
 from handler_common import display_details
 
 
-class SFTPCopyFile(FileSystemEventHandler):
+class SFTPCopyFile(Watcher):
     """SFTP Copy file/directories.
 
     SFTP Copy files created in watch folder to destinatAion folder on remote SSH

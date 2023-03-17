@@ -24,10 +24,7 @@ optional arguments:
   -h, --help            show this help message and exit
 """
 
-import sys
-import os
 import logging
-import argparse
 
 from observer import create_observer, observe_folders
 from config import load_config
@@ -58,9 +55,9 @@ def fpe() -> None:
 
     # Loop through watchers array creating file observers for each
 
-    for handler_config in config['watchers']:
+    for watcher_config in config['watchers']:
 
-        observer = create_observer(handler_config)
+        observer = create_observer(watcher_config)
         if observer is not None:
             observers_list.append(observer)
 

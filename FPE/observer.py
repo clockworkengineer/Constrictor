@@ -5,22 +5,22 @@ import time
 import logging
 
 from watchdog.observers import Observer
-from factory import create_event_handler
+from factory import create_watcher
 
 
-def create_observer(handler_config):
+def create_observer(watcher_config):
     """Create file handler attach to an observer and start watching."""
 
     try:
 
         # Default values for optional field
 
-        if not 'recursive' in handler_config:
-            handler_config['recursive'] = False
-        if not 'deletesource' in handler_config:
-            handler_config['deletesource'] = True
+        if not 'recursive' in watcher_config:
+            watcher_config['recursive'] = False
+        if not 'deletesource' in watcher_config:
+            watcher_config['deletesource'] = True
 
-        file_handler = create_event_handler(handler_config)
+        file_handler = create_watcher(watcher_config)
 
     except Exception as e:
         logging.error(e)

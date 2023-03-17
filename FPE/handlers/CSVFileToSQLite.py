@@ -4,11 +4,11 @@ import csv
 import logging
 import os
 import sqlite3
-from watchdog.events import FileSystemEventHandler
+from watcher import Watcher
 from handler_common import display_details, generate_sql
 
 
-class CSVFileToSQLite(FileSystemEventHandler):
+class CSVFileToSQLite(Watcher):
     """Import CSV file to SQLite database.
 
     Read in CSV file and insert/update rows within a given SQLite database/table.
