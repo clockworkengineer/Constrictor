@@ -6,7 +6,7 @@ This repository contains projects written in python in the course of learning th
 
 This is a Python  variant of the JavaScript/Node file processing engine. It uses the watchdog package to monitor a configured folder for files created in it and processes each file with a custom file handler script. If the resursive option is configured then any folder created in the watch folder are added to to the watch list.
 
-Current built in file handlers:
+Current built in file builtin_handlers:
 
 - Copy files/directory
 - Import CSV file to MySQL database table.

@@ -1,5 +1,5 @@
 {
-    "handlers": [
+    "builtin_handlers": [
         "CopyFile",
         "CSVFileToSQLite",
         "CSVFileToMySQL",

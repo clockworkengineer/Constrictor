@@ -8,7 +8,7 @@ to handler method on_created().
 """
 
 import logging
-import handlers
+import builtin_handlers
 
 
 def create_watcher(watcher_config):
@@ -18,7 +18,7 @@ def create_watcher(watcher_config):
 
     try:
 
-        handler_class = getattr(handlers, watcher_config['type'])
+        handler_class = getattr(builtin_handlers, watcher_config['type'])
         file_handler = handler_class(watcher_config)
 
     except KeyError as e:
