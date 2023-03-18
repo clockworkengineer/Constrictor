@@ -9,7 +9,7 @@ from watchdog.events import FileSystemEventHandler
 from handler_common import display_details, generate_sql
 
 
-class CSVFileToMySQL(FileSystemEventHandler):
+class CSVFileToMySQL:
     """Import CSV file to MySQL database.
 
     Read in CSV file and insert/update rows within a given MySQL database/table.

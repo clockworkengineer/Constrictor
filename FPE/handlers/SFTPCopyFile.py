@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler
 from handler_common import display_details
 
 
-class SFTPCopyFile(FileSystemEventHandler):
+class SFTPCopyFile:
     """SFTP Copy file/directories.
 
     SFTP Copy files created in watch folder to destinatAion folder on remote SSH

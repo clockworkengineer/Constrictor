@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler
 from handler_common import display_details, generate_sql
 
 
-class CSVFileToSQLite(FileSystemEventHandler):
+class CSVFileToSQLite:
     """Import CSV file to SQLite database.
 
     Read in CSV file and insert/update rows within a given SQLite database/table.

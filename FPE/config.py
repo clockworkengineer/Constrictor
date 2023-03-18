@@ -2,7 +2,6 @@
 """
 
 import sys
-import configparser
 import json
 import logging
 

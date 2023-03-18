@@ -7,7 +7,7 @@ from watchdog.events import FileSystemEventHandler
 from handler_common import display_details
 
 
-class CopyFile(FileSystemEventHandler):
+class CopyFile:
     """Copy file/directories.
 
     Copy files created in watch folder to destination folder keeping any in 
