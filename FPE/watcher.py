@@ -5,12 +5,13 @@ import logging
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 import factory
-from handler import Handler
+import handler
 
 
 class WatcherHandler(FileSystemEventHandler):
+    """Watcher handler adepter for watchdog."""
 
-    def __init__(self, watcher_handler: Handler) -> None:
+    def __init__(self, watcher_handler: handler.Handler) -> None:
         super().__init__()
         self.watcher_handler = watcher_handler
 

@@ -28,7 +28,7 @@ import time
 import logging
 from config import load_config
 from arguments import load_arguments
-from watcher import Watcher
+import watcher
 import factory
 import handler
 
@@ -54,40 +54,39 @@ def fpe() -> None:
     logging.info("File Processing Engine Started.")
 
     factory.register("CopyFile", handler.CopyFile)
-    factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
-    factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
-    factory.register("SFTPCopyFile", handler.SFTPCopyFile)
+    # factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
+    # factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
+    # factory.register("SFTPCopyFile", handler.SFTPCopyFile)
 
     watcher_list = []
 
     # Loop through watchers array creating file watchers for each
 
     for watcher_config in config["watchers"]:
-
-        watcher = Watcher(watcher_config)
-        if watcher is not None:
-            watcher_list.append(watcher)
+        current_watcher = watcher.Watcher(watcher_config)
+        if current_watcher is not None:
+            watcher_list.append(current_watcher)
 
     # If list not empty observer folders
 
     if watcher_list:
         try:
 
-            for watcher in watcher_list:
-                watcher.start()
+            for current_watcher in watcher_list:
+                current_watcher.start()
 
             while True:
                 time.sleep(1)
 
         except KeyboardInterrupt:
             # Stop all watchers
-            for watcher in watcher_list:
-                watcher.stop()
+            for current_watcher in watcher_list:
+                current_watcher.stop()
 
         finally:
             # Wait for all observer threads to stop
-            for watcher in watcher_list:
-                watcher.join()
+            for current_watcher in watcher_list:
+                current_watcher.join()
 
     else:
         logging.error("Error: No file builtin_handlers configured.")

@@ -6,8 +6,7 @@ import json
 import logging
 
 class ConfigError(Exception):
-    """Configuation error"""
-    
+    """Configuation error"""  
 
 def load_config(arguments):
     """Load configuration file and set logging parameters"""
