@@ -3,11 +3,11 @@
 import logging
 import os
 import shutil
-from watcher import Watcher
+from watchdog.events import FileSystemEventHandler
 from handler_common import display_details
 
 
-class CopyFile(Watcher):
+class CopyFile(FileSystemEventHandler):
     """Copy file/directories.
 
     Copy files created in watch folder to destination folder keeping any in 

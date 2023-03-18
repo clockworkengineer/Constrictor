@@ -10,7 +10,7 @@
             "name": "File Coper",
             "type": "CopyFile",
             "watch": "c:\\temp\\watch\\",
-            "destination": "c:\\temp\\desintation"
+            "destination": "c:\\temp\\destination"
         }
     ],
     "logging": {

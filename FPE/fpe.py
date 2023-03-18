@@ -15,7 +15,7 @@ Current built in file handler types:
 
 usage: fpe.py [-h] file
 
-Process files copied into watch folder with a custom handler.
+Process files copied into watch folder using a custom handler.
 
 positional arguments:
   file                  Configuration file
@@ -24,11 +24,12 @@ optional arguments:
   -h, --help            show this help message and exit
 """
 
+import time
 import logging
 
-from observer import create_observer, observe_folders
 from config import load_config
 from arguments import load_arguments
+from watcher import Watcher
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -51,20 +52,36 @@ def fpe() -> None:
 
     logging.info('File Processing Engine Started.')
 
-    observers_list = []
+    watcher_list = []
 
-    # Loop through watchers array creating file observers for each
+    # Loop through watchers array creating file watchers for each
 
     for watcher_config in config['watchers']:
 
-        observer = create_observer(watcher_config)
-        if observer is not None:
-            observers_list.append(observer)
+        watcher = Watcher(watcher_config)
+        if watcher is not None:
+            watcher_list.append(watcher)
 
     # If list not empty observer folders
 
-    if observers_list:
-        observe_folders(observers_list)
+    if watcher_list:
+        try:
+
+            for watcher in watcher_list:
+                watcher.start()
+
+            while True:
+                time.sleep(1)
+
+        except KeyboardInterrupt:
+            # Stop all watchers
+            for watcher in watcher_list:
+                watcher.stop()
+
+        finally:
+            # Wait for all observer threads to stop
+            for watcher in watcher_list:
+                watcher.join()
 
     else:
         logging.error('Error: No file handlers configured.')
