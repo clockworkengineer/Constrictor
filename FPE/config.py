@@ -16,9 +16,6 @@ def load_config(arguments):
         with open(arguments.file) as json_file:
             config = json.load(json_file)
 
-        # Check config data
-        if not 'builtin_handlers' in config:
-            raise ValueError("Missing config builtin_handlers key'.")
         if not 'watchers' in config:
             raise ValueError("Missing config watchers key'.")
 

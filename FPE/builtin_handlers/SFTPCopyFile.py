@@ -4,9 +4,10 @@
 import logging
 import os
 import pysftp
+from handler import Handler
 
 
-class SFTPCopyFile:
+class SFTPCopyFile(Handler):
     """SFTP Copy file/directories.
 
     SFTP Copy files created in watch folder to destination folder on remote SSH
@@ -37,7 +38,7 @@ class SFTPCopyFile:
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-    def on_created(self, event):
+    def process(self, event):
         """SFTP Copy file from watch folder to a destination folder on remote server."""
 
         destination_path = event.src_path[len(self.watch_folder) + 1:]

@@ -3,9 +3,10 @@
 import logging
 import os
 import shutil
+from handler import Handler
 
 
-class CopyFile:
+class CopyFile(Handler):
     """Copy file/directories.
 
     Copy files created in watch folder to destination folder keeping any in 
@@ -28,7 +29,7 @@ class CopyFile:
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
 
-    def on_created(self, event):
+    def process(self, event):
         """Copy file from watch folder to destination."""
         try:
 

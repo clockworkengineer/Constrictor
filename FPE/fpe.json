@@ -1,10 +1,4 @@
 {
-    "builtin_handlers": [
-        "CopyFile",
-        "CSVFileToSQLite",
-        "CSVFileToMySQL",
-        "SFTPCopyFile"
-    ],
     "watchers": [
         {
             "name": "File Coper",

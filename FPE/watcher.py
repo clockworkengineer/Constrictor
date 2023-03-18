@@ -2,19 +2,20 @@
 """
 
 import logging
-from factory import create_watcher
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+import factory
+from handler import Handler
 
 
 class WatcherHandler(FileSystemEventHandler):
 
-    def __init__(self, watcher_handler) -> None:
+    def __init__(self, watcher_handler: Handler) -> None:
         super().__init__()
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        self.watcher_handler.on_created(event)
+        self.watcher_handler.process(event)
 
 
 class Watcher:
@@ -37,7 +38,7 @@ class Watcher:
 
         except Exception as e:
             logging.error(e)
-            
+
     def __init__(self, watcher_config) -> None:
         try:
 
@@ -48,13 +49,13 @@ class Watcher:
             if not 'deletesource' in watcher_config:
                 watcher_config['deletesource'] = True
 
-            handler = create_watcher(watcher_config)
+            handler = factory.create(watcher_config)
 
             if handler is not None:
                 self.__observer__ = Observer()
                 self.__observer__.schedule(WatcherHandler(handler), handler.watch_folder,
                                            recursive=handler.recursive)
-                
+
                 Watcher.__display_details__(watcher_config)
 
             else:

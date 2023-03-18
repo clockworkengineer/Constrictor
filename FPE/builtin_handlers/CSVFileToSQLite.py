@@ -4,10 +4,11 @@ import csv
 import logging
 import os
 import sqlite3
+from handler import Handler
 from handler_common import generate_sql
 
 
-class CSVFileToSQLite:
+class CSVFileToSQLite(Handler):
     """Import CSV file to SQLite database.
 
     Read in CSV file and insert/update rows within a given SQLite database/table.
@@ -36,7 +37,7 @@ class CSVFileToSQLite:
         self.delete_source = handler_section['deletesource']
         self.param_style = 'named'
 
-    def on_created(self, event):
+    def process(self, event):
         """Import CSV file to SQLite database."""
 
         try:

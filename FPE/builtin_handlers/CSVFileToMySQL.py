@@ -5,10 +5,11 @@ import mysql
 import csv
 import logging
 import os
+from handler import Handler
 from handler_common import generate_sql
 
 
-class CSVFileToMySQL:
+class CSVFileToMySQL(Handler):
     """Import CSV file to MySQL database.
 
     Read in CSV file and insert/update rows within a given MySQL database/table.
@@ -43,7 +44,7 @@ class CSVFileToMySQL:
         self.delete_source = handler_section['deletesource']
         self.param_style = 'pyformat'
 
-    def on_created(self, event):
+    def process(self, event):
         """Import CSV file to MySQL database."""
 
         try:
