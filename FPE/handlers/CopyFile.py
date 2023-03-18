@@ -3,8 +3,6 @@
 import logging
 import os
 import shutil
-from watchdog.events import FileSystemEventHandler
-from handler_common import display_details
 
 
 class CopyFile:
@@ -29,8 +27,6 @@ class CopyFile:
         self.destination_folder = handler_section['destination']
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
-
-        display_details(handler_section)
 
     def on_created(self, event):
         """Copy file from watch folder to destination."""

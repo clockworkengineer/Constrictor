@@ -26,7 +26,6 @@ optional arguments:
 
 import time
 import logging
-
 from config import load_config
 from arguments import load_arguments
 from watcher import Watcher

@@ -4,8 +4,7 @@ import csv
 import logging
 import os
 import sqlite3
-from watchdog.events import FileSystemEventHandler
-from handler_common import display_details, generate_sql
+from handler_common import generate_sql
 
 
 class CSVFileToSQLite:
@@ -36,8 +35,6 @@ class CSVFileToSQLite:
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
         self.param_style = 'named'
-
-        display_details(handler_section)
 
     def on_created(self, event):
         """Import CSV file to SQLite database."""

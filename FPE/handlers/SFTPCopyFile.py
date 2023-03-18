@@ -4,14 +4,12 @@
 import logging
 import os
 import pysftp
-from watchdog.events import FileSystemEventHandler
-from handler_common import display_details
 
 
 class SFTPCopyFile:
     """SFTP Copy file/directories.
 
-    SFTP Copy files created in watch folder to destinatAion folder on remote SSH
+    SFTP Copy files created in watch folder to destination folder on remote SSH
     server keeping any in situ watch folder directory structure the same.
 
     Attributes:
@@ -36,8 +34,6 @@ class SFTPCopyFile:
         self.destination_folder = handler_section['destination']
         self.recursive = handler_section['recursive']
         self.delete_source = handler_section['deletesource']
-
-        display_details(handler_section)
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 

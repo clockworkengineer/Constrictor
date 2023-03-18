@@ -6,22 +6,6 @@ Common functions used by some/all file event handler classes.
 import logging
 
 
-def display_details(handler_section):
-    """Display event handler details and parameters."""
-
-    try:
-
-        logging.info('*' * 80)
-        logging.info(
-            '{name} Handler [{type}] running...'.format(**handler_section))
-        for option in handler_section.keys():
-            if option != 'name' and option != 'type':
-                logging.info('{} = {}'.format(option, handler_section[option]))
-
-    except Exception as e:
-        logging.error(e)
-
-
 def generate_sql(param_tyle, table_name, key_name, row_fields):
     """Generate SQL for update/insert row of fields."""
 

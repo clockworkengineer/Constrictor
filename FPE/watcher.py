@@ -8,6 +8,7 @@ from watchdog.observers import Observer
 
 
 class WatcherHandler(FileSystemEventHandler):
+
     def __init__(self, watcher_handler) -> None:
         super().__init__()
         self.watcher_handler = watcher_handler
@@ -18,35 +19,58 @@ class WatcherHandler(FileSystemEventHandler):
 
 class Watcher:
 
-    event_handler: WatcherHandler
+    __observer__: Observer = None
 
+    @staticmethod
+    def __display_details__(handler_section) -> None:
+        """Display watcher handler details and parameters."""
+
+        try:
+
+            logging.info('*' * 80)
+            logging.info(
+                '{name} Handler [{type}] running...'.format(**handler_section))
+            for option in handler_section.keys():
+                if option != 'name' and option != 'type':
+                    logging.info('{} = {}'.format(
+                        option, handler_section[option]))
+
+        except Exception as e:
+            logging.error(e)
+            
     def __init__(self, watcher_config) -> None:
         try:
 
-            # Default values for optional field
+            # Default values for optional fields
 
             if not 'recursive' in watcher_config:
                 watcher_config['recursive'] = False
             if not 'deletesource' in watcher_config:
                 watcher_config['deletesource'] = True
 
-            self.file_handler = create_watcher(watcher_config)
+            handler = create_watcher(watcher_config)
 
-            self.event_handler = WatcherHandler(self.file_handler)
+            if handler is not None:
+                self.__observer__ = Observer()
+                self.__observer__.schedule(WatcherHandler(handler), handler.watch_folder,
+                                           recursive=handler.recursive)
+                
+                Watcher.__display_details__(watcher_config)
+
+            else:
+                self.__observer__ = None
 
         except Exception as e:
             logging.error(e)
-            self.observer = None
 
     def start(self):
-        if self.file_handler is not None:
-            self.observer = Observer()
-            self.observer.schedule(self.event_handler, self.file_handler.watch_folder,
-                                   recursive=self.file_handler.recursive)
-            self.observer.start()
+        if self.__observer__ is not None:
+            self.__observer__.start()
 
     def stop(self):
-        self.observer.stop()
+        if self.__observer__ is not None:
+            self.__observer__.stop()
 
     def join(self):
-        self.observer.join()
+        if self.__observer__ is not None:
+            self.__observer__.join()
