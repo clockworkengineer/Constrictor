@@ -5,6 +5,7 @@ import sys
 import os
 import argparse
 
+
 def load_arguments() -> argparse.Namespace:
     """Load and parse command line arguments
     """
