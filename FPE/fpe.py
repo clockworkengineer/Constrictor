@@ -30,7 +30,7 @@ from config import load_config
 from arguments import load_arguments
 from watcher import Watcher
 import factory
-import builtin_handlers
+import handler
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -51,18 +51,18 @@ def fpe() -> None:
 
     config = load_config(load_arguments())
 
-    logging.info('File Processing Engine Started.')
+    logging.info("File Processing Engine Started.")
 
-    factory.register("CopyFile", builtin_handlers.CopyFile)
-    factory.register("CSVFileToMySQL", builtin_handlers.CSVFileToMySQL)
-    factory.register("CSVFileToSQLite", builtin_handlers.CSVFileToSQLite)
-    factory.register("SFTPCopyFile", builtin_handlers.SFTPCopyFile)
+    factory.register("CopyFile", handler.CopyFile)
+    factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
+    factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
+    factory.register("SFTPCopyFile", handler.SFTPCopyFile)
 
     watcher_list = []
 
     # Loop through watchers array creating file watchers for each
 
-    for watcher_config in config['watchers']:
+    for watcher_config in config["watchers"]:
 
         watcher = Watcher(watcher_config)
         if watcher is not None:
@@ -90,10 +90,10 @@ def fpe() -> None:
                 watcher.join()
 
     else:
-        logging.error('Error: No file builtin_handlers configured.')
+        logging.error("Error: No file builtin_handlers configured.")
 
-    logging.info('File Processing Engine Stopped.')
+    logging.info("File Processing Engine Stopped.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     fpe()

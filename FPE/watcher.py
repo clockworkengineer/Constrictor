@@ -28,12 +28,12 @@ class Watcher:
 
         try:
 
-            logging.info('*' * 80)
+            logging.info("*" * 80)
             logging.info(
-                '{name} Handler [{type}] running...'.format(**handler_section))
+                "{name} Handler [{type}] running...".format(**handler_section))
             for option in handler_section.keys():
-                if option != 'name' and option != 'type':
-                    logging.info('{} = {}'.format(
+                if option != "name" and option != "type":
+                    logging.info("{} = {}".format(
                         option, handler_section[option]))
 
         except Exception as e:
@@ -44,10 +44,10 @@ class Watcher:
 
             # Default values for optional fields
 
-            if not 'recursive' in watcher_config:
-                watcher_config['recursive'] = False
-            if not 'deletesource' in watcher_config:
-                watcher_config['deletesource'] = True
+            if not "recursive" in watcher_config:
+                watcher_config["recursive"] = False
+            if not "deletesource" in watcher_config:
+                watcher_config["deletesource"] = True
 
             handler = factory.create(watcher_config)
 
