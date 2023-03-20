@@ -107,7 +107,7 @@ class CopyFile(Handler):
                 if not os.path.exists(os.path.dirname(destination_path)):
                     os.makedirs(os.path.dirname(destination_path))
                 logging.info(
-                    f"Copying file {event.src_path} to {destination_path}")
+                    "Copying file %s to %s", event.src_path, destination_path)
                 shutil.copy2(event.src_path, destination_path)
 
             elif os.path.isdir(event.src_path):
@@ -117,9 +117,10 @@ class CopyFile(Handler):
 
             if self.delete_source:
                 os.remove(event.src_path)
-    
+
         except Exception as error:
-            logging.error(f"Error in handler {self.handler_name} : {error}")
+            logging.error("Error in handler %s : %s",
+                          self.handler_name, error)
 
 
 # class CSVFileToMySQL(Handler):

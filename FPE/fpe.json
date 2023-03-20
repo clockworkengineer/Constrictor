@@ -1,8 +1,11 @@
 {
+    "plugins": [
+        "plugins.FileAnnouncer"
+    ],
     "watchers": [
         {
-            "name": "File Coper",
-            "type": "CopyFile",
+            "name": "File Announcer",
+            "type": "FileAnnouncer",
             "watch": "c:\\temp\\watch\\",
             "destination": "c:\\temp\\destination"
         }

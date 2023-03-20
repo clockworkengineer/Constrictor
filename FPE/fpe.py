@@ -31,6 +31,7 @@ from arguments import load_arguments
 import watcher
 import factory
 import handler
+import loader
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -57,6 +58,8 @@ def fpe() -> None:
     # factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
     # factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
     # factory.register("SFTPCopyFile", handler.SFTPCopyFile)
+
+    loader.load_plugins(config['plugins'])
 
     watcher_list = []
 
