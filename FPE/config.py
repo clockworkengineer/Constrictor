@@ -5,11 +5,15 @@ import sys
 import json
 import logging
 
+
 class ConfigError(Exception):
-    """Configuation error"""  
+    """Configuation error
+    """
+
 
 def load_config(arguments):
-    """Load configuration file and set logging parameters"""
+    """Load configuration file and set logging parameters
+    """
 
     try:
 
@@ -18,13 +22,15 @@ def load_config(arguments):
         with open(arguments.file, "r", encoding="utf-8") as json_file:
             config = json.load(json_file)
 
-        if not "watchers" in config:
+        if "plugins" not in config:
+            raise ConfigError("Missing config watchers key.")
+        if "watchers" not in config:
             raise ConfigError("Missing config watchers key.")
 
         for watcher_config in config["watchers"]:
-            if not "name" in watcher_config:
+            if "name" not in watcher_config:
                 raise ConfigError("Missing config handler name key.")
-            if not "type" in watcher_config:
+            if "type" not in watcher_config:
                 raise ConfigError("Missing config watchers type key.")
 
         # Default logging parameters

@@ -10,7 +10,8 @@ import handler
 class FileAnnouncer(handler.Handler):
 
     def __init__(self, handler_section):
-        """ Initialise handler attributes and log details."""
+        """Initialise handler attributes and log details.
+        """
 
         self.handler_name = handler_section["name"]
         self.watch_folder = handler_section["watch"]
@@ -18,7 +19,8 @@ class FileAnnouncer(handler.Handler):
         self.delete_source = handler_section["deletesource"]
 
     def process(self, event):
-        """Copy file from watch folder to destination."""
+        """Print out name of any file copied into watch folder.
+        """
         try:
             logging.info(
                 "File %s.", event.src_path)
@@ -26,7 +28,7 @@ class FileAnnouncer(handler.Handler):
             if self.delete_source:
                 os.remove(event.src_path)
 
-        except Exception as error:
+        except ValueError as error:
             logging.error("Error in handler %s : %s",
                           self.handler_name, error)
 

@@ -9,7 +9,8 @@ import handler
 
 
 class WatcherHandler(FileSystemEventHandler):
-    """Watcher handler adepter for watchdog."""
+    """Watcher handler adepter for watchdog.
+    """
 
     def __init__(self, watcher_handler: handler.Handler) -> None:
         super().__init__()
@@ -25,7 +26,8 @@ class Watcher:
 
     @staticmethod
     def __display_details__(handler_section) -> None:
-        """Display watcher handler details and parameters."""
+        """Display watcher handler details and parameters.
+        """
 
         try:
 
@@ -34,8 +36,7 @@ class Watcher:
                 "{name} Handler [{type}] running...".format(**handler_section))
             for option in handler_section.keys():
                 if option != "name" and option != "type":
-                    logging.info("{} = {}".format(
-                        option, handler_section[option]))
+                    logging.info("%s = %s", option, handler_section[option])
 
         except Exception as e:
             logging.error(e)
@@ -50,12 +51,12 @@ class Watcher:
             if not "deletesource" in watcher_config:
                 watcher_config["deletesource"] = True
 
-            handler = factory.create(watcher_config)
+            selected_handler = factory.create(watcher_config)
 
-            if handler is not None:
+            if selected_handler is not None:
                 self.__observer__ = Observer()
-                self.__observer__.schedule(WatcherHandler(handler), handler.watch_folder,
-                                           recursive=handler.recursive)
+                self.__observer__.schedule(WatcherHandler(selected_handler), selected_handler.watch_folder,
+                                           recursive=selected_handler.recursive)
 
                 Watcher.__display_details__(watcher_config)
 

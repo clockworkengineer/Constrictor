@@ -11,7 +11,8 @@ handler_creation_funcs: dict[str, Callable[..., handler.Handler]] = {}
 
 
 def register(handler_type: str, handler_fn: Callable[..., handler.Handler]) -> None:
-    """Register a new watcher handler type."""
+    """Register a new watcher handler type.
+    """
     handler_creation_funcs[handler_type] = handler_fn
 
 
@@ -21,7 +22,8 @@ def unregister(handler_type: str) -> None:
 
 
 def create(arguments: dict[str, Any]) -> handler.Handler:
-    """Create a watcher handler of a specific type, given JSON data."""
+    """Create a watcher handler of a specific type, given JSON data.
+    """
     args_copy = arguments.copy()
     handler_type = args_copy.pop("type")
     try:

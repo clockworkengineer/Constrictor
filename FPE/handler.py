@@ -89,7 +89,8 @@ class CopyFile(Handler):
     """
 
     def __init__(self, handler_section):
-        """ Initialise handler attributes and log details."""
+        """Initialise handler attributes and log details.
+        """
 
         self.handler_name = handler_section["name"]
         self.watch_folder = handler_section["watch"]
@@ -121,7 +122,7 @@ class CopyFile(Handler):
             if self.delete_source:
                 os.remove(event.src_path)
 
-        except Exception as error:
+        except shutil.Error as error:
             logging.error("Error in handler %s : %s",
                           self.handler_name, error)
 
@@ -147,7 +148,8 @@ class CSVFileToMySQL(Handler):
     """
 
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details."""
+        """ Intialise handler attributes and log details.
+        """
 
         self.handler_name = handler_section["name"]
         self.watch_folder = handler_section["watch"]
@@ -162,7 +164,8 @@ class CSVFileToMySQL(Handler):
         self.param_style = "pyformat"
 
     def process(self, event):
-        """Import CSV file to MySQL database."""
+        """Import CSV file to MySQL database.
+        """
 
         try:
 
@@ -189,7 +192,7 @@ class CSVFileToMySQL(Handler):
                     except (mysql.connector.Error, mysql.connector.Warning) as error:
                         logging.error("%s\n%s", sql, error)
 
-        except Exception as error:
+        except mysql.connector.Error as error:
             logging.error("Error in handler %s: %s", self.handler_name, error)
             database = None
 
@@ -233,7 +236,8 @@ class CSVFileToSQLite(Handler):
         self.param_style = "named"
 
     def process(self, event):
-        """Import CSV file to SQLite database."""
+        """Import CSV file to SQLite database.
+        """
 
         try:
 
@@ -266,7 +270,7 @@ class CSVFileToSQLite(Handler):
                     except (sqlite3.Error, sqlite3.Warning) as error:
                         logging.error("%s\n%s", sql, error)
 
-        except Exception as error:
+        except sqlite3.Error as error:
             logging.error("Error in handler %s: %s", self.handler_name, error)
             database = None
 
@@ -298,7 +302,8 @@ class SFTPCopyFile(Handler):
     """
 
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details."""
+        """ Intialise handler attributes and log details.
+        """
 
         self.handler_name = handler_section["name"]
         self.watch_folder = handler_section["watch"]
@@ -312,7 +317,8 @@ class SFTPCopyFile(Handler):
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
     def process(self, event):
-        """SFTP Copy file from watch folder to a destination folder on remote server."""
+        """SFTP Copy file from watch folder to a destination folder on remote server.
+        """
 
         destination_path = event.src_path[len(self.watch_folder) + 1:]
         destination_path = os.path.join(self.destination_folder,

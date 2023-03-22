@@ -48,16 +48,17 @@ __status__ = "Pre-Alpha"
 
 
 def fpe() -> None:
-    """Main program entry point"""
+    """Main program entry point
+    """
 
     config = load_config(load_arguments())
 
     logging.info("File Processing Engine Started.")
 
     factory.register("CopyFile", handler.CopyFile)
-    # factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
-    # factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
-    # factory.register("SFTPCopyFile", handler.SFTPCopyFile)
+    factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
+    factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
+    factory.register("SFTPCopyFile", handler.SFTPCopyFile)
 
     loader.load_plugins(config['plugins'])
 
