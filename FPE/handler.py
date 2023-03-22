@@ -15,7 +15,8 @@ class Handler(Protocol):
     """Watcher file handler class"""
 
     def process(self, event):
-        """Perform watcher file processing."""
+        """Perform watcher file processing.
+        """
 
 ################################
 # Common handler fcuntionality #
@@ -23,7 +24,8 @@ class Handler(Protocol):
 
 
 def generate_sql(param_tyle, table_name, key_name, row_fields):
-    """Generate SQL for update/insert row of fields."""
+    """Generate SQL for update/insert row of fields.
+    """
 
     try:
 
@@ -96,7 +98,8 @@ class CopyFile(Handler):
         self.delete_source = handler_section["deletesource"]
 
     def process(self, event):
-        """Copy file from watch folder to destination."""
+        """Copy file from watch folder to destination.
+        """
         try:
 
             destination_path = event.src_path[len(self.watch_folder) + 1:]
@@ -167,10 +170,10 @@ class CSVFileToMySQL(Handler):
                                                self.user_password, self.database_name)
             cursor = database.cursor()
 
-            logging.info("Imorting CSV file {} to table {}.".
-                         format(event.src_path, self.table_name))
+            logging.info("Imorting CSV file %s to table %s.",
+                         event.src_path, self.table_name)
 
-            with open(event.src_path, "r") as file_handle:
+            with open(event.src_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
                 sql = generate_sql(self.param_style, self.table_name, self.key_name,
@@ -183,17 +186,16 @@ class CSVFileToMySQL(Handler):
                         with database:
                             cursor.execute(sql, row)
 
-                    except (mysql.connector.Error, mysql.connector.Warning) as e:
-                        logging.error("{}\n{}".format(sql, e))
+                    except (mysql.connector.Error, mysql.connector.Warning) as error:
+                        logging.error("%s\n%s", sql, error)
 
-        except Exception as e:
-            logging.error("Error in handler {}: {}".
-                          format(self.handler_name, e))
+        except Exception as error:
+            logging.error("Error in handler %s: %s", self.handler_name, error)
             database = None
 
         else:
-            logging.info("Finished Imorting file {} to table {}.".
-                         format(event.src_path, self.table_name))
+            logging.info("Finished Imorting file %s to table %s.",
+                         event.src_path, self.table_name)
             if self.delete_source:
                 os.remove(event.src_path)
 
@@ -244,10 +246,10 @@ class CSVFileToSQLite(Handler):
 
             cursor = database.cursor()
 
-            logging.info("Imorting CSV file {} to table {}.".
-                         format(event.src_path, self.table_name))
+            logging.info("Imorting CSV file %s to table %s.",
+                         event.src_path, self.table_name)
 
-            with open(event.src_path, "r") as file_handle:
+            with open(event.src_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
                 sql = generate_sql(self.param_style, self.table_name,
@@ -261,17 +263,16 @@ class CSVFileToSQLite(Handler):
                         with database:
                             cursor.execute(sql, row)
 
-                    except (sqlite3.Error, sqlite3.Warning) as e:
-                        logging.error("{}\n{}".format(sql, e))
+                    except (sqlite3.Error, sqlite3.Warning) as error:
+                        logging.error("%s\n%s", sql, error)
 
-        except Exception as e:
-            logging.error("Error in handler {}: {}".
-                          format(self.handler_name, e))
+        except Exception as error:
+            logging.error("Error in handler %s: %s", self.handler_name, error)
             database = None
 
         else:
-            logging.info("Finished Imorting file {} to table {}.".
-                         format(event.src_path, self.table_name))
+            logging.info("Finished Imorting file %s to table %s.",
+                         event.src_path, self.table_name)
             if self.delete_source:
                 os.remove(event.src_path)
 
@@ -324,7 +325,7 @@ class SFTPCopyFile(Handler):
             else:
                 sftp.makedirs(destination_path)
 
-        logging.info("Uploaded file {} to {}".format(
-            event.src_path, destination_path))
+        logging.info("Uploaded file %s to %s",
+                     event.src_path, destination_path)
         if self.delete_source:
             os.remove(event.src_path)

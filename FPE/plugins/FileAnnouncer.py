@@ -1,3 +1,6 @@
+"""Simple file anonnouncer example plugin handler.
+"""
+
 import os
 import logging
 import factory
