@@ -1,4 +1,4 @@
-"""Simple file anonnouncer example plugin handler.
+"""Simple file announcer example plugin handler.
 """
 
 import os
@@ -10,7 +10,7 @@ import handler
 class FileAnnouncer(handler.Handler):
 
     def __init__(self, handler_section):
-        """Initialise handler attributes and log details.
+        """Initialise handler attributes.
         """
 
         self.handler_name = handler_section["name"]

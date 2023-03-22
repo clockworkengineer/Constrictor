@@ -9,10 +9,12 @@ import handler
 
 
 class WatcherHandler(FileSystemEventHandler):
-    """Watcher handler adepter for watchdog.
+    """Watcher handler adapter for watchdog.
     """
 
     def __init__(self, watcher_handler: handler.Handler) -> None:
+        """Initialise watcher handler adapter.
+        """
         super().__init__()
         self.watcher_handler = watcher_handler
 
@@ -22,10 +24,10 @@ class WatcherHandler(FileSystemEventHandler):
 
 class Watcher:
 
-    __observer__: Observer = None
+    __observer: Observer = None
 
     @staticmethod
-    def __display_details__(handler_section) -> None:
+    def __display_details(handler_section) -> None:
         """Display watcher handler details and parameters.
         """
 
@@ -38,42 +40,42 @@ class Watcher:
                 if option != "name" and option != "type":
                     logging.info("%s = %s", option, handler_section[option])
 
-        except Exception as e:
-            logging.error(e)
+        except Exception as error:
+            logging.error(error)
 
     def __init__(self, watcher_config) -> None:
         try:
 
             # Default values for optional fields
 
-            if not "recursive" in watcher_config:
+            if "recursive" not in watcher_config:
                 watcher_config["recursive"] = False
-            if not "deletesource" in watcher_config:
+            if "deletesource" not in watcher_config:
                 watcher_config["deletesource"] = True
 
             selected_handler = factory.create(watcher_config)
 
             if selected_handler is not None:
-                self.__observer__ = Observer()
-                self.__observer__.schedule(WatcherHandler(selected_handler), selected_handler.watch_folder,
-                                           recursive=selected_handler.recursive)
+                self.__observer = Observer()
+                self.__observer.schedule(WatcherHandler(selected_handler), selected_handler.watch_folder,
+                                         recursive=selected_handler.recursive)
 
-                Watcher.__display_details__(watcher_config)
+                Watcher.__display_details(watcher_config)
 
             else:
-                self.__observer__ = None
+                self.__observer = None
 
         except Exception as e:
             logging.error(e)
 
     def start(self):
-        if self.__observer__ is not None:
-            self.__observer__.start()
+        if self.__observer is not None:
+            self.__observer.start()
 
     def stop(self):
-        if self.__observer__ is not None:
-            self.__observer__.stop()
+        if self.__observer is not None:
+            self.__observer.stop()
 
     def join(self):
-        if self.__observer__ is not None:
-            self.__observer__.join()
+        if self.__observer is not None:
+            self.__observer.join()

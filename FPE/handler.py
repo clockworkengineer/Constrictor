@@ -1,4 +1,4 @@
-""" Watcher file handler definitons built-in.
+""" Watcher file handler definitions built-in.
 """
 
 import os
@@ -19,28 +19,25 @@ class Handler(Protocol):
         """
 
 ################################
-# Common handler fcuntionality #
+# Common handler functionality #
 ################################
 
 
-def generate_sql(param_tyle, table_name, key_name, row_fields):
+def generate_sql(param_style, table_name, key_name, row_fields):
     """Generate SQL for update/insert row of fields.
     """
 
     try:
 
-        # Set up placeholder for paramstyle supported
+        # Set up placeholder for param_style supported
 
-        if param_tyle == "pyformat":
+        if param_style == "pyformat":
             placeholder = "%({})s"
-        elif param_tyle == "named":
+        elif param_style == "named":
             placeholder = ":{}"
         else:
-            logging.error(
-                f"Unsupported paramstyle {param_tyle}".format(param_tyle))
+            logging.error("Unsupported paramstyle %s.", param_style)
             placeholder = ""
-
-        fields = ""
 
         # Key provided then doing update
 
@@ -89,7 +86,7 @@ class CopyFile(Handler):
     """
 
     def __init__(self, handler_section):
-        """Initialise handler attributes and log details.
+        """Initialise handler attributes.
         """
 
         self.handler_name = handler_section["name"]
@@ -122,7 +119,7 @@ class CopyFile(Handler):
             if self.delete_source:
                 os.remove(event.src_path)
 
-        except shutil.Error as error:
+        except Exception as error:
             logging.error("Error in handler %s : %s",
                           self.handler_name, error)
 
@@ -138,17 +135,17 @@ class CSVFileToMySQL(Handler):
         handler_name : Name of handler object
         watch_folder:  Folder to watch for files
         server:        MySQL database server
-        user_name:     MySQL user name
+        user_name:     MySQL username
         user_password: MySQL user password
         database_name: MySQL database name
         table_name:    MySQL table name
         key_name:      Table column key used in updates
-        recursive:     Boolea == true perform recursive file watch
-        delete_source: Boolean == true delete source file on sucess
+        recursive:     Boole == true perform recursive file watch
+        delete_source: Boolean == true delete source file on success
     """
 
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details.
+        """ Initialise handler attributes.
         """
 
         self.handler_name = handler_section["name"]
@@ -173,7 +170,7 @@ class CSVFileToMySQL(Handler):
                                                self.user_password, self.database_name)
             cursor = database.cursor()
 
-            logging.info("Imorting CSV file %s to table %s.",
+            logging.info("Importing CSV file %s to table %s.",
                          event.src_path, self.table_name)
 
             with open(event.src_path, "r", encoding="utf-8") as file_handle:
@@ -192,12 +189,12 @@ class CSVFileToMySQL(Handler):
                     except (mysql.connector.Error, mysql.connector.Warning) as error:
                         logging.error("%s\n%s", sql, error)
 
-        except mysql.connector.Error as error:
+        except Exception as error:
             logging.error("Error in handler %s: %s", self.handler_name, error)
             database = None
 
         else:
-            logging.info("Finished Imorting file %s to table %s.",
+            logging.info("Finished Importing file %s to table %s.",
                          event.src_path, self.table_name)
             if self.delete_source:
                 os.remove(event.src_path)
@@ -219,12 +216,12 @@ class CSVFileToSQLite(Handler):
         database_file: SQLite database file name
         table_name:    SQLite table name
         key_name:      Table column key used in updates
-        recursive:     Boolea == true perform recursive file watch
-        delete_source: Boolean == true delete source file on sucess
+        recursive:     Boole == true perform recursive file watch
+        delete_source: Boolean == true delete source file on success
     """
 
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details"""
+        """ Initialise handler attributes"""
 
         self.handler_name = handler_section["name"]
         self.watch_folder = handler_section["watch"]
@@ -241,8 +238,6 @@ class CSVFileToSQLite(Handler):
 
         try:
 
-            database = None
-
             if not os.path.exists(self.database_file):
                 raise IOError("Database file does not exist.")
 
@@ -250,7 +245,7 @@ class CSVFileToSQLite(Handler):
 
             cursor = database.cursor()
 
-            logging.info("Imorting CSV file %s to table %s.",
+            logging.info("Importing CSV file %s to table %s.",
                          event.src_path, self.table_name)
 
             with open(event.src_path, "r", encoding="utf-8") as file_handle:
@@ -270,12 +265,12 @@ class CSVFileToSQLite(Handler):
                     except (sqlite3.Error, sqlite3.Warning) as error:
                         logging.error("%s\n%s", sql, error)
 
-        except sqlite3.Error as error:
+        except Exception as error:
             logging.error("Error in handler %s: %s", self.handler_name, error)
             database = None
 
         else:
-            logging.info("Finished Imorting file %s to table %s.",
+            logging.info("Finished Importing file %s to table %s.",
                          event.src_path, self.table_name)
             if self.delete_source:
                 os.remove(event.src_path)
@@ -294,15 +289,15 @@ class SFTPCopyFile(Handler):
         handler_name:  Name of handler object
         watch_folder:  Folder to watch for files
         ssh_server:    SSH Server
-        ssh_user:      SSH Server user name
+        ssh_user:      SSH Server username
         ssh_password   SSH Server user password
         destination    Destination for copy
         recursive:     Boolean == true perform recursive file watch
-        delete_source: Boolean == true delete source file on sucess
+        delete_source: Boolean == true delete source file on success
     """
 
     def __init__(self, handler_section):
-        """ Intialise handler attributes and log details.
+        """ Initialise handler attributes.
         """
 
         self.handler_name = handler_section["name"]
@@ -320,18 +315,23 @@ class SFTPCopyFile(Handler):
         """SFTP Copy file from watch folder to a destination folder on remote server.
         """
 
-        destination_path = event.src_path[len(self.watch_folder) + 1:]
-        destination_path = os.path.join(self.destination_folder,
-                                        destination_path)
+        try:
+            destination_path = event.src_path[len(self.watch_folder) + 1:]
+            destination_path = os.path.join(self.destination_folder,
+                                            destination_path)
 
-        with pysftp.Connection(self.ssh_server, username=self.ssh_user,
-                               password=self.ssh_password) as sftp:
-            if os.path.isfile(event.src_path):
-                sftp.put(event.src_path, destination_path)
-            else:
-                sftp.makedirs(destination_path)
+            with pysftp.Connection(self.ssh_server, username=self.ssh_user,
+                                   password=self.ssh_password) as sftp:
+                if os.path.isfile(event.src_path):
+                    sftp.put(event.src_path, destination_path)
+                else:
+                    sftp.makedirs(destination_path)
 
-        logging.info("Uploaded file %s to %s",
-                     event.src_path, destination_path)
-        if self.delete_source:
-            os.remove(event.src_path)
+            logging.info("Uploaded file %s to %s",
+                         event.src_path, destination_path)
+            if self.delete_source:
+                os.remove(event.src_path)
+
+        except Exception as error:
+            logging.error("Error in handler %s : %s",
+                          self.handler_name, error)
