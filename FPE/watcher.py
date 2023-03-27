@@ -4,7 +4,7 @@
 import logging
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-import factory
+from factory import Factory
 import handler
 
 
@@ -53,7 +53,7 @@ class Watcher:
             if "deletesource" not in watcher_config:
                 watcher_config["deletesource"] = True
 
-            selected_handler = factory.create(watcher_config)
+            selected_handler = Factory.create(watcher_config)
 
             if selected_handler is not None:
                 self.__observer = Observer()

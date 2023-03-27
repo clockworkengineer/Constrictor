@@ -3,11 +3,13 @@
 
 import os
 import logging
-import factory
+from factory import Factory
 import handler
 
 
 class FileAnnouncer(handler.Handler):
+    """
+    """
 
     def __init__(self, handler_section):
         """Initialise handler attributes.
@@ -34,4 +36,4 @@ class FileAnnouncer(handler.Handler):
 
 
 def register() -> None:
-    factory.register("FileAnnouncer", FileAnnouncer)
+    Factory.register("FileAnnouncer", FileAnnouncer)

@@ -15,13 +15,15 @@ class Config:
     """
 
     def __init__(self, arguments) -> None:
-        """Load configuration file validate and set logging parameters
+        """Load configuration file to be processed. 
         """
-
-        # Read in config file
 
         with open(arguments.file, "r", encoding="utf-8") as json_file:
             self.config = json.load(json_file)
+
+    def validate(self) -> None:
+        """Validate config file.
+        """
 
         if "plugins" not in self.config:
             raise ConfigError("Missing config plugins key.")
@@ -33,6 +35,10 @@ class Config:
                 raise ConfigError("Missing config handler name key.")
             if "type" not in watcher_config:
                 raise ConfigError("Missing config watchers type key.")
+
+    def set_logging(self) -> None:
+        """Set type of logging to be used.
+        """
 
         # Default logging parameters
 

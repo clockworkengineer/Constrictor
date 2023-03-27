@@ -28,8 +28,8 @@ import time
 import logging
 from config import Config, ConfigError
 from arguments import Arguments, ArgumentsError
+from factory import Factory, FactoryError
 import watcher
-import factory
 import handler
 import loader
 
@@ -53,18 +53,24 @@ def fpe() -> None:
 
     try:
 
-        # Load configuration
+        # Load configuration file, validate and set logging
 
-        config = Config(Arguments()).config
+        config = Config(Arguments())
+        config.validate()
+        config.set_logging()
+
+        # Read out config dictionary to use
+
+        config = config.config
 
         logging.info("File Processing Engine Started.")
 
         # Register built-in handlers
 
-        factory.register("CopyFile", handler.CopyFile)
-        factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
-        factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
-        factory.register("SFTPCopyFile", handler.SFTPCopyFile)
+        Factory.register("CopyFile", handler.CopyFile)
+        Factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
+        Factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
+        Factory.register("SFTPCopyFile", handler.SFTPCopyFile)
 
         # Load plug-ion handlers
         
@@ -104,7 +110,7 @@ def fpe() -> None:
 
         logging.info("File Processing Engine Stopped.")
 
-    except (ArgumentsError, ConfigError) as error:
+    except (ArgumentsError, ConfigError, FactoryError) as error:
         logging.error("FPE Error: %s.", error)
 
 
