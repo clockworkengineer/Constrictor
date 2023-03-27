@@ -26,8 +26,8 @@ optional arguments:
 
 import time
 import logging
-from config import load_config
-from arguments import load_arguments
+from config import Config, ConfigError
+from arguments import Arguments, ArgumentsError
 import watcher
 import factory
 import handler
@@ -51,51 +51,61 @@ def fpe() -> None:
     """Main program entry point
     """
 
-    config = load_config(load_arguments())
+    try:
 
-    logging.info("File Processing Engine Started.")
+        # Load configuration
 
-    factory.register("CopyFile", handler.CopyFile)
-    factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
-    factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
-    factory.register("SFTPCopyFile", handler.SFTPCopyFile)
+        config = Config(Arguments()).config
 
-    loader.load_plugins(config['plugins'])
+        logging.info("File Processing Engine Started.")
 
-    watcher_list = []
+        # Register built-in handlers
 
-    # Loop through watchers array creating file watchers for each
+        factory.register("CopyFile", handler.CopyFile)
+        factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
+        factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
+        factory.register("SFTPCopyFile", handler.SFTPCopyFile)
 
-    for watcher_config in config["watchers"]:
-        current_watcher = watcher.Watcher(watcher_config)
-        if current_watcher is not None:
-            watcher_list.append(current_watcher)
+        # Load plug-ion handlers
+        
+        loader.load_plugins(config['plugins'])
 
-    # If list not empty observer folders
+        # Loop through watchers array creating file watchers for each
+        
+        watcher_list = []
+        for watcher_config in config["watchers"]:
+            current_watcher = watcher.Watcher(watcher_config)
+            if current_watcher is not None:
+                watcher_list.append(current_watcher)
 
-    if watcher_list:
-        try:
+        # If list not empty observer folders
 
-            for current_watcher in watcher_list:
-                current_watcher.start()
+        if watcher_list:
+            try:
 
-            while True:
-                time.sleep(1)
+                for current_watcher in watcher_list:
+                    current_watcher.start()
 
-        except KeyboardInterrupt:
-            # Stop all watchers
-            for current_watcher in watcher_list:
-                current_watcher.stop()
+                while True:
+                    time.sleep(1)
 
-        finally:
-            # Wait for all observer threads to stop
-            for current_watcher in watcher_list:
-                current_watcher.join()
+            except KeyboardInterrupt:
+                # Stop all watchers
+                for current_watcher in watcher_list:
+                    current_watcher.stop()
 
-    else:
-        logging.error("Error: No file builtin_handlers configured.")
+            finally:
+                # Wait for all observer threads to stop
+                for current_watcher in watcher_list:
+                    current_watcher.join()
 
-    logging.info("File Processing Engine Stopped.")
+        else:
+            logging.error("Error: No file builtin_handlers configured.")
+
+        logging.info("File Processing Engine Stopped.")
+
+    except (ArgumentsError, ConfigError) as error:
+        logging.error("FPE Error: %s.", error)
 
 
 if __name__ == "__main__":

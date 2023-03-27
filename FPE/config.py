@@ -1,7 +1,6 @@
-""" Config handling code.
+""" Config class.
 """
 
-import sys
 import json
 import logging
 
@@ -11,23 +10,25 @@ class ConfigError(Exception):
     """
 
 
-def load_config(arguments):
-    """Load configuration file and set logging parameters
+class Config:
+    """Config class
     """
 
-    try:
+    def __init__(self, arguments) -> None:
+        """Load configuration file validate and set logging parameters
+        """
 
         # Read in config file
 
         with open(arguments.file, "r", encoding="utf-8") as json_file:
-            config = json.load(json_file)
+            self.config = json.load(json_file)
 
-        if "plugins" not in config:
-            raise ConfigError("Missing config watchers key.")
-        if "watchers" not in config:
+        if "plugins" not in self.config:
+            raise ConfigError("Missing config plugins key.")
+        if "watchers" not in self.config:
             raise ConfigError("Missing config watchers key.")
 
-        for watcher_config in config["watchers"]:
+        for watcher_config in self.config["watchers"]:
             if "name" not in watcher_config:
                 raise ConfigError("Missing config handler name key.")
             if "type" not in watcher_config:
@@ -40,16 +41,10 @@ def load_config(arguments):
 
         # Read in any logging options, merge with default
 
-        if "logging" in config:
-            logging_params.update(config["logging"])
+        if "logging" in self.config:
+            logging_params.update(self.config["logging"])
             # If level passed in then convert to int.
             if logging_params["level"] is not int:
                 logging_params["level"] = int(logging_params["level"])
 
         logging.basicConfig(**logging_params)  # Set logging options
-
-    except ConfigError as error:
-        logging.error(error)
-        sys.exit(1)
-
-    return config

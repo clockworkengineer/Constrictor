@@ -1,23 +1,30 @@
-""" Argument handling code.
+""" Arguments class.
 """
 
-import sys
 import os
 import argparse
 
 
-def load_arguments() -> argparse.Namespace:
-    """Load and parse command line arguments
+class ArgumentsError(Exception):
+    """An error occured in the program command line arguments.
     """
 
-    parser = argparse.ArgumentParser(
-        description="Process files copied into watch folder with a custom handler(s).")
-    parser.add_argument("file", help="Configuration file")
 
-    arguments = parser.parse_args()
+class Arguments:
+    """Extract arguments from command line and create arguments object.
+    """
 
-    if not os.path.exists(arguments.file):
-        print("Error: Non-existent config file passed to FPE.")
-        sys.exit(1)
+    def __init__(self) -> None:
+        """Load and parse command line into arguments object.
+        """
 
-    return arguments
+        parser = argparse.ArgumentParser(
+            description="Process files copied into watch folder with a custom handler(s).")
+        parser.add_argument("file", help="Configuration file")
+
+        arguments = parser.parse_args()
+
+        if not os.path.exists(arguments.file):
+            raise ArgumentsError("Non-existent config file passed to FPE.")
+
+        self.file = arguments.file
