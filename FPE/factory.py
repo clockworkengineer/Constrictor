@@ -38,6 +38,6 @@ class Factory:
         try:
             creator_func = Factory.handler_creation_funcs[handler_type]
         except KeyError:
-            raise ValueError(
+            raise FactoryError(
                 f"unknown handler type {handler_type!r}") from None
         return creator_func(args_copy)

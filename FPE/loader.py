@@ -1,5 +1,6 @@
 """A simple plugin loader.
-        """
+"""
+
 import importlib
 
 

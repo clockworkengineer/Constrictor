@@ -6,7 +6,7 @@ import logging
 
 
 class ConfigError(Exception):
-    """Configuration error
+    """Configuration error.
     """
 
 
