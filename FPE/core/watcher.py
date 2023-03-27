@@ -8,6 +8,11 @@ from .factory import Factory
 from .handler import Handler
 
 
+class WatcherError(Exception):
+    """An error occured in a file watcher.
+    """
+
+
 class WatcherHandler(FileSystemEventHandler):
     """Watcher handler adapter for watchdog.
     """
@@ -23,6 +28,8 @@ class WatcherHandler(FileSystemEventHandler):
 
 
 class Watcher:
+    """Watch for files being copied into a folder and process.
+    """
 
     __observer: Observer = None
 
@@ -32,7 +39,6 @@ class Watcher:
         """
 
         try:
-
             logging.info("*" * 80)
             logging.info(
                 "{name} Handler [{type}] running...".format(**handler_section))
@@ -40,8 +46,8 @@ class Watcher:
                 if option != "name" and option != "type":
                     logging.info("%s = %s", option, handler_section[option])
 
-        except Exception as error:
-            logging.error(error)
+        except IOError as error:
+            raise WatcherError from error
 
     def __init__(self, watcher_config) -> None:
         try:
@@ -65,17 +71,23 @@ class Watcher:
             else:
                 self.__observer = None
 
-        except Exception as e:
-            logging.error(e)
+        except (KeyError, ValueError) as error: 
+            raise WatcherError from error
 
     def start(self):
+        """Start watcher.
+        """
         if self.__observer is not None:
             self.__observer.start()
 
     def stop(self):
+        """Stop watcher.
+        """
         if self.__observer is not None:
             self.__observer.stop()
 
     def join(self):
+        """Wait for watcher thread to finish.
+        """
         if self.__observer is not None:
             self.__observer.join()

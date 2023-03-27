@@ -29,7 +29,7 @@ import logging
 from core.config import Config, ConfigError
 from core.arguments import Arguments, ArgumentsError
 from core.factory import Factory, FactoryError
-import core.watcher
+from core.watcher import Watcher, WatcherError
 import core.handler
 import core.loader
 
@@ -80,7 +80,7 @@ def fpe() -> None:
         
         watcher_list = []
         for watcher_config in config["watchers"]:
-            current_watcher = core.watcher.Watcher(watcher_config)
+            current_watcher = Watcher(watcher_config)
             if current_watcher is not None:
                 watcher_list.append(current_watcher)
 
@@ -110,7 +110,7 @@ def fpe() -> None:
 
         logging.info("File Processing Engine Stopped.")
 
-    except (ArgumentsError, ConfigError, FactoryError) as error:
+    except (ArgumentsError, ConfigError, FactoryError, WatcherError) as error:
         logging.error("FPE Error: %s.", error)
 
 
