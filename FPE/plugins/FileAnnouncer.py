@@ -3,11 +3,11 @@
 
 import os
 import logging
-from factory import Factory
-import handler
+from core.factory import Factory
+from core.handler import Handler
 
 
-class FileAnnouncer(handler.Handler):
+class FileAnnouncer(Handler):
     """
     """
 

@@ -2,7 +2,7 @@
 """
 
 from typing import Any, Callable
-import handler
+from .handler import Handler
 
 
 class FactoryError(Exception):
@@ -16,10 +16,10 @@ class Factory:
 
     # Watcher handler creation function dictionary
 
-    handler_creation_funcs: dict[str, Callable[..., handler.Handler]] = {}
+    handler_creation_funcs: dict[str, Callable[..., Handler]] = {}
 
     @staticmethod
-    def register(handler_type: str, handler_fn: Callable[..., handler.Handler]) -> None:
+    def register(handler_type: str, handler_fn: Callable[..., Handler]) -> None:
         """Register a new watcher handler type.
         """
         Factory.handler_creation_funcs[handler_type] = handler_fn
@@ -30,7 +30,7 @@ class Factory:
         Factory.handler_creation_funcs.pop(handler_type, None)
 
     @staticmethod
-    def create(arguments: dict[str, Any]) -> handler.Handler:
+    def create(arguments: dict[str, Any]) -> Handler:
         """Create a watcher handler of a specific type, given JSON data.
         """
         args_copy = arguments.copy()

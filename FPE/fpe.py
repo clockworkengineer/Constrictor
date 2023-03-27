@@ -26,12 +26,12 @@ optional arguments:
 
 import time
 import logging
-from config import Config, ConfigError
-from arguments import Arguments, ArgumentsError
-from factory import Factory, FactoryError
-import watcher
-import handler
-import loader
+from core.config import Config, ConfigError
+from core.arguments import Arguments, ArgumentsError
+from core.factory import Factory, FactoryError
+import core.watcher
+import core.handler
+import core.loader
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -67,20 +67,20 @@ def fpe() -> None:
 
         # Register built-in handlers
 
-        Factory.register("CopyFile", handler.CopyFile)
-        Factory.register("CSVFileToMySQL", handler.CSVFileToMySQL)
-        Factory.register("CSVFileToSQLite", handler.CSVFileToSQLite)
-        Factory.register("SFTPCopyFile", handler.SFTPCopyFile)
+        Factory.register("CopyFile", core.handler.CopyFile)
+        Factory.register("CSVFileToMySQL", core.handler.CSVFileToMySQL)
+        Factory.register("CSVFileToSQLite", core.handler.CSVFileToSQLite)
+        Factory.register("SFTPCopyFile", core.handler.SFTPCopyFile)
 
         # Load plug-ion handlers
         
-        loader.load_plugins(config['plugins'])
+        core.loader.load_plugins(config['plugins'])
 
         # Loop through watchers array creating file watchers for each
         
         watcher_list = []
         for watcher_config in config["watchers"]:
-            current_watcher = watcher.Watcher(watcher_config)
+            current_watcher = core.watcher.Watcher(watcher_config)
             if current_watcher is not None:
                 watcher_list.append(current_watcher)
 
