@@ -41,7 +41,7 @@ class Watcher:
         try:
             logging.info("*" * 80)
             logging.info(
-                "{name} Handler [{type}] running...".format(**handler_section))
+                "%s Handler [%s] running...", handler_section['name'], handler_section['type'])
             for option in handler_section.keys():
                 if option != "name" and option != "type":
                     logging.info("%s = %s", option, handler_section[option])
@@ -71,7 +71,7 @@ class Watcher:
             else:
                 self.__observer = None
 
-        except (KeyError, ValueError) as error: 
+        except (KeyError, ValueError) as error:
             raise WatcherError from error
 
     def start(self):

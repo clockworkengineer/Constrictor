@@ -119,7 +119,7 @@ class CopyFile(Handler):
             if self.delete_source:
                 os.remove(event.src_path)
 
-        except Exception as error:
+        except IOError as error:
             logging.error("Error in handler %s : %s",
                           self.handler_name, error)
 
