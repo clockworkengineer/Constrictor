@@ -14,6 +14,8 @@ class Arguments:
     """Extract arguments from command line and create arguments object.
     """
 
+    file : str = "" # Configuration file name
+    
     def __init__(self) -> None:
         """Load and parse command line into arguments object.
         """
