@@ -31,7 +31,7 @@ from core.arguments import Arguments, ArgumentsError
 from core.factory import Factory, FactoryError
 from core.watcher import Watcher, WatcherError
 from core.plugin import Plugin
-from core.handler import CopyFile, CSVFileToMySQL,CSVFileToSQLite, SFTPCopyFile 
+from core.builtin import CopyFile, CSVFileToMySQL, CSVFileToSQLite, SFTPCopyFile
 
 
 __author__ = "Rob Tizzard"
@@ -66,7 +66,7 @@ def fpe() -> None:
 
         logging.info("File Processing Engine Started.")
 
-        # Register built-in handlers
+        # Register builtin handlers
 
         Factory.register("CopyFile", CopyFile)
         Factory.register("CSVFileToMySQL", CSVFileToMySQL)
