@@ -54,3 +54,8 @@ class Config:
                 logging_params["level"] = int(logging_params["level"])
 
         logging.basicConfig(**logging_params)  # Set logging options
+
+    def get_config(self) -> dict[str, str]:
+        """Return config dictionary.
+        """
+        return self.config

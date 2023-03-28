@@ -60,9 +60,9 @@ def fpe() -> None:
         config.validate()
         config.set_logging()
 
-        # Read out config dictionary to use
-
-        config = config.config
+        # Get the running config
+        
+        fpe_config = config.get_config()
 
         logging.info("File Processing Engine Started.")
 
@@ -75,12 +75,12 @@ def fpe() -> None:
 
         # Load plugin handlers
 
-        Plugin.load(config['plugins'])
+        Plugin.load(fpe_config['plugins'])
 
         # Loop through watchers array creating file watchers for each
 
         watcher_list = []
-        for watcher_config in config["watchers"]:
+        for watcher_config in fpe_config["watchers"]:
             current_watcher = Watcher(watcher_config)
             if current_watcher is not None:
                 watcher_list.append(current_watcher)

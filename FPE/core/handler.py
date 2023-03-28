@@ -1,4 +1,4 @@
-""" Watcher file handler definitions built-in.
+""" Watcher handler interface.
 """
 
 from typing import Protocol
