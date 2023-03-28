@@ -25,5 +25,5 @@ class Plugin:
 
         plugin: IPlugin
         for plugin_file in plugin_list:
-            plugin = importlib.import_module(plugin_file)
+            plugin = importlib.import_module(plugin_file) # type: ignore
             plugin.register()

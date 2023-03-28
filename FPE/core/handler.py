@@ -1,8 +1,6 @@
 """ Watcher file handler definitions built-in.
 """
 
-import os
-
 from typing import Protocol
 
 

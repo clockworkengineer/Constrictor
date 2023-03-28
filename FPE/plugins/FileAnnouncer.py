@@ -3,8 +3,8 @@
 
 import os
 import logging
-from core.factory import Factory
-from core.handler import Handler
+from ..core.factory import Factory
+from ..core.handler import Handler
 
 
 class FileAnnouncer(Handler):

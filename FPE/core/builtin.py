@@ -16,7 +16,7 @@ from .handler import Handler
 ################################
 
 
-def __generate_sql(param_style, table_name, key_name, row_fields):
+def generate_sql(param_style, table_name, key_name, row_fields):
     """Generate SQL for update/insert row of fields.
     """
 
@@ -169,7 +169,7 @@ class CSVFileToMySQL(Handler):
             with open(event.src_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
-                sql = __generate_sql(self.param_style, self.table_name, self.key_name,
+                sql = generate_sql(self.param_style, self.table_name, self.key_name,
                                    csv_reader.fieldnames)
 
                 for row in csv_reader:
@@ -244,7 +244,7 @@ class CSVFileToSQLite(Handler):
             with open(event.src_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
-                sql = __generate_sql(self.param_style, self.table_name,
+                sql = generate_sql(self.param_style, self.table_name,
                                    self.key_name,
                                    csv_reader.fieldnames)
 
