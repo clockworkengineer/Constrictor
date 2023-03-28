@@ -30,8 +30,9 @@ from core.config import Config, ConfigError
 from core.arguments import Arguments, ArgumentsError
 from core.factory import Factory, FactoryError
 from core.watcher import Watcher, WatcherError
-import core.handler
-import core.loader
+from core.plugin import Plugin
+from core.handler import CopyFile, CSVFileToMySQL,CSVFileToSQLite, SFTPCopyFile 
+
 
 __author__ = "Rob Tizzard"
 __copyright__ = "Copyright 2023"
@@ -67,17 +68,17 @@ def fpe() -> None:
 
         # Register built-in handlers
 
-        Factory.register("CopyFile", core.handler.CopyFile)
-        Factory.register("CSVFileToMySQL", core.handler.CSVFileToMySQL)
-        Factory.register("CSVFileToSQLite", core.handler.CSVFileToSQLite)
-        Factory.register("SFTPCopyFile", core.handler.SFTPCopyFile)
+        Factory.register("CopyFile", CopyFile)
+        Factory.register("CSVFileToMySQL", CSVFileToMySQL)
+        Factory.register("CSVFileToSQLite", CSVFileToSQLite)
+        Factory.register("SFTPCopyFile", SFTPCopyFile)
 
-        # Load plug-ion handlers
-        
-        core.loader.load_plugins(config['plugins'])
+        # Load plugin handlers
+
+        Plugin.load(config['plugins'])
 
         # Loop through watchers array creating file watchers for each
-        
+
         watcher_list = []
         for watcher_config in config["watchers"]:
             current_watcher = Watcher(watcher_config)
