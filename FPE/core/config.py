@@ -1,4 +1,8 @@
 """ Config class.
+
+Create a configuration object from a JSON configuration file. Performing
+validation on the file and generating any required exceptions as necessary
+
 """
 
 import json
@@ -15,11 +19,14 @@ class Config:
     """
 
     def __init__(self, arguments) -> None:
-        """Load configuration file to be processed. 
+        """Load JSON configuration file to be processed. 
         """
 
-        with open(arguments.file, "r", encoding="utf-8") as json_file:
-            self.config = json.load(json_file)
+        try:
+            with open(arguments.file, "r", encoding="utf-8") as json_file:
+                self.config = json.load(json_file)
+        except json.JSONDecodeError as error:
+            raise ConnectionError from error
 
     def validate(self) -> None:
         """Validate config file.
