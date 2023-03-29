@@ -1,4 +1,4 @@
-"""Watcher file handler.
+"""Watcher file handler protocol class.
 """
 
 from typing import Protocol

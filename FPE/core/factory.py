@@ -6,7 +6,7 @@ from .handler import Handler
 
 
 class FactoryError(Exception):
-    """An error occured in the FPE watcher handler factory.
+    """An error occured in the watcher handler factory.
     """
 
 
@@ -22,22 +22,26 @@ class Factory:
     def register(handler_type: str, handler_fn: Callable[..., Handler]) -> None:
         """Register a new watcher handler type.
         """
+
         Factory.handler_creation_funcs[handler_type] = handler_fn
 
     @staticmethod
     def unregister(handler_type: str) -> None:
-        """Unregister a watcher handler type."""
+        """Unregister a watcher handler type.
+        """
+
         Factory.handler_creation_funcs.pop(handler_type, None)
 
     @staticmethod
     def create(arguments: dict[str, Any]) -> Handler:
         """Create a watcher handler of a specific type, given JSON data.
         """
-        args_copy = arguments.copy()
-        handler_type = args_copy.pop("type")
+
+        handler_type = arguments["type"]
         try:
             creator_func = Factory.handler_creation_funcs[handler_type]
-        except KeyError:
+        except KeyError as error:
             raise FactoryError(
-                f"unknown handler type {handler_type!r}") from None
-        return creator_func(args_copy)
+                f"Unknown handler type '{handler_type}'") from error
+
+        return creator_func(arguments)

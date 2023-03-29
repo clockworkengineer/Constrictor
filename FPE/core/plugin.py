@@ -5,7 +5,7 @@ import importlib
 
 
 class IPlugin:
-    """Represents a plugin interface. A plugin has a single register function.
+    """Plugin interface class.
     """
 
     @staticmethod
@@ -20,7 +20,7 @@ class Plugin:
 
     @staticmethod
     def load(plugin_list: list[str]) -> None:
-        """Load plugins names passed in.
+        """Load plugins list passed in.
         """
 
         plugin: IPlugin
