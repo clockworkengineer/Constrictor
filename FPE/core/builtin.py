@@ -4,10 +4,10 @@
 import os
 import shutil
 import logging
-import csv
-import sqlite3
-import pysftp
-import mysql.connector
+# import csv
+# import sqlite3
+# import pysftp
+# import mysql.connector
 from .handler import Handler
 
 
@@ -16,48 +16,48 @@ from .handler import Handler
 ################################
 
 
-def generate_sql(param_style, table_name, key_name, row_fields) -> str:
-    """Generate SQL for update/insert row of fields.
-    """
+# def generate_sql(param_style, table_name, key_name, row_fields) -> str:
+#     """Generate SQL for update/insert row of fields.
+#     """
 
-    try:
+#     try:
 
-        # Set up placeholder for param_style supported
+#         # Set up placeholder for param_style supported
 
-        if param_style == "pyformat":
-            placeholder = "%({})s"
-        elif param_style == "named":
-            placeholder = ":{}"
-        else:
-            logging.error("Unsupported paramstyle %s.", param_style)
-            placeholder = ""
+#         if param_style == "pyformat":
+#             placeholder = "%({})s"
+#         elif param_style == "named":
+#             placeholder = ":{}"
+#         else:
+#             logging.error("Unsupported paramstyle %s.", param_style)
+#             placeholder = ""
 
-        # Key provided then doing update
+#         # Key provided then doing update
 
-        if key_name != "":
+#         if key_name != "":
 
-            fields = (("{} = " + placeholder + ",") *
-                      len(row_fields)).format(*sorted(row_fields + row_fields))[:-1]
+#             fields = (("{} = " + placeholder + ",") *
+#                       len(row_fields)).format(*sorted(row_fields + row_fields))[:-1]
 
-            sql = ("UPDATE {} SET {} WHERE {} = " + placeholder).format(table_name,
-                                                                        fields, key_name, key_name)
-        # Doing an insert of a new record
+#             sql = ("UPDATE {} SET {} WHERE {} = " + placeholder).format(table_name,
+#                                                                         fields, key_name, key_name)
+#         # Doing an insert of a new record
 
-        else:
+#         else:
 
-            fields = ",".join(row_fields)
-            values = ((placeholder + ",") *
-                      (len(row_fields))).format(*row_fields)[:-1]
+#             fields = ",".join(row_fields)
+#             values = ((placeholder + ",") *
+#                       (len(row_fields))).format(*row_fields)[:-1]
 
-            sql = f"INSERT INTO {table_name} ({fields}) VALUES ({values})"
+#             sql = f"INSERT INTO {table_name} ({fields}) VALUES ({values})"
 
-    except ValueError as error:
-        logging.error(error)
-        sql = None
+#     except ValueError as error:
+#         logging.error(error)
+#         sql = None
 
-    logging.debug(sql)
+#     logging.debug(sql)
 
-    return sql
+#     return sql
 
 #####################
 # Built in handlers #
