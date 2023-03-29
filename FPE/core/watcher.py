@@ -12,11 +12,11 @@ class WatcherError(Exception):
     """An error occured in a file watcher.
     """
 
-    def __init__(self, message):
+    def __init__(self, message) -> None:
         self.message = message
         super().__init__(self.message)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Watcher Error: " + str(self.message)
 
 
@@ -81,19 +81,19 @@ class Watcher:
         except (KeyError, ValueError) as error:
             raise WatcherError from error
 
-    def start(self):
+    def start(self) -> None:
         """Start watcher.
         """
         if self.__observer is not None:
             self.__observer.start()
 
-    def stop(self):
+    def stop(self) -> None:
         """Stop watcher.
         """
         if self.__observer is not None:
             self.__observer.stop()
 
-    def join(self):
+    def join(self) -> None:
         """Wait for watcher thread to finish.
         """
         if self.__observer is not None:

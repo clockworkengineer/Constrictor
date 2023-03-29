@@ -16,7 +16,7 @@ from .handler import Handler
 ################################
 
 
-def generate_sql(param_style, table_name, key_name, row_fields):
+def generate_sql(param_style, table_name, key_name, row_fields) -> str:
     """Generate SQL for update/insert row of fields.
     """
 
@@ -78,7 +78,7 @@ class CopyFile(Handler):
         delete_source:        Boolean == true delete source file on success
     """
 
-    def __init__(self, handler_section):
+    def __init__(self, handler_section) -> None:
         """Initialise handler attributes.
         """
 
@@ -88,7 +88,7 @@ class CopyFile(Handler):
         self.recursive = handler_section["recursive"]
         self.delete_source = handler_section["deletesource"]
 
-    def process(self, event):
+    def process(self, event) -> None:
         """Copy file from watch folder to destination.
         """
         try:
@@ -137,7 +137,7 @@ class CSVFileToMySQL(Handler):
         delete_source: Boolean == true delete source file on success
     """
 
-    def __init__(self, handler_section):
+    def __init__(self, handler_section) -> None:
         """ Initialise handler attributes.
         """
 
@@ -153,7 +153,7 @@ class CSVFileToMySQL(Handler):
         self.delete_source = handler_section["deletesource"]
         self.param_style = "pyformat"
 
-    def process(self, event):
+    def process(self, event) -> None:
         """Import CSV file to MySQL database.
         """
 
@@ -213,7 +213,7 @@ class CSVFileToSQLite(Handler):
         delete_source: Boolean == true delete source file on success
     """
 
-    def __init__(self, handler_section):
+    def __init__(self, handler_section) -> None:
         """ Initialise handler attributes"""
 
         self.handler_name = handler_section["name"]
@@ -225,7 +225,7 @@ class CSVFileToSQLite(Handler):
         self.delete_source = handler_section["deletesource"]
         self.param_style = "named"
 
-    def process(self, event):
+    def process(self, event) -> None:
         """Import CSV file to SQLite database.
         """
 
@@ -289,7 +289,7 @@ class SFTPCopyFile(Handler):
         delete_source: Boolean == true delete source file on success
     """
 
-    def __init__(self, handler_section):
+    def __init__(self, handler_section) -> None:
         """ Initialise handler attributes.
         """
 
@@ -304,7 +304,7 @@ class SFTPCopyFile(Handler):
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-    def process(self, event):
+    def process(self, event) -> None:
         """SFTP Copy file from watch folder to a destination folder on remote server.
         """
 
