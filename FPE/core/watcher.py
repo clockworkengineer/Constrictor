@@ -4,8 +4,8 @@
 import logging
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-from .factory import Factory
-from .handler import Handler
+from core.factory import Factory
+from core.handler import Handler
 
 
 class WatcherError(Exception):
@@ -70,8 +70,8 @@ class Watcher:
 
             if selected_handler is not None:
                 self.__observer = Observer()
-                self.__observer.schedule(WatcherHandler(selected_handler), selected_handler.watch_folder,
-                                         recursive=selected_handler.recursive)
+                self.__observer.schedule(event_handler=WatcherHandler(selected_handler), path=watcher_config["watch"],
+                                         recursive=watcher_config["recursive"])
 
                 Watcher.__display_details(watcher_config)
 

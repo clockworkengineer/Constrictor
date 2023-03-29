@@ -70,31 +70,29 @@ class CopyFile(Handler):
     Copy files created in watch folder to destination folder keeping any in 
     situ watch folder directory structure the same.
 
-    Attributes:
-        handler_name:         Name of handler object
-        watch_folder:         Folder to watch for files
-        destination_folder:   Destination for file copy
-        recursive:            Boolean == true perform recursive file watch
-        delete_source:        Boolean == true delete source file on success
+    Handler(Watcher) config values:
+        name:           Name of handler object
+        watch:          Folder to watch for files
+        destination:    Destination for file copy
+        recursive:      Boolean == true perform recursive file watch
+        deletesource:   Boolean == true delete source file on success
+
     """
 
-    def __init__(self, handler_section) -> None:
+    def __init__(self, handler_config: dict[str, any]) -> None:
         """Initialise handler attributes.
         """
 
-        self.handler_name = handler_section["name"]
-        self.watch_folder = handler_section["watch"]
-        self.destination_folder = handler_section["destination"]
-        self.recursive = handler_section["recursive"]
-        self.delete_source = handler_section["deletesource"]
+        self.handler_config = handler_config.copy()
 
     def process(self, event) -> None:
         """Copy file from watch folder to destination.
         """
         try:
 
-            destination_path = event.src_path[len(self.watch_folder) + 1:]
-            destination_path = os.path.join(self.destination_folder,
+            destination_path = event.src_path[len(
+                self.handler_config["watch"]) + 1:]
+            destination_path = os.path.join(self.handler_config["watch"],
                                             destination_path)
 
             if os.path.isfile(event.src_path):
@@ -109,12 +107,12 @@ class CopyFile(Handler):
                     logging.info("Creating directory {event.src_path}")
                     os.makedirs(destination_path)
 
-            if self.delete_source:
+            if self.handler_config["deletesource"]:
                 os.remove(event.src_path)
 
         except IOError as error:
             logging.error("Error in handler %s : %s",
-                          self.handler_name, error)
+                          self.handler_config["name"], error)
 
 
 # class CSVFileToMySQL(Handler):
@@ -137,20 +135,20 @@ class CopyFile(Handler):
 #         delete_source: Boolean == true delete source file on success
 #     """
 
-#     def __init__(self, handler_section) -> None:
+#     def __init__(self, handler_config) -> None:
 #         """ Initialise handler attributes.
 #         """
 
-#         self.handler_name = handler_section["name"]
-#         self.watch_folder = handler_section["watch"]
-#         self.server = handler_section["server"]
-#         self.user_name = handler_section["user"]
-#         self.user_password = handler_section["password"]
-#         self.database_name = handler_section["database"]
-#         self.table_name = handler_section["table"]
-#         self.key_name = handler_section["key"]
-#         self.recursive = handler_section["recursive"]
-#         self.delete_source = handler_section["deletesource"]
+#         self.handler_name = handler_config["name"]
+#         self.watch_folder = handler_config["watch"]
+#         self.server = handler_config["server"]
+#         self.user_name = handler_config["user"]
+#         self.user_password = handler_config["password"]
+#         self.database_name = handler_config["database"]
+#         self.table_name = handler_config["table"]
+#         self.key_name = handler_config["key"]
+#         self.recursive = handler_config["recursive"]
+#         self.delete_source = handler_config["deletesource"]
 #         self.param_style = "pyformat"
 
 #     def process(self, event) -> None:
@@ -213,16 +211,16 @@ class CopyFile(Handler):
 #         delete_source: Boolean == true delete source file on success
 #     """
 
-#     def __init__(self, handler_section) -> None:
+#     def __init__(self, handler_config) -> None:
 #         """ Initialise handler attributes"""
 
-#         self.handler_name = handler_section["name"]
-#         self.watch_folder = handler_section["watch"]
-#         self.table_name = handler_section["table"]
-#         self.key_name = handler_section["key"]
-#         self.database_file = handler_section["databasefile"]
-#         self.recursive = handler_section["recursive"]
-#         self.delete_source = handler_section["deletesource"]
+#         self.handler_name = handler_config["name"]
+#         self.watch_folder = handler_config["watch"]
+#         self.table_name = handler_config["table"]
+#         self.key_name = handler_config["key"]
+#         self.database_file = handler_config["databasefile"]
+#         self.recursive = handler_config["recursive"]
+#         self.delete_source = handler_config["deletesource"]
 #         self.param_style = "named"
 
 #     def process(self, event) -> None:
@@ -289,18 +287,18 @@ class CopyFile(Handler):
 #         delete_source: Boolean == true delete source file on success
 #     """
 
-#     def __init__(self, handler_section) -> None:
+#     def __init__(self, handler_config) -> None:
 #         """ Initialise handler attributes.
 #         """
 
-#         self.handler_name = handler_section["name"]
-#         self.watch_folder = handler_section["watch"]
-#         self.ssh_server = handler_section["server"]
-#         self.ssh_user = handler_section["user"]
-#         self.ssh_password = handler_section["password"]
-#         self.destination_folder = handler_section["destination"]
-#         self.recursive = handler_section["recursive"]
-#         self.delete_source = handler_section["deletesource"]
+#         self.handler_name = handler_config["name"]
+#         self.watch_folder = handler_config["watch"]
+#         self.ssh_server = handler_config["server"]
+#         self.ssh_user = handler_config["user"]
+#         self.ssh_password = handler_config["password"]
+#         self.destination_folder = handler_config["destination"]
+#         self.recursive = handler_config["recursive"]
+#         self.delete_source = handler_config["deletesource"]
 
 #         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
