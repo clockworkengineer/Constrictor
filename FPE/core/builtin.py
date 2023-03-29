@@ -117,214 +117,214 @@ class CopyFile(Handler):
                           self.handler_name, error)
 
 
-class CSVFileToMySQL(Handler):
-    """Import CSV file to MySQL database.
+# class CSVFileToMySQL(Handler):
+#     """Import CSV file to MySQL database.
 
-    Read in CSV file and insert/update rows within a given MySQL database/table.
-    If no key attribute is specified then the rows are inserted otherwise
-    updated.
+#     Read in CSV file and insert/update rows within a given MySQL database/table.
+#     If no key attribute is specified then the rows are inserted otherwise
+#     updated.
 
-    Attributes:
-        handler_name : Name of handler object
-        watch_folder:  Folder to watch for files
-        server:        MySQL database server
-        user_name:     MySQL username
-        user_password: MySQL user password
-        database_name: MySQL database name
-        table_name:    MySQL table name
-        key_name:      Table column key used in updates
-        recursive:     Boole == true perform recursive file watch
-        delete_source: Boolean == true delete source file on success
-    """
+#     Attributes:
+#         handler_name : Name of handler object
+#         watch_folder:  Folder to watch for files
+#         server:        MySQL database server
+#         user_name:     MySQL username
+#         user_password: MySQL user password
+#         database_name: MySQL database name
+#         table_name:    MySQL table name
+#         key_name:      Table column key used in updates
+#         recursive:     Boole == true perform recursive file watch
+#         delete_source: Boolean == true delete source file on success
+#     """
 
-    def __init__(self, handler_section) -> None:
-        """ Initialise handler attributes.
-        """
+#     def __init__(self, handler_section) -> None:
+#         """ Initialise handler attributes.
+#         """
 
-        self.handler_name = handler_section["name"]
-        self.watch_folder = handler_section["watch"]
-        self.server = handler_section["server"]
-        self.user_name = handler_section["user"]
-        self.user_password = handler_section["password"]
-        self.database_name = handler_section["database"]
-        self.table_name = handler_section["table"]
-        self.key_name = handler_section["key"]
-        self.recursive = handler_section["recursive"]
-        self.delete_source = handler_section["deletesource"]
-        self.param_style = "pyformat"
+#         self.handler_name = handler_section["name"]
+#         self.watch_folder = handler_section["watch"]
+#         self.server = handler_section["server"]
+#         self.user_name = handler_section["user"]
+#         self.user_password = handler_section["password"]
+#         self.database_name = handler_section["database"]
+#         self.table_name = handler_section["table"]
+#         self.key_name = handler_section["key"]
+#         self.recursive = handler_section["recursive"]
+#         self.delete_source = handler_section["deletesource"]
+#         self.param_style = "pyformat"
 
-    def process(self, event) -> None:
-        """Import CSV file to MySQL database.
-        """
+#     def process(self, event) -> None:
+#         """Import CSV file to MySQL database.
+#         """
 
-        try:
+#         try:
 
-            database = mysql.connector.connect(self.server, self.user_name,
-                                               self.user_password, self.database_name)
-            cursor = database.cursor()
+#             database = mysql.connector.connect(self.server, self.user_name,
+#                                                self.user_password, self.database_name)
+#             cursor = database.cursor()
 
-            logging.info("Importing CSV file %s to table %s.",
-                         event.src_path, self.table_name)
+#             logging.info("Importing CSV file %s to table %s.",
+#                          event.src_path, self.table_name)
 
-            with open(event.src_path, "r", encoding="utf-8") as file_handle:
+#             with open(event.src_path, "r", encoding="utf-8") as file_handle:
 
-                csv_reader = csv.DictReader(file_handle)
-                sql = generate_sql(self.param_style, self.table_name, self.key_name,
-                                   csv_reader.fieldnames)
+#                 csv_reader = csv.DictReader(file_handle)
+#                 sql = generate_sql(self.param_style, self.table_name, self.key_name,
+#                                    csv_reader.fieldnames)
 
-                for row in csv_reader:
+#                 for row in csv_reader:
 
-                    try:
+#                     try:
 
-                        with database:
-                            cursor.execute(sql, row)
+#                         with database:
+#                             cursor.execute(sql, row)
 
-                    except (mysql.connector.Error, mysql.connector.Warning) as error:
-                        logging.error("%s\n%s", sql, error)
+#                     except (mysql.connector.Error, mysql.connector.Warning) as error:
+#                         logging.error("%s\n%s", sql, error)
 
-        except Exception as error:
-            logging.error("Error in handler %s: %s", self.handler_name, error)
-            database = None
+#         except Exception as error:
+#             logging.error("Error in handler %s: %s", self.handler_name, error)
+#             database = None
 
-        else:
-            logging.info("Finished Importing file %s to table %s.",
-                         event.src_path, self.table_name)
-            if self.delete_source:
-                os.remove(event.src_path)
+#         else:
+#             logging.info("Finished Importing file %s to table %s.",
+#                          event.src_path, self.table_name)
+#             if self.delete_source:
+#                 os.remove(event.src_path)
 
-        if database:
-            database.close()
-
-
-class CSVFileToSQLite(Handler):
-    """Import CSV file to SQLite database.
-
-    Read in CSV file and insert/update rows within a given SQLite database/table.
-    If no key attribute is specified then the rows are inserted otherwise
-    updated.
-
-    Attributes:
-        handler_name : Name of handler object
-        watch_folder:  Folder to watch for files
-        database_file: SQLite database file name
-        table_name:    SQLite table name
-        key_name:      Table column key used in updates
-        recursive:     Boole == true perform recursive file watch
-        delete_source: Boolean == true delete source file on success
-    """
-
-    def __init__(self, handler_section) -> None:
-        """ Initialise handler attributes"""
-
-        self.handler_name = handler_section["name"]
-        self.watch_folder = handler_section["watch"]
-        self.table_name = handler_section["table"]
-        self.key_name = handler_section["key"]
-        self.database_file = handler_section["databasefile"]
-        self.recursive = handler_section["recursive"]
-        self.delete_source = handler_section["deletesource"]
-        self.param_style = "named"
-
-    def process(self, event) -> None:
-        """Import CSV file to SQLite database.
-        """
-
-        try:
-
-            if not os.path.exists(self.database_file):
-                raise IOError("Database file does not exist.")
-
-            database = sqlite3.connect(self.database_file)
-
-            cursor = database.cursor()
-
-            logging.info("Importing CSV file %s to table %s.",
-                         event.src_path, self.table_name)
-
-            with open(event.src_path, "r", encoding="utf-8") as file_handle:
-
-                csv_reader = csv.DictReader(file_handle)
-                sql = generate_sql(self.param_style, self.table_name,
-                                   self.key_name,
-                                   csv_reader.fieldnames)
-
-                for row in csv_reader:
-
-                    try:
-
-                        with database:
-                            cursor.execute(sql, row)
-
-                    except (sqlite3.Error, sqlite3.Warning) as error:
-                        logging.error("%s\n%s", sql, error)
-
-        except Exception as error:
-            logging.error("Error in handler %s: %s", self.handler_name, error)
-            database = None
-
-        else:
-            logging.info("Finished Importing file %s to table %s.",
-                         event.src_path, self.table_name)
-            if self.delete_source:
-                os.remove(event.src_path)
-
-        if database:
-            database.close()
+#         if database:
+#             database.close()
 
 
-class SFTPCopyFile(Handler):
-    """SFTP Copy file/directories.
+# class CSVFileToSQLite(Handler):
+#     """Import CSV file to SQLite database.
 
-    SFTP Copy files created in watch folder to destination folder on remote SSH
-    server keeping any in situ watch folder directory structure the same.
+#     Read in CSV file and insert/update rows within a given SQLite database/table.
+#     If no key attribute is specified then the rows are inserted otherwise
+#     updated.
 
-    Attributes:
-        handler_name:  Name of handler object
-        watch_folder:  Folder to watch for files
-        ssh_server:    SSH Server
-        ssh_user:      SSH Server username
-        ssh_password   SSH Server user password
-        destination    Destination for copy
-        recursive:     Boolean == true perform recursive file watch
-        delete_source: Boolean == true delete source file on success
-    """
+#     Attributes:
+#         handler_name : Name of handler object
+#         watch_folder:  Folder to watch for files
+#         database_file: SQLite database file name
+#         table_name:    SQLite table name
+#         key_name:      Table column key used in updates
+#         recursive:     Boole == true perform recursive file watch
+#         delete_source: Boolean == true delete source file on success
+#     """
 
-    def __init__(self, handler_section) -> None:
-        """ Initialise handler attributes.
-        """
+#     def __init__(self, handler_section) -> None:
+#         """ Initialise handler attributes"""
 
-        self.handler_name = handler_section["name"]
-        self.watch_folder = handler_section["watch"]
-        self.ssh_server = handler_section["server"]
-        self.ssh_user = handler_section["user"]
-        self.ssh_password = handler_section["password"]
-        self.destination_folder = handler_section["destination"]
-        self.recursive = handler_section["recursive"]
-        self.delete_source = handler_section["deletesource"]
+#         self.handler_name = handler_section["name"]
+#         self.watch_folder = handler_section["watch"]
+#         self.table_name = handler_section["table"]
+#         self.key_name = handler_section["key"]
+#         self.database_file = handler_section["databasefile"]
+#         self.recursive = handler_section["recursive"]
+#         self.delete_source = handler_section["deletesource"]
+#         self.param_style = "named"
 
-        logging.getLogger("paramiko").setLevel(logging.WARNING)
+#     def process(self, event) -> None:
+#         """Import CSV file to SQLite database.
+#         """
 
-    def process(self, event) -> None:
-        """SFTP Copy file from watch folder to a destination folder on remote server.
-        """
+#         try:
 
-        try:
-            destination_path = event.src_path[len(self.watch_folder) + 1:]
-            destination_path = os.path.join(self.destination_folder,
-                                            destination_path)
+#             if not os.path.exists(self.database_file):
+#                 raise IOError("Database file does not exist.")
 
-            with pysftp.Connection(self.ssh_server, username=self.ssh_user,
-                                   password=self.ssh_password) as sftp:
-                if os.path.isfile(event.src_path):
-                    sftp.put(event.src_path, destination_path)
-                else:
-                    sftp.makedirs(destination_path)
+#             database = sqlite3.connect(self.database_file)
 
-            logging.info("Uploaded file %s to %s",
-                         event.src_path, destination_path)
-            if self.delete_source:
-                os.remove(event.src_path)
+#             cursor = database.cursor()
 
-        except Exception as error:
-            logging.error("Error in handler %s : %s",
-                          self.handler_name, error)
+#             logging.info("Importing CSV file %s to table %s.",
+#                          event.src_path, self.table_name)
+
+#             with open(event.src_path, "r", encoding="utf-8") as file_handle:
+
+#                 csv_reader = csv.DictReader(file_handle)
+#                 sql = generate_sql(self.param_style, self.table_name,
+#                                    self.key_name,
+#                                    csv_reader.fieldnames)
+
+#                 for row in csv_reader:
+
+#                     try:
+
+#                         with database:
+#                             cursor.execute(sql, row)
+
+#                     except (sqlite3.Error, sqlite3.Warning) as error:
+#                         logging.error("%s\n%s", sql, error)
+
+#         except Exception as error:
+#             logging.error("Error in handler %s: %s", self.handler_name, error)
+#             database = None
+
+#         else:
+#             logging.info("Finished Importing file %s to table %s.",
+#                          event.src_path, self.table_name)
+#             if self.delete_source:
+#                 os.remove(event.src_path)
+
+#         if database:
+#             database.close()
+
+
+# class SFTPCopyFile(Handler):
+#     """SFTP Copy file/directories.
+
+#     SFTP Copy files created in watch folder to destination folder on remote SSH
+#     server keeping any in situ watch folder directory structure the same.
+
+#     Attributes:
+#         handler_name:  Name of handler object
+#         watch_folder:  Folder to watch for files
+#         ssh_server:    SSH Server
+#         ssh_user:      SSH Server username
+#         ssh_password   SSH Server user password
+#         destination    Destination for copy
+#         recursive:     Boolean == true perform recursive file watch
+#         delete_source: Boolean == true delete source file on success
+#     """
+
+#     def __init__(self, handler_section) -> None:
+#         """ Initialise handler attributes.
+#         """
+
+#         self.handler_name = handler_section["name"]
+#         self.watch_folder = handler_section["watch"]
+#         self.ssh_server = handler_section["server"]
+#         self.ssh_user = handler_section["user"]
+#         self.ssh_password = handler_section["password"]
+#         self.destination_folder = handler_section["destination"]
+#         self.recursive = handler_section["recursive"]
+#         self.delete_source = handler_section["deletesource"]
+
+#         logging.getLogger("paramiko").setLevel(logging.WARNING)
+
+#     def process(self, event) -> None:
+#         """SFTP Copy file from watch folder to a destination folder on remote server.
+#         """
+
+#         try:
+#             destination_path = event.src_path[len(self.watch_folder) + 1:]
+#             destination_path = os.path.join(self.destination_folder,
+#                                             destination_path)
+
+#             with pysftp.Connection(self.ssh_server, username=self.ssh_user,
+#                                    password=self.ssh_password) as sftp:
+#                 if os.path.isfile(event.src_path):
+#                     sftp.put(event.src_path, destination_path)
+#                 else:
+#                     sftp.makedirs(destination_path)
+
+#             logging.info("Uploaded file %s to %s",
+#                          event.src_path, destination_path)
+#             if self.delete_source:
+#                 os.remove(event.src_path)
+
+#         except Exception as error:
+#             logging.error("Error in handler %s : %s",
+#                           self.handler_name, error)

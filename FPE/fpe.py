@@ -31,7 +31,8 @@ from core.arguments import Arguments, ArgumentsError
 from core.factory import Factory, FactoryError
 from core.watcher import Watcher, WatcherError
 from core.plugin import Plugin
-from core.builtin import CopyFile, CSVFileToMySQL, CSVFileToSQLite, SFTPCopyFile
+from core.builtin import CopyFile
+# CSVFileToMySQL, CSVFileToSQLite, SFTPCopyFile
 
 
 __author__ = "Rob Tizzard"
@@ -69,9 +70,9 @@ def fpe() -> None:
         # Register builtin handlers
 
         Factory.register("CopyFile", CopyFile)
-        Factory.register("CSVFileToMySQL", CSVFileToMySQL)
-        Factory.register("CSVFileToSQLite", CSVFileToSQLite)
-        Factory.register("SFTPCopyFile", SFTPCopyFile)
+        # Factory.register("CSVFileToMySQL", CSVFileToMySQL)
+        # Factory.register("CSVFileToSQLite", CSVFileToSQLite)
+        # Factory.register("SFTPCopyFile", SFTPCopyFile)
 
         # Load plugin handlers
 
