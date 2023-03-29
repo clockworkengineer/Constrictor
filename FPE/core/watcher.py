@@ -12,6 +12,13 @@ class WatcherError(Exception):
     """An error occured in a file watcher.
     """
 
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return "Watcher Error: " + str(self.message)
+
 
 class WatcherHandler(FileSystemEventHandler):
     """Watcher handler adapter for watchdog.

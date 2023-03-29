@@ -14,19 +14,26 @@ class ArgumentsError(Exception):
     """An error occured in the program command line arguments.
     """
 
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return "Arguments Error: " + str(self.message)
+
 
 class Arguments:
     """Extract arguments from command line and create arguments object.
     """
 
-    file : str = "" # Configuration file name
-    
+    file: str = ""  # Configuration file name
+
     def __init__(self) -> None:
         """Load and parse command line into arguments object.
         """
 
         # Extract and parse arguments
-        
+
         parser = argparse.ArgumentParser(
             description="Process files copied into watch folder with a custom handler(s).")
         parser.add_argument("file", help="Configuration file")
@@ -36,8 +43,8 @@ class Arguments:
         # Check that configuration file exists
 
         if not os.path.exists(arguments.file):
-            raise ArgumentsError("Non-existent config file passed to FPE.")
+            raise ArgumentsError("Non-existent config file passed to FPE")
 
         # Pass back valid parameters
-        
+
         self.file = arguments.file

@@ -13,6 +13,13 @@ class ConfigError(Exception):
     """Configuration error.
     """
 
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return "Config Error: " + str(self.message)
+
 
 class Config:
     """Config class
@@ -26,7 +33,7 @@ class Config:
             with open(arguments.file, "r", encoding="utf-8") as json_file:
                 self.config = json.load(json_file)
         except json.JSONDecodeError as error:
-            raise ConnectionError from error
+            raise ConfigError(error) from error
 
     def validate(self) -> None:
         """Validate config file.
@@ -35,17 +42,17 @@ class Config:
         # Must contain 'plugins' and 'watchers' key entries
 
         if "plugins" not in self.config:
-            raise ConfigError("Missing config 'plugins' key.")
+            raise ConfigError("Missing config 'plugins' key")
         if "watchers" not in self.config:
-            raise ConfigError("Missing config 'wa'tchers' key.")
+            raise ConfigError("Missing config 'wa'tchers' key")
 
         # Each watcher entry must have a 'name' and 'type'
 
         for watcher_config in self.config["watchers"]:
             if "name" not in watcher_config:
-                raise ConfigError("Missing config handler 'name' key.")
+                raise ConfigError("Missing config handler 'name' key")
             if "type" not in watcher_config:
-                raise ConfigError("Missing config watchers 'type' key.")
+                raise ConfigError("Missing config watchers 'type' key")
 
     def set_logging(self) -> None:
         """Set type of logging to be used.

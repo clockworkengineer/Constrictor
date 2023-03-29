@@ -9,6 +9,12 @@ class FactoryError(Exception):
     """An error occured in the watcher handler factory.
     """
 
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return "Factory Error: " + str(self.message)
 
 class Factory:
     """Factory to create watcher handlers.
