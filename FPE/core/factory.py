@@ -16,6 +16,7 @@ class FactoryError(Exception):
     def __str__(self):
         return "Factory Error: " + str(self.message)
 
+
 class Factory:
     """Factory to create watcher handlers.
     """
