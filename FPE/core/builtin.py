@@ -1,4 +1,4 @@
-""" Watcher file handler definitions built-in.
+""" Built-in watcher file handlers.
 """
 
 import os
