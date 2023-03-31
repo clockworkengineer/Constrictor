@@ -9,9 +9,9 @@ in file handler classes.
 
 Current built in file handler types:
 1) Copy files/directory
-2) Import CSV file to MySQL database table.
-3) Import CSV file to SQLite database table.
-4) SFTP copy files/directory to an SSH server.
+2) Import CSV file to MySQL database table (missing for moment).
+3) Import CSV file to SQLite database table (missing for moment).
+4) SFTP copy files/directory to an SSH server (missing for moment).
 
 usage: fpe.py [-h] file
 
@@ -32,7 +32,6 @@ from core.factory import Factory, FactoryError
 from core.watcher import Watcher, WatcherError
 from core.plugin import Plugin
 from core.builtin import CopyFile
-# CSVFileToMySQL, CSVFileToSQLite, SFTPCopyFile
 
 
 __author__ = "Rob Tizzard"
@@ -70,9 +69,6 @@ def fpe() -> None:
         # Register builtin handlers
 
         Factory.register("CopyFile", CopyFile)
-        # Factory.register("CSVFileToMySQL", CSVFileToMySQL)
-        # Factory.register("CSVFileToSQLite", CSVFileToSQLite)
-        # Factory.register("SFTPCopyFile", SFTPCopyFile)
 
         # Load plugin handlers
 

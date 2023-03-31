@@ -34,5 +34,4 @@ class FileAnnouncer(Handler):
 def register() -> None:
     """Register plugin as a watcher handler.
     """
-
     Factory.register("FileAnnouncer", FileAnnouncer)

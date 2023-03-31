@@ -31,7 +31,6 @@ class Arguments:
     def __init__(self) -> None:
         """Load and parse command line into arguments object.
         """
-
         # Extract and parse arguments
 
         parser = argparse.ArgumentParser(
