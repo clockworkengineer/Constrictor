@@ -1,11 +1,11 @@
-"""Plugin Interface and loader.
+"""Plugin interface and loader.
 """
 
 import importlib
 
 
 class IPlugin:
-    """Plugin interface class.
+    """Plugin interface.
     """
 
     @staticmethod
@@ -15,7 +15,7 @@ class IPlugin:
 
 
 class Plugin:
-    """Plugin loader class.
+    """Plugin loader.
     """
 
     @staticmethod

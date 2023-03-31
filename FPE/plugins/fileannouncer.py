@@ -11,14 +11,10 @@ class FileAnnouncer(Handler):
     """File Announcer
     """
 
-    def __init__(self, handler_section) -> None:
+    def __init__(self, handler_config) -> None:
         """Initialise handler attributes.
         """
-
-        self.handler_name = handler_section["name"]
-        self.watch_folder = handler_section["watch"]
-        self.recursive = handler_section["recursive"]
-        self.delete_source = handler_section["deletesource"]
+        self.handler_config = handler_config.copy()
 
     def process(self, event) -> None:
         """Print out name of any file copied into watch folder.
@@ -27,16 +23,16 @@ class FileAnnouncer(Handler):
             logging.info(
                 "File %s.", event.src_path)
 
-            if self.delete_source:
+            if self.handler_config["deletesource"]:
                 os.remove(event.src_path)
 
         except OSError as error:
             logging.error("Error in handler %s : %s",
-                          self.handler_name, error)
+                          self.handler_config["name"], error)
 
 
 def register() -> None:
     """Register plugin as a watcher handler.
     """
-    
+
     Factory.register("FileAnnouncer", FileAnnouncer)
