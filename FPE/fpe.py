@@ -61,7 +61,7 @@ def fpe() -> None:
         config.set_logging()
 
         # Get the running config
-        
+
         fpe_config = config.get_config()
 
         logging.info("File Processing Engine Started.")

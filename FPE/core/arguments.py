@@ -2,7 +2,8 @@
 
 Convert command line arguments into an object that can be accessed by the FPE.
 Performing any validation required on the passed in parameters and generating
-any exceptions for any errors found.
+any exceptions for any errors found. This is currently just a JSON configuration
+file that is used to specify any custom plugins and running handler details.
 
 """
 
@@ -26,8 +27,6 @@ class Arguments:
     """Extract arguments from command line and create arguments object.
     """
 
-    file: str = ""  # Configuration file name
-
     def __init__(self) -> None:
         """Load and parse command line into arguments object.
         """
@@ -46,4 +45,4 @@ class Arguments:
 
         # Pass back valid parameters
 
-        self.file = arguments.file
+        self.file: str = arguments.file  # Configuration file name
