@@ -31,7 +31,7 @@ from core.arguments import Arguments, ArgumentsError
 from core.factory import Factory, FactoryError
 from core.watcher import Watcher, WatcherError
 from core.plugin import PluginLoader
-from core.builtin.copyfile_handler import CopyFileHandler
+from builtin.copyfile_handler import CopyFileHandler
 
 
 __author__ = "Rob Tizzard"

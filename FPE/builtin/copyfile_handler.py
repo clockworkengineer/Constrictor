@@ -4,7 +4,7 @@
 import os
 import shutil
 import logging
-from ..handler import Handler
+from core.handler import Handler
 
 
 class CopyFileHandlerError(Exception):
@@ -70,5 +70,5 @@ class CopyFileHandler(Handler):
                 os.remove(event.src_path)
 
 
-        except (IOError, KeyError, ValueError) as error:
+        except (OSError, KeyError, ValueError) as error:
             raise CopyFileHandlerError from error
