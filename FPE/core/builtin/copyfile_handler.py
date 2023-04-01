@@ -7,6 +7,18 @@ import logging
 from ..handler import Handler
 
 
+class CopyFileHandlerError(Exception):
+    """An error occured in the CopyFile handler.
+    """
+
+    def __init__(self, message) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
+        return " CopyFileHandler Error: " + str(self.message)
+
+
 class CopyFileHandler(Handler):
     """Copy file/directories.
 
@@ -57,6 +69,6 @@ class CopyFileHandler(Handler):
             if self.handler_config["deletesource"]:
                 os.remove(event.src_path)
 
-        except IOError as error:
-            logging.error("Error in handler %s : %s",
-                          self.handler_config["name"], error)
+
+        except (IOError, KeyError, ValueError) as error:
+            raise CopyFileHandlerError from error
