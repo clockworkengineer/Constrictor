@@ -7,7 +7,7 @@ from core.factory import Factory
 from core.handler import Handler
 
 
-class FileAnnouncer(Handler):
+class FileAnnouncerHandler(Handler):
     """File Announcer
     """
 
@@ -34,4 +34,4 @@ class FileAnnouncer(Handler):
 def register() -> None:
     """Register plugin as a watcher handler.
     """
-    Factory.register("FileAnnouncer", FileAnnouncer)
+    Factory.register("FileAnnouncer", FileAnnouncerHandler)
