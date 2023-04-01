@@ -28,7 +28,6 @@ class Config:
     def __init__(self, arguments) -> None:
         """Load JSON configuration file to be processed. 
         """
-
         try:
             with open(arguments.file, "r", encoding="utf-8") as json_file:
                 self.config = json.load(json_file)
@@ -38,7 +37,6 @@ class Config:
     def validate(self) -> None:
         """Validate config file.
         """
-
         # Must contain 'plugins' and 'watchers' key entries
 
         if "plugins" not in self.config:
@@ -57,7 +55,6 @@ class Config:
     def set_logging(self) -> None:
         """Set type of logging to be used.
         """
-
         # Default logging parameters
 
         logging_params = {"level": logging.INFO,

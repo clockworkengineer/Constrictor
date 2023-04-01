@@ -14,7 +14,7 @@ class IPlugin:
         """
 
 
-class Plugin:
+class PluginLoader:
     """Plugin loader.
     """
 
@@ -22,8 +22,7 @@ class Plugin:
     def load(plugin_list: list[str]) -> None:
         """Load plugins list passed in.
         """
-
         plugin: IPlugin
         for plugin_file in plugin_list:
-            plugin = importlib.import_module(plugin_file) # type: ignore
+            plugin = importlib.import_module(plugin_file)  # type: ignore
             plugin.register()

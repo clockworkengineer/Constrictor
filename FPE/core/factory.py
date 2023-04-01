@@ -9,7 +9,7 @@ class FactoryError(Exception):
     """An error occured in the watcher handler factory.
     """
 
-    def __init__(self, message)-> None:
+    def __init__(self, message) -> None:
         self.message = message
         super().__init__(self.message)
 
@@ -29,21 +29,18 @@ class Factory:
     def register(handler_type: str, handler_fn: Callable[..., Handler]) -> None:
         """Register a new watcher handler type.
         """
-
         Factory.handler_creation_funcs[handler_type] = handler_fn
 
     @staticmethod
     def unregister(handler_type: str) -> None:
         """Unregister a watcher handler type.
         """
-
         Factory.handler_creation_funcs.pop(handler_type, None)
 
     @staticmethod
     def create(arguments: dict[str, Any]) -> Handler:
         """Create a watcher handler of a specific type, given JSON data.
         """
-
         handler_type = arguments["type"]
         try:
             creator_func = Factory.handler_creation_funcs[handler_type]

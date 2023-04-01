@@ -6,7 +6,7 @@
         {
             "name": "File Copier",
             "type": "CopyFile",
-            "watch": "c:\\temp\\watch\\",
+            "watch": "c:\\temp\\watch",
             "destination": "c:\\temp\\destination"
         }
     ],

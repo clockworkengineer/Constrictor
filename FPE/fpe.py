@@ -30,8 +30,8 @@ from core.config import Config, ConfigError
 from core.arguments import Arguments, ArgumentsError
 from core.factory import Factory, FactoryError
 from core.watcher import Watcher, WatcherError
-from core.plugin import Plugin
-from core.builtin import CopyFile
+from core.plugin import PluginLoader
+from core.builtin.copyfile_handler import CopyFileHandler
 
 
 __author__ = "Rob Tizzard"
@@ -68,11 +68,11 @@ def fpe() -> None:
 
         # Register builtin handlers
 
-        Factory.register("CopyFile", CopyFile)
+        Factory.register("CopyFile", CopyFileHandler)
 
         # Load plugin handlers
 
-        Plugin.load(fpe_config['plugins'])
+        PluginLoader.load(fpe_config['plugins'])
 
         # Loop through watchers array creating file watchers for each
 

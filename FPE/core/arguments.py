@@ -27,6 +27,10 @@ class Arguments:
     """Extract arguments from command line and create arguments object.
     """
 
+    # Parsed argument attributes
+
+    file: str   # Configuration file name
+
     def __init__(self) -> None:
         """Load and parse command line into arguments object.
         """
@@ -43,6 +47,6 @@ class Arguments:
         if not os.path.exists(arguments.file):
             raise ArgumentsError("Non-existent config file passed to FPE")
 
-        # Pass back valid parameters
+        # Pass back valid attributes
 
-        self.file: str = arguments.file  # Configuration file name
+        self.file = arguments.file

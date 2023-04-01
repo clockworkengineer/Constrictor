@@ -1,4 +1,4 @@
-""" File watcher class.
+""" File watcher.
 """
 
 import logging
@@ -37,14 +37,12 @@ class WatcherHandler(FileSystemEventHandler):
 class Watcher:
     """Watch for files being copied into a folder and process.
     """
-
     __observer: Observer = None
 
     @staticmethod
     def __display_details(handler_section) -> None:
         """Display watcher handler details and parameters.
         """
-
         try:
             logging.info("*" * 80)
             logging.info(
@@ -57,8 +55,9 @@ class Watcher:
             raise WatcherError from error
 
     def __init__(self, watcher_config) -> None:
+        """Initialise file watcher handler.
+        """
         try:
-
             # Default values for optional fields
 
             if "recursive" not in watcher_config:

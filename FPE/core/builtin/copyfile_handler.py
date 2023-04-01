@@ -1,18 +1,13 @@
-""" Built-in watcher file handlers.
+"""CopyFile builtin handler.
 """
 
 import os
 import shutil
 import logging
-from .handler import Handler
+from ..handler import Handler
 
 
-#####################
-# Built in handlers #
-#####################
-
-
-class CopyFile(Handler):
+class CopyFileHandler(Handler):
     """Copy file/directories.
 
     Copy files created in watch folder to destination folder keeping any in 
@@ -37,9 +32,14 @@ class CopyFile(Handler):
         """
         try:
 
+            if self.handler_config["watch"][-1:] != "\\":
+                self.handler_config["watch"] += "\\"
+            if self.handler_config["destination"][-1:] != "\\":
+                self.handler_config["destination"] += "\\"
+
             destination_path = event.src_path[len(
-                self.handler_config["watch"]) + 1:]
-            destination_path = os.path.join(self.handler_config["watch"],
+                self.handler_config["watch"]):]
+            destination_path = os.path.join(self.handler_config["destination"],
                                             destination_path)
 
             if os.path.isfile(event.src_path):
