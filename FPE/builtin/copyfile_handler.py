@@ -34,6 +34,8 @@ class CopyFileHandler(Handler):
 
     """
 
+    # handler_config : dict[str, any]
+
     def __init__(self, handler_config: dict[str, any]) -> None:
         """Initialise handler attributes.
         """
@@ -63,12 +65,11 @@ class CopyFileHandler(Handler):
 
             elif os.path.isdir(event.src_path):
                 if not os.path.exists(destination_path):
-                    logging.info("Creating directory {event.src_path}")
+                    logging.info("Creating directory %s", event.src_path)
                     os.makedirs(destination_path)
 
-            if self.handler_config["deletesource"]:
+            if self.handler_config["deletesource"] and not os.path.isdir(event.src_path):
                 os.remove(event.src_path)
 
-
         except (OSError, KeyError, ValueError) as error:
-            raise CopyFileHandlerError from error
+            raise CopyFileHandlerError(error) from error

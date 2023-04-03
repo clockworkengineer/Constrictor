@@ -104,7 +104,7 @@ def fpe() -> None:
                     current_watcher.join()
 
         else:
-            logging.error("Error: No file builtin_handlers configured.")
+            logging.error("Error: No file handlers configured.")
 
         logging.info("File Processing Engine Stopped.")
 
