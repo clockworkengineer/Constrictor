@@ -51,25 +51,29 @@ class CopyFileHandler(Handler):
             if self.handler_config["destination"][-1:] != "\\":
                 self.handler_config["destination"] += "\\"
 
-            destination_path = event.src_path[len(
-                self.handler_config["watch"]):]
+            # destination_path = event.src_path[len(
+            #     self.handler_config["watch"]):]
             destination_path = os.path.join(self.handler_config["destination"],
-                                            destination_path)
+                                            event.src_path[len(
+                                                self.handler_config["watch"]):])
 
             if os.path.isfile(event.src_path):
-                if not os.path.exists(os.path.dirname(destination_path)):
-                    os.makedirs(os.path.dirname(destination_path))
+                # if not os.path.exists(os.path.dirname(destination_path)):
+                #     os.makedirs(os.path.dirname(destination_path))
                 logging.info(
                     "Copying file %s to %s", event.src_path, destination_path)
                 shutil.copy2(event.src_path, destination_path)
+                if self.handler_config["deletesource"]:
+                    os.remove(event.src_path)
 
             elif os.path.isdir(event.src_path):
                 if not os.path.exists(destination_path):
                     logging.info("Creating directory %s", event.src_path)
                     os.makedirs(destination_path)
 
-            if self.handler_config["deletesource"] and not os.path.isdir(event.src_path):
-                os.remove(event.src_path)
+            # if self.handler_config["deletesource"]:
+            #     if not os.path.isdir(event.src_path):
+            #         os.remove(event.src_path)
 
         except (OSError, KeyError, ValueError) as error:
             raise CopyFileHandlerError(error) from error
