@@ -16,7 +16,7 @@ class CopyFileHandlerError(Exception):
         super().__init__(self.message)
 
     def __str__(self) -> str:
-        return " CopyFileHandler Error: " + str(self.message)
+        return "CopyFileHandler Error: " + str(self.message)
 
 
 class CopyFileHandler(Handler):
