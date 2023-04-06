@@ -34,10 +34,8 @@ class CopyFileHandler(Handler):
 
     """
 
-    # handler_config : dict[str, any]
-
     def __init__(self, handler_config: dict[str, any]) -> None:
-        """Initialise handler attributes.
+        """Copy handler config.
         """
         self.handler_config = handler_config.copy()
 
