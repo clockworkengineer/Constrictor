@@ -12,7 +12,7 @@ class FileAnnouncerHandler(Handler):
     """
 
     def __init__(self, handler_config: dict[str, any]) -> None:
-        """Initialise handler attributes.
+        """Copy handler config.
         """
         self.handler_config = handler_config.copy()
 
@@ -20,8 +20,7 @@ class FileAnnouncerHandler(Handler):
         """Print out name of any file copied into watch folder.
         """
         try:
-            logging.info(
-                "File %s.", event.src_path)
+            logging.info("File %s.", event.src_path)
 
             if self.handler_config["deletesource"] and not os.path.isdir(event.src_path):
                 os.remove(event.src_path)

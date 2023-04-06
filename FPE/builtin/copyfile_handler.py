@@ -54,8 +54,8 @@ class CopyFileHandler(Handler):
                                                 self.handler_config["watch"]):])
 
             if os.path.isfile(event.src_path):
-                logging.info(
-                    "Copying file %s to %s", event.src_path, destination_path)
+                logging.info("Copying file %s to %s",
+                             event.src_path, destination_path)
                 shutil.copy2(event.src_path, destination_path)
                 if self.handler_config["deletesource"]:
                     os.remove(event.src_path)
