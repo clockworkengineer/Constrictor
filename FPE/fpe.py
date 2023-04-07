@@ -26,6 +26,7 @@ optional arguments:
 
 import time
 import logging
+
 from core.config import Config
 from core.arguments import Arguments
 from core.factory import Factory
@@ -110,7 +111,7 @@ def fpe() -> None:
         logging.info("File Processing Engine Stopped.")
 
     except FPEError as error:
-        logging.error("FPE Error: %s.", error)
+        logging.error(error)
 
 
 if __name__ == "__main__":

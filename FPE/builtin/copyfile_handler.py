@@ -8,6 +8,7 @@ import logging
 from core.handler import Handler
 from core.error import FPEError
 
+
 class CopyFileHandlerError(FPEError):
     """An error occured in the CopyFile handler.
     """
@@ -23,7 +24,7 @@ class CopyFileHandlerError(FPEError):
 class CopyFileHandler(Handler):
     """Copy file/directories.
 
-    Copy files created in watch folder to destination folder keeping any in 
+    Copy files created in watch folder to destination folder keeping any in
     situ watch folder directory structure the same.
 
     Handler(Watcher) config values:
@@ -40,15 +41,15 @@ class CopyFileHandler(Handler):
         """
         self.handler_config = handler_config.copy()
 
+        if self.handler_config["watch"][-1:] != "\\":
+            self.handler_config["watch"] += "\\"
+        if self.handler_config["destination"][-1:] != "\\":
+            self.handler_config["destination"] += "\\"
+
     def process(self, event) -> None:
         """Copy file from watch folder to destination.
         """
         try:
-
-            if self.handler_config["watch"][-1:] != "\\":
-                self.handler_config["watch"] += "\\"
-            if self.handler_config["destination"][-1:] != "\\":
-                self.handler_config["destination"] += "\\"
 
             destination_path = os.path.join(self.handler_config["destination"],
                                             event.src_path[len(
