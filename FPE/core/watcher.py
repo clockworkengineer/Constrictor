@@ -15,10 +15,9 @@ class WatcherError(FPEError):
 
     def __init__(self, message) -> None:
         self.message = message
-        super().__init__(self.message)
 
     def __str__(self) -> str:
-        return "Watcher Error: " + str(self.message)
+        return "FPE Watcher Error: " + str(self.message)
 
 
 class WatcherHandler(FileSystemEventHandler):

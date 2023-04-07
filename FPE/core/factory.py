@@ -13,10 +13,9 @@ class FactoryError(FPEError):
 
     def __init__(self, message) -> None:
         self.message = message
-        super().__init__(self.message)
 
     def __str__(self) -> str:
-        return "Factory Error: " + str(self.message)
+        return "FPE Factory Error: " + str(self.message)
 
 
 class Factory:
@@ -48,6 +47,6 @@ class Factory:
             creator_func = Factory.handler_creation_funcs[handler_type]
         except KeyError as error:
             raise FactoryError(
-                f"Unknown handler type '{handler_type}'") from error
+                f"Unknown handler type '{handler_type}'.") from error
 
         return creator_func(arguments)

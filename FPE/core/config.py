@@ -16,10 +16,9 @@ class ConfigError(FPEError):
 
     def __init__(self, message) -> None:
         self.message = message
-        super().__init__(self.message)
 
     def __str__(self) -> str:
-        return "Config Error: " + str(self.message)
+        return "FPE Config Error: " + str(self.message)
 
 
 class Config:
