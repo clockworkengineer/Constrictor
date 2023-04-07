@@ -1,14 +1,15 @@
 """Watcher file handler.
 """
 
-from typing import Protocol
+
+from core.error import FPEError
 
 
-class Handler(Protocol):
+class Handler(FPEError):
     """Watcher file handler class"""
 
-    handler_config : dict[str, any]
-    
+    handler_config: dict[str, any]
+
     def process(self, event) -> None:
         """Perform watcher file processing.
         """

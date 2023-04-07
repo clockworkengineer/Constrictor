@@ -4,10 +4,11 @@
 import os
 import shutil
 import logging
+
 from core.handler import Handler
+from core.error import FPEError
 
-
-class CopyFileHandlerError(Exception):
+class CopyFileHandlerError(FPEError):
     """An error occured in the CopyFile handler.
     """
 

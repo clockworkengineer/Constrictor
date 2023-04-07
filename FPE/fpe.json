@@ -1,6 +1,6 @@
 {
     "plugins": [
-        "plugins.fileannouncer"
+        "plugins.fileannouncer_handler"
     ],
     "watchers": [
         {

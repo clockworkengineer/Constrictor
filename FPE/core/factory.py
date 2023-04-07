@@ -2,10 +2,12 @@
 """
 
 from typing import Any, Callable
-from .handler import Handler
+
+from core.handler import Handler
+from core.error import FPEError
 
 
-class FactoryError(Exception):
+class FactoryError(FPEError):
     """An error occured in the watcher handler factory.
     """
 

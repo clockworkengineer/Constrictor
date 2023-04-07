@@ -10,8 +10,10 @@ file that is used to specify any custom plugins and running handler details.
 import os
 import argparse
 
+from core.error import FPEError
 
-class ArgumentsError(Exception):
+
+class ArgumentsError(FPEError):
     """An error occured in the program command line arguments.
     """
 

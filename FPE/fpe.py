@@ -26,11 +26,12 @@ optional arguments:
 
 import time
 import logging
-from core.config import Config, ConfigError
-from core.arguments import Arguments, ArgumentsError
-from core.factory import Factory, FactoryError
-from core.watcher import Watcher, WatcherError
+from core.config import Config
+from core.arguments import Arguments
+from core.factory import Factory
+from core.watcher import Watcher
 from core.plugin import PluginLoader
+from core.error import FPEError
 from builtin.copyfile_handler import CopyFileHandler
 
 
@@ -108,7 +109,7 @@ def fpe() -> None:
 
         logging.info("File Processing Engine Stopped.")
 
-    except (ArgumentsError, ConfigError, FactoryError, WatcherError) as error:
+    except FPEError as error:
         logging.error("FPE Error: %s.", error)
 
 

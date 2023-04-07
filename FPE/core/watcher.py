@@ -4,11 +4,12 @@
 import logging
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+
 from core.factory import Factory
 from core.handler import Handler
+from core.error import FPEError
 
-
-class WatcherError(Exception):
+class WatcherError(FPEError):
     """An error occured in a file watcher.
     """
 

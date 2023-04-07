@@ -8,8 +8,9 @@ validation on the file and generating any required exceptions as necessary
 import json
 import logging
 
+from core.error import FPEError
 
-class ConfigError(Exception):
+class ConfigError(FPEError):
     """Configuration error.
     """
 
