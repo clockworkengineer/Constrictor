@@ -1,4 +1,8 @@
 """Watcher handler factory.
+
+Watcher handlers are registered/unregistered and mapped from their string
+name to the correct handler function by this factory class.
+
 """
 
 from typing import Any, Callable
@@ -40,7 +44,7 @@ class Factory:
 
     @staticmethod
     def create(arguments: dict[str, Any]) -> Handler:
-        """Create a watcher handler of a specific type, given JSON data.
+        """Create a watcher handler of a specific type given JSON data.
         """
         handler_type = arguments["type"]
         try:

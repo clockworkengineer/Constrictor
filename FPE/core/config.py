@@ -1,7 +1,7 @@
 """ Config class.
 
-Create a configuration object from a JSON configuration file. Performing
-validation on the file and generating any required exceptions as necessary
+Create a configuration dictionary from a JSON configuration file. Performing
+validation on the JSON and generating any required exceptions as necessary.
 
 """
 
@@ -42,7 +42,7 @@ class Config:
         if "plugins" not in self.config:
             raise ConfigError("Missing config 'plugins' key")
         if "watchers" not in self.config:
-            raise ConfigError("Missing config 'wa'tchers' key")
+            raise ConfigError("Missing config 'watchers' key")
 
         # Each watcher entry must have a 'name' and 'type'
 

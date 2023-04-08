@@ -37,6 +37,7 @@ class WatcherHandler(FileSystemEventHandler):
 class Watcher:
     """Watch for files being copied into a folder and process.
     """
+    
     __observer: Observer = None
 
     @staticmethod
@@ -52,7 +53,7 @@ class Watcher:
                     logging.info("%s = %s", option, handler_section[option])
 
         except IOError as error:
-            raise WatcherError from error
+            raise WatcherError(error) from error
 
     def __init__(self, watcher_config) -> None:
         """Initialise file watcher handler.
@@ -78,7 +79,7 @@ class Watcher:
                 self.__observer = None
 
         except (KeyError, ValueError) as error:
-            raise WatcherError from error
+            raise WatcherError(error) from error
 
     def start(self) -> None:
         """Start watcher.

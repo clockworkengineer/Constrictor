@@ -1,14 +1,17 @@
 """Watcher file handler.
+
+The is the protocol class that defines the file watcher handler interface.
+
 """
 
 
-from core.error import FPEError
+from typing import Protocol
 
 
-class Handler(FPEError):
+class Handler(Protocol):
     """Watcher file handler class"""
 
-    handler_config: dict[str, any]
+    handler_config: dict[str, any]  # Handler config dictionary
 
     def process(self, event) -> None:
         """Perform watcher file processing.

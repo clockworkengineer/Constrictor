@@ -68,4 +68,4 @@ class CopyFileHandler(Handler):
                     os.makedirs(destination_path)
 
         except (OSError, KeyError, ValueError) as error:
-            raise CopyFileHandlerError(error) from error
+              raise CopyFileHandlerError(error) from error
