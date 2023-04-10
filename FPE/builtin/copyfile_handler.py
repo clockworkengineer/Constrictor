@@ -10,7 +10,7 @@ from core.error import FPEError
 
 
 class CopyFileHandlerError(FPEError):
-    """An error occured in the CopyFile handler.
+    """An error occurred in the CopyFile handler.
     """
 
     def __init__(self, message) -> None:

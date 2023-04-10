@@ -14,7 +14,7 @@ from core.error import FPEError
 
 
 class ArgumentsError(FPEError):
-    """An error occured in the program command line arguments.
+    """An error occurred in the program command line arguments.
     """
 
     def __init__(self, message) -> None:

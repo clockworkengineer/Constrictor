@@ -1,6 +1,6 @@
 """Watcher file handler.
 
-The is the protocol class that defines the file watcher handler interface.
+Protocol class that defines the file watcher handler interface.
 
 """
 

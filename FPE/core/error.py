@@ -3,5 +3,5 @@
 
 
 class FPEError(Exception):
-    """An error occured in the FPE.
+    """An error occurred in the FPE.
     """

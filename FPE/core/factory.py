@@ -12,7 +12,7 @@ from core.error import FPEError
 
 
 class FactoryError(FPEError):
-    """An error occured in the watcher handler factory.
+    """An error occurred in the watcher handler factory.
     """
 
     def __init__(self, message) -> None:

@@ -48,7 +48,7 @@ __status__ = "Pre-Alpha"
 
 
 def load_config() -> dict[str, Any]:
-    """ Load configuation.
+    """ Load configuration.
     """
 
     # Load configuration file, validate and set logging.
@@ -63,7 +63,7 @@ def load_config() -> dict[str, Any]:
 
 
 def load_handlers(fpe_config: dict[str, Any]) -> None:
-    """Load builtin and plugin handers.
+    """Load builtin and plugin handlers.
     """
 
     Factory.register("CopyFile", CopyFileHandler)

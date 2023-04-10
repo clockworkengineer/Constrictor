@@ -9,8 +9,9 @@ from core.factory import Factory
 from core.handler import Handler
 from core.error import FPEError
 
+
 class WatcherError(FPEError):
-    """An error occured in a file watcher.
+    """An error occurred in a file watcher.
     """
 
     def __init__(self, message) -> None:
@@ -37,7 +38,7 @@ class WatcherHandler(FileSystemEventHandler):
 class Watcher:
     """Watch for files being copied into a folder and process.
     """
-    
+
     __observer: Observer = None
 
     @staticmethod
@@ -76,7 +77,7 @@ class Watcher:
                 Watcher.__display_details(watcher_config)
 
             else:
-                self.__observer = None
+                self.__observer = None  # type: ignore
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
