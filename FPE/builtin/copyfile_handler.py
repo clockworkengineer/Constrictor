@@ -39,12 +39,11 @@ class CopyFileHandler(Handler):
     def __init__(self, handler_config: dict[str, any]) -> None:
         """Copy handler config.
         """
+
         self.handler_config = handler_config.copy()
 
-        if self.handler_config["watch"][-1:] != "\\":
-            self.handler_config["watch"] += "\\"
-        if self.handler_config["destination"][-1:] != "\\":
-            self.handler_config["destination"] += "\\"
+        self.handler_config["watch"] = os.path.join(self.handler_config["watch"], '')
+        self.handler_config["destination"] = os.path.join(self.handler_config["destination"], '')
 
     def process(self, event) -> None:
         """Copy file from watch folder to destination.
@@ -68,4 +67,4 @@ class CopyFileHandler(Handler):
                     os.makedirs(destination_path)
 
         except (OSError, KeyError, ValueError) as error:
-              raise CopyFileHandlerError(error) from error
+            raise CopyFileHandlerError(error) from error

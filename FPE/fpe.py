@@ -2,9 +2,9 @@
 
 """File Processing Engine.
 
-This is a generic file processing engine that sets up a watch folder and waits 
-for files/directories to be copied to it. Any added directories are also watched 
-(if recursive is set) and any added files are be processed using one of its built 
+This is a generic file processing engine that sets up a watch folder and waits
+for files/directories to be copied to it. Any added directories are also watched
+(if recursive is set) and any added files are be processed using one of its built
 in file handler classes.
 
 Current built in file handler types:
@@ -45,6 +45,65 @@ __maintainer__ = "Rob Tizzard"
 __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
+
+def load_config() -> dict[str, str]:
+    """ Load FPE configuation.
+    """
+
+    # Load configuration file, validate and set logging.
+
+    config = Config(Arguments())
+    config.validate()
+    config.set_logging()
+
+    # Get the running config
+
+    fpe_config = config.get_config()
+
+    # Register builtin handlers
+
+    Factory.register("CopyFile", CopyFileHandler)
+
+    # Load plugin handlers
+
+    PluginLoader.load(fpe_config['plugins'])
+
+    return fpe_config
+
+def create_watchers(fpe_config: dict[str, str]) -> list[Watcher]:
+    """Create list of watchers.
+    """
+
+    watcher_list: list[Watcher]=[]
+    for watcher_config in fpe_config["watchers"]:
+        current_watcher=Watcher(watcher_config)
+        if current_watcher is not None:
+            watcher_list.append(current_watcher)
+
+    return watcher_list
+
+def run_watchers(watcher_list: list[Watcher]):
+    """Run watchers in created list.
+    """
+
+    try:
+
+        for current_watcher in watcher_list:
+            current_watcher.start()
+
+        while True:
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        # Stop all watchers
+        for current_watcher in watcher_list:
+            current_watcher.stop()
+
+    finally:
+        # Wait for all observer threads to stop
+        for current_watcher in watcher_list:
+            current_watcher.join()
+
 ########################
 # FPE Main Entry Point #
 ########################
@@ -56,55 +115,14 @@ def fpe() -> None:
 
     try:
 
-        # Load configuration file, validate and set logging
+        fpe_config=load_config()
 
-        config = Config(Arguments())
-        config.validate()
-        config.set_logging()
-
-        # Get the running config
-
-        fpe_config = config.get_config()
+        watcher_list=create_watchers(fpe_config)
 
         logging.info("File Processing Engine Started.")
 
-        # Register builtin handlers
-
-        Factory.register("CopyFile", CopyFileHandler)
-
-        # Load plugin handlers
-
-        PluginLoader.load(fpe_config['plugins'])
-
-        # Loop through watchers array creating file watchers for each
-
-        watcher_list = []
-        for watcher_config in fpe_config["watchers"]:
-            current_watcher = Watcher(watcher_config)
-            if current_watcher is not None:
-                watcher_list.append(current_watcher)
-
-        # If list not empty observer folders
-
         if watcher_list:
-            try:
-
-                for current_watcher in watcher_list:
-                    current_watcher.start()
-
-                while True:
-                    time.sleep(1)
-
-            except KeyboardInterrupt:
-                # Stop all watchers
-                for current_watcher in watcher_list:
-                    current_watcher.stop()
-
-            finally:
-                # Wait for all observer threads to stop
-                for current_watcher in watcher_list:
-                    current_watcher.join()
-
+            run_watchers(watcher_list)
         else:
             logging.error("Error: No file handlers configured.")
 
