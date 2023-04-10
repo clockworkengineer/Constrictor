@@ -47,7 +47,7 @@ __status__ = "Pre-Alpha"
 
 
 def load_config() -> dict[str, str]:
-    """ Load FPE configuation.
+    """ Load configuation.
     """
 
     # Load configuration file, validate and set logging.
@@ -56,34 +56,35 @@ def load_config() -> dict[str, str]:
     config.validate()
     config.set_logging()
 
-    # Get the running config
+    # Return the running config
 
-    fpe_config = config.get_config()
+    return  config.get_config()
 
-    # Register builtin handlers
+
+def load_handlers(fpe_config: dict[str, str]) -> None:
+    """Load builtin and plugin handers.
+    """
 
     Factory.register("CopyFile", CopyFileHandler)
-
-    # Load plugin handlers
-
+    
     PluginLoader.load(fpe_config['plugins'])
 
-    return fpe_config
 
 def create_watchers(fpe_config: dict[str, str]) -> list[Watcher]:
     """Create list of watchers.
     """
 
-    watcher_list: list[Watcher]=[]
+    watcher_list: list[Watcher] = []
     for watcher_config in fpe_config["watchers"]:
-        current_watcher=Watcher(watcher_config)
+        current_watcher = Watcher(watcher_config)
         if current_watcher is not None:
             watcher_list.append(current_watcher)
 
     return watcher_list
 
+
 def run_watchers(watcher_list: list[Watcher]):
-    """Run watchers in created list.
+    """Run watchers in passed list.
     """
 
     try:
@@ -115,9 +116,11 @@ def fpe() -> None:
 
     try:
 
-        fpe_config=load_config()
+        fpe_config = load_config()
 
-        watcher_list=create_watchers(fpe_config)
+        load_handlers(fpe_config)
+
+        watcher_list = create_watchers(fpe_config)
 
         logging.info("File Processing Engine Started.")
 
