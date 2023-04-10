@@ -4,6 +4,7 @@
 import os
 import shutil
 import logging
+from typing import Any
 
 from core.handler import Handler
 from core.error import FPEError
@@ -36,7 +37,7 @@ class CopyFileHandler(Handler):
 
     """
 
-    def __init__(self, handler_config: dict[str, any]) -> None:
+    def __init__(self, handler_config: dict[str, Any]) -> None:
         """Copy handler config.
         """
 
