@@ -7,8 +7,10 @@ validation on the JSON and generating any required exceptions as necessary.
 
 import json
 import logging
+from typing import Any
 
 from core.error import FPEError
+
 
 class ConfigError(FPEError):
     """Configuration error.
@@ -57,8 +59,8 @@ class Config:
         """
         # Default logging parameters
 
-        logging_params = {"level": logging.INFO,
-                          "format": "%(asctime)s:%(message)s"}
+        logging_params: dict[str, Any] = {"level": logging.INFO,
+                                          "format": "%(asctime)s:%(message)s"}
 
         # Read in any logging options, merge with default
 
@@ -70,7 +72,7 @@ class Config:
 
         logging.basicConfig(**logging_params)  # Set logging options
 
-    def get_config(self) -> dict[str, str]:
+    def get_config(self) -> dict[str, Any]:
         """Return config dictionary.
         """
         return self.config

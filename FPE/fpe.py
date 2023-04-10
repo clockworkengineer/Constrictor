@@ -26,6 +26,7 @@ optional arguments:
 
 import time
 import logging
+from typing import Any
 
 from core.config import Config
 from core.arguments import Arguments
@@ -46,7 +47,7 @@ __email__ = "robert_tizzard@hotmail.com"
 __status__ = "Pre-Alpha"
 
 
-def load_config() -> dict[str, str]:
+def load_config() -> dict[str, Any]:
     """ Load configuation.
     """
 
@@ -58,24 +59,24 @@ def load_config() -> dict[str, str]:
 
     # Return the running config
 
-    return  config.get_config()
+    return config.get_config()
 
 
-def load_handlers(fpe_config: dict[str, str]) -> None:
+def load_handlers(fpe_config: dict[str, Any]) -> None:
     """Load builtin and plugin handers.
     """
 
     Factory.register("CopyFile", CopyFileHandler)
-    
+
     PluginLoader.load(fpe_config['plugins'])
 
 
-def create_watchers(fpe_config: dict[str, str]) -> list[Watcher]:
+def create_watchers(watcher_configs: list[dict]) -> list[Watcher]:
     """Create list of watchers.
     """
 
     watcher_list: list[Watcher] = []
-    for watcher_config in fpe_config["watchers"]:
+    for watcher_config in watcher_configs:
         current_watcher = Watcher(watcher_config)
         if current_watcher is not None:
             watcher_list.append(current_watcher)
@@ -120,7 +121,7 @@ def fpe() -> None:
 
         load_handlers(fpe_config)
 
-        watcher_list = create_watchers(fpe_config)
+        watcher_list = create_watchers(fpe_config["watchers"])
 
         logging.info("File Processing Engine Started.")
 
