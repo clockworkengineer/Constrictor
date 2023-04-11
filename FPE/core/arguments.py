@@ -32,7 +32,7 @@ class Arguments:
 
     file: str   # Configuration file name
 
-    def __init__(self) -> None:
+    def __init__(self, argv=None) -> None:
         """Load and parse command line into arguments object.
         """
         # Extract and parse arguments
@@ -40,8 +40,8 @@ class Arguments:
         parser = argparse.ArgumentParser(
             description="Process files copied into watch folder with a custom handler(s).")
         parser.add_argument("file", help="Configuration file")
-
-        arguments = parser.parse_args()
+        
+        arguments = parser.parse_args(argv)
 
         # Check that configuration file exists
 

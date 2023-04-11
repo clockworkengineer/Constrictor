@@ -39,7 +39,7 @@ class Watcher:
     """Watch for files being copied into a folder and process.
     """
 
-    __observer: Observer = None
+    __observer: Observer
 
     @staticmethod
     def __display_details(handler_section) -> None:
