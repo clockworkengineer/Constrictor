@@ -53,7 +53,7 @@ def load_config() -> dict[str, Any]:
 
     # Load configuration file, validate and set logging.
 
-    config = Config(Arguments(["fpe.py"]))
+    config = Config(Arguments())
     config.validate()
     config.set_logging()
 
