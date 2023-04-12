@@ -15,6 +15,10 @@ class TestArguments:
             _ = Arguments([os.path.join(os.getcwd(), "FPE", "tests", "test.jsn")])
 
 
-    def test_arguments_output_of_help(self):
-        # _ = Arguments(["-h"])
-        assert(True)
+    def test_arguments_output_of_help(self, capsys):
+        with raises(SystemExit):
+            _ = Arguments(["-h"])
+        out, err = capsys.readouterr()
+        assert out.startswith("usage")
+            # print out, err
+            # assert(True)
