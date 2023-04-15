@@ -18,7 +18,5 @@ class TestArguments:
     def test_arguments_output_of_help(self, capsys):
         with raises(SystemExit):
             _ = Arguments(["-h"])
-        out, err = capsys.readouterr()
-        assert out.startswith("usage")
-            # print out, err
-            # assert(True)
+        out, _ = capsys.readouterr()
+        assert out == 'usage: __main__.py [-h] file\n\nProcess files copied into watch folder with a custom handler(s).\n\npositional arguments:\n  file        Configuration file\n\noptional arguments:\n  -h, --help  show this help message and exit\n'
