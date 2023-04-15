@@ -1,0 +1,9 @@
+{
+    "plugins": [
+        "plugins.fileannouncer_handler"
+    ],
+    "logging": {
+        "level": 20,
+        "format": "%(asctime)s:%(message)s"
+    }
+}
