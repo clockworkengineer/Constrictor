@@ -9,7 +9,7 @@ class TestConfig:
 
     def test_config_with_valid_json_file(self):
         config = Config(Arguments(
-            [os.path.join(os.getcwd(), "FPE", "tests", "json", "test.json")])).get_config()
+            [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_valid.json")])).get_config()
         assert config["plugins"][0] == "plugins.fileannouncer_handler"
 
     def test_config_with_invalid_json_file(self):
