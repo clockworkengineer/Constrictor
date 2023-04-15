@@ -1,0 +1,17 @@
+{
+    "plugins": [
+        "plugins.fileannouncer_handler"
+    ],
+    "watchers": [
+        {
+            "type": "CopyFile",
+            "watch": "c:\\temp\\watch",
+            "destination": "c:\\temp\\destination\\",
+            "recursive": true
+        }
+    ],
+    "logging": {
+        "level": 20,
+        "format": "%(asctime)s:%(message)s"
+    }
+}

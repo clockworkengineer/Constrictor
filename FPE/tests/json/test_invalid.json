@@ -1,18 +1,16 @@
 {
-    "plugins": 
-        "plugins.fileannouncer_handler"
-    ],
-    "watchers": [
-        {
-            "name": "File Copier",
-            "type": "CopyFile",
-            "watch": "c:\\temp\\watch",
-            "destination": "c:\\temp\\destination\\",
-            "recursive": true
-        }
-    ],
-    "logging": {
-        "level": 20,
-        "format": "%(asctime)s:%(message)s"
+    "plugins": "plugins.fileannouncer_handler"
+],
+"watchers": [
+    {
+        "name": "File Copier",
+        "watch": "c:\\temp\\watch",
+        "destination": "c:\\temp\\destination\\",
+        "recursive": true
     }
+],
+"logging": {
+    "level": 20,
+    "format": "%(asctime)s:%(message)s"
+}
 }
