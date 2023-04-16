@@ -8,6 +8,7 @@ class TestFactory:
     # Test empty factory
     # Test register handler
     # Test unregister handler
+    # Test register non existant handler
     # Test unregister non existant handler
     # Test register more than one handler
     # Test try to create non-existant handler (unregistered)
