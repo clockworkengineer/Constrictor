@@ -35,7 +35,7 @@ from core.watcher import Watcher
 from core.plugin import PluginLoader
 from core.error import FPEError
 from builtin.copyfile_handler import CopyFileHandler
-from builtin.sftp_copyfile_hanldler import SFTPCopyFileHandler
+from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 
 __author__ = "Rob Tizzard"
