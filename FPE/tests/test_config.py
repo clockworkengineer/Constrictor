@@ -1,4 +1,4 @@
-from pytest import raises
+import pytest
 import os
 
 from core.arguments import Arguments
@@ -14,30 +14,30 @@ class TestConfig:
         assert config["watchers"][0]["type"] == "CopyFile"
 
     def test_config_with_invalid_json_file(self):
-        with raises(ConfigError):
+        with pytest.raises(ConfigError):
             config = Config(Arguments(
                 [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_invalid.json")]))
 
     def test_config_with_no_plugin_key(self):
-        with raises(ConfigError):
+        with pytest.raises(ConfigError):
             config = Config(Arguments(
                 [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_noplugin_key.json")]))
             config.validate()
 
     def test_config_with_no_watchers_key(self):
-        with raises(ConfigError):
+        with pytest.raises(ConfigError):
             config = Config(Arguments(
                 [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_nowatchers_key.json")]))
             config.validate()
 
     def test_config_with_watcher_name_missing(self):
-        with raises(ConfigError):
+        with pytest.raises(ConfigError):
             config = Config(Arguments([os.path.join(
                 os.getcwd(), "FPE", "tests", "json", "test_watcher_name_missing.json")]))
             config.validate()
             
     def test_config_with_watcher_type_missing(self):
-        with raises(ConfigError):
+        with pytest.raises(ConfigError):
             config = Config(Arguments([os.path.join(
                 os.getcwd(), "FPE", "tests", "json", "test_watcher_type_missing.json")]))
             config.validate()

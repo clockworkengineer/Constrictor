@@ -1,4 +1,4 @@
-from pytest import raises
+import pytest
 
 from core.plugin import PluginLoader
 

@@ -1,4 +1,4 @@
-from pytest import raises
+import pytest
 
 from core.watcher import Watcher, WatcherError
 
@@ -6,7 +6,7 @@ from core.watcher import Watcher, WatcherError
 class TestWatcher:
     pass
     # Test watcher with None for config passed in
-    # Test watchef with invalid confg passed in
+    # Test watcher with invalid confg passed in
     # Test watcher with valid config pass in
     # Test watcher initial state is stopped
     # Test watcher start
