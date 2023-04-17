@@ -35,6 +35,7 @@ from core.watcher import Watcher
 from core.plugin import PluginLoader
 from core.error import FPEError
 from builtin.copyfile_handler import CopyFileHandler
+from builtin.sftp_copyfile_hanldler import SFTPCopyFileHandler
 
 
 __author__ = "Rob Tizzard"
@@ -67,6 +68,7 @@ def load_handlers(fpe_config: dict[str, Any]) -> None:
     """
 
     Factory.register("CopyFile", CopyFileHandler)
+    Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
     PluginLoader.load(fpe_config['plugins'])
 
