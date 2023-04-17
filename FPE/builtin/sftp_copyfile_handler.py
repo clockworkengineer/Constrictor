@@ -36,7 +36,7 @@ class SFTPCopyFileHandler(Handler):
         ssh_password   SSH Server user password
         destination    Destination for copy
         recursive:     Boolean == true perform recursive file watch
-        hdeletesource  Boolean == true delete source file on success
+        deletesource   Boolean == true delete source file on success
     """
 
     def __init__(self, handler_config) -> None:
