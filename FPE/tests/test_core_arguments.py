@@ -4,7 +4,7 @@ import os
 from core.arguments import Arguments, ArgumentsError
 
 
-class TestArguments:
+class TestCoreArguments:
 
     def test_arguments_with_existing_json_file(self):
         arg = Arguments(

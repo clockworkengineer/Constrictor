@@ -3,7 +3,7 @@ import pytest
 from core.watcher import Watcher, WatcherError
 
 
-class TestWatcher:
+class TestCoreWatcher:
     pass
     # Test watcher with None for config passed in
     # Test watcher with invalid confg passed in

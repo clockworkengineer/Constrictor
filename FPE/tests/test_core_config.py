@@ -5,7 +5,7 @@ from core.arguments import Arguments
 from core.config import Config, ConfigError
 
 
-class TestConfig:
+class TestCoreConfig:
 
     def test_config_with_valid_json_file(self):
         config = Config(Arguments(

@@ -14,7 +14,7 @@ def reset_factory():
     yield
 
 
-class TestFactory:
+class TestCoreFactory:
 
     def test_factory_that_has_noregistered_handlers(self, reset_factory):
 
