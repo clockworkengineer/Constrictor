@@ -34,6 +34,13 @@ class Factory:
     def register(handler_type: str, handler_fn: Callable[..., Handler]) -> None:
         """Register a new watcher handler type.
         """
+
+        if handler_type == "":
+             raise FactoryError("Invalid handler type (\"\").")
+         
+        if handler_fn == None:
+             raise FactoryError("None not allowed for handler function.")
+         
         Factory.handler_creation_funcs[handler_type] = handler_fn
 
     @staticmethod
@@ -46,6 +53,11 @@ class Factory:
     def create(arguments: dict[str, Any]) -> Handler:
         """Create a watcher handler of a specific type given JSON data.
         """
+        
+        if len(Factory.handler_creation_funcs) == 0:
+            raise FactoryError(
+                "Factory does not contain any registered handlers.")
+            
         handler_type = arguments["type"]
         try:
             creator_func = Factory.handler_creation_funcs[handler_type]

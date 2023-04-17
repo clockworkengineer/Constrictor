@@ -11,6 +11,7 @@ class TestConfig:
         config = Config(Arguments(
             [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_valid.json")])).get_config()
         assert config["plugins"][0] == "plugins.fileannouncer_handler"
+        assert config["watchers"][0]["type"] == "CopyFile"
 
     def test_config_with_invalid_json_file(self):
         with raises(ConfigError):
