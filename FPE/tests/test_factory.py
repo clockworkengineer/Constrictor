@@ -19,14 +19,12 @@ class TestFactory:
             _ = Factory.create(config["watchers"][0])
 
     # Test register handler
-
     def test_factory_register_handler(self):
 
         Factory.register("CopyFile", CopyFileHandler)
         assert "CopyFile" in Factory.handler_creation_funcs.keys()
 
     # Test unregister handler
-
     def test_factory_unregister_handler(self):
 
         Factory.register("CopyFile", CopyFileHandler)
@@ -43,6 +41,10 @@ class TestFactory:
             Factory.register("", CopyFileHandler)
 
     # Test unregister non existant handler
+    def test_factory_unregister_a_nonexistant_handler(self):
+        with raises(FactoryError):
+            Factory.unregister("HandlerOne")
+
     # Test register more than one handler
     # Test try to create non-existant handler (unregistered)
     # Test try to create a a registered handler
