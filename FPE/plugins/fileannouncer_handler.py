@@ -3,6 +3,7 @@
 
 import os
 import logging
+from typing import Any
 
 from core.factory import Factory
 from core.handler import Handler
@@ -12,7 +13,7 @@ class FileAnnouncerHandler(Handler):
     """File Announcer
     """
 
-    def __init__(self, handler_config: dict[str, any]) -> None:
+    def __init__(self, handler_config: dict[str, Any]) -> None:
         """Copy handler config.
         """
         self.handler_config = handler_config.copy()
