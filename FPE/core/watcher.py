@@ -39,7 +39,7 @@ class Watcher:
     """Watch for files being copied into a folder and process.
     """
 
-    __observer: Observer
+    _observer: Observer
 
     @staticmethod
     def __display_details(handler_section) -> None:
@@ -60,6 +60,12 @@ class Watcher:
         """Initialise file watcher handler.
         """
         try:
+
+            # None not a valid config
+            
+            if watcher_config is None:
+                raise WatcherError("None as config passed to watcher.")
+
             # Default values for optional fields
 
             if "recursive" not in watcher_config:
@@ -70,32 +76,45 @@ class Watcher:
             selected_handler = Factory.create(watcher_config)
 
             if selected_handler is not None:
-                self.__observer = Observer()
-                self.__observer.schedule(event_handler=WatcherHandler(selected_handler), path=watcher_config["watch"],
+                self._observer = Observer()
+                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=watcher_config["watch"],
                                          recursive=watcher_config["recursive"])
 
                 Watcher.__display_details(watcher_config)
 
             else:
-                self.__observer = None  # type: ignore
+                self._observer = None  # type: ignore
+                
+            self._started = False
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
+        
+    @property
+    def started(self):
+        return self._started
 
     def start(self) -> None:
         """Start watcher.
         """
-        if self.__observer is not None:
-            self.__observer.start()
+        if self._observer is not None:
+            self._observer.start()
+            
+        self._started = True
 
     def stop(self) -> None:
         """Stop watcher.
         """
-        if self.__observer is not None:
-            self.__observer.stop()
+        if self._observer is not None:
+            self._observer.stop()
+            
+        self._started = False
 
     def join(self) -> None:
         """Wait for watcher thread to finish.
         """
-        if self.__observer is not None:
-            self.__observer.join()
+        if self._observer is not None:
+            self._observer.join()
+            
+
+    
