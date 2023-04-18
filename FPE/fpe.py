@@ -119,7 +119,7 @@ def fpe() -> None:
 
     try:
 
-        fpe_config = load_config()
+        fpe_config : dict[str, Any] = load_config()
 
         load_handlers(fpe_config)
 

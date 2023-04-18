@@ -18,14 +18,14 @@ class FileAnnouncerHandler(Handler):
         """
         self.handler_config = handler_config.copy()
 
-    def process(self, event) -> None:
+    def process(self, source_path: str) -> None:
         """Print out name of any file copied into watch folder.
         """
         try:
-            logging.info("File %s.", event.src_path)
+            logging.info("File %s.", source_path)
 
-            if self.handler_config["deletesource"] and not os.path.isdir(event.src_path):
-                os.remove(event.src_path)
+            if self.handler_config["deletesource"] and not os.path.isdir(source_path):
+                os.remove(source_path)
 
         except OSError as error:
             logging.error("Error in handler %s : %s",

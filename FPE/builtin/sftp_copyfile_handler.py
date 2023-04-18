@@ -52,28 +52,28 @@ class SFTPCopyFileHandler(Handler):
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-    def process(self, event) -> None:
+    def process(self, source_path: str) -> None:
         """SFTP Copy file from watch folder to a destination folder on remote server.
         """
 
         try:
-            destination_path = event.src_path[len(
+            destination_path = source_path[len(
                 self.handler_config["watch"]) + 1:]
             destination_path = os.path.join(self.handler_config["destination"],
                                             destination_path)
 
             with pysftp.Connection(self.handler_config["ssh_server"], username=self.handler_config["ssh_user"],
                                    password=self.handler_config["ssh_password"]) as sftp:
-                if os.path.isfile(event.src_path):
-                    sftp.put(event.src_path, destination_path)
+                if os.path.isfile(source_path):
+                    sftp.put(source_path, destination_path)
                 else:
                     sftp.makedirs(destination_path)
 
             logging.info("Uploaded file %s to %s",
-                         event.src_path, destination_path)
+                         source_path, destination_path)
 
             if self.handler_config["deletesource"]:
-                os.remove(event.src_path)
+                os.remove(source_path)
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
             raise SFTPCopyFileHandlerError(error) from error

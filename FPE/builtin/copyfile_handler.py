@@ -43,28 +43,29 @@ class CopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["watch"] = os.path.join(self.handler_config["watch"], '')
-        self.handler_config["destination"] = os.path.join(self.handler_config["destination"], '')
+        self.handler_config["watch"] = os.path.join(
+            self.handler_config["watch"], '')
+        self.handler_config["destination"] = os.path.join(
+            self.handler_config["destination"], '')
 
-    def process(self, event) -> None:
+    def process(self, source_path: str) -> None:
         """Copy file from watch folder to destination.
         """
         try:
 
             destination_path = os.path.join(self.handler_config["destination"],
-                                            event.src_path[len(
-                                                self.handler_config["watch"]):])
+                                            source_path[len(self.handler_config["watch"]):])
 
-            if os.path.isfile(event.src_path):
+            if os.path.isfile(source_path):
                 logging.info("Copying file %s to %s",
-                             event.src_path, destination_path)
-                shutil.copy2(event.src_path, destination_path)
+                             source_path, destination_path)
+                shutil.copy2(source_path, destination_path)
                 if self.handler_config["deletesource"]:
-                    os.remove(event.src_path)
+                    os.remove(source_path)
 
-            elif os.path.isdir(event.src_path):
+            elif os.path.isdir(source_path):
                 if not os.path.exists(destination_path):
-                    logging.info("Creating directory %s", event.src_path)
+                    logging.info("Creating directory %s", source_path)
                     os.makedirs(destination_path)
 
         except (OSError, KeyError, ValueError) as error:

@@ -13,6 +13,6 @@ class Handler(Protocol):
 
     handler_config: dict[str, Any]  # Handler config dictionary
 
-    def process(self, event) -> None:
+    def process(self, source_path : str) -> None:
         """Perform watcher file processing.
         """

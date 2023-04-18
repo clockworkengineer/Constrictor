@@ -32,7 +32,7 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        self.watcher_handler.process(event)
+        self.watcher_handler.process(event.src_path)
 
 
 class Watcher:
