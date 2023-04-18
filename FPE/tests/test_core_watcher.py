@@ -27,38 +27,27 @@ def reset_factory_and_return_config() -> dict[str, Any]:
 class TestCoreWatcher:
 
     def test_watcher_with_config_of_none(self, reset_factory_and_return_config):
-        
         with pytest.raises(WatcherError):
             _ = Watcher(None)
 
     def test_watcher_with_a_valid_config(self, reset_factory_and_return_config):
-
         watcher = Watcher(reset_factory_and_return_config)
-
         assert watcher != None
 
     def test_watcher_initial_state_stopped(self, reset_factory_and_return_config):
-
         watcher = Watcher(reset_factory_and_return_config)
-
         assert watcher.started == False
 
     def test_watcher_started(self, reset_factory_and_return_config):
-
         watcher = Watcher(reset_factory_and_return_config)
-
         watcher.start()
-
         assert watcher.started == True
 
     def test_watcher_started_then_stopped(self, reset_factory_and_return_config):
-
         watcher = Watcher(reset_factory_and_return_config)
-
         watcher.start()
         time.sleep(1)
         watcher.stop()
-
         assert watcher.started == False
 
     # Test watcher with invalid confg passed in
