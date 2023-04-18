@@ -6,7 +6,7 @@ from core.plugin import PluginLoader, PluginLoaderError
 
 @pytest.fixture()
 def reset_factory():
-    Factory.handler_creation_funcs.clear()
+    Factory.clear()
     yield
 
 
@@ -26,5 +26,5 @@ class TestCorePlugin:
 
     def test_plugin_load_with_valid_handler_type(self, reset_factory):
         PluginLoader.load(["plugins.fileannouncer_handler"])
-        assert len(Factory.handler_creation_funcs) == 1
-        assert "FileAnnouncer" in Factory.handler_creation_funcs.keys()
+        assert len(Factory.handler_function_list()) == 1
+        assert "FileAnnouncer" in Factory.handler_function_list()

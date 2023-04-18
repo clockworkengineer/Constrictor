@@ -10,7 +10,7 @@ from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 @pytest.fixture()
 def reset_factory():
-    Factory.handler_creation_funcs.clear()
+    Factory.clear()
     yield
 
 
@@ -24,12 +24,12 @@ class TestCoreFactory:
 
     def test_factory_register_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
-        assert "CopyFile" in Factory.handler_creation_funcs.keys()
+        assert "CopyFile" in Factory.handler_function_list()
 
     def test_factory_unregister_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
         Factory.unregister("CopyFile")
-        assert "CopyFile" not in Factory.handler_creation_funcs.keys()
+        assert "CopyFile" not in Factory.handler_function_list()
 
     def test_factory_register_a_nonexistant_handler(self, reset_factory):
         with pytest.raises(FactoryError):
@@ -46,9 +46,9 @@ class TestCoreFactory:
     def test_factory_register_more_than_one_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
-        assert "CopyFile" in Factory.handler_creation_funcs
-        assert "SFTPCopyFile" in Factory.handler_creation_funcs
-        assert len(Factory.handler_creation_funcs) == 2
+        assert "CopyFile" in Factory.handler_function_list()
+        assert "SFTPCopyFile" in Factory.handler_function_list()
+        assert len(Factory.handler_function_list()) == 2
 
     def test_factory_create_with_a_handler_that_is_not_registered(self, reset_factory):
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)

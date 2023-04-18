@@ -13,14 +13,14 @@ from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 @pytest.fixture()
 def reset_factory_and_return_config() -> dict[str, Any]:
-    
-    Factory.handler_creation_funcs.clear()
+
+    Factory.clear()
     Factory.register("CopyFile", CopyFileHandler)
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
     config = Config(Arguments(
         [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_valid.json")])).get_config()
-    
+
     yield config["watchers"][0]
 
 
