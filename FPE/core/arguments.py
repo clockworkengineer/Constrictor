@@ -7,7 +7,7 @@ file that is used to specify any custom plugins and running handler details.
 
 """
 
-import os
+import pathlib
 import argparse
 
 from core.error import FPEError
@@ -46,7 +46,7 @@ class Arguments:
 
         # Check that configuration file exists
 
-        if not os.path.exists(arguments.file):
+        if not pathlib.Path(arguments.file).exists():
             raise ArgumentsError("Non-existent config file passed to FPE")
 
         # Pass back valid attributes

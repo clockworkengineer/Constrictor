@@ -46,7 +46,7 @@ class Config:
         if "watchers" not in self.config:
             raise ConfigError("Missing config 'watchers' key")
 
-        # Each watcher entry must have a 'name' and 'type'
+        # Each watcher entry must have a 'name', 'type' and 'source' keys
 
         for watcher_config in self.config["watchers"]:
             if "name" not in watcher_config:
