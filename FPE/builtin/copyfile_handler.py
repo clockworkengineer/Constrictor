@@ -45,13 +45,15 @@ class CopyFileHandler(Handler):
         self.handler_config = handler_config.copy()
 
         Handler.normalize_path(self.handler_config["source"])
+        Handler.create_path(self.handler_config["source"])
         Handler.normalize_path(self.handler_config["destination"])
+        Handler.create_path(self.handler_config["destination"])
 
-        if not os.path.exists(self.handler_config["source"]):
-            os.makedirs(self.handler_config["source"])
+        # if not os.path.exists(self.handler_config["source"]):
+        #     os.makedirs(self.handler_config["source"])
 
-        if not os.path.exists(self.handler_config["destination"]):
-            os.makedirs(self.handler_config["destination"])
+        # if not os.path.exists(self.handler_config["destination"]):
+        #     os.makedirs(self.handler_config["destination"])
 
     def process(self, source_path: str) -> None:
         """Copy file from watch folder to destination.

@@ -20,3 +20,7 @@ class Handler(Protocol):
     @staticmethod
     def normalize_path(path: str):
         path = str(pathlib.Path(path).resolve())
+
+    @staticmethod
+    def create_path(path: str):
+        pathlib.Path(path).resolve().mkdir(parents=True,  exist_ok=True)
