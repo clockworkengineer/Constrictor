@@ -4,6 +4,7 @@
 
 import os
 import logging
+from typing import Any
 import pysftp
 
 from core.handler import Handler
@@ -39,7 +40,7 @@ class SFTPCopyFileHandler(Handler):
         deletesource   Boolean == true delete source file on success
     """
 
-    def __init__(self, handler_config) -> None:
+    def __init__(self, handler_config : dict[str, Any]) -> None:
         """ Initialise handler attributes.
         """
 
