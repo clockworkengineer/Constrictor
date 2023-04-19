@@ -54,7 +54,7 @@ class Config:
             if "type" not in watcher_config:
                 raise ConfigError("Missing config watchers 'type' key")
             if "source" not in watcher_config:
-                raise ConfigError("Missing config watchers 'watch' key")
+                raise ConfigError("Missing config watchers 'source' key")
 
     def set_logging(self) -> None:
         """Set type of logging to be used.

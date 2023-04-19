@@ -30,12 +30,18 @@ class TestCoreConfig:
                 [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_nowatchers_key.json")]))
             config.validate()
 
+    def test_config_with_watcher_source_missing(self):
+        with pytest.raises(ConfigError):
+            config = Config(Arguments([os.path.join(
+                os.getcwd(), "FPE", "tests", "json", "test_watcher_source_missing.json")]))
+            config.validate()
+
     def test_config_with_watcher_name_missing(self):
         with pytest.raises(ConfigError):
             config = Config(Arguments([os.path.join(
                 os.getcwd(), "FPE", "tests", "json", "test_watcher_name_missing.json")]))
             config.validate()
-            
+
     def test_config_with_watcher_type_missing(self):
         with pytest.raises(ConfigError):
             config = Config(Arguments([os.path.join(
