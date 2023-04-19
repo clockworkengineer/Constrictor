@@ -32,9 +32,9 @@ class SFTPCopyFileHandler(Handler):
     Attributes:
         name           Name of handler object
         source         Folder to watch for files
-        ssh_server     SSH Server
-        ssh_user       SSH Server username
-        ssh_password   SSH Server user password
+        server         SSH Server
+        user           SSH Server username
+        password       SSH Server user password
         destination    Destination for copy
         recursive:     Boolean == true perform recursive file watch
         deletesource   Boolean == true delete source file on success
@@ -46,10 +46,10 @@ class SFTPCopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = os.path.join(
-            self.handler_config["source"], '')
-        self.handler_config["destination"] = os.path.join(
-            self.handler_config["destination"], '')
+        self.handler_config["source"] = Handler.normalize_path(
+            self.handler_config["source"])
+        self.handler_config["destination"] = Handler.normalize_path(
+            self.handler_config["destination"])
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
@@ -63,8 +63,8 @@ class SFTPCopyFileHandler(Handler):
             destination_path = os.path.join(self.handler_config["destination"],
                                             destination_path)
 
-            with pysftp.Connection(self.handler_config["ssh_server"], username=self.handler_config["ssh_user"],
-                                   password=self.handler_config["ssh_password"]) as sftp:
+            with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
+                                   password=self.handler_config["password"]) as sftp:
                 if os.path.isfile(source_path):
                     sftp.put(source_path, destination_path)
                 else:
