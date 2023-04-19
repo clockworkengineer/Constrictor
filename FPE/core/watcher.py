@@ -42,7 +42,7 @@ class Watcher:
     _observer: Observer
 
     @staticmethod
-    def __display_details(handler_section) -> None:
+    def _display_details(handler_section) -> None:
         """Display watcher handler details and parameters.
         """
         try:
@@ -77,10 +77,10 @@ class Watcher:
 
             if selected_handler is not None:
                 self._observer = Observer()
-                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=watcher_config["source"],
-                                        recursive=watcher_config["recursive"])
+                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=selected_handler.handler_config["source"],
+                                        recursive=selected_handler.handler_config["recursive"])
 
-                Watcher.__display_details(watcher_config)
+                Watcher._display_details(selected_handler.handler_config)
 
             else:
                 self._observer = None  # type: ignore
