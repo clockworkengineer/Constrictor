@@ -3,7 +3,7 @@
         {
             "name": "File Copier",
             "type": "CopyFile",
-            "watch": "c:\\temp\\watch",
+            "source": "c:\\temp\\source",
             "destination": "c:\\temp\\destination\\",
             "recursive": true
         }

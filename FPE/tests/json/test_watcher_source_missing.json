@@ -4,8 +4,8 @@
     ],
     "watchers": [
         {
+            "name": "File Copier",
             "type": "CopyFile",
-            "source": "c:\\temp\\source",
             "destination": "c:\\temp\\destination\\",
             "recursive": true
         }

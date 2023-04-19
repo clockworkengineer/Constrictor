@@ -31,7 +31,7 @@ class SFTPCopyFileHandler(Handler):
 
     Attributes:
         name           Name of handler object
-        watch          Folder to watch for files
+        source         Folder to watch for files
         ssh_server     SSH Server
         ssh_user       SSH Server username
         ssh_password   SSH Server user password
@@ -40,14 +40,14 @@ class SFTPCopyFileHandler(Handler):
         deletesource   Boolean == true delete source file on success
     """
 
-    def __init__(self, handler_config : dict[str, Any]) -> None:
+    def __init__(self, handler_config: dict[str, Any]) -> None:
         """ Initialise handler attributes.
         """
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["watch"] = os.path.join(
-            self.handler_config["watch"], '')
+        self.handler_config["source"] = os.path.join(
+            self.handler_config["source"], '')
         self.handler_config["destination"] = os.path.join(
             self.handler_config["destination"], '')
 
@@ -59,7 +59,7 @@ class SFTPCopyFileHandler(Handler):
 
         try:
             destination_path = source_path[len(
-                self.handler_config["watch"]) + 1:]
+                self.handler_config["source"]) + 1:]
             destination_path = os.path.join(self.handler_config["destination"],
                                             destination_path)
 

@@ -30,7 +30,7 @@ class CopyFileHandler(Handler):
 
     Handler(Watcher) config values:
         name:           Name of handler object
-        watch:          Folder to watch for files
+        source:         Folder to watch for files
         destination:    Destination for file copy
         recursive:      Boolean == true perform recursive file watch
         deletesource:   Boolean == true delete source file on success
@@ -43,8 +43,8 @@ class CopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["watch"] = os.path.join(
-            self.handler_config["watch"], '')
+        self.handler_config["source"] = os.path.join(
+            self.handler_config["source"], '')
         self.handler_config["destination"] = os.path.join(
             self.handler_config["destination"], '')
 
@@ -54,7 +54,7 @@ class CopyFileHandler(Handler):
         try:
 
             destination_path = os.path.join(self.handler_config["destination"],
-                                            source_path[len(self.handler_config["watch"]):])
+                                            source_path[len(self.handler_config["source"]):])
 
             if os.path.isfile(source_path):
                 logging.info("Copying file %s to %s",

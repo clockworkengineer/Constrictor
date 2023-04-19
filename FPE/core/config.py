@@ -53,6 +53,8 @@ class Config:
                 raise ConfigError("Missing config handler 'name' key")
             if "type" not in watcher_config:
                 raise ConfigError("Missing config watchers 'type' key")
+            if "source" not in watcher_config:
+                raise ConfigError("Missing config watchers 'watch' key")
 
     def set_logging(self) -> None:
         """Set type of logging to be used.

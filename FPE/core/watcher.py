@@ -62,7 +62,7 @@ class Watcher:
         try:
 
             # None not a valid config
-            
+
             if watcher_config is None:
                 raise WatcherError("None as config passed to watcher.")
 
@@ -77,19 +77,19 @@ class Watcher:
 
             if selected_handler is not None:
                 self._observer = Observer()
-                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=watcher_config["watch"],
-                                         recursive=watcher_config["recursive"])
+                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=watcher_config["source"],
+                                        recursive=watcher_config["recursive"])
 
                 Watcher.__display_details(watcher_config)
 
             else:
                 self._observer = None  # type: ignore
-                
+
             self._started = False
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
-        
+
     @property
     def started(self):
         return self._started
@@ -99,7 +99,7 @@ class Watcher:
         """
         if self._observer is not None:
             self._observer.start()
-            
+
         self._started = True
 
     def stop(self) -> None:
@@ -107,7 +107,7 @@ class Watcher:
         """
         if self._observer is not None:
             self._observer.stop()
-            
+
         self._started = False
 
     def join(self) -> None:
@@ -115,6 +115,3 @@ class Watcher:
         """
         if self._observer is not None:
             self._observer.join()
-            
-
-    
