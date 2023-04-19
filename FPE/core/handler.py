@@ -4,7 +4,8 @@ Protocol class that defines the file watcher handler interface.
 
 """
 
-import os
+# import os
+import pathlib
 from typing import Protocol, Any
 
 
@@ -19,4 +20,4 @@ class Handler(Protocol):
 
     @staticmethod
     def normalize_path(path: str):
-        return os.path.join(path, '')
+        return str(pathlib.Path(path).resolve())

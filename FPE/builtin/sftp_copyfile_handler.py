@@ -3,6 +3,7 @@
 
 
 import os
+import pathlib
 import logging
 from typing import Any
 import pysftp
@@ -58,10 +59,9 @@ class SFTPCopyFileHandler(Handler):
         """
 
         try:
-            destination_path = source_path[len(
-                self.handler_config["source"]) + 1:]
-            destination_path = os.path.join(self.handler_config["destination"],
-                                            destination_path)
+
+            destination_path = str(pathlib.Path(
+                self.handler_config["destination"]) / source_path[len(self.handler_config["source"])+1:])
 
             with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
                                    password=self.handler_config["password"]) as sftp:
