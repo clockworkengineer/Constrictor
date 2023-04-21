@@ -22,8 +22,8 @@ class Handler(Protocol):
         return str(pathlib.Path(path).absolute())
 
     @staticmethod
-    def create_path(path: str):
-        pathlib.Path(path).absolute().mkdir(parents=True,  exist_ok=True)
+    def create_path(path: str) -> None:
+        pathlib.Path(path).mkdir(parents=True,  exist_ok=True)
 
     @staticmethod
     def create_local_destination(source_path: str, config: dict[str, Any]) -> str:

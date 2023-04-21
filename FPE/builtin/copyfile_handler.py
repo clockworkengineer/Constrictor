@@ -1,7 +1,6 @@
 """CopyFile builtin handler.
 """
 
-import os
 import pathlib
 import shutil
 import logging
@@ -44,29 +43,35 @@ class CopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = Handler.normalize_path(self.handler_config["source"])
+        self.handler_config["source"] = Handler.normalize_path(
+            self.handler_config["source"])
+        self.handler_config["destination"] = Handler.normalize_path(
+            self.handler_config["destination"])
+
         Handler.create_path(self.handler_config["source"])
-        self.handler_config["destination"] = Handler.normalize_path(self.handler_config["destination"])
         Handler.create_path(self.handler_config["destination"])
 
-    def process(self, source_path: str) -> None:
+    def process(self, source_file_name: str) -> None:
         """Copy file from watch folder to destination.
         """
         try:
 
-            destination_path = Handler.create_local_destination(source_path, self.handler_config)
+            with pathlib.Path(source_file_name) as source_path:
 
-            if os.path.isfile(source_path):
-                logging.info("Copying file %s to %s",
-                             source_path, destination_path)
-                shutil.copy2(source_path, destination_path)
-                if self.handler_config["deletesource"]:
-                    os.remove(source_path)
+                destination_path = pathlib.Path(Handler.create_local_destination(
+                    source_file_name, self.handler_config))
 
-            elif os.path.isdir(source_path):
-                if not os.path.exists(destination_path):
-                    logging.info("Creating directory %s", source_path)
-                    os.makedirs(destination_path)
+                if source_path.is_file():
+                    shutil.copy2(source_path, destination_path)
+                    logging.info(
+                        f"Copied file {source_path} to {destination_path}.")
+                    if self.handler_config["deletesource"]:
+                        source_path.unlink()
+
+                elif source_path.is_dir():
+                    if not destination_path.exists():
+                        Handler.create_path(str(destination_path))
+                        logging.info(f"Created directory {destination_path}.")
 
         except (OSError, KeyError, ValueError) as error:
             raise CopyFileHandlerError(error) from error

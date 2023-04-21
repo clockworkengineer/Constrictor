@@ -47,9 +47,12 @@ class SFTPCopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = Handler.normalize_path(self.handler_config["source"])
+        self.handler_config["source"] = Handler.normalize_path(
+            self.handler_config["source"])
+        self.handler_config["destination"] = Handler.normalize_path(
+            self.handler_config["destination"])
+
         Handler.create_path(self.handler_config["source"])
-        self.handler_config["destination"] = Handler.normalize_path(self.handler_config["destination"])
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
