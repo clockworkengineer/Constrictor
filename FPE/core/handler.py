@@ -24,3 +24,9 @@ class Handler(Protocol):
     @staticmethod
     def create_path(path: str):
         pathlib.Path(path).resolve().mkdir(parents=True,  exist_ok=True)
+        
+    @staticmethod
+    def create_local_destination(source_path : str, destination_path: str, config : dict[str, Any]) -> str:
+        return str(pathlib.Path(
+                config["destination"]) / source_path[len(config["source"])+1:])
+
