@@ -18,8 +18,8 @@ class Handler(Protocol):
         """
 
     @staticmethod
-    def normalize_path(path: str) -> str:
-        return str(pathlib.Path(path).absolute())
+    def normalize_path(path_to_normalise: str) -> str:
+        return str(pathlib.Path(path_to_normalise).absolute())
 
     @staticmethod
     def create_path(path: str) -> None:
@@ -29,3 +29,9 @@ class Handler(Protocol):
     def create_local_destination(source_path: str, config: dict[str, Any]) -> str:
         return str(pathlib.Path(
             config["destination"]) / source_path[len(config["source"])+1:])
+
+    @staticmethod
+    def setup_path(handler_config: dict[str, Any], path_type: str):
+        handler_config[path_type] = Handler.normalize_path(
+            handler_config[path_type])
+        Handler.create_path(handler_config[path_type])

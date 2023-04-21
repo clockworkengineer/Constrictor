@@ -47,12 +47,10 @@ class SFTPCopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = Handler.normalize_path(
-            self.handler_config["source"])
+        Handler.setup_path(self.handler_config, "source")
+
         self.handler_config["destination"] = Handler.normalize_path(
             self.handler_config["destination"])
-
-        Handler.create_path(self.handler_config["source"])
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
@@ -62,8 +60,8 @@ class SFTPCopyFileHandler(Handler):
 
         try:
 
-            destination_path = str(pathlib.Path(
-                self.handler_config["destination"]) / source_path[len(self.handler_config["source"])+1:])
+            destination_path = pathlib.Path(Handler.create_local_destination(
+                source_path, self.handler_config))
 
             with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
                                    password=self.handler_config["password"]) as sftp:

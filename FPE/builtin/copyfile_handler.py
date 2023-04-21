@@ -43,13 +43,8 @@ class CopyFileHandler(Handler):
 
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = Handler.normalize_path(
-            self.handler_config["source"])
-        self.handler_config["destination"] = Handler.normalize_path(
-            self.handler_config["destination"])
-
-        Handler.create_path(self.handler_config["source"])
-        Handler.create_path(self.handler_config["destination"])
+        Handler.setup_path(self.handler_config, "source")
+        Handler.setup_path(self.handler_config, "destination")
 
     def process(self, source_file_name: str) -> None:
         """Copy file from watch folder to destination.
