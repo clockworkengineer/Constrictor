@@ -47,9 +47,3 @@ class TestCoreConfig:
             config = Config(Arguments([os.path.join(
                 os.getcwd(), "FPE", "tests", "json", "test_watcher_type_missing.json")]))
             config.validate()
-
-    def test_config_with_watcher_exitonfail_missing(self):
-        with pytest.raises(ConfigError):
-            config = Config(Arguments([os.path.join(
-                os.getcwd(), "FPE", "tests", "json", "test_watcher_exitonfail_missing.json")]))
-            config.validate()

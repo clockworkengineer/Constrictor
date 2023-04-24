@@ -32,7 +32,24 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
+        # self.watcher_handler.process(event.src_path)
+        logging.debug("File %s created.", event.src_path)
+
+    def on_opened(self, event):
+        logging.debug("File %s opened.", event.src_path)
+
+    def on_moved(self, event):
+        logging.debug("File %s moved.", event.src_path)
+
+    def on_modified(self, event):
         self.watcher_handler.process(event.src_path)
+        logging.debug("File %s modified.", event.src_path)
+
+    def on_closed(self, event):
+        logging.debug("File %s closed.", event.src_path)
+
+    def on_deleted(self, event):
+        logging.debug("File %s deleted.", event.src_path)
 
 
 class Watcher:
@@ -66,12 +83,14 @@ class Watcher:
             if watcher_config is None:
                 raise WatcherError("None as config passed to watcher.")
 
-            # Default values for optional fields
+            # Default values for fields
 
             if "recursive" not in watcher_config:
                 watcher_config["recursive"] = False
             if "deletesource" not in watcher_config:
                 watcher_config["deletesource"] = True
+            if "exitonfail" not in watcher_config:
+                watcher_config["exitonfail"] = False
 
             selected_handler = Factory.create(watcher_config)
 

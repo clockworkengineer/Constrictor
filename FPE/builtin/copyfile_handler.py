@@ -58,15 +58,18 @@ class CopyFileHandler(Handler):
 
                 if source_path.is_file():
                     shutil.copy2(source_path, destination_path)
-                    logging.info(
-                        f"Copied file {source_path} to {destination_path}.")
+                    logging.info("Copied file %s to %s.",
+                                 source_path, destination_path)
                     if self.handler_config["deletesource"]:
                         source_path.unlink()
 
                 elif source_path.is_dir():
                     if not destination_path.exists():
                         Handler.create_path(str(destination_path))
-                        logging.info(f"Created directory {destination_path}.")
+                        logging.info("Created directory %s.", destination_path)
 
         except (OSError, KeyError, ValueError) as error:
-            raise CopyFileHandlerError(error) from error
+            if self.handler_config['exitonfail']:
+                raise CopyFileHandlerError(error) from error
+            else:
+                logging.info("CopyFileHandler Error : %s.", error)
