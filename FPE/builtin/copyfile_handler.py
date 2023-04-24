@@ -47,11 +47,12 @@ class CopyFileHandler(Handler):
         Handler.setup_path(self.handler_config, "source")
         Handler.setup_path(self.handler_config, "destination")
 
-    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path) -> None:
-        """Copy source path to destination path retrying when an exception occurs.
+    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_file :bool) -> None:
+        """Copy source path to destination path retrying when an exception occurs and also
+        deleting the sourec file if specified.
         """
 
-        # File may be being copied into source so se wait until this is complete
+        # File may be being copied into source so we wait until this is complete
         
         failure: bool = True
         while failure:
@@ -69,6 +70,9 @@ class CopyFileHandler(Handler):
 
         logging.info("Copied file %s to %s.",
                      source_path, destination_path)
+        
+        if delete_file:
+            source_path.unlink()
 
     def process(self, source_file_name: str) -> None:
         """Copy file from watch folder to destination.
@@ -81,13 +85,9 @@ class CopyFileHandler(Handler):
                     source_file_name, self.handler_config))
 
                 if source_path.is_file():
-                    self._copy_file(source_path, destination_path)
-                    if self.handler_config["deletesource"]:
-                        source_path.unlink()
-
+                    self._copy_file(source_path, destination_path, self.handler_config["deletesource"])
                 elif source_path.is_dir():
                     Handler.create_path(str(destination_path))
-                    
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:
