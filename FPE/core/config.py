@@ -46,7 +46,7 @@ class Config:
         if "watchers" not in self.config:
             raise ConfigError("Missing config 'watchers' key")
 
-        # Each watcher entry must have a 'name', 'type' and 'source' keys
+        # Each watcher entry must have a 'name', 'type', 'exitonfail' and 'source' keys
 
         for watcher_config in self.config["watchers"]:
             if "name" not in watcher_config:
@@ -55,6 +55,8 @@ class Config:
                 raise ConfigError("Missing config watchers 'type' key")
             if "source" not in watcher_config:
                 raise ConfigError("Missing config watchers 'source' key")
+            if "exitonfail" not in watcher_config:
+                raise ConfigError("Missing config watchers 'exitonfail' key")
 
     def set_logging(self) -> None:
         """Set type of logging to be used.
