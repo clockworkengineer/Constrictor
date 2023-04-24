@@ -9,7 +9,8 @@ class TestBuiltinCopyFileHandler:
     # Test CopyFileHandler checks for None passed in as config
     # Test CopyFileHandler creates non-existant source
     # Test CopyFileHandler create non-existant destination
-    # Test CopyFileHandler copies single file copied into source to destination
-    # Test CopyFileHandler copies single file copied into source to destination and deletes source
-    # Test CopyFileHandler copies a whole directory structure copied into source to destination
+    # Test CopyFileHandler single file copied into source then copied to destination
+    # Test CopyFileHandler single file copied into source then copied to destination and source file deleted
+    # Test CopyFileHandler a whole directory structure copied into source then copied to destination
+    # Test CopyFileHandler copies a whole directory structure copied into source then copied to destination amd source files deleted
      

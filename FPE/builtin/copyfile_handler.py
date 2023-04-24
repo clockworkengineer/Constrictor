@@ -48,8 +48,7 @@ class CopyFileHandler(Handler):
         Handler.setup_path(self.handler_config, "destination")
 
     def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_file :bool) -> None:
-        """Copy source path to destination path retrying when an exception occurs and also
-        deleting the sourec file if specified.
+        """Copy source path to destination path.
         """
 
         # File may be being copied into source so we wait until this is complete
@@ -75,7 +74,7 @@ class CopyFileHandler(Handler):
             source_path.unlink()
 
     def process(self, source_file_name: str) -> None:
-        """Copy file from watch folder to destination.
+        """Copy file from source folder to destination.
         """
         try:
 
