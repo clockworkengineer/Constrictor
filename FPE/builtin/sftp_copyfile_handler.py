@@ -80,4 +80,4 @@ class SFTPCopyFileHandler(Handler):
             if self.handler_config['exitonfailure']:
                 raise SFTPCopyFileHandlerError(error) from error
             else:
-                logging.info("SFTPCopyFileHandler Error : %s.", error)
+                logging.info(SFTPCopyFileHandlerError(error))

@@ -93,4 +93,4 @@ class CopyFileHandler(Handler):
             if self.handler_config['exitonfailure']:
                 raise CopyFileHandlerError(error) from error
             else:
-                logging.info("CopyFileHandler Error : %s.", error)
+                logging.info(CopyFileHandlerError(error))
