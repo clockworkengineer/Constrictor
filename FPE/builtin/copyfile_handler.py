@@ -77,9 +77,7 @@ class CopyFileHandler(Handler):
                         source_path.unlink()
 
                 elif source_path.is_dir():
-                    if not destination_path.exists():
-                        Handler.create_path(str(destination_path))
-                        logging.info("Created directory %s.", destination_path)
+                    Handler.create_path(str(destination_path))
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:
