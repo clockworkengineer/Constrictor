@@ -12,7 +12,7 @@
         }
     ],
     "logging": {
-        "level": 10,
+        "level": 20,
         "format": "%(asctime)s:%(message)s"
     }
 }

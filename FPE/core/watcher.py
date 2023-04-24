@@ -41,7 +41,6 @@ class WatcherHandler(FileSystemEventHandler):
         logging.debug("File %s moved.", event.src_path)
 
     def on_modified(self, event):
-        self.watcher_handler.process(event.src_path)
         logging.debug("File %s modified.", event.src_path)
 
     def on_closed(self, event):
@@ -89,7 +88,7 @@ class Watcher:
             if "deletesource" not in watcher_config:
                 watcher_config["deletesource"] = True
             if "exitonfail" not in watcher_config:
-                watcher_config["exitonfail"] = False
+                watcher_config["exitonfailure"] = False
 
             selected_handler = Factory.create(watcher_config)
 

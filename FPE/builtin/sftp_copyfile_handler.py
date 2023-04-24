@@ -77,4 +77,7 @@ class SFTPCopyFileHandler(Handler):
                 os.remove(source_path)
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
-            raise SFTPCopyFileHandlerError(error) from error
+            if self.handler_config['exitonfailure']:
+                raise SFTPCopyFileHandlerError(error) from error
+            else:
+                logging.info("SFTPCopyFileHandler Error : %s.", error)
