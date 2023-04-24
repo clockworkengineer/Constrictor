@@ -43,3 +43,4 @@ class Handler(Protocol):
         handler_config[path_type] = Handler.normalize_path(
             handler_config[path_type])
         Handler.create_path(handler_config[path_type])
+        

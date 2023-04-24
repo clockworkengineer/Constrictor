@@ -1,6 +1,7 @@
 """CopyFile builtin handler.
 """
 
+import errno
 import pathlib
 import shutil
 import logging
@@ -49,17 +50,25 @@ class CopyFileHandler(Handler):
     def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path) -> None:
         """Copy source path to destination path retrying when an exception occurs.
         """
+
+        # File may be being copied into source so se wait until this is complete
         
         failure: bool = True
         while failure:
             try:
-                shutil.copy2(source_path, destination_path)
-            except Exception:
-                failure = True
-            failure = False
+                with open(source_path, "rb") as source_file:
+                    _ = source_file.read()
+                failure = False
+            except IOError as error:
+                if error.errno == errno.EACCES:
+                    pass
+                else:
+                   failure = False
 
-            logging.info("Copied file %s to %s.",
-                         source_path, destination_path)
+        shutil.copy2(source_path, destination_path)
+
+        logging.info("Copied file %s to %s.",
+                     source_path, destination_path)
 
     def process(self, source_file_name: str) -> None:
         """Copy file from watch folder to destination.
@@ -78,6 +87,7 @@ class CopyFileHandler(Handler):
 
                 elif source_path.is_dir():
                     Handler.create_path(str(destination_path))
+                    
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:
