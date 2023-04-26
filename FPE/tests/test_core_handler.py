@@ -1,6 +1,7 @@
 import pytest
 import tempfile
 import pathlib
+from typing import Any
 
 from core.handler import Handler
 
@@ -24,4 +25,12 @@ class TestCoreHandler:
             temporary_directory_path.rmdir()
 
     # Test Handler create local destination
+    def test_core_handler_create_local_destination(self) -> None:
+        config: dict[str, Any] = {}
+        source_path:pathlib.Path = pathlib.Path(Handler.normalize_path("./watcher/source"))
+        destination_path: pathlib.Path = pathlib.Path(Handler.normalize_path("./watcher/destination"))
+        source_file_path: pathlib.Path = source_path / "dir1" / "dir2" / "source.txt"
+        config["source"] = str(source_path)
+        config["destination"] = str(destination_path)
+        assert Handler.create_local_destination(str(source_file_path), config) == str(destination_path / "dir1" / "dir2" / "source.txt" )
     # Test Handler setup path
