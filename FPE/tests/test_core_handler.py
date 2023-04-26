@@ -39,7 +39,9 @@ class TestCoreHandler:
         config : dict[str, Any] = {}
         config["source"] = "./watchers/source"
         source_path:pathlib.Path = pathlib.Path(config["source"])
-        assert not source_path.exists()
+
+        if source_path.exists():
+            source_path.rmdir()
         Handler.setup_path(config, "source")
         assert source_path.exists()
         source_path.rmdir()
@@ -53,3 +55,10 @@ class TestCoreHandler:
         Handler.setup_path(config, "source")
         assert source_path.exists()
         source_path.rmdir()
+        
+    def test_core_handler_setup_path_with_invalid_config_key(self) -> None:
+        config : dict[str, Any] = {}
+        config["source"] = "./watchers/source"
+        source_path:pathlib.Path = pathlib.Path(config["source"])
+        with pytest.raises(KeyError):
+            Handler.setup_path(config, "destination")
