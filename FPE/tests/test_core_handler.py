@@ -34,3 +34,22 @@ class TestCoreHandler:
         config["destination"] = str(destination_path)
         assert Handler.create_local_destination(str(source_file_path), config) == str(destination_path / "dir1" / "dir2" / "source.txt" )
     # Test Handler setup path
+    
+    def test_core_handler_setup_path_doesnt_exist(self) -> None:
+        config : dict[str, Any] = {}
+        config["source"] = "./watchers/source"
+        source_path:pathlib.Path = pathlib.Path(config["source"])
+        assert not source_path.exists()
+        Handler.setup_path(config, "source")
+        assert source_path.exists()
+        source_path.rmdir()
+        
+    def test_core_handler_setup_path_does_exist(self) -> None:
+        config : dict[str, Any] = {}
+        config["source"] = "./watchers/source"
+        source_path:pathlib.Path = pathlib.Path(config["source"])
+        source_path.mkdir(parents=True, exist_ok=True)
+        assert source_path.exists()
+        Handler.setup_path(config, "source")
+        assert source_path.exists()
+        source_path.rmdir()
