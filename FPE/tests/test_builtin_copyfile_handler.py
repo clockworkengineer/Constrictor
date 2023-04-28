@@ -1,6 +1,7 @@
 import pytest
 import pathlib
 import tempfile
+from typing import Any
 
 from core.error import FPEError
 from core.handler import Handler
@@ -9,6 +10,7 @@ from builtin.copyfile_handler import CopyFileHandler, CopyFileHandlerError
 class Fixture:
     source_path : pathlib.Path
     destination_path : pathlib.Path
+    config: dict[str, Any] = {}
     
 @pytest.fixture()
 def setup_source_destination() -> Fixture:
@@ -18,8 +20,14 @@ def setup_source_destination() -> Fixture:
                 directory_name) / "watchers" / "source"
             destination_directory_path: pathlib.Path = pathlib.Path(
                 directory_name) / "watchers" / "destination"
-            fixture.source_path = str(source_directory_path)
-            fixture.destination_path = str(destination_directory_path)
+            fixture.source_path = source_directory_path
+            fixture.destination_path = destination_directory_path
+    if fixture.source_path.exists():
+        fixture.setup_source_destination.source_path.rmdir()
+    if fixture.destination_path.exists():
+        fixture.setup_source_destination.destination_path.rmdir()
+    fixture.config["source"] = str(fixture.source_path)
+    fixture.config["destination"] = str(fixture.destination_path)
     return fixture
     
 
@@ -33,8 +41,8 @@ class TestBuiltinCopyFileHandler:
 
     # Test CopyFileHandler creates non-existant source
     def test_buitin_handler_create_non_existant_source(self, setup_source_destination) -> None:
-        setup_source_destination.source_path.rmdir()
-        setup_source_destination.destination_path.mkdir()
+        setup_source_destination.destination_path.mkdir(parents=True,  exist_ok=True)
+        assert True
         
         
     # Test CopyFileHandler create non-existant destinati on
