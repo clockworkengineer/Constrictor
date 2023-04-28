@@ -42,6 +42,9 @@ class CopyFileHandler(Handler):
         """Copy handler config.
         """
 
+        if handler_config is None:
+            raise CopyFileHandlerError("None passed as handler config.")
+        
         self.handler_config = handler_config.copy()
 
         Handler.setup_path(self.handler_config, "source")
