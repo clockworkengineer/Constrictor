@@ -6,7 +6,7 @@ from typing import Any
 
 from core.error import FPEError
 from core.handler import Handler
-from builtin.copyfile_handler import CopyFileHandler, CopyFileHandlerError
+from builtin.copyfile_handler import CopyFileHandler
 
 
 class Fixture:
