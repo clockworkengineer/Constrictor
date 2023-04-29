@@ -39,26 +39,21 @@ def setup_source_destination() -> Fixture:
 
 class TestBuiltinCopyFileHandler:
 
-    # Test CopyFileHandler checks for None passed in as config
     def test_builtin_copyfile_handler_pass_none_as_config(self) -> None:
         with pytest.raises(FPEError):
             handdler: Handler = CopyFileHandler(None)  # type: ignore
 
-    # Test CopyFileHandler creates non-existant source
     def test_buitin_handler_create_non_existant_source(self, setup_source_destination) -> None:
         setup_source_destination.destination_path.mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
         assert setup_source_destination.source_path.exists()
 
-    # Test CopyFileHandler create non-existant destination
     def test_buitin_handler_create_non_existant_destination(self, setup_source_destination) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
         assert setup_source_destination.destination_path.exists()
-
-    # Test CopyFileHandler single file copied into source then copied to destination
 
     def test_buitin_handler_copy_a_single_source_to_destination(self, setup_source_destination) -> None:
         setup_source_destination.source_path.mkdir(
@@ -72,7 +67,6 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert source_file.exists()
 
-    # Test CopyFileHandler single file copied into source then copied to destination and source file deleted
     def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
@@ -86,13 +80,12 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert not source_file.exists()
 
-    # Test CopyFileHandler a whole directory structure copied into source then copied to destination
-
     def test_buitin_handler_copy_source_directory_structure_to_destination(self, setup_source_destination) -> None:
         (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
-        source_file = setup_source_destination.source_path / "dir1" / "dir2" / "dir3" / "test.txt"
+        source_file = setup_source_destination.source_path / \
+            "dir1" / "dir2" / "dir3" / "test.txt"
         destination_file = setup_source_destination.destination_path / \
             "dir1" / "dir2" / "dir3" / "test.txt"
         source_file.touch()
@@ -100,15 +93,14 @@ class TestBuiltinCopyFileHandler:
         handler.process(str(source_file))
         assert destination_file.exists()
         assert source_file.exists()
-        
-    # Test CopyFileHandler copies a whole directory structure copied into source then copied to destination amd source files deleted
-    
+
     def test_buitin_handler_copy_source_directory_structure_to_destination_deleting_source(self, setup_source_destination) -> None:
         (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
             parents=True,  exist_ok=True)
         setup_source_destination.config["deletesource"] = True
         handler = CopyFileHandler(setup_source_destination.config)
-        source_file = setup_source_destination.source_path / "dir1" / "dir2" / "dir3" / "test.txt"
+        source_file = setup_source_destination.source_path / \
+            "dir1" / "dir2" / "dir3" / "test.txt"
         destination_file = setup_source_destination.destination_path / \
             "dir1" / "dir2" / "dir3" / "test.txt"
         source_file.touch()
