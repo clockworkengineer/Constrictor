@@ -90,6 +90,7 @@ class TestBuiltinCopyFileHandler:
             "dir1" / "dir2" / "dir3" / "test.txt"
         source_file.touch()
         assert not destination_file.exists()
+        handler.process(str(source_file.parent))
         handler.process(str(source_file))
         assert destination_file.exists()
         assert source_file.exists()
@@ -105,6 +106,7 @@ class TestBuiltinCopyFileHandler:
             "dir1" / "dir2" / "dir3" / "test.txt"
         source_file.touch()
         assert not destination_file.exists()
+        handler.process(str(source_file.parent))
         handler.process(str(source_file))
         assert destination_file.exists()
         assert not source_file.exists()

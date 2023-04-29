@@ -54,12 +54,6 @@ class CopyFileHandler(Handler):
         """Copy source path to destination path.
         """
 
-        # Make sure desination directory structure exists
-        
-        if not destination_path.parent.exists():
-            destination_path.mkdir(
-                parents=True,  exist_ok=True)
-
         # File may be being copied into source so we wait until this is complete
 
         failure: bool = True
