@@ -4,6 +4,7 @@ Protocol class that defines the file watcher handler interface.
 
 """
 
+import errno
 import pathlib
 import logging
 from typing import Protocol, Any
@@ -43,4 +44,19 @@ class Handler(Protocol):
         handler_config[path_type] = Handler.normalize_path(
             handler_config[path_type])
         Handler.create_path(handler_config[path_type])
+    
+    @staticmethod
+    def wait_for_copy_completion(source_path: pathlib.Path):
+
+        failure: bool = True
+        while failure:
+            try:
+                with open(source_path, "rb") as source_file:
+                    _ = source_file.read()
+                failure = False
+            except IOError as error:
+                if error.errno == errno.EACCES:
+                    pass
+                else:
+                    failure = False
         

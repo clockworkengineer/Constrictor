@@ -1,7 +1,6 @@
 """CopyFile builtin handler.
 """
 
-import errno
 import pathlib
 import shutil
 import logging
@@ -54,20 +53,8 @@ class CopyFileHandler(Handler):
         """Copy source path to destination path.
         """
 
-        # File may be being copied into source so we wait until this is complete
-
-        failure: bool = True
-        while failure:
-            try:
-                with open(source_path, "rb") as source_file:
-                    _ = source_file.read()
-                failure = False
-            except IOError as error:
-                if error.errno == errno.EACCES:
-                    pass
-                else:
-                    failure = False
-
+        Handler.wait_for_copy_completion(source_path)
+        
         shutil.copy2(source_path, destination_path)
 
         logging.info("Copied file %s to %s.",

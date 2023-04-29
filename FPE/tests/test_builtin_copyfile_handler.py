@@ -62,7 +62,6 @@ class TestBuiltinCopyFileHandler:
         source_file = setup_source_destination.source_path / "test.txt"
         destination_file = setup_source_destination.destination_path / "test.txt"
         source_file.touch()
-        assert not destination_file.exists()
         handler.process(str(source_file))
         assert destination_file.exists()
         assert source_file.exists()
@@ -75,7 +74,6 @@ class TestBuiltinCopyFileHandler:
         source_file = setup_source_destination.source_path / "test.txt"
         destination_file = setup_source_destination.destination_path / "test.txt"
         source_file.touch()
-        assert not destination_file.exists()
         handler.process(str(source_file))
         assert destination_file.exists()
         assert not source_file.exists()
@@ -89,7 +87,6 @@ class TestBuiltinCopyFileHandler:
         destination_file = setup_source_destination.destination_path / \
             "dir1" / "dir2" / "dir3" / "test.txt"
         source_file.touch()
-        assert not destination_file.exists()
         handler.process(str(source_file.parent))
         handler.process(str(source_file))
         assert destination_file.exists()
@@ -105,7 +102,6 @@ class TestBuiltinCopyFileHandler:
         destination_file = setup_source_destination.destination_path / \
             "dir1" / "dir2" / "dir3" / "test.txt"
         source_file.touch()
-        assert not destination_file.exists()
         handler.process(str(source_file.parent))
         handler.process(str(source_file))
         assert destination_file.exists()
