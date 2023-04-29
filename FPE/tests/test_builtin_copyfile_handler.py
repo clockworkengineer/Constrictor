@@ -43,19 +43,19 @@ class TestBuiltinCopyFileHandler:
         with pytest.raises(FPEError):
             handdler: Handler = CopyFileHandler(None)  # type: ignore
 
-    def test_buitin_handler_create_non_existant_source(self, setup_source_destination) -> None:
+    def test_buitin_handler_create_non_existant_source(self, setup_source_destination: Fixture) -> None:
         setup_source_destination.destination_path.mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
         assert setup_source_destination.source_path.exists()
 
-    def test_buitin_handler_create_non_existant_destination(self, setup_source_destination) -> None:
+    def test_buitin_handler_create_non_existant_destination(self, setup_source_destination: Fixture) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
         assert setup_source_destination.destination_path.exists()
 
-    def test_buitin_handler_copy_a_single_source_to_destination(self, setup_source_destination) -> None:
+    def test_buitin_handler_copy_a_single_source_to_destination(self, setup_source_destination: Fixture) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
@@ -67,7 +67,7 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert source_file.exists()
 
-    def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination) -> None:
+    def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
         setup_source_destination.config["deletesource"] = True
@@ -80,7 +80,7 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert not source_file.exists()
 
-    def test_buitin_handler_copy_source_directory_structure_to_destination(self, setup_source_destination) -> None:
+    def test_buitin_handler_copy_source_directory_structure_to_destination(self, setup_source_destination: Fixture) -> None:
         (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
@@ -94,7 +94,7 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert source_file.exists()
 
-    def test_buitin_handler_copy_source_directory_structure_to_destination_deleting_source(self, setup_source_destination) -> None:
+    def test_buitin_handler_copy_source_directory_structure_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
         (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
             parents=True,  exist_ok=True)
         setup_source_destination.config["deletesource"] = True
