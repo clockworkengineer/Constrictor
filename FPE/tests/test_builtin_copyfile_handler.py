@@ -19,12 +19,10 @@ class Fixture:
 def setup_source_destination() -> Fixture:
     fixture: Fixture = Fixture()
     with tempfile.TemporaryDirectory() as directory_name:
-        source_directory_path: pathlib.Path = pathlib.Path(
+        fixture.source_path = pathlib.Path(
             directory_name) / "watchers" / "source"
-        destination_directory_path: pathlib.Path = pathlib.Path(
+        fixture.destination_path = pathlib.Path(
             directory_name) / "watchers" / "destination"
-        fixture.source_path = source_directory_path
-        fixture.destination_path = destination_directory_path
         if fixture.source_path.exists():
             fixture.source_path.rmdir()
         if fixture.destination_path.exists():
@@ -61,7 +59,7 @@ class TestBuiltinCopyFileHandler:
 
     # Test CopyFileHandler single file copied into source then copied to destination
 
-    def test_buitin_handler_copy_source_to_destination(self, setup_source_destination) -> None:
+    def test_buitin_handler_copy_a_single_source_to_destination(self, setup_source_destination) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(setup_source_destination.config)
@@ -74,7 +72,7 @@ class TestBuiltinCopyFileHandler:
         assert source_file.exists()
 
     # Test CopyFileHandler single file copied into source then copied to destination and source file deleted
-    def test_buitin_handler_copy_source_to_destination_deleting_source(self, setup_source_destination) -> None:
+    def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
         setup_source_destination.config["deletesource"] = True
