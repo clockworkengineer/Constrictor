@@ -31,6 +31,7 @@ def setup_source_destination() -> Fixture:
         fixture.config["destination"] = str(fixture.destination_path)
         fixture.config["deletesource"] = False
         fixture.config["recursive"] = True
+        fixture.config["exitonfailure"] = True
     yield fixture
     shutil.rmtree(fixture.source_path)
     shutil.rmtree(fixture.destination_path)
@@ -86,4 +87,32 @@ class TestBuiltinCopyFileHandler:
         assert not source_file.exists()
 
     # Test CopyFileHandler a whole directory structure copied into source then copied to destination
+
+    def test_buitin_handler_copy_source_directory_structure_to_destination(self, setup_source_destination) -> None:
+        (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
+            parents=True,  exist_ok=True)
+        handler = CopyFileHandler(setup_source_destination.config)
+        source_file = setup_source_destination.source_path / "dir1" / "dir2" / "dir3" / "test.txt"
+        destination_file = setup_source_destination.destination_path / \
+            "dir1" / "dir2" / "dir3" / "test.txt"
+        source_file.touch()
+        assert not destination_file.exists()
+        handler.process(str(source_file))
+        assert destination_file.exists()
+        assert source_file.exists()
+        
     # Test CopyFileHandler copies a whole directory structure copied into source then copied to destination amd source files deleted
+    
+    def test_buitin_handler_copy_source_directory_structure_to_destination_deleting_source(self, setup_source_destination) -> None:
+        (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
+            parents=True,  exist_ok=True)
+        setup_source_destination.config["deletesource"] = True
+        handler = CopyFileHandler(setup_source_destination.config)
+        source_file = setup_source_destination.source_path / "dir1" / "dir2" / "dir3" / "test.txt"
+        destination_file = setup_source_destination.destination_path / \
+            "dir1" / "dir2" / "dir3" / "test.txt"
+        source_file.touch()
+        assert not destination_file.exists()
+        handler.process(str(source_file))
+        assert destination_file.exists()
+        assert not source_file.exists()

@@ -44,18 +44,24 @@ class CopyFileHandler(Handler):
 
         if handler_config is None:
             raise CopyFileHandlerError("None passed as handler config.")
-        
+
         self.handler_config = handler_config.copy()
 
         Handler.setup_path(self.handler_config, "source")
         Handler.setup_path(self.handler_config, "destination")
 
-    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_file :bool) -> None:
+    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_file: bool) -> None:
         """Copy source path to destination path.
         """
 
-        # File may be being copied into source so we wait until this is complete
+        # Make sure desination directory structure exists
         
+        if not destination_path.parent.exists():
+            destination_path.mkdir(
+                parents=True,  exist_ok=True)
+
+        # File may be being copied into source so we wait until this is complete
+
         failure: bool = True
         while failure:
             try:
@@ -66,13 +72,13 @@ class CopyFileHandler(Handler):
                 if error.errno == errno.EACCES:
                     pass
                 else:
-                   failure = False
+                    failure = False
 
         shutil.copy2(source_path, destination_path)
 
         logging.info("Copied file %s to %s.",
                      source_path, destination_path)
-        
+
         if delete_file:
             source_path.unlink()
 
@@ -87,7 +93,8 @@ class CopyFileHandler(Handler):
                     source_file_name, self.handler_config))
 
                 if source_path.is_file():
-                    self._copy_file(source_path, destination_path, self.handler_config["deletesource"])
+                    self._copy_file(source_path, destination_path,
+                                    self.handler_config["deletesource"])
                 elif source_path.is_dir():
                     Handler.create_path(str(destination_path))
 
