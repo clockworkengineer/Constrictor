@@ -34,6 +34,7 @@ class CopyFileHandler(Handler):
         destination:    Destination for file copy
         recursive:      Boolean == true perform recursive file watch
         deletesource:   Boolean == true delete source file on success
+        exitonfailure:  Boolean == true exit handler on failure; generating an exception
 
     """
 
@@ -54,7 +55,7 @@ class CopyFileHandler(Handler):
         """
 
         Handler.wait_for_copy_completion(source_path)
-        
+
         shutil.copy2(source_path, destination_path)
 
         logging.info("Copied file %s to %s.",
@@ -70,8 +71,8 @@ class CopyFileHandler(Handler):
 
             with pathlib.Path(source_file_name) as source_path:
 
-                destination_path = pathlib.Path(Handler.create_local_destination(
-                    source_file_name, self.handler_config))
+                destination_path = Handler.create_local_destination(
+                    source_path, self.handler_config)
 
                 if source_path.is_file():
                     self._copy_file(source_path, destination_path,

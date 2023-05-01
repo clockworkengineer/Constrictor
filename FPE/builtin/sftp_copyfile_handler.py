@@ -31,20 +31,25 @@ class SFTPCopyFileHandler(Handler):
     server keeping any in situ watch folder directory structure the same.
 
     Attributes:
-        name           Name of handler object
-        source         Folder to watch for files
-        server         SSH Server
-        user           SSH Server username
-        password       SSH Server user password
-        destination    Destination for copy
-        recursive:     Boolean == true perform recursive file watch
-        deletesource   Boolean == true delete source file on success
+        name:           Name of handler object
+        source:         Folder to watch for files
+        server:         SSH Server
+        user:           SSH Server username
+        password:       SSH Server user password
+        destination:    Destination for copy
+        recursive:      Boolean == true perform recursive file watch
+        deletesource:   Boolean == true delete source file on success
+        exitonfailure:  Boolean == true exit handler on failure; generating an exception
+        
     """
 
     def __init__(self, handler_config: dict[str, Any]) -> None:
         """ Initialise handler attributes.
         """
 
+        if handler_config is None:
+            raise SFTPCopyFileHandlerError("None passed as handler config.")
+        
         self.handler_config = handler_config.copy()
 
         Handler.setup_path(self.handler_config, "source")
@@ -60,8 +65,7 @@ class SFTPCopyFileHandler(Handler):
 
         try:
 
-            destination_path = pathlib.Path(Handler.create_local_destination(
-                source_path, self.handler_config))
+            destination_path = Handler.create_local_destination(pathlib.Path(source_path), self.handler_config)
 
             with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
                                    password=self.handler_config["password"]) as sftp:

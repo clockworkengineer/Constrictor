@@ -33,10 +33,10 @@ class Handler(Protocol):
                 logging.info("Created directory %s.", path_to_directory)
 
     @staticmethod
-    def create_local_destination(source_path: str, config: dict[str, Any]) -> str:
+    def create_local_destination(source_path: pathlib.Path, config: dict[str, Any]) -> pathlib.Path:
         
-        return str(pathlib.Path(
-            config["destination"]) / source_path[len(config["source"])+1:])
+        return pathlib.Path(
+            config["destination"]) / str(source_path)[len(config["source"])+1:]
 
     @staticmethod
     def setup_path(handler_config: dict[str, Any], path_type: str):
