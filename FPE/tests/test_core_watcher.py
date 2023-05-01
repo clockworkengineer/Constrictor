@@ -1,5 +1,5 @@
 import pytest
-import os
+import pathlib
 import time
 from typing import Any
 
@@ -17,7 +17,7 @@ def reset_factory_and_return_config() -> dict[str, Any]:
     Factory.register("CopyFile", CopyFileHandler)
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
     config = Config(Arguments(
-        [os.path.join(os.getcwd(), "FPE", "tests", "json", "test_valid.json")])).get_config()
+        [str(pathlib.Path.cwd() / "FPE" / "tests" / "json" / "test_valid.json")])).get_config()
     yield config["watchers"][0]
 
 

@@ -15,7 +15,7 @@ class TestCoreHandler:
     def test_core_handler_create_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory_name:
             temporary_directory_path: pathlib.Path = pathlib.Path(
-                directory_name) / "watchers" / "source"
+                directory_name) / "watcher" / "source"
             assert not temporary_directory_path.exists()
             Handler.create_path(str(temporary_directory_path))
             assert temporary_directory_path.exists()
@@ -34,7 +34,7 @@ class TestCoreHandler:
 
     def test_core_handler_setup_path_doesnt_exist(self) -> None:
         config: dict[str, Any] = {}
-        config["source"] = "./watchers/source"
+        config["source"] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config["source"])
         if source_path.exists():
             source_path.rmdir()
@@ -44,7 +44,7 @@ class TestCoreHandler:
 
     def test_core_handler_setup_path_does_exist(self) -> None:
         config: dict[str, Any] = {}
-        config["source"] = "./watchers/source"
+        config["source"] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config["source"])
         source_path.mkdir(parents=True, exist_ok=True)
         assert source_path.exists()
@@ -54,7 +54,7 @@ class TestCoreHandler:
 
     def test_core_handler_setup_path_with_invalid_config_key(self) -> None:
         config: dict[str, Any] = {}
-        config["source"] = "./watchers/source"
+        config["source"] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config["source"])
         with pytest.raises(KeyError):
             Handler.setup_path(config, "destination")

@@ -20,9 +20,9 @@ def setup_source_destination() -> Fixture:
     fixture: Fixture = Fixture()
     with tempfile.TemporaryDirectory() as directory_name:
         fixture.source_path = pathlib.Path(
-            directory_name) / "watchers" / "source"
+            directory_name) / "watcher" / "source"
         fixture.destination_path = pathlib.Path(
-            directory_name) / "watchers" / "destination"
+            directory_name) / "watcher" / "destination"
         if fixture.source_path.exists():
             fixture.source_path.rmdir()
         if fixture.destination_path.exists():
