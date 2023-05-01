@@ -2,7 +2,6 @@
 """
 
 
-import os
 import pathlib
 import logging
 from typing import Any
@@ -40,7 +39,7 @@ class SFTPCopyFileHandler(Handler):
         recursive:      Boolean == true perform recursive file watch
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
-        
+
     """
 
     def __init__(self, handler_config: dict[str, Any]) -> None:
@@ -49,7 +48,7 @@ class SFTPCopyFileHandler(Handler):
 
         if handler_config is None:
             raise SFTPCopyFileHandlerError("None passed as handler config.")
-        
+
         self.handler_config = handler_config.copy()
 
         Handler.setup_path(self.handler_config, "source")
@@ -59,17 +58,21 @@ class SFTPCopyFileHandler(Handler):
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-    def process(self, source_path: str) -> None:
-        """SFTP Copy file from watch folder to a destination folder on remote server.
+    def process(self, source_file_name: str) -> None:
+        """SFTP Copy file from source(watch) directory to a destination directory on remote server.
         """
 
         try:
 
-            destination_path = Handler.create_local_destination(pathlib.Path(source_path), self.handler_config)
+            source_path: pathlib.Path = pathlib.Path(source_file_name)
+            destination_path: pathlib.Path = Handler.create_local_destination(
+                source_path, self.handler_config)
+
+            Handler.wait_for_copy_completion(source_path)
 
             with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
                                    password=self.handler_config["password"]) as sftp:
-                if os.path.isfile(source_path):
+                if source_path.is_file():
                     sftp.put(source_path, destination_path)
                 else:
                     sftp.makedirs(destination_path)
@@ -78,7 +81,7 @@ class SFTPCopyFileHandler(Handler):
                          source_path, destination_path)
 
             if self.handler_config["deletesource"]:
-                os.remove(source_path)
+                source_path.unlink()
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
             if self.handler_config['exitonfailure']:

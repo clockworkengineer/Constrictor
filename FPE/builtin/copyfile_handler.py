@@ -50,7 +50,7 @@ class CopyFileHandler(Handler):
         Handler.setup_path(self.handler_config, "source")
         Handler.setup_path(self.handler_config, "destination")
 
-    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_file: bool) -> None:
+    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_source: bool) -> None:
         """Copy source path to destination path.
         """
 
@@ -61,11 +61,11 @@ class CopyFileHandler(Handler):
         logging.info("Copied file %s to %s.",
                      source_path, destination_path)
 
-        if delete_file:
+        if delete_source:
             source_path.unlink()
 
     def process(self, source_file_name: str) -> None:
-        """Copy file from source folder to destination.
+        """Copy file from source(watch) directory to destination directory.
         """
         try:
 
