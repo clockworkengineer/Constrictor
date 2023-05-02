@@ -56,6 +56,8 @@ class CopyFileHandler(Handler):
 
         Handler.wait_for_copy_completion(source_path)
 
+        source_path.chmod(source_path.stat().st_mode | 0o664)
+
         shutil.copy2(source_path, destination_path)
 
         logging.info("Copied file %s to %s.",
