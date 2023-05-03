@@ -25,8 +25,7 @@ class CopyFileHandlerError(FPEError):
 class CopyFileHandler(Handler):
     """Copy file/directories.
 
-    Copy files created in watch folder to destination folder keeping any in
-    situ watch folder directory structure the same.
+    Copy files created in watch folder to destination folder.
 
     Handler(Watcher) config values:
         name:           Name of handler object

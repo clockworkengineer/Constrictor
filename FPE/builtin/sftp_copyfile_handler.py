@@ -26,8 +26,7 @@ class SFTPCopyFileHandlerError(FPEError):
 class SFTPCopyFileHandler(Handler):
     """SFTP Copy file/directories.
 
-    SFTP Copy files created in watch folder to destination folder on remote SSH
-    server keeping any in situ watch folder directory structure the same.
+    SFTP Copy files created in watch folder to destination folder on remote SSH server.
 
     Attributes:
         name:           Name of handler object
