@@ -32,6 +32,7 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
+        logging.debug("File %s created.", event.src_path)
         self.watcher_handler.process(event.src_path)
 
     def on_opened(self, event):

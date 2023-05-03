@@ -12,6 +12,8 @@
         }
     ],
     "logging": {
+        "filename" : ".\\fpe.log",
+        "filemoew" : "a",
         "level": 20,
         "format": "%(asctime)s:%(message)s"
     }
