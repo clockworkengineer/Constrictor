@@ -6,8 +6,7 @@
         {
             "type": "CopyFile",
             "source": "./watcher/source",
-            "destination": "./watcher/destination/",
-            "recursive": true
+            "destination": "./watcher/destination/"
         }
     ],
     "logging": {

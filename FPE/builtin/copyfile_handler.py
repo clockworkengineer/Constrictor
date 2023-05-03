@@ -32,7 +32,6 @@ class CopyFileHandler(Handler):
         name:           Name of handler object
         source:         Folder to watch for files
         destination:    Destination for file copy
-        recursive:      Boolean == true perform recursive file watch
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
 

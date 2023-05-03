@@ -3,8 +3,7 @@
 """File Processing Engine.
 
 This is a generic file processing engine that sets up a watch folder and waits
-for files/directories to be copied to it. Any added directories are also watched
-(if recursive is set) and any added files are be processed using one of its built
+for files to be copied to it which are to be processed using one of its built
 in file handler classes.
 
 Current built in file handler types:

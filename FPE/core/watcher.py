@@ -32,23 +32,23 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        logging.debug("File %s created.", event.src_path)
+        # logging.debug("File %s created.", event.src_path)
         self.watcher_handler.process(event.src_path)
 
-    def on_opened(self, event):
-        logging.debug("File %s opened.", event.src_path)
+    # def on_opened(self, event):
+    #     logging.debug("File %s opened.", event.src_path)
 
-    def on_moved(self, event):
-        logging.debug("File %s moved.", event.src_path)
+    # def on_moved(self, event):
+    #     logging.debug("File %s moved.", event.src_path)
 
-    def on_modified(self, event):
-        logging.debug("File %s modified.", event.src_path)
+    # def on_modified(self, event):
+    #     logging.debug("File %s modified.", event.src_path)
 
-    def on_closed(self, event):
-        logging.debug("File %s closed.", event.src_path)
+    # def on_closed(self, event):
+    #     logging.debug("File %s closed.", event.src_path)
 
-    def on_deleted(self, event):
-        logging.debug("File %s deleted.", event.src_path)
+    # def on_deleted(self, event):
+    #     logging.debug("File %s deleted.", event.src_path)
 
 
 class Watcher:
@@ -84,8 +84,6 @@ class Watcher:
 
             # Default values for fields
 
-            if "recursive" not in watcher_config:
-                watcher_config["recursive"] = False
             if "deletesource" not in watcher_config:
                 watcher_config["deletesource"] = True
             if "exitonfail" not in watcher_config:
@@ -95,9 +93,7 @@ class Watcher:
 
             if selected_handler is not None:
                 self._observer = Observer()
-                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=selected_handler.handler_config["source"],
-                                        recursive=selected_handler.handler_config["recursive"])
-
+                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=selected_handler.handler_config["source"],recursive=False)
                 Watcher._display_details(selected_handler.handler_config)
 
             else:

@@ -36,7 +36,6 @@ class SFTPCopyFileHandler(Handler):
         user:           SSH Server username
         password:       SSH Server user password
         destination:    Destination for copy
-        recursive:      Boolean == true perform recursive file watch
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
 
