@@ -73,9 +73,9 @@ class Factory:
     
 
     @staticmethod
-    def handler_function_list():
+    def handler_function_list() -> list[str]:
         return list(Factory._handler_creation_funcs.keys())
     
     @staticmethod
-    def clear():
+    def clear() -> None:
         Factory._handler_creation_funcs.clear()

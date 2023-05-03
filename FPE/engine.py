@@ -1,5 +1,6 @@
+"""FPE engine.
+"""
 import time
-import logging
 from typing import Any
 
 from core.config import Config
@@ -49,7 +50,7 @@ def create_watchers(watcher_configs: list[dict]) -> list[Watcher]:
     return watcher_list
 
 
-def run_watchers(watcher_list: list[Watcher]):
+def run_watchers(watcher_list: list[Watcher])-> None:
     """Run watchers in passed list.
     """
 
@@ -67,6 +68,6 @@ def run_watchers(watcher_list: list[Watcher]):
             current_watcher.stop()
 
     finally:
-        # Wait for all observer threads to stop
+        # Wait for all watcher threads to stop
         for current_watcher in watcher_list:
             current_watcher.join()

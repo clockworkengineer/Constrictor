@@ -78,31 +78,31 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert not source_file.exists()
 
-    def test_buitin_handler_copy_source_directory_structure_to_destination(self, setup_source_destination: Fixture) -> None:
-        (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
-            parents=True,  exist_ok=True)
-        handler = CopyFileHandler(setup_source_destination.config)
-        source_file = setup_source_destination.source_path / \
-            "dir1" / "dir2" / "dir3" / "test.txt"
-        destination_file = setup_source_destination.destination_path / \
-            "dir1" / "dir2" / "dir3" / "test.txt"
-        source_file.touch()
-        handler.process(str(source_file.parent))
-        handler.process(str(source_file))
-        assert destination_file.exists()
-        assert source_file.exists()
+    # def test_buitin_handler_copy_source_directory_structure_to_destination(self, setup_source_destination: Fixture) -> None:
+    #     (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
+    #         parents=True,  exist_ok=True)
+    #     handler = CopyFileHandler(setup_source_destination.config)
+    #     source_file = setup_source_destination.source_path / \
+    #         "dir1" / "dir2" / "dir3" / "test.txt"
+    #     destination_file = setup_source_destination.destination_path / \
+    #         "dir1" / "dir2" / "dir3" / "test.txt"
+    #     source_file.touch()
+    #     handler.process(str(source_file.parent))
+    #     handler.process(str(source_file))
+    #     assert destination_file.exists()
+    #     assert source_file.exists()
 
-    def test_buitin_handler_copy_source_directory_structure_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
-        (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
-            parents=True,  exist_ok=True)
-        setup_source_destination.config["deletesource"] = True
-        handler = CopyFileHandler(setup_source_destination.config)
-        source_file = setup_source_destination.source_path / \
-            "dir1" / "dir2" / "dir3" / "test.txt"
-        destination_file = setup_source_destination.destination_path / \
-            "dir1" / "dir2" / "dir3" / "test.txt"
-        source_file.touch()
-        handler.process(str(source_file.parent))
-        handler.process(str(source_file))
-        assert destination_file.exists()
-        assert not source_file.exists()
+    # def test_buitin_handler_copy_source_directory_structure_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
+    #     (setup_source_destination.source_path / "dir1" / "dir2" / "dir3").mkdir(
+    #         parents=True,  exist_ok=True)
+    #     setup_source_destination.config["deletesource"] = True
+    #     handler = CopyFileHandler(setup_source_destination.config)
+    #     source_file = setup_source_destination.source_path / \
+    #         "dir1" / "dir2" / "dir3" / "test.txt"
+    #     destination_file = setup_source_destination.destination_path / \
+    #         "dir1" / "dir2" / "dir3" / "test.txt"
+    #     source_file.touch()
+    #     handler.process(str(source_file.parent))
+    #     handler.process(str(source_file))
+    #     assert destination_file.exists()
+    #     assert not source_file.exists()

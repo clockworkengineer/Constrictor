@@ -26,8 +26,9 @@ optional arguments:
 import logging
 from typing import Any
 
-from engine import load_config, load_handlers, create_watchers, run_watchers
 from core.error import FPEError
+from core.watcher import Watcher
+from engine import load_config, load_handlers, create_watchers, run_watchers
 
 
 __author__ = "Rob Tizzard"
@@ -51,11 +52,11 @@ def fpe() -> None:
 
     try:
 
-        fpe_config : dict[str, Any] = load_config()
+        fpe_config: dict[str, Any] = load_config()
 
         load_handlers(fpe_config)
 
-        watcher_list = create_watchers(fpe_config["watchers"])
+        watcher_list : list[Watcher] = create_watchers(fpe_config["watchers"])
 
         logging.info("File Processing Engine Started.")
 

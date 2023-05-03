@@ -105,7 +105,7 @@ class Watcher:
             raise WatcherError(error) from error
 
     @property
-    def started(self):
+    def started(self) -> bool:
         return self._started
 
     def start(self) -> None:

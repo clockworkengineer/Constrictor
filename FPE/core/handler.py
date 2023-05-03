@@ -39,14 +39,14 @@ class Handler(Protocol):
             config["destination"]) / str(source_path)[len(config["source"])+1:]
 
     @staticmethod
-    def setup_path(handler_config: dict[str, Any], path_type: str):
+    def setup_path(handler_config: dict[str, Any], path_type: str) -> None:
         
         handler_config[path_type] = Handler.normalize_path(
             handler_config[path_type])
         Handler.create_path(handler_config[path_type])
     
     @staticmethod
-    def wait_for_copy_completion(source_path: pathlib.Path):
+    def wait_for_copy_completion(source_path: pathlib.Path) -> None:
 
         failure: bool = True
         while failure:
