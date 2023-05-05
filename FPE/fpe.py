@@ -54,24 +54,22 @@ def fpe() -> None:
 
     try:
 
-        fpe_config: dict[str, Any]
-
         # Load configuration file, validate and set logging.
 
-        fpe_config = Config(Arguments())
+        fpe_config: Config = Config(Arguments())
+        
         fpe_config.validate()
         fpe_config.set_logging()
-        
+
         #  Create engine, load handlers and create watchers
-        
-        fpe_engine : Engine = Engine(fpe_config)
-        
+
+        fpe_engine: Engine = Engine(fpe_config.get_config())
+
         fpe_engine.load_handlers()
-        
         fpe_engine.create_watchers()
 
         logging.info("File Processing Engine Started.")
-        
+
         fpe_engine.run_watchers()
 
         logging.info("File Processing Engine Stopped.")

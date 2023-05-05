@@ -11,14 +11,13 @@ from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 
 class Engine:
-    
-    config : dict[str, Any] = {}
+
+    engine_config: dict[str, Any] = {}
     watcher_list: list[Watcher] = []
-    
-    def __init__(self, config : dict[str, Any] ) -> None:
-        
-        self.config = config.copy()
-    
+
+    def __init__(self, config: dict[str, Any]) -> None:
+
+        self.engine_config = config.copy()
 
     def load_handlers(self) -> None:
         """Load builtin and plugin handlers.
@@ -27,20 +26,18 @@ class Engine:
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
-        PluginLoader.load(self.config['plugins'])
-
+        PluginLoader.load(self.engine_config['plugins'])
 
     def create_watchers(self) -> None:
         """Create list of watchers.
         """
-        
-        for watcher_config in self.config["watchers"]:
+
+        for watcher_config in self.engine_config["watchers"]:
             current_watcher = Watcher(watcher_config)
             if current_watcher is not None:
                 self.watcher_list.append(current_watcher)
-                
 
-    def run_watchers(self)-> None:
+    def run_watchers(self) -> None:
         """Run watchers in passed list.
         """
 
