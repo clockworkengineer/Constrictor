@@ -62,7 +62,7 @@ def fpe() -> None:
         fpe_config.validate()
         fpe_config.set_logging()
         
-        #  Create engine
+        #  Create engine, load handlers and create watchers
         
         fpe_engine : Engine = Engine(fpe_config)
         

@@ -32,23 +32,7 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        # logging.debug("File %s created.", event.src_path)
         self.watcher_handler.process(event.src_path)
-
-    # def on_opened(self, event):
-    #     logging.debug("File %s opened.", event.src_path)
-
-    # def on_moved(self, event):
-    #     logging.debug("File %s moved.", event.src_path)
-
-    # def on_modified(self, event):
-    #     logging.debug("File %s modified.", event.src_path)
-
-    # def on_closed(self, event):
-    #     logging.debug("File %s closed.", event.src_path)
-
-    # def on_deleted(self, event):
-    #     logging.debug("File %s deleted.", event.src_path)
 
 
 class Watcher:
