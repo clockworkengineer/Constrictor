@@ -3,8 +3,6 @@
 import time
 from typing import Any
 
-from core.config import Config
-from core.arguments import Arguments
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
@@ -12,62 +10,54 @@ from builtin.copyfile_handler import CopyFileHandler
 from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 
-def load_config() -> dict[str, Any]:
-    """ Load configuration.
-    """
-
-    # Load configuration file, validate and set logging.
-
-    config = Config(Arguments())
-    config.validate()
-    config.set_logging()
-
-    # Return the running config
-
-    return config.get_config()
-
-
-def load_handlers(fpe_config: dict[str, Any]) -> None:
-    """Load builtin and plugin handlers.
-    """
-
-    Factory.register("CopyFile", CopyFileHandler)
-    Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
-
-    PluginLoader.load(fpe_config['plugins'])
-
-
-def create_watchers(watcher_configs: list[dict]) -> list[Watcher]:
-    """Create list of watchers.
-    """
-
+class Engine:
+    
+    config : dict[str, Any] = {}
     watcher_list: list[Watcher] = []
-    for watcher_config in watcher_configs:
-        current_watcher = Watcher(watcher_config)
-        if current_watcher is not None:
-            watcher_list.append(current_watcher)
+    
+    def __init__(self, config : dict[str, Any] ) -> None:
+        
+        self.config = config.copy()
+    
 
-    return watcher_list
+    def load_handlers(self) -> None:
+        """Load builtin and plugin handlers.
+        """
+
+        Factory.register("CopyFile", CopyFileHandler)
+        Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
+
+        PluginLoader.load(self.config['plugins'])
 
 
-def run_watchers(watcher_list: list[Watcher])-> None:
-    """Run watchers in passed list.
-    """
+    def create_watchers(self) -> None:
+        """Create list of watchers.
+        """
+        
+        for watcher_config in self.config["watchers"]:
+            current_watcher = Watcher(watcher_config)
+            if current_watcher is not None:
+                self.watcher_list.append(current_watcher)
+                
 
-    try:
+    def run_watchers(self)-> None:
+        """Run watchers in passed list.
+        """
 
-        for current_watcher in watcher_list:
-            current_watcher.start()
+        try:
 
-        while True:
-            time.sleep(1)
+            for current_watcher in self.watcher_list:
+                current_watcher.start()
 
-    except KeyboardInterrupt:
-        # Stop all watchers
-        for current_watcher in watcher_list:
-            current_watcher.stop()
+            while True:
+                time.sleep(1)
 
-    finally:
-        # Wait for all watcher threads to stop
-        for current_watcher in watcher_list:
-            current_watcher.join()
+        except KeyboardInterrupt:
+            # Stop all watchers
+            for current_watcher in self.watcher_list:
+                current_watcher.stop()
+
+        finally:
+            # Wait for all watcher threads to stop
+            for current_watcher in self.watcher_list:
+                current_watcher.join()

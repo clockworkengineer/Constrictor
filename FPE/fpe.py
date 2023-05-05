@@ -20,6 +20,7 @@ positional arguments:
   file                  Configuration file
 
 optional arguments:
+
   -h, --help            show this help message and exit
 """
 
@@ -27,8 +28,9 @@ import logging
 from typing import Any
 
 from core.error import FPEError
-from core.watcher import Watcher
-from engine import load_config, load_handlers, create_watchers, run_watchers
+from core.config import Config
+from core.arguments import Arguments
+from engine import Engine
 
 
 __author__ = "Rob Tizzard"
@@ -52,18 +54,25 @@ def fpe() -> None:
 
     try:
 
-        fpe_config: dict[str, Any] = load_config()
+        fpe_config: dict[str, Any]
 
-        load_handlers(fpe_config)
+        # Load configuration file, validate and set logging.
 
-        watcher_list : list[Watcher] = create_watchers(fpe_config["watchers"])
+        fpe_config = Config(Arguments())
+        fpe_config.validate()
+        fpe_config.set_logging()
+        
+        #  Create engine
+        
+        fpe_engine : Engine = Engine(fpe_config)
+        
+        fpe_engine.load_handlers()
+        
+        fpe_engine.create_watchers()
 
         logging.info("File Processing Engine Started.")
-
-        if watcher_list:
-            run_watchers(watcher_list)
-        else:
-            logging.error("Error: No file handlers configured.")
+        
+        fpe_engine.run_watchers()
 
         logging.info("File Processing Engine Stopped.")
 
