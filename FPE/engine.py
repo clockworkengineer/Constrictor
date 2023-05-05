@@ -13,11 +13,25 @@ from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 class Engine:
 
     engine_config: dict[str, Any] = {}
-    watcher_list: list[Watcher] = []
+    engine_watchers: dict[str, Watcher] = {}
 
     def __init__(self, config: dict[str, Any]) -> None:
-
         self.engine_config = config.copy()
+
+    def create_watcher(self, watcher_config: dict[str, Any]) -> None:
+        current_watcher = Watcher(watcher_config)
+        if current_watcher is not None:
+            self.engine_watchers[watcher_config["name"]] = current_watcher
+
+    def delete_watcher(self, watcher_name: str) -> None:
+        self.engine_watchers[watcher_name].join()
+        self.engine_watchers.pop(watcher_name)
+
+    def start_watcher(self, watcher_name: str) -> None:
+        self.engine_watchers[watcher_name].start()
+
+    def stop_watcher(self, watcher_name: str) -> None:
+        self.engine_watchers[watcher_name].stop()
 
     def load_handlers(self) -> None:
         """Load builtin and plugin handlers.
@@ -29,32 +43,33 @@ class Engine:
         PluginLoader.load(self.engine_config['plugins'])
 
     def create_watchers(self) -> None:
-        """Create list of watchers.
+        """Create watchers from config.
         """
 
         for watcher_config in self.engine_config["watchers"]:
-            current_watcher = Watcher(watcher_config)
-            if current_watcher is not None:
-                self.watcher_list.append(current_watcher)
+            self.create_watcher(watcher_config)
 
     def run_watchers(self) -> None:
-        """Run watchers in passed list.
+        """Run configured watchers.
         """
 
         try:
 
-            for current_watcher in self.watcher_list:
-                current_watcher.start()
+            for watcher_name in self.engine_watchers.keys():
+                self.start_watcher(watcher_name)
 
             while True:
                 time.sleep(1)
 
         except KeyboardInterrupt:
             # Stop all watchers
-            for current_watcher in self.watcher_list:
-                current_watcher.stop()
+            for watcher_name in self.engine_watchers.keys():
+                self.stop_watcher(watcher_name)
 
         finally:
-            # Wait for all watcher threads to stop
-            for current_watcher in self.watcher_list:
-                current_watcher.join()
+            # Wait for watcher thread to end
+            for watcher_name in self.engine_watchers.keys():
+                self.engine_watchers[watcher_name].join()
+            # Clear all watchers
+            self.engine_watchers.clear()
+  
