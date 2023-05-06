@@ -16,27 +16,52 @@ class Engine:
     engine_watchers: dict[str, Watcher] = {}
 
     def __init__(self, config: dict[str, Any]) -> None:
+        """_summary_
+
+        Args:
+            config (dict[str, Any]): _description_
+        """
         self.engine_config = config.copy()
 
     def create_watcher(self, watcher_config: dict[str, Any]) -> None:
+        """_summary_
+
+        Args:
+            watcher_config (dict[str, Any]): _description_
+        """
         current_watcher = Watcher(watcher_config)
         if current_watcher is not None:
             self.engine_watchers[watcher_config["name"]] = current_watcher
 
     def delete_watcher(self, watcher_name: str) -> None:
+        """_summary_
+
+        Args:
+            watcher_name (str): _description_
+        """
         self.engine_watchers[watcher_name].join()
         self.engine_watchers.pop(watcher_name)
 
     def start_watcher(self, watcher_name: str) -> None:
+        """_summary_
+
+        Args:
+            watcher_name (str): _description_
+        """
         self.engine_watchers[watcher_name].start()
 
     def stop_watcher(self, watcher_name: str) -> None:
+        """_summary_
+
+        Args:
+            watcher_name (str): _description_
+        """
         self.engine_watchers[watcher_name].stop()
 
     def load_handlers(self) -> None:
         """Load builtin and plugin handlers.
         """
-
+        
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
@@ -45,14 +70,12 @@ class Engine:
     def create_watchers(self) -> None:
         """Create watchers from config.
         """
-
         for watcher_config in self.engine_config["watchers"]:
             self.create_watcher(watcher_config)
 
     def run_watchers(self) -> None:
         """Run configured watchers.
         """
-
         try:
 
             for watcher_name in self.engine_watchers.keys():
@@ -67,7 +90,7 @@ class Engine:
                 self.stop_watcher(watcher_name)
 
         finally:
-            # Wait for watcher thread to end
+            # Wait for watcher threads to end
             for watcher_name in self.engine_watchers.keys():
                 self.engine_watchers[watcher_name].join()
             # Clear all watchers

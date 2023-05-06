@@ -49,9 +49,9 @@ __status__ = "Pre-Alpha"
 
 
 def fpe() -> None:
-    """Main program entry point
+    """Main program entry point.
     """
-
+  
     try:
 
         # Load configuration file, validate and set logging.
@@ -72,10 +72,13 @@ def fpe() -> None:
 
         fpe_engine.run_watchers()
 
-        logging.info("File Processing Engine Stopped.")
-
     except FPEError as error:
         logging.error(error)
+        
+    finally:
+        logging.info("File Processing Engine Stopped.")
+
+      
 
 
 if __name__ == "__main__":
