@@ -18,9 +18,19 @@ class ArgumentsError(FPEError):
     """
 
     def __init__(self, message) -> None:
+        """_summary_
+
+        Args:
+            message (_type_): _description_
+        """
         self.message = message
 
     def __str__(self) -> str:
+        """_summary_
+
+        Returns:
+            str: _description_
+        """
         return "FPE Arguments Error: " + str(self.message)
 
 
@@ -34,14 +44,20 @@ class Arguments:
 
     def __init__(self, argv=None) -> None:
         """Load and parse command line into arguments object.
+
+        Args:
+            argv (_type_, optional): _description_. Defaults to None.
+
+        Raises:
+            ArgumentsError: _description_
         """
-        
+
         # Extract and parse arguments
 
         parser = argparse.ArgumentParser(
             description="Process files copied into watch folder with a custom handler(s).")
         parser.add_argument("file", help="Configuration file")
-        
+
         arguments = parser.parse_args(argv)
 
         # Check that configuration file exists
