@@ -15,67 +15,69 @@ class Engine:
     engine_config: dict[str, Any] = {}
     engine_watchers: dict[str, Watcher] = {}
 
-    def __init__(self, config: dict[str, Any]) -> None:
-        """_summary_
+    def __init__(self, engine_config: dict[str, Any]) -> None:
+        """Create FPE engine.
 
         Args:
-            config (dict[str, Any]): _description_
+            engine_config (dict[str, Any]): FPE configuration.
         """
-        self.engine_config = config.copy()
+        self.engine_config = engine_config.copy()
 
     def create_watcher(self, watcher_config: dict[str, Any]) -> None:
-        """_summary_
+        """Create a directory watcher;
 
         Args:
-            watcher_config (dict[str, Any]): _description_
+            watcher_config (dict[str, Any]): Watcher configuration.
         """
         current_watcher = Watcher(watcher_config)
         if current_watcher is not None:
             self.engine_watchers[watcher_config["name"]] = current_watcher
 
     def delete_watcher(self, watcher_name: str) -> None:
-        """_summary_
+        """Delete directory watcher.
 
         Args:
-            watcher_name (str): _description_
+            watcher_name (str): Watcher name.
         """
         self.engine_watchers[watcher_name].join()
         self.engine_watchers.pop(watcher_name)
 
     def start_watcher(self, watcher_name: str) -> None:
-        """_summary_
+        """Start directory watcher.
 
         Args:
-            watcher_name (str): _description_
+            watcher_name (str): Watcher name.
         """
         self.engine_watchers[watcher_name].start()
 
     def stop_watcher(self, watcher_name: str) -> None:
-        """_summary_
+        """Stop directory watcher.
 
         Args:
-            watcher_name (str): _description_
+            watcher_name (str): Watcher name.
         """
         self.engine_watchers[watcher_name].stop()
 
     def load_handlers(self) -> None:
         """Load builtin and plugin handlers.
         """
-        
+
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
         PluginLoader.load(self.engine_config['plugins'])
 
     def create_watchers(self) -> None:
-        """Create watchers from config.
+        """Create direcory watchers from config.
         """
+
         for watcher_config in self.engine_config["watchers"]:
             self.create_watcher(watcher_config)
 
     def run_watchers(self) -> None:
-        """Run configured watchers.
+        """Run configured directory watchers.
         """
+
         try:
 
             for watcher_name in self.engine_watchers.keys():
@@ -95,4 +97,3 @@ class Engine:
                 self.engine_watchers[watcher_name].join()
             # Clear all watchers
             self.engine_watchers.clear()
-  
