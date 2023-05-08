@@ -2,6 +2,7 @@
 """
 
 import logging
+from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
@@ -14,7 +15,7 @@ class WatcherError(FPEError):
     """An error occurred in a file watcher.
     """
 
-    def __init__(self, message:str) -> None:
+    def __init__(self, message: Any) -> None:
         """Create watcher exception.
 
         Args:
@@ -26,9 +27,9 @@ class WatcherError(FPEError):
         """Return string for exception.
 
         Returns:
-            str: Eception string.
+            str: Exception string.
         """
-        return "FPE Watcher Error: " + str(self.message)
+        return FPEError.error_prefix("Watcher") + str(self.message)
 
 
 class WatcherHandler(FileSystemEventHandler):
@@ -51,7 +52,7 @@ class Watcher:
 
     _observer: Observer
 
-    @staticmethod
+    @ staticmethod
     def _display_details(handler_section) -> None:
         """Display watcher handler details and parameters.
         """
@@ -87,7 +88,8 @@ class Watcher:
 
             if selected_handler is not None:
                 self._observer = Observer()
-                self._observer.schedule(event_handler=WatcherHandler(selected_handler), path=selected_handler.handler_config["source"],recursive=False)
+                self._observer.schedule(event_handler=WatcherHandler(
+                    selected_handler), path=selected_handler.handler_config["source"], recursive=False)
                 Watcher._display_details(selected_handler.handler_config)
 
             else:
@@ -98,7 +100,7 @@ class Watcher:
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
 
-    @property
+    @ property
     def started(self) -> bool:
         return self._started
 

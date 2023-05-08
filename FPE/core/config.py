@@ -10,17 +10,18 @@ import logging
 from typing import Any
 
 from core.error import FPEError
+from core.arguments import Arguments
 
 
 class ConfigError(FPEError):
     """An error occurred whilst processing FPE configuration file.
     """
 
-    def __init__(self, message:str) -> None:
+    def __init__(self, message: Any) -> None:
         """Create config exception.
 
         Args:
-            message (str): Exception message.
+            message (Any): Exception message.
         """
         self.message = message
 
@@ -28,17 +29,23 @@ class ConfigError(FPEError):
         """Return string for exception.
 
         Returns:
-            str: Eception string.
+            str: Exception string.
         """
-        return "FPE Config Error: " + str(self.message)
+        return  FPEError.error_prefix("Config") + str(self.message)
 
 
 class Config:
-    """Config class
+    """ Load JSON configuraion into a dictionary and validate it.
     """
 
-    def __init__(self, arguments) -> None:
-        """Load JSON configuration file to be processed. 
+    def __init__(self, arguments: Arguments) -> None:
+        """Load JSON configuration file to be processed.
+
+        Args:
+            arguments (Arguments): Passed arguments.
+
+        Raises:
+            ConfigError: An error was found in the config.
         """
         try:
             with open(arguments.file, "r", encoding="utf-8") as json_file:
@@ -86,5 +93,8 @@ class Config:
 
     def get_config(self) -> dict[str, Any]:
         """Return config dictionary.
+
+        Returns:
+            dict[str, Any]: Config dictionary.
         """
         return self.config

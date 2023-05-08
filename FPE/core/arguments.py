@@ -9,6 +9,7 @@ file that is used to specify any custom plugins and running handler details.
 
 import pathlib
 import argparse
+from typing import Any
 
 from core.error import FPEError
 
@@ -17,7 +18,7 @@ class ArgumentsError(FPEError):
     """An error occurred in the program command line arguments.
     """
 
-    def __init__(self, message:str) -> None:
+    def __init__(self, message: Any) -> None:
         """Create argument exception.
 
         Args:
@@ -29,9 +30,9 @@ class ArgumentsError(FPEError):
         """Return string for exception.
 
         Returns:
-            str: Eception string.
+            str: Exception string.
         """
-        return "FPE Arguments Error: " + str(self.message)
+        return FPEError.error_prefix("Arguments") + str(self.message)
 
 
 class Arguments:

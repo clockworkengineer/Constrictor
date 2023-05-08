@@ -2,6 +2,7 @@
 """
 
 import importlib
+from typing import Any
 
 from core.error import FPEError
 
@@ -20,7 +21,7 @@ class PluginLoaderError(FPEError):
     """An error occurred in the plugin loader.
     """
 
-    def __init__(self, message:str) -> None:
+    def __init__(self, message: Any) -> None:
         """Create plugin loader exception.
 
         Args:
@@ -32,16 +33,16 @@ class PluginLoaderError(FPEError):
         """Return string for exception.
 
         Returns:
-            str: Eception string.
+            str: Exception string.
         """
-        return "FPE Plugin Loader Error: " + str(self.message)
+        return FPEError.error_prefix("Plugin") + str(self.message)
 
 
 class PluginLoader:
     """Plugin loader.
     """
 
-    @staticmethod
+    @ staticmethod
     def load(plugin_list: list[str]) -> None:
         """Load plugins list passed in.
         """
