@@ -6,7 +6,6 @@ name to the correct handler function by this factory class.
 """
 
 from typing import Any, Callable
-from typing import Any
 
 from core.handler import IHandler
 from core.error import FPEError

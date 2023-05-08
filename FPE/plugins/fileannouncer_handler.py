@@ -1,7 +1,6 @@
 """Simple file announcer example plugin handler.
 """
 
-import os
 import pathlib
 import logging
 from typing import Any

@@ -7,9 +7,9 @@ from core.arguments import Arguments, ArgumentsError
 class TestCoreArguments:
 
     def test_arguments_with_existing_json_file(self):
-        arg = Arguments(
-            [str(pathlib.Path.cwd() / "FPE" / "tests" / "json" / "test_valid.json")])
-        assert arg.file == str(pathlib.Path.cwd() / "FPE" / "tests" / "json" / "test_valid.json")
+        config_file =  str(pathlib.Path.cwd() / "FPE" / "tests" / "json" / "test_valid.json")
+        arg = Arguments([config_file])
+        assert arg.file == config_file
 
     def test_arguments_with_nonexistant_json__file(self):
         with pytest.raises(ArgumentsError):
