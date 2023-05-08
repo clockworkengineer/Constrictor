@@ -5,7 +5,7 @@ import tempfile
 from typing import Any
 
 from core.error import FPEError
-from core.handler import Handler
+from core.handler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
 
 
@@ -41,7 +41,7 @@ class TestBuiltinCopyFileHandler:
 
     def test_builtin_copyfile_handler_pass_none_as_config(self) -> None:
         with pytest.raises(FPEError):
-            handdler: Handler = CopyFileHandler(None)  # type: ignore
+            handdler: IHandler = CopyFileHandler(None)  # type: ignore
 
     def test_buitin_handler_create_non_existant_source(self, setup_source_destination: Fixture) -> None:
         setup_source_destination.destination_path.mkdir(
@@ -77,4 +77,3 @@ class TestBuiltinCopyFileHandler:
         handler.process(source_file)
         assert destination_file.exists()
         assert not source_file.exists()
-

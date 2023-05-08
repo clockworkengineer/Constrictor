@@ -30,7 +30,8 @@ class TestCoreHandler:
         source_file_path: pathlib.Path = source_path / "dir1" / "dir2" / "source.txt"
         config["source"] = str(source_path)
         config["destination"] = str(destination_path)
-        assert Handler.create_local_destination(source_file_path, config) == destination_path / "dir1" / "dir2" / "source.txt"
+        assert Handler.create_local_destination(
+            source_file_path, config) == destination_path / "dir1" / "dir2" / "source.txt"
 
     def test_core_handler_setup_path_doesnt_exist(self) -> None:
         config: dict[str, Any] = {}

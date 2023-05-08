@@ -7,10 +7,10 @@ import logging
 from typing import Any
 
 from core.factory import Factory
-from core.handler import Handler
+from core.handler import IHandler, Handler
 
 
-class FileAnnouncerHandler(Handler):
+class FileAnnouncerHandler(IHandler):
     """File Announcer
     """
 
@@ -19,7 +19,8 @@ class FileAnnouncerHandler(Handler):
         """
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = Handler.normalize_path(self.handler_config["source"])
+        self.handler_config["source"] = Handler.normalize_path(
+            self.handler_config["source"])
         Handler.create_path(pathlib.Path(self.handler_config["source"]))
 
     def process(self,  source_path: pathlib.Path) -> None:

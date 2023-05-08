@@ -8,7 +8,7 @@ name to the correct handler function by this factory class.
 from typing import Any, Callable
 from typing import Any
 
-from core.handler import Handler
+from core.handler import IHandler
 from core.error import FPEError
 
 
@@ -39,10 +39,10 @@ class Factory:
 
     # Watcher handler creation function dictionary
 
-    _handler_creation_funcs: dict[str, Callable[..., Handler]] = {}
+    _handler_creation_funcs: dict[str, Callable[..., IHandler]] = {}
 
     @ staticmethod
-    def register(handler_type: str, handler_fn: Callable[..., Handler]) -> None:
+    def register(handler_type: str, handler_fn: Callable[..., IHandler]) -> None:
         """"Register a new watcher handler type.
 
         Args:
@@ -78,7 +78,7 @@ class Factory:
         Factory._handler_creation_funcs.pop(handler_type, None)
 
     @ staticmethod
-    def create(handler_config: dict[str, Any]) -> Handler:
+    def create(handler_config: dict[str, Any]) -> IHandler:
         """Create a watcher handler of a specific type given JSON data.
 
         Args:

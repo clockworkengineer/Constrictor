@@ -7,7 +7,7 @@ import logging
 from typing import Any
 import pysftp
 
-from core.handler import Handler
+from core.handler import IHandler, Handler
 from core.error import FPEError
 
 
@@ -23,7 +23,7 @@ class SFTPCopyFileHandlerError(FPEError):
         return "SFTPCopyFileHandler Error: " + str(self.message)
 
 
-class SFTPCopyFileHandler(Handler):
+class SFTPCopyFileHandler(IHandler):
     """SFTP Copy file/directories.
 
     SFTP Copy files created in watch folder to destination folder on remote SSH server.

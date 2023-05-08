@@ -8,7 +8,7 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from core.factory import Factory
-from core.handler import Handler
+from core.handler import IHandler, Handler
 from core.error import FPEError
 
 
@@ -37,14 +37,15 @@ class WatcherHandler(FileSystemEventHandler):
     """Watcher handler adapter for watchdog.
     """
 
-    def __init__(self, watcher_handler: Handler) -> None:
+    def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
         """
         super().__init__()
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        source_path: pathlib.Path =  pathlib.Path(event.src_path)  # type: ignore
+        source_path: pathlib.Path = pathlib.Path(
+            event.src_path)  # type: ignore
         Handler.wait_for_copy_completion(source_path)
         source_path.chmod(source_path.stat().st_mode | 0o664)
         self.watcher_handler.process(source_path)

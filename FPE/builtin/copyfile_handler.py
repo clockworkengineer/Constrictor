@@ -6,7 +6,7 @@ import shutil
 import logging
 from typing import Any
 
-from core.handler import Handler
+from core.handler import IHandler, Handler
 from core.error import FPEError
 
 
@@ -22,7 +22,7 @@ class CopyFileHandlerError(FPEError):
         return "CopyFileHandler Error: " + str(self.message)
 
 
-class CopyFileHandler(Handler):
+class CopyFileHandler(IHandler):
     """Copy file/directories.
 
     Copy files created in watch folder to destination folder.
