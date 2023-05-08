@@ -44,7 +44,13 @@ class PluginLoader:
 
     @ staticmethod
     def load(plugin_list: list[str]) -> None:
-        """Load plugins list passed in.
+        """"Load handler plugins list passed in.
+
+        Args:
+            plugin_list (list[str]): List of plugin watcher handlers.
+
+        Raises:
+            PluginLoaderError: An error has occurred in the plugin watcher handler loader.
         """
 
         if plugin_list is None or len(plugin_list) == 0:

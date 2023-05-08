@@ -107,6 +107,11 @@ class Watcher:
 
     @ property
     def started(self) -> bool:
+        """_summary_
+
+        Returns:
+            bool: _description_
+        """
         return self._started
 
     def start(self) -> None:
