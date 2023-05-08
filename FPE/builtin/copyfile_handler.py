@@ -52,8 +52,6 @@ class CopyFileHandler(Handler):
         """Copy source path to destination path.
         """
 
-        Handler.wait_for_copy_completion(source_path)
-        source_path.chmod(source_path.stat().st_mode | 0o664)
         shutil.copy2(source_path, destination_path)
 
         logging.info("Copied file %s to %s.",
@@ -62,21 +60,19 @@ class CopyFileHandler(Handler):
         if delete_source:
             source_path.unlink()
 
-    def process(self, source_file_name: str) -> None:
+    def process(self, source_path: pathlib.Path) -> None:
         """Copy file from source(watch) directory to destination directory.
         """
         try:
 
-            with pathlib.Path(source_file_name) as source_path:
+            destination_path = Handler.create_local_destination(
+                source_path, self.handler_config)
 
-                destination_path = Handler.create_local_destination(
-                    source_path, self.handler_config)
-
-                if source_path.is_file():
-                    self._copy_file(source_path, destination_path,
-                                    self.handler_config["deletesource"])
-                elif source_path.is_dir():
-                    Handler.create_path(str(destination_path))
+            if source_path.is_file():
+                self._copy_file(source_path, destination_path,
+                                self.handler_config["deletesource"])
+            elif source_path.is_dir():
+                Handler.create_path(str(destination_path))
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:

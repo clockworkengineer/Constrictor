@@ -2,6 +2,7 @@
 """
 
 import os
+import pathlib
 import logging
 from typing import Any
 
@@ -21,14 +22,14 @@ class FileAnnouncerHandler(Handler):
         self.handler_config["source"] = Handler.normalize_path(self.handler_config["source"])
         Handler.create_path(self.handler_config["source"])
 
-    def process(self, source_path: str) -> None:
+    def process(self,  source_path: pathlib.Path) -> None:
         """Print out name of any file copied into watch folder.
         """
         try:
             logging.info("File %s.", source_path)
 
-            if self.handler_config["deletesource"] and not os.path.isdir(source_path):
-                os.remove(source_path)
+            if self.handler_config["deletesource"] and not source_path.is_dir():
+                source_path.unlink()
 
         except OSError as error:
             logging.error("Error in handler %s : %s",

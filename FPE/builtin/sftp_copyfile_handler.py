@@ -56,17 +56,14 @@ class SFTPCopyFileHandler(Handler):
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-    def process(self, source_file_name: str) -> None:
+    def process(self,  source_path: pathlib.Path) -> None:
         """SFTP Copy file from source(watch) directory to a destination directory on remote server.
         """
 
         try:
 
-            source_path: pathlib.Path = pathlib.Path(source_file_name)
             destination_path: pathlib.Path = Handler.create_local_destination(
                 source_path, self.handler_config)
-
-            Handler.wait_for_copy_completion(source_path)
 
             with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
                                    password=self.handler_config["password"]) as sftp:

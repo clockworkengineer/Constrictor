@@ -2,6 +2,7 @@
 """
 
 import logging
+import pathlib
 from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
@@ -43,7 +44,10 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        self.watcher_handler.process(event.src_path)
+        source_path: pathlib.Path =  pathlib.Path(event.src_path)  # type: ignore
+        Handler.wait_for_copy_completion(source_path)
+        source_path.chmod(source_path.stat().st_mode | 0o664)
+        self.watcher_handler.process(source_path)
 
 
 class Watcher:
