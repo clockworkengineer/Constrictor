@@ -17,19 +17,19 @@ class ArgumentsError(FPEError):
     """An error occurred in the program command line arguments.
     """
 
-    def __init__(self, message) -> None:
-        """_summary_
+    def __init__(self, message:str) -> None:
+        """Create argument exception.
 
         Args:
-            message (_type_): _description_
+            message (str): Exception message.
         """
         self.message = message
 
     def __str__(self) -> str:
-        """_summary_
+        """Return string for exception.
 
         Returns:
-            str: _description_
+            str: Eception string.
         """
         return "FPE Arguments Error: " + str(self.message)
 
@@ -46,10 +46,10 @@ class Arguments:
         """Load and parse command line into arguments object.
 
         Args:
-            argv (_type_, optional): _description_. Defaults to None.
+            argv (list[Any], optional): Command line aruments. Defaults to None.
 
         Raises:
-            ArgumentsError: _description_
+            ArgumentsError: Invalid command line arguments
         """
 
         # Extract and parse arguments

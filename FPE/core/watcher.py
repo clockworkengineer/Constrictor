@@ -14,10 +14,20 @@ class WatcherError(FPEError):
     """An error occurred in a file watcher.
     """
 
-    def __init__(self, message) -> None:
+    def __init__(self, message:str) -> None:
+        """Create watcher exception.
+
+        Args:
+            message (str): Exception message.
+        """
         self.message = message
 
     def __str__(self) -> str:
+        """Return string for exception.
+
+        Returns:
+            str: Eception string.
+        """
         return "FPE Watcher Error: " + str(self.message)
 
 

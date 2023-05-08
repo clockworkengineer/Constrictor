@@ -11,6 +11,8 @@ from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 
 class Engine:
+    """Control class for the FPE used to create, control and delete directory watchers.
+    """
 
     engine_config: dict[str, Any] = {}
     engine_watchers: dict[str, Watcher] = {}

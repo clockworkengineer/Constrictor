@@ -15,10 +15,20 @@ class FactoryError(FPEError):
     """An error occurred in the watcher handler factory.
     """
 
-    def __init__(self, message) -> None:
+    def __init__(self, message:str) -> None:
+        """Create factory exception.
+
+        Args:
+            message (str): Exception message.
+        """
         self.message = message
 
     def __str__(self) -> str:
+        """Return string for exception.
+
+        Returns:
+            str: Eception string.
+        """
         return "FPE Factory Error: " + str(self.message)
 
 

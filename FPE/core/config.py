@@ -13,13 +13,23 @@ from core.error import FPEError
 
 
 class ConfigError(FPEError):
-    """Configuration error.
+    """An error occurred whilst processing FPE configuration file.
     """
 
-    def __init__(self, message) -> None:
+    def __init__(self, message:str) -> None:
+        """Create config exception.
+
+        Args:
+            message (str): Exception message.
+        """
         self.message = message
 
     def __str__(self) -> str:
+        """Return string for exception.
+
+        Returns:
+            str: Eception string.
+        """
         return "FPE Config Error: " + str(self.message)
 
 
