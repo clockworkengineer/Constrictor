@@ -6,3 +6,11 @@
 2023-05-08 14:42:09,180:exitonfailure = False
 2023-05-08 14:42:09,180:File Processing Engine Started.
 2023-05-08 14:42:12,219:File Processing Engine Stopped.
+2023-05-08 15:25:38,165:********************************************************************************
+2023-05-08 15:25:38,166:File Copier Handler [CopyFile] running...
+2023-05-08 15:25:38,166:source = C:\Projects\Constrictor\watcher\source
+2023-05-08 15:25:38,167:destination = C:\Projects\Constrictor\watcher\destination
+2023-05-08 15:25:38,167:deletesource = True
+2023-05-08 15:25:38,167:exitonfailure = False
+2023-05-08 15:25:38,168:File Processing Engine Started.
+2023-05-08 15:25:45,166:File Processing Engine Stopped.

@@ -17,7 +17,7 @@ class TestCoreHandler:
             temporary_directory_path: pathlib.Path = pathlib.Path(
                 directory_name) / "watcher" / "source"
             assert not temporary_directory_path.exists()
-            Handler.create_path(str(temporary_directory_path))
+            Handler.create_path(temporary_directory_path)
             assert temporary_directory_path.exists()
             temporary_directory_path.rmdir()
 

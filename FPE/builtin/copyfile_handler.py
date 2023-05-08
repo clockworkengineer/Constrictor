@@ -72,7 +72,7 @@ class CopyFileHandler(Handler):
                 self._copy_file(source_path, destination_path,
                                 self.handler_config["deletesource"])
             elif source_path.is_dir():
-                Handler.create_path(str(destination_path))
+                Handler.create_path(destination_path)
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:
