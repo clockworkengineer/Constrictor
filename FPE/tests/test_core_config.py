@@ -8,6 +8,7 @@ from core.config import Config, ConfigError
 def json_file_source():
     yield pathlib.Path.cwd() / "FPE" / "tests" / "json"
     
+    
 class TestCoreConfig:
 
     def test_config_with_valid_json_file(self,json_file_source):
