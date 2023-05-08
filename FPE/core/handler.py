@@ -1,6 +1,7 @@
 """Watcher file handler.
 
-Protocol class that defines the file watcher handler interface.
+Protocol class that defines the file watcher handler interface and
+handler utility static methods.
 
 """
 
@@ -20,37 +21,34 @@ class IHandler(Protocol):
         """Perform watcher file processing.
 
         Args:
-            source_path (pathlib.Path): _description_
-
-        Returns:
-            _type_: _description_
+            source_path (pathlib.Path): Source fiel path.
         """
 
 
 class Handler():
-    """_summary_
+    """Directory watcher handler utility static methods.
 
     Returns:
         _type_: _description_
     """
     @staticmethod
     def normalize_path(path_to_normalise: str) -> str:
-        """_summary_
+        """Normalise passed in path string.
 
         Args:
-            path_to_normalise (str): _description_
+            path_to_normalise (str): Path string.
 
         Returns:
-            str: _description_
+            str: Normalised path string.
         """
         return str(pathlib.Path(path_to_normalise).absolute())
 
     @staticmethod
     def create_path(directory_path: pathlib.Path) -> None:
-        """_summary_
+        """Create directory for path if it does not exist.
 
         Args:
-            directory_path (pathlib.Path): _description_
+            directory_path (pathlib.Path): Directory path.
         """
         if not directory_path.exists():
             directory_path.mkdir(parents=True,  exist_ok=True)
@@ -58,11 +56,11 @@ class Handler():
 
     @staticmethod
     def create_local_destination(source_path: pathlib.Path, config: dict[str, Any]) -> pathlib.Path:
-        """_summary_
+        """Create local desination for source file.
 
         Args:
-            source_path (pathlib.Path): _description_
-            config (dict[str, Any]): _description_
+            source_path (pathlib.Path): Soure file path.
+            config (dict[str, Any]): Watcher handler config.
 
         Returns:
             pathlib.Path: _description_
@@ -75,8 +73,8 @@ class Handler():
         """_summary_
 
         Args:
-            handler_config (dict[str, Any]): _description_
-            path_type (str): _description_
+            handler_config (dict[str, Any]): Watcher handler config.
+            path_type (str): Watcher handler type.
         """
         handler_config[path_type] = Handler.normalize_path(
             handler_config[path_type])
@@ -87,7 +85,7 @@ class Handler():
         """_summary_
 
         Args:
-            source_path (pathlib.Path): _description_
+            source_path (pathlib.Path):  Soure file path.
         """
         failure: bool = True
         while failure:
