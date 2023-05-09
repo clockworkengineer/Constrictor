@@ -3,6 +3,7 @@ import pathlib
 import time
 from typing import Any
 
+from tests.common import json_file_source
 from core.arguments import Arguments
 from core.config import Config
 from core.watcher import Watcher, WatcherError
@@ -17,7 +18,7 @@ def reset_factory_and_return_config() -> dict[str, Any]:
     Factory.register("CopyFile", CopyFileHandler)
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
     config = Config(Arguments(
-        [str(pathlib.Path.cwd() / "FPE" / "tests" / "json" / "test_valid.json")])).get_config()
+        [json_file_source("test_valid.json")])).get_config()
     yield config["watchers"][0]
 
 
