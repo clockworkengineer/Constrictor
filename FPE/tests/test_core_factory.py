@@ -1,10 +1,7 @@
 import pytest
-import pathlib
 
 from tests.common import json_file_source
-
 from core.arguments import Arguments
-
 from core.config import Config
 from core.factory import Factory, FactoryError
 from builtin.copyfile_handler import CopyFileHandler

@@ -1,8 +1,6 @@
 import pytest
-import pathlib
 
 from tests.common import json_file_source
-
 from core.arguments import Arguments
 from core.config import Config, ConfigError
 
