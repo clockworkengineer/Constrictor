@@ -1,7 +1,10 @@
 import pytest
 import pathlib
 
+from tests.common import json_file_source
+
 from core.arguments import Arguments
+
 from core.config import Config
 from core.factory import Factory, FactoryError
 from builtin.copyfile_handler import CopyFileHandler
@@ -14,16 +17,11 @@ def reset_factory():
     yield
 
 
-@pytest.fixture()
-def json_file_source(reset_factory):
-    yield pathlib.Path.cwd() / "FPE" / "tests" / "json"
-
-
 class TestCoreFactory:
 
     def test_factory_that_has_noregistered_handlers(self, reset_factory):
         config = Config(Arguments(
-            [str(pathlib.Path.cwd() / "FPE" / "tests" / "json" / "test_valid.json")])).get_config()
+            [json_file_source("test_valid.json")])).get_config()
         with pytest.raises(FactoryError):
             _ = Factory.create(config["watchers"][0])
 
@@ -55,15 +53,15 @@ class TestCoreFactory:
         assert "SFTPCopyFile" in Factory.handler_function_list()
         assert len(Factory.handler_function_list()) == 2
 
-    def test_factory_create_with_a_handler_that_is_not_registered(self, json_file_source):
+    def test_factory_create_with_a_handler_that_is_not_registered(self, reset_factory):
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
         config = Config(Arguments(
-            [str(json_file_source / "test_valid.json")])).get_config()
+            [json_file_source("test_valid.json")])).get_config()
         with pytest.raises(FactoryError):
             _ = Factory.create(config["watchers"][0])
 
-    def test_factory_create_with_a_registered_handler(self, json_file_source):
+    def test_factory_create_with_a_registered_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
         config = Config(Arguments(
-            [str(json_file_source / "test_valid.json")])).get_config()
+            [json_file_source("test_valid.json")])).get_config()
         assert Factory.create(config["watchers"][0]) != None

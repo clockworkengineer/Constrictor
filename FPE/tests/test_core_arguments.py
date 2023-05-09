@@ -1,24 +1,21 @@
 import pytest
 import pathlib
 
+from tests.common import json_file_source
+
 from core.arguments import Arguments, ArgumentsError
-
-
-@pytest.fixture()
-def json_file_source():
-    yield pathlib.Path.cwd() / "FPE" / "tests" / "json"
 
 
 class TestCoreArguments:
 
-    def test_arguments_with_existing_json_file(self, json_file_source):
-        config_file = str(json_file_source / "test_valid.json")
+    def test_arguments_with_existing_json_file(self):
+        config_file = json_file_source("test_valid.json")
         arg = Arguments([config_file])
         assert arg.file == config_file
 
-    def test_arguments_with_nonexistant_json__file(self, json_file_source):
+    def test_arguments_with_nonexistant_json__file(self):
         with pytest.raises(ArgumentsError):
-            _ = Arguments([str(json_file_source / "test.jsn")])
+            _ = Arguments([json_file_source("test.jsn")])
 
     def test_arguments_output_of_help(self, capsys):
         with pytest.raises(SystemExit):
