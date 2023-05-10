@@ -18,7 +18,7 @@ Current built in file builtin_handlers:
 		Process files copied into watch folder with a custom handler.
 		
 		positional arguments:
-		  file                  Configration file
+		  file                  JSON Configration file
 		
 		optional arguments:
 		  -h, --help            show this help message and exit

@@ -31,7 +31,7 @@ class TestCoreFactory:
         Factory.unregister("CopyFile")
         assert "CopyFile" not in Factory.handler_function_list()
         
-    def test_factory_register_a_already_regiestered_handler(self, reset_factory):
+    def test_factory_register_an_already_regiestered_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("CopyFile", CopyFileHandler)
         assert Factory.handler_function_list().count("CopyFile") == 1
