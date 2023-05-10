@@ -3,11 +3,10 @@
 import time
 from typing import Any
 
+from builtin._handler_list import handler_list
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
-from builtin.copyfile_handler import CopyFileHandler
-from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 
 class Engine:
@@ -64,8 +63,8 @@ class Engine:
         """Load builtin and plugin handlers.
         """
 
-        Factory.register("CopyFile", CopyFileHandler)
-        Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
+        for handler_name in handler_list.keys():
+            Factory.register(handler_name, handler_list[handler_name])
 
         PluginLoader.load(self.engine_config['plugins'])
 
