@@ -1,4 +1,9 @@
 """ File watcher.
+
+Use watchdog package to monitor directories and process each file created using one
+of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
+is not recursive for easons of performance; a watcher thread can accumalate to many polling
+functions for added directories.
 """
 
 import logging
