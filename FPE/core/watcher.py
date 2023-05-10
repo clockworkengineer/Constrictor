@@ -4,6 +4,7 @@ Use watchdog package to monitor directories and process each file created using 
 of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
 is not recursive for easons of performance; a watcher thread can accumalate to many polling
 functions for added directories.
+
 """
 
 import logging
@@ -18,7 +19,7 @@ from core.error import FPEError
 
 
 class WatcherError(FPEError):
-    """An error occurred in a file watcher.
+    """An error occurred in directory watcher.
     """
 
     def __init__(self, message: Any) -> None:
@@ -44,11 +45,19 @@ class WatcherHandler(FileSystemEventHandler):
 
     def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
+
+        Args:
+            watcher_handler (IHandler): _description_
         """
         super().__init__()
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
+        """_summary_
+
+        Args:
+            event (_type_): _description_
+        """
         source_path: pathlib.Path = pathlib.Path(  # type: ignore
             event.src_path)
         Handler.wait_for_copy_completion(source_path)
@@ -65,6 +74,12 @@ class Watcher:
     @ staticmethod
     def _display_details(handler_section) -> None:
         """Display watcher handler details and parameters.
+
+        Args:
+            handler_section (_type_): _description_
+
+        Raises:
+            WatcherError: _description_
         """
         try:
             logging.info("*" * 80)
@@ -79,6 +94,12 @@ class Watcher:
 
     def __init__(self, watcher_config) -> None:
         """Initialise file watcher handler.
+
+        Args:
+            watcher_config (_type_): _description_
+
+        Raises:
+            WatcherError: _description_
         """
         try:
 
@@ -110,7 +131,7 @@ class Watcher:
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
 
-    @ property
+    @property
     def started(self) -> bool:
         """_summary_
 

@@ -57,7 +57,7 @@ class Arguments:
 
         parser = argparse.ArgumentParser(
             description="Process files copied into watch folder with a custom handler(s).")
-        parser.add_argument("file", help="Configuration file")
+        parser.add_argument("file", help="JSON Configuration file")
 
         arguments = parser.parse_args(argv)
 
