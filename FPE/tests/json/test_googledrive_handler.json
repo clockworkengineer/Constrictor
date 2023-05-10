@@ -1,0 +1,17 @@
+{
+    "plugins": [
+        "plugins.fileannouncer_handler"
+    ],
+    "watchers": [
+        {
+            "name": "Google Drive File Copier",
+            "type": "GoogleDriveCopyFile",
+            "source": "./watcher/source",
+            "destination": "./watcher/destination/"
+        }
+    ],
+    "logging": {
+        "level": 20,
+        "format": "%(asctime)s:%(message)s"
+    }
+}

@@ -30,6 +30,11 @@ class TestCoreFactory:
         Factory.register("CopyFile", CopyFileHandler)
         Factory.unregister("CopyFile")
         assert "CopyFile" not in Factory.handler_function_list()
+        
+    def test_factory_register_a_already_regiestered_handler(self, reset_factory):
+        Factory.register("CopyFile", CopyFileHandler)
+        Factory.register("CopyFile", CopyFileHandler)
+        assert Factory.handler_function_list().count("CopyFile") == 1
 
     def test_factory_register_a_nonexistant_handler(self, reset_factory):
         with pytest.raises(FactoryError):
@@ -51,14 +56,16 @@ class TestCoreFactory:
         assert len(Factory.handler_function_list()) == 2
 
     def test_factory_create_with_a_handler_that_is_not_registered(self, reset_factory):
+        Factory.register("CopyFile", CopyFileHandler)
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
         config = Config(Arguments(
-            [json_file_source("test_valid.json")])).get_config()
+            [json_file_source("test_googledrive_handler.json")])).get_config()
         with pytest.raises(FactoryError):
             _ = Factory.create(config["watchers"][0])
 
     def test_factory_create_with_a_registered_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
+        Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
         config = Config(Arguments(
             [json_file_source("test_valid.json")])).get_config()
         assert Factory.create(config["watchers"][0]) != None
