@@ -23,10 +23,6 @@ def setup_source_destination() -> Fixture:
             directory_name) / "watcher" / "source"
         fixture.destination_path = pathlib.Path(
             directory_name) / "watcher" / "destination"
-        # if fixture.source_path.exists():
-        #     fixture.source_path.rmdir()
-        # if fixture.destination_path.exists():
-        #     fixture.destination_path.rmdir()
         fixture.config["source"] = str(fixture.source_path)
         fixture.config["destination"] = str(fixture.destination_path)
         fixture.config["deletesource"] = False

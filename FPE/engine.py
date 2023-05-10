@@ -3,7 +3,7 @@
 import time
 from typing import Any
 
-from builtin._handler_list import handler_list
+from builtin._handler_list import fpe_handler_list
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
@@ -63,8 +63,8 @@ class Engine:
         """Load builtin and plugin handlers.
         """
 
-        for handler_name in handler_list.keys():
-            Factory.register(handler_name, handler_list[handler_name])
+        for handler_name in fpe_handler_list.keys():
+            Factory.register(handler_name, fpe_handler_list[handler_name])
 
         PluginLoader.load(self.engine_config['plugins'])
 

@@ -17,7 +17,7 @@ usage: fpe.py [-h] file
 Process files copied into watch folder using a custom handler.
 
 positional arguments:
-  file                  Configuration file
+  file                  JSON Configuration file
 
 optional arguments:
 
@@ -57,14 +57,12 @@ def fpe() -> None:
         # Load configuration file, validate and set logging.
 
         fpe_config: Config = Config(Arguments())
-        
         fpe_config.validate()
         fpe_config.set_logging()
 
         #  Create engine, load handlers and create watchers
 
         fpe_engine: Engine = Engine(fpe_config.get_config())
-
         fpe_engine.load_handlers()
         fpe_engine.create_watchers()
 
