@@ -96,11 +96,12 @@ class Watcher:
         """Initialise file watcher handler.
 
         Args:
-            watcher_config (_type_): _description_
+            watcher_config (dict[str,Any]): Watcher config
 
         Raises:
-            WatcherError: _description_
+            WatcherError: A watcher error has occured.
         """
+
         try:
 
             # None not a valid config
@@ -126,38 +127,42 @@ class Watcher:
             else:
                 self._observer = None  # type: ignore
 
-            self._started = False
+            self._running = False
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
 
     @property
-    def started(self) -> bool:
-        """_summary_
+    def running(self) -> bool:
+        """Is wtcher currently running.
 
         Returns:
-            bool: _description_
+            bool: true then watcher running.
         """
-        return self._started
+
+        return self._running
 
     def start(self) -> None:
         """Start watcher.
         """
+
         if self._observer is not None:
             self._observer.start()
 
-        self._started = True
+        self._running = True
 
     def stop(self) -> None:
         """Stop watcher.
         """
+
         if self._observer is not None:
             self._observer.stop()
 
-        self._started = False
+        self._running = False
 
     def join(self) -> None:
         """Wait for watcher thread to finish.
         """
+
         if self._observer is not None:
             self._observer.join()

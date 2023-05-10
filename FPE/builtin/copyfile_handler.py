@@ -63,6 +63,7 @@ class CopyFileHandler(IHandler):
     def process(self, source_path: pathlib.Path) -> None:
         """Copy file from source(watch) directory to destination directory.
         """
+        
         try:
 
             destination_path = Handler.create_local_destination(

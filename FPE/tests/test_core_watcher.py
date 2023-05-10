@@ -34,18 +34,18 @@ class TestCoreWatcher:
 
     def test_watcher_initial_state_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
-        assert watcher.started == False
+        assert watcher.running == False
 
     def test_watcher_started(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
-        assert watcher.started == True
+        assert watcher.running == True
 
     def test_watcher_started_then_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
         time.sleep(1)
         watcher.stop()
-        assert watcher.started == False
+        assert watcher.running == False
 
     # Test watcher with invalid confg passed in
