@@ -1,4 +1,4 @@
-""" Config class.
+"""FPE Config.
 
 Create a configuration dictionary from a JSON configuration file. Performing
 validation on the JSON and generating any required exceptions as necessary.

@@ -1,4 +1,4 @@
-""" File watcher.
+"""File watcher.
 
 Use watchdog package to monitor directories and process each file created using one
 of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
@@ -28,6 +28,7 @@ class WatcherError(FPEError):
         Args:
             message (str): Exception message.
         """
+
         self.message = message
 
     def __str__(self) -> str:
@@ -36,6 +37,7 @@ class WatcherError(FPEError):
         Returns:
             str: Exception string.
         """
+
         return FPEError.error_prefix("Watcher") + str(self.message)
 
 
@@ -47,19 +49,20 @@ class WatcherHandler(FileSystemEventHandler):
         """Initialise watcher handler adapter.
 
         Args:
-            watcher_handler (IHandler): _description_
+            watcher_handler (IHandler): Watchdog handler.
         """
+
         super().__init__()
         self.watcher_handler = watcher_handler
 
     def on_created(self, event):
-        """_summary_
+        """On file created event.
 
         Args:
-            event (_type_): _description_
+            event (Any): Watchdog event.
         """
-        source_path: pathlib.Path = pathlib.Path(  # type: ignore
-            event.src_path)
+
+        source_path = pathlib.Path(event.src_path)  # type: ignore
         Handler.wait_for_copy_completion(source_path)
         source_path.chmod(source_path.stat().st_mode | 0o664)
         self.watcher_handler.process(source_path)
@@ -69,25 +72,27 @@ class Watcher:
     """Watch for files being copied into a folder and process.
     """
 
-    _observer: Observer
+    __observer: Observer
+    __running: bool
 
     @ staticmethod
-    def _display_details(handler_section) -> None:
+    def _display_details(handler_config) -> None:
         """Display watcher handler details and parameters.
 
         Args:
-            handler_section (_type_): _description_
+            handler_config (dic[str,Any]): Handler config.
 
         Raises:
-            WatcherError: _description_
+            WatcherError: An error has occured whilst running the watcher.
         """
+
         try:
             logging.info("*" * 80)
             logging.info(
-                "%s Handler [%s] running...", handler_section['name'], handler_section['type'])
-            for option in handler_section.keys():
+                "%s Handler [%s] running...", handler_config['name'], handler_config['type'])
+            for option in handler_config.keys():
                 if option != "name" and option != "type":
-                    logging.info("%s = %s", option, handler_section[option])
+                    logging.info("%s = %s", option, handler_config[option])
 
         except IOError as error:
             raise WatcherError(error) from error
@@ -119,15 +124,15 @@ class Watcher:
             selected_handler = Factory.create(watcher_config)
 
             if selected_handler is not None:
-                self._observer = Observer()
-                self._observer.schedule(event_handler=WatcherHandler(
+                self.__observer = Observer()
+                self.__observer.schedule(event_handler=WatcherHandler(
                     selected_handler), path=selected_handler.handler_config["source"], recursive=False)
                 Watcher._display_details(selected_handler.handler_config)
 
             else:
-                self._observer = None  # type: ignore
+                self.__observer = None  # type: ignore
 
-            self._running = False
+            self.__running = False
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
@@ -140,29 +145,29 @@ class Watcher:
             bool: true then watcher running.
         """
 
-        return self._running
+        return self.__running
 
     def start(self) -> None:
         """Start watcher.
         """
 
-        if self._observer is not None:
-            self._observer.start()
+        if self.__observer is not None:
+            self.__observer.start()
 
-        self._running = True
+        self.__running = True
 
     def stop(self) -> None:
         """Stop watcher.
         """
 
-        if self._observer is not None:
-            self._observer.stop()
+        if self.__observer is not None:
+            self.__observer.stop()
 
-        self._running = False
+        self.__running = False
 
     def join(self) -> None:
         """Wait for watcher thread to finish.
         """
 
-        if self._observer is not None:
-            self._observer.join()
+        if self.__observer is not None:
+            self.__observer.join()

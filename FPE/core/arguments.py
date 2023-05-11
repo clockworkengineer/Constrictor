@@ -1,4 +1,4 @@
-""" Arguments class.
+"""FPE Arguments.
 
 Convert command line arguments into an object that can be accessed by the FPE.
 Performing any validation required on the passed in parameters and generating
