@@ -10,6 +10,8 @@ import pathlib
 import logging
 from typing import Protocol, Any
 
+from core.constants import CONFIG_SOURCE
+
 
 class IHandler(Protocol):
     """Interface for watcher file handler.
@@ -66,7 +68,7 @@ class Handler():
             pathlib.Path: _description_
         """
         return pathlib.Path(
-            config["destination"]) / str(source_path)[len(config["source"])+1:]
+            config["destination"]) / str(source_path)[len(config[CONFIG_SOURCE])+1:]
 
     @staticmethod
     def setup_path(handler_config: dict[str, Any], path_type: str) -> None:

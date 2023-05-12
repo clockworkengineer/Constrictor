@@ -6,6 +6,7 @@ import shutil
 import logging
 from typing import Any
 
+from core.constants import CONFIG_SOURCE
 from core.handler import IHandler, Handler
 from core.error import FPEError
 
@@ -45,7 +46,7 @@ class CopyFileHandler(IHandler):
 
         self.handler_config = handler_config.copy()
 
-        Handler.setup_path(self.handler_config, "source")
+        Handler.setup_path(self.handler_config, CONFIG_SOURCE)
         Handler.setup_path(self.handler_config, "destination")
 
     def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_source: bool) -> None:
@@ -63,7 +64,7 @@ class CopyFileHandler(IHandler):
     def process(self, source_path: pathlib.Path) -> None:
         """Copy file from source(watch) directory to destination directory.
         """
-        
+
         try:
 
             destination_path = Handler.create_local_destination(

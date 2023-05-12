@@ -5,6 +5,7 @@ import pathlib
 import logging
 from typing import Any
 
+from core.constants import CONFIG_SOURCE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 
@@ -18,9 +19,9 @@ class FileAnnouncerHandler(IHandler):
         """
         self.handler_config = handler_config.copy()
 
-        self.handler_config["source"] = Handler.normalize_path(
-            self.handler_config["source"])
-        Handler.create_path(pathlib.Path(self.handler_config["source"]))
+        self.handler_config[CONFIG_SOURCE] = Handler.normalize_path(
+            self.handler_config[CONFIG_SOURCE])
+        Handler.create_path(pathlib.Path(self.handler_config[CONFIG_SOURCE]))
 
     def process(self,  source_path: pathlib.Path) -> None:
         """Print out name of any file copied into watch folder.

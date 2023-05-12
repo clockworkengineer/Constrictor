@@ -7,8 +7,9 @@ validation on the JSON and generating any required exceptions as necessary.
 
 import json
 import logging
-from typing import Any
+from typing import Any, Tuple
 
+from core.constants import CONFIG_SOURCE
 from core.error import FPEError
 from core.arguments import Arguments
 
@@ -31,7 +32,7 @@ class ConfigError(FPEError):
         Returns:
             str: Exception string.
         """
-        return  FPEError.error_prefix("Config") + str(self.message)
+        return FPEError.error_prefix("Config") + str(self.message)
 
 
 class Config:
@@ -47,7 +48,7 @@ class Config:
         Raises:
             ConfigError: An error was found in the config.
         """
-        
+
         try:
             with open(arguments.file, "r", encoding="utf-8") as json_file:
                 self.config = json.load(json_file)
@@ -57,10 +58,10 @@ class Config:
     def validate(self) -> None:
         """Validate config file.
         """
-        
-        fpe_mandatory_keys : tuple(str) = ("plugins","watchers")
-        watcher_mandatory_keys : tuple(str) = ("name", "type", "source")
-        
+
+        fpe_mandatory_keys: Tuple[str, ...] = ("plugins", "watchers")
+        watcher_mandatory_keys: Tuple[str, ...] = ("name", "type", CONFIG_SOURCE)
+
         # Must contain 'plugins' and 'watchers' key entries
 
         for key in fpe_mandatory_keys:
@@ -68,17 +69,16 @@ class Config:
                 raise ConfigError(f"Missing config '{key}' key")
 
         # Each watcher entry must have a 'name', 'type' and 'source' keys
-        
+
         for watcher_config in self.config["watchers"]:
             for key in watcher_mandatory_keys:
                 if key not in watcher_config:
                     raise ConfigError(f"Missing config '{key}' key")
 
-
     def set_logging(self) -> None:
         """Set type of logging to be used.
         """
-        
+
         # Default logging parameters
 
         logging_params: dict[str, Any] = {"level": logging.INFO,
@@ -100,5 +100,5 @@ class Config:
         Returns:
             dict[str, Any]: Config dictionary.
         """
-        
+
         return self.config

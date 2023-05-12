@@ -13,6 +13,7 @@ from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
+from core.constants import CONFIG_SOURCE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 from core.error import FPEError
@@ -126,7 +127,7 @@ class Watcher:
             if selected_handler is not None:
                 self.__observer = Observer()
                 self.__observer.schedule(event_handler=WatcherHandler(
-                    selected_handler), path=selected_handler.handler_config["source"], recursive=False)
+                    selected_handler), path=selected_handler.handler_config[CONFIG_SOURCE], recursive=False)
                 Watcher._display_details(selected_handler.handler_config)
 
             else:

@@ -11,3 +11,10 @@
 2023-05-12 17:41:53,206:deletesource = True
 2023-05-12 17:41:53,207:exitonfailure = False
 2023-05-12 17:41:53,207:File Processing Engine Started.
+2023-05-12 18:21:02,938:********************************************************************************
+2023-05-12 18:21:02,939:File Copier Handler [CopyFile] running...
+2023-05-12 18:21:02,939:source = C:\Projects\Constrictor\watcher\source
+2023-05-12 18:21:02,939:destination = C:\Projects\Constrictor\watcher\destination
+2023-05-12 18:21:02,939:deletesource = True
+2023-05-12 18:21:02,939:exitonfailure = False
+2023-05-12 18:21:02,940:File Processing Engine Started.
