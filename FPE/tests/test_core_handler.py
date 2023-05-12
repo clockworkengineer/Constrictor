@@ -16,7 +16,7 @@ class TestCoreHandler:
     def test_core_handler_create_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory_name:
             temporary_directory_path: pathlib.Path = pathlib.Path(
-                directory_name) / "watcher" / CONFIG_SOURCE
+                directory_name) / "watcher" / "source"
             assert not temporary_directory_path.exists()
             Handler.create_path(temporary_directory_path)
             assert temporary_directory_path.exists()
