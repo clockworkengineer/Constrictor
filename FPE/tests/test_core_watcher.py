@@ -24,7 +24,7 @@ def reset_factory_and_return_config() -> dict[str, Any]:
 
 class TestCoreWatcher:
 
-    def test_watcher_with_config_of_none(self, reset_factory_and_return_config):
+    def test_watcher_with_config_of_none(self):
         with pytest.raises(WatcherError):
             _ = Watcher(None)
 

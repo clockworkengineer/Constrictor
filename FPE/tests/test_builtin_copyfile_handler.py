@@ -4,6 +4,7 @@ import shutil
 import tempfile
 from typing import Any
 
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.error import FPEError
 from core.handler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
@@ -20,11 +21,11 @@ def setup_source_destination() -> Fixture:
     fixture: Fixture = Fixture()
     with tempfile.TemporaryDirectory() as directory_name:
         fixture.source_path = pathlib.Path(
-            directory_name) / "watcher" / "source"
+            directory_name) / "watcher" / CONFIG_SOURCE
         fixture.destination_path = pathlib.Path(
             directory_name) / "watcher" / "destination"
-        fixture.config["source"] = str(fixture.source_path)
-        fixture.config["destination"] = str(fixture.destination_path)
+        fixture.config[CONFIG_SOURCE] = str(fixture.source_path)
+        fixture.config[CONFIG_DESTINATION] = str(fixture.destination_path)
         fixture.config["deletesource"] = False
         fixture.config["exitonfailure"] = True
     yield fixture
