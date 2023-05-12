@@ -6,7 +6,7 @@ import shutil
 import logging
 from typing import Any
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.handler import IHandler, Handler
 from core.error import FPEError
 
@@ -47,7 +47,7 @@ class CopyFileHandler(IHandler):
         self.handler_config = handler_config.copy()
 
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
-        Handler.setup_path(self.handler_config, "destination")
+        Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
 
     def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_source: bool) -> None:
         """Copy source path to destination path.

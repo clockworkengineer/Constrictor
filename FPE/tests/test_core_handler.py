@@ -3,7 +3,7 @@ import tempfile
 import pathlib
 from typing import Any
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.handler import Handler
 
 
@@ -30,7 +30,7 @@ class TestCoreHandler:
             Handler.normalize_path("./watcher/destination"))
         source_file_path: pathlib.Path = source_path / "dir1" / "dir2" / "source.txt"
         config[CONFIG_SOURCE] = str(source_path)
-        config["destination"] = str(destination_path)
+        config[CONFIG_DESTINATION] = str(destination_path)
         assert Handler.create_local_destination(
             source_file_path, config) == destination_path / "dir1" / "dir2" / "source.txt"
 
@@ -59,4 +59,4 @@ class TestCoreHandler:
         config[CONFIG_SOURCE] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         with pytest.raises(KeyError):
-            Handler.setup_path(config, "destination")
+            Handler.setup_path(config, CONFIG_DESTINATION)

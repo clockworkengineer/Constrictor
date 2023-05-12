@@ -10,7 +10,7 @@ import pathlib
 import logging
 from typing import Protocol, Any
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 
 
 class IHandler(Protocol):
@@ -68,7 +68,7 @@ class Handler():
             pathlib.Path: _description_
         """
         return pathlib.Path(
-            config["destination"]) / str(source_path)[len(config[CONFIG_SOURCE])+1:]
+            config[CONFIG_DESTINATION]) / str(source_path)[len(config[CONFIG_SOURCE])+1:]
 
     @staticmethod
     def setup_path(handler_config: dict[str, Any], path_type: str) -> None:

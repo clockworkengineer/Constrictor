@@ -7,7 +7,7 @@ import logging
 from typing import Any
 import pysftp
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.handler import IHandler, Handler
 from core.error import FPEError
 
@@ -52,8 +52,8 @@ class SFTPCopyFileHandler(IHandler):
 
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
 
-        self.handler_config["destination"] = Handler.normalize_path(
-            self.handler_config["destination"])
+        self.handler_config[CONFIG_DESTINATION] = Handler.normalize_path(
+            self.handler_config[CONFIG_DESTINATION])
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
