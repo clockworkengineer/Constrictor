@@ -50,7 +50,7 @@ class Arguments:
             argv (list[Any], optional): Command line aruments. Defaults to None.
 
         Raises:
-            ArgumentsError: Invalid command line arguments
+            ArgumentsError: A command line arguments occurred.
         """
 
         # Extract and parse arguments

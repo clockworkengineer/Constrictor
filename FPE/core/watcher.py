@@ -19,7 +19,7 @@ from core.error import FPEError
 
 
 class WatcherError(FPEError):
-    """An error occurred in directory watcher.
+    """An error occurred in directory file watcher.
     """
 
     def __init__(self, message: Any) -> None:
@@ -139,7 +139,7 @@ class Watcher:
 
     @property
     def running(self) -> bool:
-        """Is wtcher currently running.
+        """Is wtcher currently running ?
 
         Returns:
             bool: true then watcher running.

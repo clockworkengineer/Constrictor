@@ -47,6 +47,7 @@ class Config:
         Raises:
             ConfigError: An error was found in the config.
         """
+        
         try:
             with open(arguments.file, "r", encoding="utf-8") as json_file:
                 self.config = json.load(json_file)
@@ -56,26 +57,27 @@ class Config:
     def validate(self) -> None:
         """Validate config file.
         """
+        
+        fpe_mandatory_keys : tuple(str) = ("plugins, watchers")
+        watcher_mandatory_keys : tuple = ("name", "type", "source")
+        
         # Must contain 'plugins' and 'watchers' key entries
 
-        if "plugins" not in self.config:
-            raise ConfigError("Missing config 'plugins' key")
-        if "watchers" not in self.config:
-            raise ConfigError("Missing config 'watchers' key")
+        for key in fpe_mandatory_keys:
+            if key not in self.config:
+                raise ConfigError(f"Missing config '{key}' key")
 
         # Each watcher entry must have a 'name', 'type' and 'source' keys
 
-        for watcher_config in self.config["watchers"]:
-            if "name" not in watcher_config:
-                raise ConfigError("Missing config handler 'name' key")
-            if "type" not in watcher_config:
-                raise ConfigError("Missing config watchers 'type' key")
-            if "source" not in watcher_config:
-                raise ConfigError("Missing config watchers 'source' key")
+        for key in watcher_mandatory_keys:
+            if key not in self.config:
+                raise ConfigError(f"Missing config '{key}' key")
+
 
     def set_logging(self) -> None:
         """Set type of logging to be used.
         """
+        
         # Default logging parameters
 
         logging_params: dict[str, Any] = {"level": logging.INFO,
@@ -97,4 +99,5 @@ class Config:
         Returns:
             dict[str, Any]: Config dictionary.
         """
+        
         return self.config
