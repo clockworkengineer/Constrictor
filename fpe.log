@@ -1,0 +1,13 @@
+2023-05-12 17:28:37,995:FPEFactory: Unknown handler type 'CopyFile'.
+2023-05-12 17:28:37,996:File Processing Engine Stopped.
+2023-05-12 17:30:34,590:FPEFactory: Unknown handler type 'CopyFile'.
+2023-05-12 17:30:34,591:File Processing Engine Stopped.
+2023-05-12 17:30:43,266:FPEFactory: Unknown handler type 'CopyFile'.
+2023-05-12 17:30:43,266:File Processing Engine Stopped.
+2023-05-12 17:41:53,203:********************************************************************************
+2023-05-12 17:41:53,205:File Copier Handler [CopyFile] running...
+2023-05-12 17:41:53,205:source = C:\Projects\Constrictor\watcher\source
+2023-05-12 17:41:53,206:destination = C:\Projects\Constrictor\watcher\destination
+2023-05-12 17:41:53,206:deletesource = True
+2023-05-12 17:41:53,207:exitonfailure = False
+2023-05-12 17:41:53,207:File Processing Engine Started.

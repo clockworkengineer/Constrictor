@@ -3,7 +3,7 @@
 import time
 from typing import Any
 
-from builtin._handler_list import fpe_handler_list
+from builtin.handler_list import fpe_handler_list
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
