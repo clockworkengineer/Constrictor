@@ -3,7 +3,9 @@
 import time
 from typing import Any
 
+
 from builtin.handler_list import fpe_handler_list
+from core.constants import CONFIG_NAME
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
@@ -32,7 +34,7 @@ class Engine:
         """
         current_watcher = Watcher(watcher_config)
         if current_watcher is not None:
-            self.engine_watchers[watcher_config["name"]] = current_watcher
+            self.engine_watchers[watcher_config[CONFIG_NAME]] = current_watcher
 
     def delete_watcher(self, watcher_name: str) -> None:
         """Delete directory watcher.

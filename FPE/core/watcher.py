@@ -13,7 +13,7 @@ from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 from core.error import FPEError
@@ -92,7 +92,7 @@ class Watcher:
             logging.info(
                 "%s Handler [%s] running...", handler_config['name'], handler_config['type'])
             for option in handler_config.keys():
-                if option != "name" and option != "type":
+                if option != CONFIG_NAME and option != CONFIG_TYPE:
                     logging.info("%s = %s", option, handler_config[option])
 
         except IOError as error:

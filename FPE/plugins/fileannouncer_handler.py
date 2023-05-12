@@ -5,7 +5,7 @@ import pathlib
 import logging
 from typing import Any
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE,CONFIG_NAME
 from core.factory import Factory
 from core.handler import IHandler, Handler
 
@@ -34,7 +34,7 @@ class FileAnnouncerHandler(IHandler):
 
         except OSError as error:
             logging.error("Error in handler %s : %s",
-                          self.handler_config["name"], error)
+                          self.handler_config[CONFIG_NAME], error)
 
 
 def register() -> None:

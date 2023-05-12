@@ -7,6 +7,7 @@ name to the correct handler function by this factory class.
 
 from typing import Any, Callable
 
+from core.constants import CONFIG_TYPE
 from core.handler import IHandler
 from core.error import FPEError
 
@@ -94,7 +95,7 @@ class Factory:
             raise FactoryError(
                 "Factory does not contain any registered handlers.")
 
-        handler_type = handler_config["type"]
+        handler_type = handler_config[CONFIG_TYPE]
         try:
             creator_func = Factory._handler_creation_funcs[handler_type]
         except KeyError as error:

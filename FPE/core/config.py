@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any, Tuple
 
-from core.constants import CONFIG_SOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE
 from core.error import FPEError
 from core.arguments import Arguments
 
@@ -60,7 +60,8 @@ class Config:
         """
 
         fpe_mandatory_keys: Tuple[str, ...] = ("plugins", "watchers")
-        watcher_mandatory_keys: Tuple[str, ...] = ("name", "type", CONFIG_SOURCE)
+        watcher_mandatory_keys: Tuple[str, ...] = (
+            CONFIG_NAME, CONFIG_TYPE, CONFIG_SOURCE)
 
         # Must contain 'plugins' and 'watchers' key entries
 
