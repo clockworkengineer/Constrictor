@@ -58,8 +58,8 @@ class Config:
         """Validate config file.
         """
         
-        fpe_mandatory_keys : tuple(str) = ("plugins, watchers")
-        watcher_mandatory_keys : tuple = ("name", "type", "source")
+        fpe_mandatory_keys : tuple(str) = ("plugins","watchers")
+        watcher_mandatory_keys : tuple(str) = ("name", "type", "source")
         
         # Must contain 'plugins' and 'watchers' key entries
 
@@ -68,10 +68,11 @@ class Config:
                 raise ConfigError(f"Missing config '{key}' key")
 
         # Each watcher entry must have a 'name', 'type' and 'source' keys
-
-        for key in watcher_mandatory_keys:
-            if key not in self.config:
-                raise ConfigError(f"Missing config '{key}' key")
+        
+        for watcher_config in self.config["watchers"]:
+            for key in watcher_mandatory_keys:
+                if key not in watcher_config:
+                    raise ConfigError(f"Missing config '{key}' key")
 
 
     def set_logging(self) -> None:
