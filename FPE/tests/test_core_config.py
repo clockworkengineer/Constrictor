@@ -1,7 +1,7 @@
 import pytest
 
 from tests.common import json_file_source
-from core.constants import CONFIG_TYPE
+from core.constants import CONFIG_TYPE, CONFIG_WATCHERS, CONFIG_PLUGINS
 from core.arguments import Arguments
 from core.config import Config, ConfigError
 
@@ -11,8 +11,8 @@ class TestCoreConfig:
     def test_config_with_valid_json_file(self):
         config = Config(Arguments(
             [json_file_source("test_valid.json")])).get_config()
-        assert config["plugins"][0] == "plugins.fileannouncer_handler"
-        assert config["watchers"][0][CONFIG_TYPE] == "CopyFile"
+        assert config[CONFIG_PLUGINS][0] == "plugins.fileannouncer_handler"
+        assert config[CONFIG_WATCHERS][0][CONFIG_TYPE] == "CopyFile"
 
     def test_config_with_invalid_json_file(self):
         with pytest.raises(ConfigError):

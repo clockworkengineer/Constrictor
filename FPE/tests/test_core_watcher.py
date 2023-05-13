@@ -4,6 +4,7 @@ import time
 from typing import Any
 
 from tests.common import json_file_source
+from core.constants import CONFIG_WATCHERS
 from core.arguments import Arguments
 from core.config import Config
 from core.watcher import Watcher, WatcherError
@@ -19,7 +20,7 @@ def reset_factory_and_return_config() -> dict[str, Any]:
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
     config = Config(Arguments(
         [json_file_source("test_valid.json")])).get_config()
-    yield config["watchers"][0]
+    yield config[CONFIG_WATCHERS][0]
 
 
 class TestCoreWatcher:

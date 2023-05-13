@@ -5,7 +5,7 @@ from typing import Any
 
 
 from builtin.handler_list import fpe_handler_list
-from core.constants import CONFIG_NAME
+from core.constants import CONFIG_NAME, CONFIG_WATCHERS
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
@@ -74,7 +74,7 @@ class Engine:
         """Create direcory watchers from config.
         """
 
-        for watcher_config in self.engine_config["watchers"]:
+        for watcher_config in self.engine_config[CONFIG_WATCHERS]:
             self.create_watcher(watcher_config)
 
     def run_watchers(self) -> None:

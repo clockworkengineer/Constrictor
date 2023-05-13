@@ -1,6 +1,7 @@
 import pytest
 
 from tests.common import json_file_source
+from core.constants import CONFIG_WATCHERS
 from core.arguments import Arguments
 from core.config import Config
 from core.factory import Factory, FactoryError
@@ -20,7 +21,7 @@ class TestCoreFactory:
         config = Config(Arguments(
             [json_file_source("test_valid.json")])).get_config()
         with pytest.raises(FactoryError):
-            _ = Factory.create(config["watchers"][0])
+            _ = Factory.create(config[CONFIG_WATCHERS][0])
 
     def test_factory_register_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
@@ -30,7 +31,7 @@ class TestCoreFactory:
         Factory.register("CopyFile", CopyFileHandler)
         Factory.unregister("CopyFile")
         assert "CopyFile" not in Factory.handler_function_list()
-        
+
     def test_factory_register_an_already_regiestered_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("CopyFile", CopyFileHandler)
@@ -61,11 +62,11 @@ class TestCoreFactory:
         config = Config(Arguments(
             [json_file_source("test_googledrive_handler.json")])).get_config()
         with pytest.raises(FactoryError):
-            _ = Factory.create(config["watchers"][0])
+            _ = Factory.create(config[CONFIG_WATCHERS][0])
 
     def test_factory_create_with_a_registered_handler(self, reset_factory):
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
         config = Config(Arguments(
             [json_file_source("test_valid.json")])).get_config()
-        assert Factory.create(config["watchers"][0]) != None
+        assert Factory.create(config[CONFIG_WATCHERS][0]) != None
