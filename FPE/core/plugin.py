@@ -2,26 +2,16 @@
 """
 
 import importlib
-from typing import Any
 
+from core.interface.iplugin import IPlugin
 from core.error import FPEError
-
-
-class IPlugin:
-    """Plugin interface.
-    """
-
-    @staticmethod
-    def register() -> None:
-        """Register the necessary items in the watcher handler factory.
-        """
 
 
 class PluginLoaderError(FPEError):
     """An error occurred in the plugin loader.
     """
 
-    def __init__(self, message : str) -> None:
+    def __init__(self, message: str) -> None:
         """Create plugin loader exception.
 
         Args:
