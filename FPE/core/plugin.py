@@ -1,4 +1,4 @@
-"""Plugin interface and loader.
+"""Plugin loader.
 """
 
 import importlib
