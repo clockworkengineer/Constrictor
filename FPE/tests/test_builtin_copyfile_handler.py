@@ -4,7 +4,7 @@ import shutil
 import tempfile
 from typing import Any
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE,CONFIG_EXITONFAILURE
 from core.error import FPEError
 from core.handler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
@@ -27,7 +27,7 @@ def setup_source_destination() -> Fixture:
         fixture.config[CONFIG_SOURCE] = str(fixture.source_path)
         fixture.config[CONFIG_DESTINATION] = str(fixture.destination_path)
         fixture.config[CONFIG_DELETESOURCE] = False
-        fixture.config["exitonfailure"] = True
+        fixture.config[CONFIG_EXITONFAILURE] = True
     yield fixture
     shutil.rmtree(fixture.source_path)
     shutil.rmtree(fixture.destination_path)

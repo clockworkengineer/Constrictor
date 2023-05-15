@@ -13,7 +13,7 @@ from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 from core.error import FPEError
@@ -120,7 +120,7 @@ class Watcher:
             if "deletesource" not in watcher_config:
                 watcher_config["deletesource"] = True
             if "exitonfail" not in watcher_config:
-                watcher_config["exitonfailure"] = False
+                watcher_config[CONFIG_EXITONFAILURE] = False
 
             selected_handler = Factory.create(watcher_config)
 
