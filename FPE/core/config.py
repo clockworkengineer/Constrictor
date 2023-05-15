@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any, Tuple
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_WATCHERS,CONFIG_PLUGINS
+from core.constants import CONFIG_WATCHERS,CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
 from core.error import FPEError
 from core.arguments import Arguments
 
@@ -18,7 +18,7 @@ class ConfigError(FPEError):
     """An error occurred whilst processing FPE configuration file.
     """
 
-    def __init__(self, message: Any) -> None:
+    def __init__(self, message : str) -> None:
         """Create config exception.
 
         Args:
@@ -59,20 +59,16 @@ class Config:
         """Validate config file.
         """
 
-        fpe_mandatory_keys: Tuple[str, ...] = (CONFIG_PLUGINS, CONFIG_WATCHERS)
-        watcher_mandatory_keys: Tuple[str, ...] = (
-            CONFIG_NAME, CONFIG_TYPE, CONFIG_SOURCE)
-
         # Must contain 'plugins' and 'watchers' key entries
 
-        for key in fpe_mandatory_keys:
+        for key in CONFIG_MANDATORY_KEYS:
             if key not in self.config:
                 raise ConfigError(f"Missing config '{key}' key")
 
         # Each watcher entry must have a 'name', 'type' and 'source' keys
 
         for watcher_config in self.config[CONFIG_WATCHERS]:
-            for key in watcher_mandatory_keys:
+            for key in CONFIG_WATCHER_MANDATORY_KEYS:
                 if key not in watcher_config:
                     raise ConfigError(f"Missing config '{key}' key")
 

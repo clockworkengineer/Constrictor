@@ -16,7 +16,7 @@ class FactoryError(FPEError):
     """An error occurred in the watcher handler factory.
     """
 
-    def __init__(self, message: Any) -> None:
+    def __init__(self, message : str) -> None:
         """Create factory exception.
 
         Args:

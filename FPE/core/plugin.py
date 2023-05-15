@@ -21,7 +21,7 @@ class PluginLoaderError(FPEError):
     """An error occurred in the plugin loader.
     """
 
-    def __init__(self, message: Any) -> None:
+    def __init__(self, message : str) -> None:
         """Create plugin loader exception.
 
         Args:

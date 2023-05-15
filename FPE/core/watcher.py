@@ -13,7 +13,7 @@ from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 from core.error import FPEError
@@ -23,7 +23,7 @@ class WatcherError(FPEError):
     """An error occurred in directory file watcher.
     """
 
-    def __init__(self, message: Any) -> None:
+    def __init__(self, message : str) -> None:
         """Create watcher exception.
 
         Args:
@@ -117,8 +117,8 @@ class Watcher:
 
             # Default values for fields
 
-            if "deletesource" not in watcher_config:
-                watcher_config["deletesource"] = True
+            if CONFIG_DELETESOURCE not in watcher_config:
+                watcher_config[CONFIG_DELETESOURCE] = True
             if "exitonfail" not in watcher_config:
                 watcher_config[CONFIG_EXITONFAILURE] = False
 
