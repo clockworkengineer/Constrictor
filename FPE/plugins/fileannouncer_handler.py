@@ -6,8 +6,9 @@ import logging
 from typing import Any
 
 from core.constants import CONFIG_SOURCE,CONFIG_NAME, CONFIG_DELETESOURCE
+from core.interface.ihandler import IHandler
 from core.factory import Factory
-from core.handler import IHandler, Handler
+from core.handler import Handler
 
 
 class FileAnnouncerHandler(IHandler):

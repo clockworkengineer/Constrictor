@@ -1,7 +1,7 @@
 
 from typing import Callable
 
-from core.handler import IHandler
+from core.interface.ihandler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
 from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 

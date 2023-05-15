@@ -7,7 +7,9 @@ import logging
 from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
-from core.handler import IHandler, Handler
+
+from core.interface.ihandler import IHandler
+from core.handler import  Handler
 from core.error import FPEError
 
 

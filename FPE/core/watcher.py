@@ -13,8 +13,9 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE
+from core.interface.ihandler import IHandler
 from core.factory import Factory
-from core.handler import IHandler, Handler
+from core.handler import Handler
 from core.error import FPEError
 
 

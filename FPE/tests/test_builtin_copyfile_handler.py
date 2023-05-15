@@ -5,8 +5,8 @@ import tempfile
 from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE,CONFIG_EXITONFAILURE
+from core.interface.ihandler import IHandler
 from core.error import FPEError
-from core.handler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
 
 

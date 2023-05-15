@@ -13,20 +13,6 @@ from typing import Protocol, Any
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 
 
-class IHandler(Protocol):
-    """Interface for watcher file handler.
-    """
-
-    handler_config: dict[str, Any]  # Handler config dictionary
-
-    def process(self, source_path: pathlib.Path) -> None:
-        """Perform watcher file processing.
-
-        Args:
-            source_path (pathlib.Path): Source fiel path.
-        """
-
-
 class Handler():
     """Directory watcher handler utility static methods.
 
