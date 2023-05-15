@@ -6,6 +6,7 @@ from typing import Any
 
 from builtin.handler_list import fpe_handler_list
 from core.constants import CONFIG_NAME, CONFIG_WATCHERS
+from core.config import ConfigDict
 from core.factory import Factory
 from core.watcher import Watcher
 from core.plugin import PluginLoader
@@ -15,22 +16,22 @@ class Engine:
     """Control class for the FPE used to create, control and delete directory watchers.
     """
 
-    engine_config: dict[str, Any] = {}
+    engine_config: ConfigDict = {}
     engine_watchers: dict[str, Watcher] = {}
 
-    def __init__(self, engine_config: dict[str, Any]) -> None:
+    def __init__(self, engine_config: ConfigDict) -> None:
         """Create FPE engine.
 
         Args:
-            engine_config (dict[str, Any]): FPE configuration.
+            engine_config (ConfigDict): FPE configuration.
         """
         self.engine_config = engine_config.copy()
 
-    def create_watcher(self, watcher_config: dict[str, Any]) -> None:
+    def create_watcher(self, watcher_config: ConfigDict) -> None:
         """Create a directory watcher;
 
         Args:
-            watcher_config (dict[str, Any]): Watcher configuration.
+            watcher_config (ConfigDict): Watcher configuration.
         """
         current_watcher = Watcher(watcher_config)
         if current_watcher is not None:

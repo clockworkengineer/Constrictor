@@ -7,8 +7,9 @@ import logging
 from typing import Any
 import pysftp
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION,CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
 from core.interface.ihandler import IHandler
+from core.config import ConfigDict
 from core.handler import Handler
 from core.error import FPEError
 
@@ -42,7 +43,7 @@ class SFTPCopyFileHandler(IHandler):
 
     """
 
-    def __init__(self, handler_config: dict[str, Any]) -> None:
+    def __init__(self, handler_config: ConfigDict) -> None:
         """ Initialise handler attributes.
         """
 

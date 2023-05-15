@@ -6,7 +6,7 @@ from typing import Any
 from tests.common import json_file_source
 from core.constants import CONFIG_WATCHERS
 from core.arguments import Arguments
-from core.config import Config
+from core.config import Config, ConfigDict
 from core.watcher import Watcher, WatcherError
 from core.factory import Factory
 from builtin.copyfile_handler import CopyFileHandler
@@ -14,7 +14,7 @@ from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
 
 
 @pytest.fixture()
-def reset_factory_and_return_config() -> dict[str, Any]:
+def reset_factory_and_return_config() -> ConfigDict:
     Factory.clear()
     Factory.register("CopyFile", CopyFileHandler)
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)

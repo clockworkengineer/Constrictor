@@ -10,6 +10,7 @@ import logging
 from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
+from core.config import ConfigDict
 
 
 class Handler():
@@ -42,12 +43,12 @@ class Handler():
             logging.info("Created directory %s.", directory_path)
 
     @staticmethod
-    def create_local_destination(source_path: pathlib.Path, config: dict[str, Any]) -> pathlib.Path:
+    def create_local_destination(source_path: pathlib.Path, config: ConfigDict) -> pathlib.Path:
         """Create local desination for source file.
 
         Args:
             source_path (pathlib.Path): Soure file path.
-            config (dict[str, Any]): Watcher handler config.
+            config (ConfigDict): Watcher handler config.
 
         Returns:
             pathlib.Path: _description_
@@ -56,11 +57,11 @@ class Handler():
             config[CONFIG_DESTINATION]) / str(source_path)[len(config[CONFIG_SOURCE])+1:]
 
     @staticmethod
-    def setup_path(handler_config: dict[str, Any], path_type: str) -> None:
+    def setup_path(handler_config: ConfigDict, path_type: str) -> None:
         """_summary_
 
         Args:
-            handler_config (dict[str, Any]): Watcher handler config.
+            handler_config (ConfigDict): Watcher handler config.
             path_type (str): Watcher handler type.
         """
         handler_config[path_type] = Handler.normalize_path(

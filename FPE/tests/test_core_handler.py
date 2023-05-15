@@ -4,7 +4,9 @@ import pathlib
 from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
+from core.config import ConfigDict
 from core.handler import Handler
+
 
 
 class TestCoreHandler:
@@ -23,7 +25,7 @@ class TestCoreHandler:
             temporary_directory_path.rmdir()
 
     def test_core_handler_create_local_destination(self) -> None:
-        config: dict[str, Any] = {}
+        config: ConfigDict = {}
         source_path: pathlib.Path = pathlib.Path(
             Handler.normalize_path("./watcher/source"))
         destination_path: pathlib.Path = pathlib.Path(
@@ -35,7 +37,7 @@ class TestCoreHandler:
             source_file_path, config) == destination_path / "dir1" / "dir2" / "source.txt"
 
     def test_core_handler_setup_path_doesnt_exist(self) -> None:
-        config: dict[str, Any] = {}
+        config: ConfigDict = {}
         config[CONFIG_SOURCE] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         if source_path.exists():
@@ -45,7 +47,7 @@ class TestCoreHandler:
         source_path.rmdir()
 
     def test_core_handler_setup_path_does_exist(self) -> None:
-        config: dict[str, Any] = {}
+        config: ConfigDict = {}
         config[CONFIG_SOURCE] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         source_path.mkdir(parents=True, exist_ok=True)
@@ -55,7 +57,7 @@ class TestCoreHandler:
         source_path.rmdir()
 
     def test_core_handler_setup_path_with_invalid_config_key(self) -> None:
-        config: dict[str, Any] = {}
+        config: ConfigDict = {}
         config[CONFIG_SOURCE] = "./watcher/source"
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         with pytest.raises(KeyError):

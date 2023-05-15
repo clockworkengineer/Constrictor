@@ -1,8 +1,6 @@
 """Plugin interface.
 """
 
-from typing import Any
-
 
 class IPlugin:
     """Plugin interface.

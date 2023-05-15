@@ -9,6 +9,7 @@ from typing import Any, Callable
 
 from core.constants import CONFIG_TYPE
 from core.interface.ihandler import IHandler
+from core.config import ConfigDict
 from core.error import FPEError
 
 
@@ -78,11 +79,11 @@ class Factory:
         Factory.__handler_creation_funcs.pop(handler_type, None)
 
     @staticmethod
-    def create(handler_config: dict[str, Any]) -> IHandler:
+    def create(handler_config: ConfigDict) -> IHandler:
         """Create a watcher handler of a specific type given JSON data.
 
         Args:
-            handler_config (dict[str, Any]): Watcher handler config
+            handler_config (ConfigDict): Watcher handler config
 
         Raises:
             FactoryError: An error occured whilst tryinhg to use watcher factory.

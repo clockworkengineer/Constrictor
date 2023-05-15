@@ -4,8 +4,9 @@ import shutil
 import tempfile
 from typing import Any
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE,CONFIG_EXITONFAILURE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_EXITONFAILURE
 from core.interface.ihandler import IHandler
+from core.config import ConfigDict
 from core.error import FPEError
 from builtin.copyfile_handler import CopyFileHandler
 
@@ -13,7 +14,7 @@ from builtin.copyfile_handler import CopyFileHandler
 class Fixture:
     source_path: pathlib.Path
     destination_path: pathlib.Path
-    config: dict[str, Any] = {}
+    config: ConfigDict = {}
 
 
 @pytest.fixture()

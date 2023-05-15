@@ -9,7 +9,8 @@ from typing import Any
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
 
 from core.interface.ihandler import IHandler
-from core.handler import  Handler
+from core.config import ConfigDict
+from core.handler import Handler
 from core.error import FPEError
 
 
@@ -39,7 +40,7 @@ class CopyFileHandler(IHandler):
 
     """
 
-    def __init__(self, handler_config: dict[str, Any]) -> None:
+    def __init__(self, handler_config: ConfigDict) -> None:
         """Copy handler config.
         """
 

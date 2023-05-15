@@ -5,8 +5,9 @@ import pathlib
 import logging
 from typing import Any
 
-from core.constants import CONFIG_SOURCE,CONFIG_NAME, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_DELETESOURCE
 from core.interface.ihandler import IHandler
+from core.config import ConfigDict
 from core.factory import Factory
 from core.handler import Handler
 
@@ -15,7 +16,7 @@ class FileAnnouncerHandler(IHandler):
     """File Announcer
     """
 
-    def __init__(self, handler_config: dict[str, Any]) -> None:
+    def __init__(self, handler_config: ConfigDict) -> None:
         """Copy handler config.
         """
         self.handler_config = handler_config.copy()

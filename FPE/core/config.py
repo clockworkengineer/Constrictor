@@ -13,7 +13,7 @@ from core.constants import CONFIG_WATCHERS,CONFIG_MANDATORY_KEYS, CONFIG_WATCHER
 from core.error import FPEError
 from core.arguments import Arguments
 
-
+ConfigDict = dict[str, Any]
 class ConfigError(FPEError):
     """An error occurred whilst processing FPE configuration file.
     """
