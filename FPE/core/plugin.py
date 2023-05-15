@@ -62,4 +62,4 @@ class PluginLoader:
                 plugin = importlib.import_module(plugin_file)  # type: ignore
                 plugin.register()
         except ModuleNotFoundError as error:
-            raise PluginLoaderError(error)
+            raise PluginLoaderError(str(error))

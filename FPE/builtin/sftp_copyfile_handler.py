@@ -81,6 +81,6 @@ class SFTPCopyFileHandler(IHandler):
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
             if self.handler_config['exitonfailure']:
-                raise SFTPCopyFileHandlerError(error) from error
+                raise SFTPCopyFileHandlerError(str(error)) from error
             else:
                 logging.info(SFTPCopyFileHandlerError(error))
