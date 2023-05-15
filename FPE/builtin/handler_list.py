@@ -1,5 +1,5 @@
 
-from typing import Any, Callable
+from typing import Callable
 
 from core.handler import IHandler
 from builtin.copyfile_handler import CopyFileHandler

@@ -49,7 +49,8 @@ class CopyFileHandler(IHandler):
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
         Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
 
-    def _copy_file(self, source_path: pathlib.Path, destination_path: pathlib.Path, delete_source: bool) -> None:
+    @staticmethod
+    def _copy_file(source_path: pathlib.Path, destination_path: pathlib.Path, delete_source: bool) -> None:
         """Copy source path to destination path.
         """
 
