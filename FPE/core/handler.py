@@ -1,14 +1,13 @@
-"""Watcher file handler.
+"""File handler.
 
-Protocol class that defines the file watcher handler interface and
-handler utility static methods.
+Handler utility static methods.
 
 """
 
 import errno
 import pathlib
 import logging
-from typing import Protocol, Any
+from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 

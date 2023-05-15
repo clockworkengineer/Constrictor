@@ -1,6 +1,7 @@
 """FPE base error.
 """
 
+from core.constants import APP_NAME
 
 class FPEError(Exception):
     """An error occurred in the FPE.
@@ -8,4 +9,4 @@ class FPEError(Exception):
 
     @staticmethod
     def error_prefix(component: str) -> str:
-        return "FPE"+component+": "
+        return APP_NAME+component+": "
