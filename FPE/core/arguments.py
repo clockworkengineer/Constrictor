@@ -9,7 +9,6 @@ file that is used to specify any custom plugins and running handler details.
 
 import pathlib
 import argparse
-from typing import Any
 
 from core.error import FPEError
 

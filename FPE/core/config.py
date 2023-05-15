@@ -7,7 +7,7 @@ validation on the JSON and generating any required exceptions as necessary.
 
 import json
 import logging
-from typing import Any, Tuple
+from typing import Any
 
 from core.constants import CONFIG_WATCHERS,CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
 from core.error import FPEError
@@ -53,7 +53,7 @@ class Config:
             with open(arguments.file, "r", encoding="utf-8") as json_file:
                 self.config = json.load(json_file)
         except json.JSONDecodeError as error:
-            raise ConfigError(error) from error
+            raise ConfigError(str(error)) from error
 
     def validate(self) -> None:
         """Validate config file.

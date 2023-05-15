@@ -9,7 +9,6 @@ functions for added directories.
 
 import logging
 import pathlib
-from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
@@ -96,7 +95,7 @@ class Watcher:
                     logging.info("%s = %s", option, handler_config[option])
 
         except IOError as error:
-            raise WatcherError(error) from error
+            raise WatcherError(str(error)) from error
 
     def __init__(self, watcher_config) -> None:
         """Initialise file watcher handler.
@@ -136,7 +135,7 @@ class Watcher:
             self.__running = False
 
         except (KeyError, ValueError) as error:
-            raise WatcherError(error) from error
+            raise WatcherError(str(error)) from error
 
     @property
     def running(self) -> bool:

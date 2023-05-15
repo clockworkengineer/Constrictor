@@ -25,7 +25,6 @@ optional arguments:
 """
 
 import logging
-from typing import Any
 
 from core.error import FPEError
 from core.config import Config
