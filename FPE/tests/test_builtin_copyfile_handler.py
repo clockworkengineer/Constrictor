@@ -4,7 +4,7 @@ import shutil
 import tempfile
 from typing import Any
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
 from core.error import FPEError
 from core.handler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
@@ -26,7 +26,7 @@ def setup_source_destination() -> Fixture:
             directory_name) / "watcher" / "destination"
         fixture.config[CONFIG_SOURCE] = str(fixture.source_path)
         fixture.config[CONFIG_DESTINATION] = str(fixture.destination_path)
-        fixture.config["deletesource"] = False
+        fixture.config[CONFIG_DELETESOURCE] = False
         fixture.config["exitonfailure"] = True
     yield fixture
     shutil.rmtree(fixture.source_path)
@@ -65,7 +65,7 @@ class TestBuiltinCopyFileHandler:
     def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
         setup_source_destination.source_path.mkdir(
             parents=True,  exist_ok=True)
-        setup_source_destination.config["deletesource"] = True
+        setup_source_destination.config[CONFIG_DELETESOURCE] = True
         handler = CopyFileHandler(setup_source_destination.config)
         source_file = setup_source_destination.source_path / "test.txt"
         destination_file = setup_source_destination.destination_path / "test.txt"

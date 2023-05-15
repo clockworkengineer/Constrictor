@@ -5,7 +5,7 @@ import pathlib
 import logging
 from typing import Any
 
-from core.constants import CONFIG_SOURCE,CONFIG_NAME
+from core.constants import CONFIG_SOURCE,CONFIG_NAME, CONFIG_DELETESOURCE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 
@@ -29,7 +29,7 @@ class FileAnnouncerHandler(IHandler):
         try:
             logging.info("File %s.", source_path)
 
-            if self.handler_config["deletesource"] and not source_path.is_dir():
+            if self.handler_config[CONFIG_DELETESOURCE] and not source_path.is_dir():
                 source_path.unlink()
 
         except OSError as error:

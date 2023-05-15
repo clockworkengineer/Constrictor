@@ -6,7 +6,7 @@ import shutil
 import logging
 from typing import Any
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
 from core.handler import IHandler, Handler
 from core.error import FPEError
 
@@ -72,7 +72,7 @@ class CopyFileHandler(IHandler):
 
             if source_path.is_file():
                 self._copy_file(source_path, destination_path,
-                                self.handler_config["deletesource"])
+                                self.handler_config[CONFIG_DELETESOURCE])
             elif source_path.is_dir():
                 Handler.create_path(destination_path)
 

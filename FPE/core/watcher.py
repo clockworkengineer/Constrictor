@@ -13,7 +13,7 @@ from typing import Any
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_DELETESOURCE
 from core.factory import Factory
 from core.handler import IHandler, Handler
 from core.error import FPEError
