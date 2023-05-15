@@ -16,7 +16,7 @@ class FactoryError(FPEError):
     """An error occurred in the watcher handler factory.
     """
 
-    def __init__(self, message : str) -> None:
+    def __init__(self, message: str) -> None:
         """Create factory exception.
 
         Args:
@@ -39,11 +39,11 @@ class Factory:
 
     # Watcher handler creation function dictionary
 
-    _handler_creation_funcs: dict[str, Callable[..., IHandler]] = {}
+    __handler_creation_funcs: dict[str, Callable[..., IHandler]] = {}
 
-    @ staticmethod
+    @staticmethod
     def register(handler_type: str, handler_fn: Callable[..., IHandler]) -> None:
-        """"Register a new watcher handler type.
+        """Register a new watcher handler type.
 
         Args:
             handler_type (str): Watch handler type.
@@ -59,9 +59,9 @@ class Factory:
         if handler_fn == None:
             raise FactoryError("None not allowed for handler function.")
 
-        Factory._handler_creation_funcs[handler_type] = handler_fn
+        Factory.__handler_creation_funcs[handler_type] = handler_fn
 
-    @ staticmethod
+    @staticmethod
     def unregister(handler_type: str) -> None:
         """Unregister a watcher handler type.
 
@@ -71,13 +71,13 @@ class Factory:
         Raises:
             FactoryError: An error occured whilst tryinhg to use watcher factory.
         """
-        if handler_type not in Factory._handler_creation_funcs:
+        if handler_type not in Factory.__handler_creation_funcs:
             raise FactoryError(
                 "Cannot unregiester handler not in factory.")
 
-        Factory._handler_creation_funcs.pop(handler_type, None)
+        Factory.__handler_creation_funcs.pop(handler_type, None)
 
-    @ staticmethod
+    @staticmethod
     def create(handler_config: dict[str, Any]) -> IHandler:
         """Create a watcher handler of a specific type given JSON data.
 
@@ -91,30 +91,30 @@ class Factory:
             Handler: Watch handler.
         """
 
-        if len(Factory._handler_creation_funcs) == 0:
+        if len(Factory.__handler_creation_funcs) == 0:
             raise FactoryError(
                 "Factory does not contain any registered handlers.")
 
         handler_type = handler_config[CONFIG_TYPE]
         try:
-            creator_func = Factory._handler_creation_funcs[handler_type]
+            creator_func = Factory.__handler_creation_funcs[handler_type]
         except KeyError as error:
             raise FactoryError(
                 f"Unknown handler type '{handler_type}'.") from error
 
         return creator_func(handler_config)
 
-    @ staticmethod
+    @staticmethod
     def handler_function_list() -> list[str]:
         """Return list of all current watch handler types.
 
         Returns:
             list[str]: List of watch handler types.
         """
-        return list(Factory._handler_creation_funcs.keys())
+        return list(Factory.__handler_creation_funcs.keys())
 
-    @ staticmethod
+    @staticmethod
     def clear() -> None:
         """Clear watch handler type list.
         """
-        Factory._handler_creation_funcs.clear()
+        Factory.__handler_creation_funcs.clear()

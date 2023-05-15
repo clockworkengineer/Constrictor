@@ -32,7 +32,7 @@ class PluginLoader:
     """Plugin loader.
     """
 
-    @ staticmethod
+    @staticmethod
     def load(plugin_list: list[str]) -> None:
         """Load handler plugins list passed in.
 

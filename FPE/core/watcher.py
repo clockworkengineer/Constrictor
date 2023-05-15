@@ -23,7 +23,7 @@ class WatcherError(FPEError):
     """An error occurred in directory file watcher.
     """
 
-    def __init__(self, message : str) -> None:
+    def __init__(self, message: str) -> None:
         """Create watcher exception.
 
         Args:
@@ -76,7 +76,7 @@ class Watcher:
     __observer: Observer
     __running: bool
 
-    @ staticmethod
+    @staticmethod
     def _display_details(handler_config) -> None:
         """Display watcher handler details and parameters.
 

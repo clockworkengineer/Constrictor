@@ -17,7 +17,7 @@ class ArgumentsError(FPEError):
     """An error occurred in the program command line arguments.
     """
 
-    def __init__(self, message : str) -> None:
+    def __init__(self, message: str) -> None:
         """Create argument exception.
 
         Args:
@@ -49,7 +49,7 @@ class Arguments:
             argv (list[Any], optional): Command line aruments. Defaults to None.
 
         Raises:
-            ArgumentsError: A command line arguments occurred.
+            ArgumentsError: A command line arguments error occurred.
         """
 
         # Extract and parse arguments
