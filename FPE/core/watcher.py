@@ -14,6 +14,7 @@ from watchdog.observers import Observer
 
 from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE
 from core.interface.ihandler import IHandler
+from core.config import ConfigDict
 from core.factory import Factory
 from core.handler import Handler
 from core.error import FPEError
@@ -77,11 +78,11 @@ class Watcher:
     __running: bool
 
     @staticmethod
-    def _display_details(handler_config) -> None:
+    def _display_details(handler_config: ConfigDict) -> None:
         """Display watcher handler details and parameters.
 
         Args:
-            handler_config (dic[str,Any]): Handler config.
+            handler_config (ConfigDict): Handler config.
 
         Raises:
             WatcherError: An error has occured whilst running the watcher.
@@ -98,11 +99,11 @@ class Watcher:
         except IOError as error:
             raise WatcherError(str(error)) from error
 
-    def __init__(self, watcher_config) -> None:
+    def __init__(self, watcher_config:ConfigDict) -> None:
         """Initialise file watcher handler.
 
         Args:
-            watcher_config (dict[str,Any]): Watcher config
+            watcher_config (ConfigDict): Watcher config
 
         Raises:
             WatcherError: A watcher error has occured.

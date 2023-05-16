@@ -3,7 +3,6 @@
 
 import pathlib
 import logging
-from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_DELETESOURCE
 from core.interface.ihandler import IHandler

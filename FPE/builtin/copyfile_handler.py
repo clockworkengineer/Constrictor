@@ -4,7 +4,6 @@
 import pathlib
 import shutil
 import logging
-from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
 

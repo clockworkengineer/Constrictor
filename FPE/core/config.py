@@ -14,6 +14,8 @@ from core.error import FPEError
 from core.arguments import Arguments
 
 ConfigDict = dict[str, Any]
+
+
 class ConfigError(FPEError):
     """An error occurred whilst processing FPE configuration file.
     """
@@ -22,7 +24,7 @@ class ConfigError(FPEError):
         """Create config exception.
 
         Args:
-            message (Any): Exception message.
+            message (str): Exception message.
         """
         self.message = message
 
@@ -91,7 +93,7 @@ class Config:
 
         logging.basicConfig(**logging_params)  # Set logging options
 
-    def get_config(self) -> dict[str, Any]:
+    def get_config(self) -> ConfigDict:
         """Return config dictionary.
 
         Returns:

@@ -4,7 +4,6 @@
 
 import pathlib
 import logging
-from typing import Any
 import pysftp
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE

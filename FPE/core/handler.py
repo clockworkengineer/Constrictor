@@ -7,7 +7,6 @@ Handler utility static methods.
 import errno
 import pathlib
 import logging
-from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.config import ConfigDict

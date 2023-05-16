@@ -5,7 +5,7 @@ name to the correct handler function by this factory class.
 
 """
 
-from typing import Any, Callable
+from typing import Callable
 
 from core.constants import CONFIG_TYPE
 from core.interface.ihandler import IHandler
