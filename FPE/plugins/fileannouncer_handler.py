@@ -31,7 +31,7 @@ class FileAnnouncerHandler(IHandler):
         try:
             logging.info("File %s.", source_path)
 
-            if self.handler_config[CONFIG_DELETESOURCE] and not source_path.is_dir():
+            if self.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
                 source_path.unlink()
 
         except OSError as error:
