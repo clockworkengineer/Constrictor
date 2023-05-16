@@ -78,7 +78,7 @@ class SFTPCopyFileHandler(IHandler):
             logging.info("Uploaded file %s to %s",
                          source_path, destination_path)
 
-            if self.handler_config[CONFIG_DELETESOURCE]:
+            if  self.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
                 source_path.unlink()
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
