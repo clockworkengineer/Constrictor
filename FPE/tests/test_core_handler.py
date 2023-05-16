@@ -1,12 +1,10 @@
 import pytest
 import tempfile
 import pathlib
-from typing import Any
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.config import ConfigDict
 from core.handler import Handler
-
 
 
 class TestCoreHandler:

@@ -6,7 +6,6 @@ import shutil
 import logging
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
-
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler

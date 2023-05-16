@@ -1,8 +1,6 @@
 """FPE engine.
 """
 import time
-from typing import Any
-
 
 from builtin.handler_list import fpe_handler_list
 from core.constants import CONFIG_NAME, CONFIG_WATCHERS

@@ -1,7 +1,5 @@
 import pytest
-import pathlib
 import time
-from typing import Any
 
 from tests.common import json_file_source
 from core.constants import CONFIG_WATCHERS

@@ -19,10 +19,8 @@ class FileAnnouncerHandler(IHandler):
         """Copy handler config.
         """
         self.handler_config = handler_config.copy()
-
-        self.handler_config[CONFIG_SOURCE] = Handler.normalize_path(
-            self.handler_config[CONFIG_SOURCE])
-        Handler.create_path(pathlib.Path(self.handler_config[CONFIG_SOURCE]))
+        
+        Handler.setup_path(self.handler_config, CONFIG_SOURCE)
 
     def process(self,  source_path: pathlib.Path) -> None:
         """Print out name of any file copied into watch folder.
