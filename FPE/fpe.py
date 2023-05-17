@@ -50,7 +50,7 @@ __status__ = "Pre-Alpha"
 def fpe() -> None:
     """Main program entry point.
     """
-  
+
     try:
 
         # Load configuration file, validate and set logging.
@@ -59,23 +59,24 @@ def fpe() -> None:
         fpe_config.validate()
         fpe_config.set_logging()
 
-        #  Create engine, load handlers and create watchers
+        #  Create engine, load handlers
 
         fpe_engine: Engine = Engine(fpe_config.get_config())
         fpe_engine.load_handlers()
-        fpe_engine.create_watchers()
+        
+        # Create and startup watchers
+        
+        fpe_engine.startup_watchers()
 
         logging.info("File Processing Engine Started.")
 
-        fpe_engine.run_watchers()
+        fpe_engine.loop_while_watching()
 
     except FPEError as error:
         logging.error(error)
-        
+
     finally:
         logging.info("File Processing Engine Stopped.")
-
-      
 
 
 if __name__ == "__main__":

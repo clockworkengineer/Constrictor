@@ -69,21 +69,21 @@ class Engine:
 
         PluginLoader.load(self.engine_config['plugins'])
 
-    def create_watchers(self) -> None:
-        """Create direcory watchers from config.
+    def startup_watchers(self) -> None:
+        """Create directory watchers from config and startup.
         """
 
         for watcher_config in self.engine_config[CONFIG_WATCHERS]:
             self.create_watcher(watcher_config)
 
-    def run_watchers(self) -> None:
-        """Run configured directory watchers.
+        for watcher_name in self.engine_watchers.keys():
+            self.start_watcher(watcher_name)
+
+    def loop_while_watching(self) -> None:
+        """Loop running watcher threads until interrupted
         """
 
         try:
-
-            for watcher_name in self.engine_watchers.keys():
-                self.start_watcher(watcher_name)
 
             while True:
                 time.sleep(1)
