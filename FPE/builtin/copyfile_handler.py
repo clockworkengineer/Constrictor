@@ -5,7 +5,7 @@ import pathlib
 import shutil
 import logging
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -51,7 +51,7 @@ class CopyFileHandler(IHandler):
         Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
 
     @staticmethod
-    def _copy_file(source_path: pathlib.Path, destination_path: pathlib.Path, delete_source: bool) -> None:
+    def _copy_file(source_path: pathlib.Path, destination_path: pathlib.Path) -> None:
         """Copy source path to destination path.
         """
 
@@ -59,9 +59,6 @@ class CopyFileHandler(IHandler):
 
         logging.info("Copied file %s to %s.",
                      source_path, destination_path)
-
-        if delete_source:
-            source_path.unlink()
 
     def process(self, source_path: pathlib.Path) -> None:
         """Copy file from source(watch) directory to destination directory.
@@ -73,8 +70,7 @@ class CopyFileHandler(IHandler):
                 source_path, self.handler_config)
 
             if source_path.is_file():
-                self._copy_file(source_path, destination_path,
-                                self.handler_config[CONFIG_DELETESOURCE])
+                self._copy_file(source_path, destination_path)
             elif source_path.is_dir():
                 Handler.create_path(destination_path)
 

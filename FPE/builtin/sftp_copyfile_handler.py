@@ -6,7 +6,7 @@ import pathlib
 import logging
 import pysftp
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -76,9 +76,6 @@ class SFTPCopyFileHandler(IHandler):
 
             logging.info("Uploaded file %s to %s",
                          source_path, destination_path)
-
-            if  self.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-                source_path.unlink()
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
             if self.handler_config['exitonfailure']:

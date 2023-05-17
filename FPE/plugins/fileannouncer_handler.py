@@ -4,7 +4,7 @@
 import pathlib
 import logging
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
@@ -27,9 +27,6 @@ class FileAnnouncerHandler(IHandler):
         """
         try:
             logging.info("File %s.", source_path)
-
-            if self.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-                source_path.unlink()
 
         except OSError as error:
             logging.error("Error in handler %s : %s",

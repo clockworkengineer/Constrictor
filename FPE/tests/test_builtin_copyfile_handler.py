@@ -62,14 +62,14 @@ class TestBuiltinCopyFileHandler:
         assert destination_file.exists()
         assert source_file.exists()
 
-    def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
-        setup_source_destination.source_path.mkdir(
-            parents=True,  exist_ok=True)
-        setup_source_destination.config[CONFIG_DELETESOURCE] = True
-        handler = CopyFileHandler(setup_source_destination.config)
-        source_file = setup_source_destination.source_path / "test.txt"
-        destination_file = setup_source_destination.destination_path / "test.txt"
-        source_file.touch()
-        handler.process(source_file)
-        assert destination_file.exists()
-        assert not source_file.exists()
+    # def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
+    #     setup_source_destination.source_path.mkdir(
+    #         parents=True,  exist_ok=True)
+    #     setup_source_destination.config[CONFIG_DELETESOURCE] = True
+    #     handler = CopyFileHandler(setup_source_destination.config)
+    #     source_file = setup_source_destination.source_path / "test.txt"
+    #     destination_file = setup_source_destination.destination_path / "test.txt"
+    #     source_file.touch()
+    #     handler.process(source_file)
+    #     assert destination_file.exists()
+    #     assert not source_file.exists()
