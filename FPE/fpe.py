@@ -25,6 +25,7 @@ optional arguments:
 """
 
 import logging
+import time
 
 from core.error import FPEError
 from core.config import Config
@@ -70,12 +71,17 @@ def fpe() -> None:
 
         logging.info("File Processing Engine Started.")
 
-        fpe_engine.loop_while_watching()
-
+        try:
+          while True:
+              time.sleep(1)
+        except KeyboardInterrupt:
+          logging.info("File Processing Engine interrupted...")
+          
     except FPEError as error:
         logging.error(error)
 
     finally:
+        fpe_engine.shutdown()
         logging.info("File Processing Engine Stopped.")
 
 

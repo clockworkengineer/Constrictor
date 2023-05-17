@@ -1,6 +1,5 @@
 """FPE engine.
 """
-import time
 
 from builtin.handler_list import fpe_handler_list
 from core.constants import CONFIG_NAME, CONFIG_WATCHERS
@@ -79,23 +78,11 @@ class Engine:
         for watcher_name in self.engine_watchers.keys():
             self.start_watcher(watcher_name)
 
-    def loop_while_watching(self) -> None:
-        """Loop running watcher threads until interrupted
+    def shutdown(self) -> None:
+        """Shutdown watchers created by engine.
         """
+        for watcher_name in self.engine_watchers.keys():
+            self.stop_watcher(watcher_name)
+            self.engine_watchers[watcher_name].join()
 
-        try:
-
-            while True:
-                time.sleep(1)
-
-        except KeyboardInterrupt:
-            # Stop all watchers
-            for watcher_name in self.engine_watchers.keys():
-                self.stop_watcher(watcher_name)
-
-        finally:
-            # Wait for watcher threads to end
-            for watcher_name in self.engine_watchers.keys():
-                self.engine_watchers[watcher_name].join()
-            # Clear all watchers
-            self.engine_watchers.clear()
+        self.engine_watchers.clear()
