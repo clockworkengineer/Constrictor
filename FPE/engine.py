@@ -59,7 +59,7 @@ class Engine:
         """
         self.engine_watchers[watcher_name].stop()
 
-    def load_handlers(self) -> None:
+    def load(self) -> None:
         """Load builtin and plugin handlers.
         """
 
@@ -68,7 +68,7 @@ class Engine:
 
         PluginLoader.load(self.engine_config['plugins'])
 
-    def startup_watchers(self) -> None:
+    def startup(self) -> None:
         """Create directory watchers from config and startup.
         """
 

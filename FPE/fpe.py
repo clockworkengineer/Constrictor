@@ -63,20 +63,20 @@ def fpe() -> None:
         #  Create engine, load handlers
 
         fpe_engine: Engine = Engine(fpe_config.get_config())
-        fpe_engine.load_handlers()
-        
+        fpe_engine.load()
+
         # Create and startup watchers
-        
-        fpe_engine.startup_watchers()
+
+        fpe_engine.startup()
 
         logging.info("File Processing Engine Started.")
 
         try:
-          while True:
-              time.sleep(1)
+            while True:
+                time.sleep(1)
         except KeyboardInterrupt:
-          logging.info("File Processing Engine interrupted...")
-          
+            logging.info("File Processing Engine interrupted...")
+
     except FPEError as error:
         logging.error(error)
 
