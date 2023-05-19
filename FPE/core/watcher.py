@@ -40,7 +40,7 @@ class WatcherError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("Watcher") + str(self.message)
+        return FPEError.error_prefix("Watcher") + self.message
 
 
 class WatcherHandler(FileSystemEventHandler):
@@ -68,7 +68,7 @@ class WatcherHandler(FileSystemEventHandler):
         Handler.wait_for_copy_completion(source_path)
         source_path.chmod(source_path.stat().st_mode | 0o664)
         self.watcher_handler.process(source_path)
-        if  self.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
+        if self.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
             source_path.unlink()
 
 
@@ -101,7 +101,7 @@ class Watcher:
         except IOError as error:
             raise WatcherError(str(error)) from error
 
-    def __init__(self, watcher_config:ConfigDict) -> None:
+    def __init__(self, watcher_config: ConfigDict) -> None:
         """Initialise file watcher handler.
 
         Args:

@@ -21,7 +21,7 @@ class CopyFileHandlerError(FPEError):
         super().__init__(self.message)
 
     def __str__(self) -> str:
-        return "CopyFileHandler Error: " + str(self.message)
+        return "CopyFileHandler Error: " + self.message
 
 
 class CopyFileHandler(IHandler):

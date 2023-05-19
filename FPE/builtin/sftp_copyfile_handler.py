@@ -22,7 +22,7 @@ class SFTPCopyFileHandlerError(FPEError):
         super().__init__(self.message)
 
     def __str__(self) -> str:
-        return "SFTPCopyFileHandler Error: " + str(self.message)
+        return "SFTPCopyFileHandler Error: " + self.message
 
 
 class SFTPCopyFileHandler(IHandler):

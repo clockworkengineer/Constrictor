@@ -3,7 +3,8 @@
 Convert command line arguments into an object that can be accessed by the FPE.
 Performing any validation required on the passed in parameters and generating
 any exceptions for any errors found. This is currently just a JSON configuration
-file that is used to specify any custom plugins and running handler details.
+file that is used to specify any custom plugins and running handler details plus
+a flag that indicates that the FPE will be run with no user interface.
 
 """
 
@@ -31,7 +32,7 @@ class ArgumentsError(FPEError):
         Returns:
             str: Exception string.
         """
-        return FPEError.error_prefix("Arguments") + str(self.message)
+        return FPEError.error_prefix("Arguments") + self.message
 
 
 class Arguments:
@@ -58,7 +59,7 @@ class Arguments:
             description="Process files copied into watch folder with a custom handler(s).")
         parser.add_argument('--nogui', action='store_true',
                             help="run FPE with no user interface")
-        parser.add_argument("file", help="JSON Configuration file")
+        parser.add_argument("file", help="JSON configuration file")
 
         arguments = parser.parse_args(argv)
 

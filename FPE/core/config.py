@@ -9,18 +9,18 @@ import json
 import logging
 from typing import Any
 
-from core.constants import CONFIG_WATCHERS,CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
+from core.constants import CONFIG_WATCHERS, CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
 from core.error import FPEError
 from core.arguments import Arguments
 
 ConfigDict = dict[str, Any]
 
 
-class ConfigError(FPEError): 
+class ConfigError(FPEError):
     """An error occurred whilst processing FPE configuration file.
     """
 
-    def __init__(self, message : str) -> None:
+    def __init__(self, message: str) -> None:
         """Create config exception.
 
         Args:
@@ -34,7 +34,7 @@ class ConfigError(FPEError):
         Returns:
             str: Exception string.
         """
-        return FPEError.error_prefix("Config") + str(self.message)
+        return FPEError.error_prefix("Config") + self.message
 
 
 class Config:
