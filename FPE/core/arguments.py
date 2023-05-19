@@ -56,6 +56,8 @@ class Arguments:
 
         parser = argparse.ArgumentParser(
             description="Process files copied into watch folder with a custom handler(s).")
+        parser.add_argument('--nogui', action='store_true',
+                            help="run FPE with no user interface")
         parser.add_argument("file", help="JSON Configuration file")
 
         arguments = parser.parse_args(argv)
@@ -67,4 +69,5 @@ class Arguments:
 
         # Pass back valid attributes
 
+        self.nogui = arguments.nogui
         self.file = arguments.file

@@ -12,16 +12,16 @@ Current built in file handler types:
 3) Import CSV file to SQLite database table (missing for moment).
 4) SFTP copy files/directory to an SSH server (missing for moment).
 
-usage: fpe.py [-h] file
+usage: fpe.py [-h] [--nogui] file
 
-Process files copied into watch folder using a custom handler.
+Process files copied into watch folder with a custom handler(s).
 
 positional arguments:
-  file                  JSON Configuration file
+  file        JSON Configuration file
 
-optional arguments:
-
-  -h, --help            show this help message and exit
+options:
+  -h, --help  show this help message and exit
+  --nogui     run FPE with no user interface
 """
 
 import logging
