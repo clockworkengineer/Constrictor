@@ -52,8 +52,12 @@ class Config:
         """
 
         try:
+            # Load config file
             with open(arguments.file, "r", encoding="utf-8") as json_file:
                 self.config = json.load(json_file)
+            # Set UI flag (JSON file setting overrides any command line option)
+            if "nogui" not in self.config:
+                self.config["nogui"] = arguments.nogui
         except json.JSONDecodeError as error:
             raise ConfigError(str(error)) from error
 

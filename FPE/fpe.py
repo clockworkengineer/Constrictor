@@ -71,11 +71,15 @@ def fpe() -> None:
 
         logging.info("File Processing Engine Started.")
 
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            logging.info("File Processing Engine interrupted...")
+        if fpe_config.get_config()["nogui"]:
+            try:
+                logging.info("Running with no User Interface.")
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                logging.info("File Processing Engine interrupted...")
+        else:
+            logging.info("Running with a User Interface.")       
 
     except FPEError as error:
         logging.error(error)

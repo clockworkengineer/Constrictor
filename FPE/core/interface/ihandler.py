@@ -5,7 +5,7 @@ Protocol class that defines the file handler interface.
 """
 
 import pathlib
-from typing import Protocol, Any
+from typing import Protocol
 
 from core.config import ConfigDict
 
