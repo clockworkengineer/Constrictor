@@ -97,7 +97,7 @@ class Config:
         """Return config dictionary.
 
         Returns:
-            dict[str, Any]: Config dictionary.
+            ConfigDict: Config dictionary.
         """
 
         return self.config
