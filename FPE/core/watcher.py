@@ -122,7 +122,7 @@ class Watcher:
 
             if CONFIG_DELETESOURCE not in watcher_config:
                 watcher_config[CONFIG_DELETESOURCE] = True
-            if "exitonfail" not in watcher_config:
+            if CONFIG_EXITONFAILURE not in watcher_config:
                 watcher_config[CONFIG_EXITONFAILURE] = False
 
             selected_handler = Factory.create(watcher_config)
