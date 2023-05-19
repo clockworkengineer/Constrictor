@@ -47,4 +47,6 @@ class TestCoreWatcher:
         watcher.stop()
         assert watcher.running == False
 
+    # Test watcher copying file with deletesource set to false.
+    # Test watcher copyinh file with deletesource set to true
     # Test watcher with invalid confg passed in
