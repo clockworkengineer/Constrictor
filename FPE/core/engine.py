@@ -89,6 +89,6 @@ class Engine:
         
         
     def running_watchers_list(self) -> list[str]:
-        """Return list of current watchers names.
+        """Return list of current watcher names.
         """
         return self.__engine_watchers.keys()

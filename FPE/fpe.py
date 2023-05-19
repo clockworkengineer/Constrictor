@@ -30,7 +30,7 @@ import time
 from core.error import FPEError
 from core.config import Config
 from core.arguments import Arguments
-from engine import Engine
+from core.engine import Engine
 
 
 __author__ = "Rob Tizzard"
