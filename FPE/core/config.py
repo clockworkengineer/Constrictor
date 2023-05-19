@@ -16,7 +16,7 @@ from core.arguments import Arguments
 ConfigDict = dict[str, Any]
 
 
-class ConfigError(FPEError):
+class ConfigError(FPEError): 
     """An error occurred whilst processing FPE configuration file.
     """
 

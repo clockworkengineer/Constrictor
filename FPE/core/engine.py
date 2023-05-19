@@ -25,7 +25,7 @@ class Engine:
         self.__engine_config = engine_config.copy()
 
     def create_watcher(self, watcher_config: ConfigDict) -> None:
-        """Create a directory watcher;
+        """Create a directory watcher.
 
         Args:
             watcher_config (ConfigDict): Watcher configuration.
