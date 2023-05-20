@@ -6,9 +6,10 @@ from ui.main_window import MainWindow
 
 from core.engine import Engine
 
+
 def fpe_windowed(fpe_engine: Engine):
     logging.info("Running with a user interface.")
-    qtapp = QApplication(sys.argv)
+    qt_app = QApplication(sys.argv)
     fpe_gui = MainWindow(fpe_engine)
     fpe_gui.show()
-    sys.exit(qtapp.exec())     
+    qt_app.exec()
