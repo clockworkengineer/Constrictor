@@ -26,6 +26,7 @@ options:
 
 import logging
 import time
+import sys
 
 from core.error import FPEError
 from core.config import Config
@@ -79,7 +80,13 @@ def fpe() -> None:
             except KeyboardInterrupt:
                 logging.info("File Processing Engine interrupted...")
         else:
-            logging.info("Running with a User Interface.")       
+            logging.info("Running with a User Interface.")
+            from PyQt6.QtWidgets import QApplication
+            from ui.main_window import MainWindow
+            qapp = QApplication(sys.argv)
+            fpe_gui = MainWindow(fpe_engine)
+            fpe_gui.show()
+            sys.exit(qapp.exec())     
 
     except FPEError as error:
         logging.error(error)
