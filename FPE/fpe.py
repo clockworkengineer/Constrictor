@@ -25,9 +25,9 @@ options:
 """
 
 import logging
-import time
-import sys
 
+from fpe_headerless import fpe_headerless
+from fpe_windowed import fpe_windowed
 from core.error import FPEError
 from core.config import Config
 from core.arguments import Arguments
@@ -73,20 +73,9 @@ def fpe() -> None:
         logging.info("File Processing Engine Started.")
 
         if fpe_config.get_config()["nogui"]:
-            try:
-                logging.info("Running with no User Interface.")
-                while True:
-                    time.sleep(1)
-            except KeyboardInterrupt:
-                logging.info("File Processing Engine interrupted...")
+            fpe_headerless(fpe_engine)
         else:
-            logging.info("Running with a User Interface.")
-            from PyQt6.QtWidgets import QApplication
-            from ui.main_window import MainWindow
-            qapp = QApplication(sys.argv)
-            fpe_gui = MainWindow(fpe_engine)
-            fpe_gui.show()
-            sys.exit(qapp.exec())     
+            fpe_windowed(fpe_engine)    
 
     except FPEError as error:
         logging.error(error)

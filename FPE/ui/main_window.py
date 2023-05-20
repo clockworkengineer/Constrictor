@@ -5,11 +5,7 @@ from core.engine import Engine
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    """_summary_
-
-    Args:
-        QMainWindow (_type_): _description_
-        Ui_MainWindow (_type_): _description_
+    """Main user interface window.
     """
     def __init__(self, fpe_engine: Engine, parent=None):
         super().__init__(parent)
