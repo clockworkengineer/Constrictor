@@ -9,24 +9,24 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
-        self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
+class Ui_fpe_main_window(object):
+    def setupUi(self, fpe_main_window):
+        fpe_main_window.setObjectName("fpe_main_window")
+        fpe_main_window.resize(800, 600)
+        self.centralwidget = QtWidgets.QWidget(parent=fpe_main_window)
         self.centralwidget.setObjectName("centralwidget")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
+        fpe_main_window.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(parent=fpe_main_window)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 22))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
+        fpe_main_window.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(parent=fpe_main_window)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        fpe_main_window.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslateUi(fpe_main_window)
+        QtCore.QMetaObject.connectSlotsByName(fpe_main_window)
 
-    def retranslateUi(self, MainWindow):
+    def retranslateUi(self, fpe_main_window):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        fpe_main_window.setWindowTitle(_translate("fpe_main_window", "MainWindow"))
