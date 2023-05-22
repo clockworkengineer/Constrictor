@@ -73,17 +73,18 @@ def fpe() -> None:
         logging.info("File Processing Engine Started.")
 
         # Run with selected user interface
-        
+
         if fpe_config.get_config()["nogui"]:
             fpe_headerless(fpe_engine)
         else:
-            fpe_windowed(fpe_engine)    
+            fpe_windowed(fpe_engine)
+
+        fpe_engine.shutdown()
 
     except FPEError as error:
         logging.error(error)
 
     finally:
-        fpe_engine.shutdown()
         logging.info("File Processing Engine Stopped.")
 
 

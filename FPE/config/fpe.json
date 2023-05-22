@@ -4,10 +4,22 @@
     ],
     "watchers": [
         {
-            "name": "File Copier",
+            "name": "File Copier 1",
             "type": "CopyFile",
-            "source": ".\\watcher\\source\\",
-            "destination": ".\\watcher\\destination\\"
+            "source": ".\\watcher\\source1\\",
+            "destination": ".\\watcher\\destination1\\"
+        },
+        {
+            "name": "File Copier 2",
+            "type": "CopyFile",
+            "source": ".\\watcher\\source2\\",
+            "destination": ".\\watcher\\destination2\\"
+        },
+        {
+            "name": "File Copier 3",
+            "type": "CopyFile",
+            "source": ".\\watcher\\source3\\",
+            "destination": ".\\watcher\\destination3\\"
         }
     ],
     "logging": {
