@@ -3,7 +3,8 @@ import time
 
 from core.engine import Engine
 
-def fpe_headerless(fpe_engine:Engine):
+
+def fpe_headerless(fpe_engine: Engine):
 
     try:
         logging.info("Running with no user interface.")
@@ -11,4 +12,3 @@ def fpe_headerless(fpe_engine:Engine):
             time.sleep(1)
     except KeyboardInterrupt:
         logging.info("File Processing Engine interrupted...")
-

@@ -1,12 +1,13 @@
 from PyQt6.QtWidgets import QMainWindow
-from ui.QtMainWindow_ui import Ui_fpe_main_window
 
+from ui.QtMainWindow_ui import Ui_fpe_main_window
 from core.engine import Engine
 
 
 class MainWindow(QMainWindow, Ui_fpe_main_window):
     """Main user interface window.
     """
+
     def __init__(self, fpe_engine: Engine, parent=None):
         super().__init__(parent)
         self.setupUi(self)

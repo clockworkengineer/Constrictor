@@ -29,4 +29,4 @@ class Ui_fpe_main_window(object):
 
     def retranslateUi(self, fpe_main_window):
         _translate = QtCore.QCoreApplication.translate
-        fpe_main_window.setWindowTitle(_translate("fpe_main_window", "MainWindow"))
+        fpe_main_window.setWindowTitle(_translate("fpe_main_window", "File Processing Engine"))
