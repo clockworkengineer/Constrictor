@@ -27,8 +27,29 @@
      <string>Running Watchers</string>
     </property>
     <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="fpe_running_watcher_stop_button">
+       <property name="text">
+        <string>Stop</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
       <widget class="QListWidget" name="fpe_running_watchers_list"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QPushButton" name="fpe_running_watcher_delete_button">
+       <property name="text">
+        <string>Delete</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Create</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
