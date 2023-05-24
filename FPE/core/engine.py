@@ -32,7 +32,8 @@ class Engine:
         """
         current_watcher = Watcher(watcher_config)
         if current_watcher is not None:
-            self.__engine_watchers[watcher_config[CONFIG_NAME]] = current_watcher
+            self.__engine_watchers[watcher_config[CONFIG_NAME]
+                                   ] = current_watcher
 
     def delete_watcher(self, watcher_name: str) -> None:
         """Delete directory watcher.
@@ -86,9 +87,13 @@ class Engine:
             self.__engine_watchers[watcher_name].join()
 
         self.__engine_watchers.clear()
-        
-        
+
     def running_watchers_list(self) -> list[str]:
         """Return list of current watcher names.
         """
         return list(self.__engine_watchers.keys())
+
+    def running_config(self) -> ConfigDict:
+        """Return engine configuration.
+        """
+        return self.__engine_config
