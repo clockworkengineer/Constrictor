@@ -5,14 +5,16 @@ import json
 from ui.QtMainWindow_ui import Ui_fpe_main_window
 from core.engine import Engine
 
+from core.constants import CONFIG_WATCHERS
+
 
 class MainWindow(QMainWindow, Ui_fpe_main_window):
     """Main user interface window.
     """
 
-    def rowChanged(self, row):
+    def rowChanged(self, row: int) -> None:
         self.fpe_watcher_config_textedit.setPlainText(json.dumps(
-            self.fpe_engine.running_config()["watchers"][row], indent=1))
+            self.fpe_engine.running_config()[CONFIG_WATCHERS][row], indent=1))
 
     def __init__(self, fpe_engine: Engine, parent=None):
         """_summary_
