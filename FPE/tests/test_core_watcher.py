@@ -40,6 +40,19 @@ class TestCoreWatcher:
         watcher.start()
         assert watcher.running == True
 
+    def test_watcher_start_a_running_watcher(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        watcher.start()
+        assert watcher.running == True
+
+    def test_watcher_stopping_a_stopped_watcher(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        watcher.stop()
+        watcher.stop()
+        assert watcher.running == False
+
     def test_watcher_started_then_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()

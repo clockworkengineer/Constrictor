@@ -161,9 +161,12 @@ class Watcher:
         """Start watcher.
         """
 
+        if self.__running:
+            return
+
         if self.__observer is None:
             self.__observer = Watcher._create_observer(self.__handler)
-            
+
         if self.__observer is not None:
             self.__observer.start()
             self.__running = True
@@ -177,6 +180,5 @@ class Watcher:
         if self.__observer is not None:
             self.__observer.stop()
             self.__observer.join()
-            self.__observer = None # type: ignore
-
-        self.__running = False
+            self.__observer = None  # type: ignore
+            self.__running = False
