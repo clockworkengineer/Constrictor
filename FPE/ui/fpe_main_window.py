@@ -12,8 +12,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
     """Main user interface window.
     """
 
-    def __set_start_stop_button_title(self) -> None:
-        watcher_name = self.fpe_running_watchers_list.currentItem().text()
+    def __set_start_stop_button_title(self, watcher_name: str) -> None:
         if self.fpe_engine.is_watcher_running(watcher_name):
             self.fpe_running_watcher_start_stop_button.setText("Stop")
         else:
@@ -22,7 +21,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
     def __rowChanged(self, row: int) -> None:
         self.fpe_watcher_config_textedit.setPlainText(json.dumps(
             self.fpe_engine.running_config()[CONFIG_WATCHERS][row], indent=1))
-        self.__set_start_stop_button_title()
+        self.__set_start_stop_button_title(watcher_name = self.fpe_running_watchers_list.currentItem().text())
 
     def __start_stop_watcher(self) -> None:
         watcher_name = self.fpe_running_watchers_list.currentItem().text()
@@ -30,7 +29,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.fpe_engine.start_watcher(watcher_name)
         else:
             self.fpe_engine.stop_watcher(watcher_name)
-        self.__set_start_stop_button_title()
+        self.__set_start_stop_button_title(watcher_name)
 
     def __init__(self, fpe_engine: Engine, parent=None):
 
