@@ -76,8 +76,16 @@ class Watcher:
     """Watch for files being copied into a folder and process.
     """
 
+    __handler: IHandler
     __observer: Observer
     __running: bool
+
+    @staticmethod
+    def _create_observer(handler: IHandler) -> Observer:
+        observer = observer = Observer()
+        observer.schedule(event_handler=WatcherHandler(
+            handler), path=handler.handler_config[CONFIG_SOURCE], recursive=False)
+        return observer
 
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
@@ -125,13 +133,11 @@ class Watcher:
             if CONFIG_EXITONFAILURE not in watcher_config:
                 watcher_config[CONFIG_EXITONFAILURE] = False
 
-            selected_handler = Factory.create(watcher_config)
+            self.__handler = Factory.create(watcher_config)
 
-            if selected_handler is not None:
-                self.__observer = Observer()
-                self.__observer.schedule(event_handler=WatcherHandler(
-                    selected_handler), path=selected_handler.handler_config[CONFIG_SOURCE], recursive=False)
-                Watcher._display_details(selected_handler.handler_config)
+            if self.__handler is not None:
+                self.__observer = Watcher._create_observer(self.__handler)
+                Watcher._display_details(self.__handler.handler_config)
 
             else:
                 self.__observer = None  # type: ignore
@@ -155,10 +161,14 @@ class Watcher:
         """Start watcher.
         """
 
+        if self.__observer is None:
+            self.__observer = Watcher._create_observer(self.__handler)
+            
         if self.__observer is not None:
             self.__observer.start()
-
-        self.__running = True
+            self.__running = True
+        else:
+            raise WatcherError("Could not create watchdog observer.")
 
     def stop(self) -> None:
         """Stop watcher.
@@ -166,12 +176,7 @@ class Watcher:
 
         if self.__observer is not None:
             self.__observer.stop()
+            self.__observer.join()
+            self.__observer = None # type: ignore
 
         self.__running = False
-
-    def join(self) -> None:
-        """Wait for watcher thread to finish.
-        """
-
-        if self.__observer is not None:
-            self.__observer.join()

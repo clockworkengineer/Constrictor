@@ -47,6 +47,13 @@ class TestCoreWatcher:
         watcher.stop()
         assert watcher.running == False
 
+    def test_watcher_started_then_stopped_then_restarted(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        time.sleep(1)
+        watcher.stop()
+        watcher.start()
+        assert watcher.running == True
     # Test watcher copying file with deletesource set to false.
     # Test watcher copyinh file with deletesource set to true
     # Test watcher with invalid confg passed in

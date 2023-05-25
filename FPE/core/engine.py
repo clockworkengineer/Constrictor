@@ -41,7 +41,7 @@ class Engine:
         Args:
             watcher_name (str): Watcher name.
         """
-        self.__engine_watchers[watcher_name].join()
+        self.__engine_watchers[watcher_name].stop()
         self.__engine_watchers.pop(watcher_name)
 
     def start_watcher(self, watcher_name: str) -> None:
@@ -84,7 +84,7 @@ class Engine:
         """
         for watcher_name in self.__engine_watchers.keys():
             self.stop_watcher(watcher_name)
-            self.__engine_watchers[watcher_name].join()
+            self.__engine_watchers[watcher_name].stop()
 
         self.__engine_watchers.clear()
 
