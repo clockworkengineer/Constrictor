@@ -60,6 +60,18 @@ class Engine:
         """
         self.__engine_watchers[watcher_name].stop()
 
+    def is_watcher_running(self, watcher_name: str) -> bool:
+        """Is a named watcher running ?
+
+        Args:
+            watcher_name (str):  Watcher name.
+
+        Returns:
+            bool: true if watcher currently running
+        """
+
+        return self.__engine_watchers[watcher_name].running
+
     def load(self) -> None:
         """Load builtin and plugin handlers.
         """
