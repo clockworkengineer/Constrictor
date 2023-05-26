@@ -8,6 +8,12 @@ from core.engine import Engine
 
 
 def fpe_windowed(fpe_engine: Engine):
+    """_summary_
+
+    Args:
+        fpe_engine (Engine): _description_
+    """
+    
     logging.info("Running with a user interface.")
     qt_app = QApplication(sys.argv)
     fpe_gui = MainWindow(fpe_engine)

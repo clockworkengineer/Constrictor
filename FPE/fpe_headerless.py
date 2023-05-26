@@ -5,7 +5,11 @@ from core.engine import Engine
 
 
 def fpe_headerless(fpe_engine: Engine):
+    """_summary_
 
+    Args:
+        fpe_engine (Engine): _description_
+    """
     try:
         logging.info("Running with no user interface.")
         while True:
