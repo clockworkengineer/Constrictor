@@ -30,7 +30,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         Args:
             row (int): _description_
         """
-        
+
         if row != -1:
             self.fpe_watcher_config_textedit.setPlainText(json.dumps(
                 self.fpe_engine.running_config()[CONFIG_WATCHERS][row], indent=1))
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.fpe_engine.stop_watcher(watcher_name)
         self.__set_start_stop_button_title(watcher_name)
 
-    def _delete_watcher(self) -> None:
+    def __delete_watcher(self) -> None:
         """_summary_
         """
 
@@ -74,12 +74,6 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
         self.fpe_engine = fpe_engine
 
-        self.fpe_running_watchers_list.addItems(
-            fpe_engine.running_watchers_list())
-
-        self.fpe_running_watchers_list.setCurrentRow(0)
-        self.__rowChanged(0)
-
         self.fpe_running_watchers_list.currentRowChanged.connect(
             self.__rowChanged)
 
@@ -89,4 +83,9 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.fpe_watcher_config_textedit.setReadOnly(True)
 
         self.fpe_running_watcher_delete_button.clicked.connect(
-            self._delete_watcher)
+            self.__delete_watcher)
+
+        self.fpe_running_watchers_list.addItems(
+            fpe_engine.running_watchers_list())
+
+        self.fpe_running_watchers_list.setCurrentRow(0)
