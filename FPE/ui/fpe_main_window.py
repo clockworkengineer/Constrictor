@@ -30,6 +30,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         Args:
             row (int): _description_
         """
+        
         if row != -1:
             self.fpe_watcher_config_textedit.setPlainText(json.dumps(
                 self.fpe_engine.running_config()[CONFIG_WATCHERS][row], indent=1))
@@ -56,7 +57,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         """
 
         watcher_name = self.fpe_running_watchers_list.currentItem().text()
-        self.fpe_engine.stop_watcher(watcher_name)
+        self.fpe_engine.delete_watcher(watcher_name)
         self.fpe_running_watchers_list.takeItem(
             self.fpe_running_watchers_list.currentRow())
 
