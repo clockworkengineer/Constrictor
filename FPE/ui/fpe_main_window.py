@@ -30,11 +30,15 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         Args:
             row (int): _description_
         """
-
-        self.fpe_watcher_config_textedit.setPlainText(json.dumps(
-            self.fpe_engine.running_config()[CONFIG_WATCHERS][row], indent=1))
-        self.__set_start_stop_button_title(
-            watcher_name=self.fpe_running_watchers_list.currentItem().text())
+        if row != -1:
+            self.fpe_watcher_config_textedit.setPlainText(json.dumps(
+                self.fpe_engine.running_config()[CONFIG_WATCHERS][row], indent=1))
+            self.__set_start_stop_button_title(
+                watcher_name=self.fpe_running_watchers_list.currentItem().text())
+        else:
+            self.fpe_watcher_config_textedit.setPlainText("")
+            self.fpe_running_watcher_start_stop_button.setEnabled(False)
+            self.fpe_running_watcher_delete_button.setEnabled(False)
 
     def __start_stop_watcher(self) -> None:
         """_summary_
@@ -46,6 +50,15 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         else:
             self.fpe_engine.stop_watcher(watcher_name)
         self.__set_start_stop_button_title(watcher_name)
+
+    def _delete_watcher(self) -> None:
+        """_summary_
+        """
+
+        watcher_name = self.fpe_running_watchers_list.currentItem().text()
+        self.fpe_engine.stop_watcher(watcher_name)
+        self.fpe_running_watchers_list.takeItem(
+            self.fpe_running_watchers_list.currentRow())
 
     def __init__(self, fpe_engine: Engine, parent=None):
         """_summary_
@@ -73,3 +86,6 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.__start_stop_watcher)
 
         self.fpe_watcher_config_textedit.setReadOnly(True)
+
+        self.fpe_running_watcher_delete_button.clicked.connect(
+            self._delete_watcher)
