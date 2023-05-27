@@ -80,10 +80,10 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.fpe_running_watcher_start_stop_button.clicked.connect(
             self.__start_stop_watcher)
 
-        self.fpe_watcher_config_textedit.setReadOnly(True)
-
         self.fpe_running_watcher_delete_button.clicked.connect(
             self.__delete_watcher)
+        
+        self.fpe_watcher_config_textedit.setReadOnly(True)
 
         self.fpe_running_watchers_list.addItems(
             fpe_engine.running_watchers_list())
