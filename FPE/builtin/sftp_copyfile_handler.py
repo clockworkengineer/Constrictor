@@ -21,7 +21,7 @@ class SFTPCopyFileHandlerError(FPEError):
         """SFTPCopyFile handler error.
 
         Args:
-            message (str): Error message.
+            message (str): Exception message.
         """
         self.message = message
         super().__init__(self.message)

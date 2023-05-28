@@ -1,4 +1,7 @@
 """FPE Plugin interface.
+
+Protocol class that defines the handler plugin interface.
+
 """
 
 
