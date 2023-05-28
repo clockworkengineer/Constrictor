@@ -149,7 +149,7 @@ class Watcher:
 
     @property
     def running(self) -> bool:
-        """Is wtcher currently running ?
+        """Is watcher currently running ?
 
         Returns:
             bool: true then watcher running.
