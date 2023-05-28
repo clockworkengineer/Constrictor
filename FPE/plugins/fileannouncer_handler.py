@@ -16,7 +16,7 @@ class FileAnnouncerHandler(IHandler):
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:
-        """Copy handler config.
+        """Copy handler config and setup source directory.
         """
         self.handler_config = handler_config.copy()
         

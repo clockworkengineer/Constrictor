@@ -1,3 +1,6 @@
+"""Fun FPE headerless.
+"""
+
 import logging
 import time
 

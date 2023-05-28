@@ -1,3 +1,5 @@
+"""FPE Qt based windows UI.
+"""
 
 from PyQt6.QtWidgets import QMainWindow
 import json

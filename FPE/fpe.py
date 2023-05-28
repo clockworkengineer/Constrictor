@@ -61,10 +61,9 @@ def fpe() -> None:
         fpe_config.validate()
         fpe_config.set_logging()
 
-        #  Create engine, load handlers
+        #  Create engine
 
         fpe_engine: Engine = Engine(fpe_config.get_config())
-        fpe_engine.load()
 
         # Create and startup watchers
 

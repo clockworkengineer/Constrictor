@@ -1,4 +1,4 @@
-"""FPE engine.
+"""FPE controller engine.
 """
 
 from builtin.handler_list import fpe_handler_list
@@ -22,7 +22,17 @@ class Engine:
         Args:
             engine_config (ConfigDict): FPE configuration.
         """
+        
+        # Make a copy of config for engine
+        
         self.__engine_config = engine_config.copy()
+
+        # Load builtin and plugin handlers.
+
+        for handler_name in fpe_handler_list.keys():
+            Factory.register(handler_name, fpe_handler_list[handler_name])
+
+        PluginLoader.load(self.__engine_config['plugins'])
 
     def create_watcher(self, watcher_config: ConfigDict) -> None:
         """Create a directory watcher.
@@ -71,15 +81,6 @@ class Engine:
         """
 
         return self.__engine_watchers[watcher_name].running
-
-    def load(self) -> None:
-        """Load builtin and plugin handlers.
-        """
-
-        for handler_name in fpe_handler_list.keys():
-            Factory.register(handler_name, fpe_handler_list[handler_name])
-
-        PluginLoader.load(self.__engine_config['plugins'])
 
     def startup(self) -> None:
         """Create directory watchers from config and startup.

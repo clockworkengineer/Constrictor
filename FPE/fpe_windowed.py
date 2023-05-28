@@ -1,3 +1,5 @@
+"""Run FPE with windows UI.
+"""
 
 import logging
 import sys

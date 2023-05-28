@@ -1,4 +1,4 @@
-"""File handler.
+"""FPE File handler.
 
 Handler utility static methods.
 

@@ -1,4 +1,4 @@
-"""SFTPCopyFile builtin handler.
+"""FPE SFTPCopyFile builtin handler.
 """
 
 
@@ -18,6 +18,11 @@ class SFTPCopyFileHandlerError(FPEError):
     """
 
     def __init__(self, message) -> None:
+        """SFTPCopyFile handler error.
+
+        Args:
+            message (str): Error message.
+        """
         self.message = message
         super().__init__(self.message)
 
@@ -43,7 +48,13 @@ class SFTPCopyFileHandler(IHandler):
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:
-        """ Initialise handler attributes.
+        """Initialise handler attributes.
+
+        Args:
+            handler_config (ConfigDict): Handler configuration.
+
+        Raises:
+            SFTPCopyFileHandlerError: None passed as handler configuration.
         """
 
         if handler_config is None:
@@ -60,6 +71,12 @@ class SFTPCopyFileHandler(IHandler):
 
     def process(self,  source_path: pathlib.Path) -> None:
         """SFTP Copy file from source(watch) directory to a destination directory on remote server.
+
+        Args:
+            source_path (pathlib.Path): Source file path.
+
+        Raises:
+            SFTPCopyFileHandlerError: Ann error occured while tryinhg to transfer file to FTP server.
         """
 
         try:

@@ -1,4 +1,4 @@
-"""File watcher.
+"""FPE directory/file watcher.
 
 Use watchdog package to monitor directories and process each file created using one
 of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
@@ -21,7 +21,7 @@ from core.error import FPEError
 
 
 class WatcherError(FPEError):
-    """An error occurred in directory file watcher.
+    """An error occurred in directory/file watcher.
     """
 
     def __init__(self, message: str) -> None:

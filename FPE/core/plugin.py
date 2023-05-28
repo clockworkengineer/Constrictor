@@ -1,4 +1,4 @@
-"""Plugin loader.
+"""FPE Plugin loader.
 """
 
 import importlib

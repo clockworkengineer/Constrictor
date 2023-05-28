@@ -1,4 +1,4 @@
-"""File handler interface.
+"""FPE File handler interface.
 
 Protocol class that defines the file handler interface.
 
@@ -22,3 +22,4 @@ class IHandler(Protocol):
         Args:
             source_path (pathlib.Path): Source fiel path.
         """
+        ...

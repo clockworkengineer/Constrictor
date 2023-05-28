@@ -1,3 +1,5 @@
+"""FPE builtin handler table.
+"""
 
 from typing import Callable
 

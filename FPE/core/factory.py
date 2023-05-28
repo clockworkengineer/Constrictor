@@ -1,4 +1,4 @@
-"""Watcher handler factory.
+"""FPE Watcher handler factory.
 
 Watcher handlers are registered/unregistered and mapped from their string
 name to the correct handler function by this factory class.

@@ -1,4 +1,4 @@
-"""CopyFile builtin handler.
+"""FPE CopyFile builtin handler.
 """
 
 import pathlib
@@ -17,6 +17,11 @@ class CopyFileHandlerError(FPEError):
     """
 
     def __init__(self, message) -> None:
+        """CopyFileHandler error.
+
+        Args:
+            message (str): Error message.
+        """
         self.message = message
         super().__init__(self.message)
 
@@ -25,7 +30,7 @@ class CopyFileHandlerError(FPEError):
 
 
 class CopyFileHandler(IHandler):
-    """Copy file/directories.
+    """Copy file.
 
     Copy files created in watch folder to destination folder.
 
@@ -39,7 +44,13 @@ class CopyFileHandler(IHandler):
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:
-        """Copy handler config.
+        """Initialise copy file handler.
+
+        Args:
+            handler_config (ConfigDict): Handler configuration.
+
+        Raises:
+            CopyFileHandlerError: None passed as config.
         """
 
         if handler_config is None:
@@ -53,6 +64,10 @@ class CopyFileHandler(IHandler):
     @staticmethod
     def _copy_file(source_path: pathlib.Path, destination_path: pathlib.Path) -> None:
         """Copy source path to destination path.
+
+        Args:
+            source_path (pathlib.Path): Source file path.
+            destination_path (pathlib.Path): Destination file path.
         """
 
         shutil.copy2(source_path, destination_path)
@@ -62,6 +77,12 @@ class CopyFileHandler(IHandler):
 
     def process(self, source_path: pathlib.Path) -> None:
         """Copy file from source(watch) directory to destination directory.
+
+        Args:
+            source_path (pathlib.Path): Source file path.
+
+        Raises:
+            CopyFileHandlerError: An error occured during file copy.
         """
 
         try:

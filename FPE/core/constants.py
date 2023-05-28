@@ -1,3 +1,6 @@
+"""FPE related constant definitions.
+"""
+
 from typing import Final, Tuple
 
 APP_NAME: Final[str] = "FPE"

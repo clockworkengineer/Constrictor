@@ -1,4 +1,4 @@
-"""Plugin interface.
+"""FPE Plugin interface.
 """
 
 
@@ -6,7 +6,7 @@ class IPlugin:
     """Plugin interface.
     """
 
-    @staticmethod
-    def register() -> None:
+    def register(self) -> None:
         """Register the necessary items in the watcher handler factory.
         """
+        ...
