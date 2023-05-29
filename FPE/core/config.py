@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any
 
-from core.constants import CONFIG_WATCHERS, CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
+from core.constants import CONFIG_WATCHERS, CONFIG_FILENAME, CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
 from core.error import FPEError
 from core.arguments import Arguments
 
@@ -58,6 +58,8 @@ class Config:
             # Set UI flag (JSON file setting overrides any command line option)
             if "nogui" not in self.config:
                 self.config["nogui"] = arguments.nogui
+            # Save away config file name
+            self.config[CONFIG_FILENAME] = arguments.file
         except json.JSONDecodeError as error:
             raise ConfigError(str(error)) from error
 

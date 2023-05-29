@@ -85,6 +85,9 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.fpe_running_watcher_delete_button.clicked.connect(
             self.__delete_watcher)
 
+        self.fpe_running_watcher_save_button.clicked.connect(
+            self.fpe_engine.save_config)
+
         self.fpe_watcher_config_textedit.setReadOnly(True)
 
         self.fpe_running_watchers_list.addItems(

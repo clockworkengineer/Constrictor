@@ -1,8 +1,10 @@
 """FPE controller engine.
 """
 
+import json
+
 from builtin.handler_list import fpe_handler_list
-from core.constants import CONFIG_NAME, CONFIG_WATCHERS
+from core.constants import CONFIG_NAME, CONFIG_WATCHERS, CONFIG_FILENAME
 from core.config import ConfigDict
 from core.factory import Factory
 from core.watcher import Watcher
@@ -22,9 +24,9 @@ class Engine:
         Args:
             engine_config (ConfigDict): FPE configuration.
         """
-        
+
         # Make a copy of config for engine
-        
+
         self.__engine_config = engine_config.copy()
 
         # Load builtin and plugin handlers.
@@ -110,3 +112,7 @@ class Engine:
         """Return engine configuration.
         """
         return self.__engine_config
+
+    def save_config(self) -> None:
+        with open(self.__engine_config[CONFIG_FILENAME], "w", encoding="utf-8") as json_file:
+            json_file.write(json.dumps(self.__engine_config, indent=1))
