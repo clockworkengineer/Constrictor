@@ -15,10 +15,10 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
     """
 
     def __set_start_stop_button_title(self, watcher_name: str) -> None:
-        """_summary_
+        """Set Start/Stop button depending on watchers running state.
 
         Args:
-            watcher_name (str): _description_
+            watcher_name (str): Watcher name.
         """
 
         if self.fpe_engine.is_watcher_running(watcher_name):
@@ -27,10 +27,10 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.fpe_running_watcher_start_stop_button.setText("Start")
 
     def __rowChanged(self, row: int) -> None:
-        """_summary_
+        """Set UI for watcher selected from list.
 
         Args:
-            row (int): _description_
+            row (int): Row of currently selected watcher.
         """
 
         if row != -1:
@@ -44,7 +44,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.fpe_running_watcher_delete_button.setEnabled(False)
 
     def __start_stop_watcher(self) -> None:
-        """_summary_
+        """Start/Stop watcher.
         """
 
         watcher_name = self.fpe_running_watchers_list.currentItem().text()
@@ -55,7 +55,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.__set_start_stop_button_title(watcher_name)
 
     def __delete_watcher(self) -> None:
-        """_summary_
+        """Delete watcher from engine running list.
         """
 
         watcher_name = self.fpe_running_watchers_list.currentItem().text()
@@ -64,11 +64,11 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.fpe_running_watchers_list.currentRow())
 
     def __init__(self, fpe_engine: Engine, parent=None):
-        """_summary_
+        """Main FPE UI window.
 
         Args:
-            fpe_engine (Engine): _description_
-            parent (_type_, optional): _description_. Defaults to None.
+            fpe_engine (Engine): FPE Engine.
+            parent (_type_, optional): FPE Window parent. Defaults to None.
         """
 
         super().__init__(parent)
