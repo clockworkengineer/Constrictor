@@ -12,7 +12,7 @@ import pathlib
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
@@ -82,9 +82,9 @@ class Watcher:
 
     @staticmethod
     def _create_observer(handler: IHandler) -> Observer:
-        observer = observer = Observer()
+        observer : Observer = Observer()
         observer.schedule(event_handler=WatcherHandler(
-            handler), path=handler.handler_config[CONFIG_SOURCE], recursive=False)
+            handler), path=handler.handler_config[CONFIG_SOURCE], recursive=handler.handler_config[CONFIG_RECURSIVE])
         return observer
 
     @staticmethod
@@ -132,6 +132,8 @@ class Watcher:
                 watcher_config[CONFIG_DELETESOURCE] = True
             if CONFIG_EXITONFAILURE not in watcher_config:
                 watcher_config[CONFIG_EXITONFAILURE] = False
+            if CONFIG_RECURSIVE not in watcher_config:
+                watcher_config[CONFIG_RECURSIVE] = False
 
             self.__handler = Factory.create(watcher_config)
 
