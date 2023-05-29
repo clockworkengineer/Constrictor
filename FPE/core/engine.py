@@ -4,7 +4,7 @@
 import json
 
 from builtin.handler_list import fpe_handler_list
-from core.constants import CONFIG_NAME, CONFIG_WATCHERS, CONFIG_FILENAME
+from core.constants import CONFIG_NAME, CONFIG_WATCHERS, CONFIG_FILENAME, CONFIG_NOGUI
 from core.config import ConfigDict
 from core.factory import Factory
 from core.watcher import Watcher
@@ -55,6 +55,11 @@ class Engine:
         """
         self.__engine_watchers[watcher_name].stop()
         self.__engine_watchers.pop(watcher_name)
+
+        for watcher_config in self.__engine_config[CONFIG_WATCHERS]:
+            if watcher_config[CONFIG_NAME] == watcher_name:
+                self.__engine_config[CONFIG_WATCHERS].remove(watcher_config)
+                break
 
     def start_watcher(self, watcher_name: str) -> None:
         """Start directory watcher.
@@ -114,5 +119,13 @@ class Engine:
         return self.__engine_config
 
     def save_config(self) -> None:
+        """Save current configurationaway to JSON file.
+        """
+        # Copy engine config
+        config_to_save: ConfigDict = self.__engine_config.copy()
+        # Remove uneeded kays
+        config_to_save.pop(CONFIG_FILENAME)
+        config_to_save.pop(CONFIG_NOGUI)
+        # Write JSON configuration
         with open(self.__engine_config[CONFIG_FILENAME], "w", encoding="utf-8") as json_file:
-            json_file.write(json.dumps(self.__engine_config, indent=1))
+            json_file.write(json.dumps(config_to_save, indent=1))

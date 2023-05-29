@@ -26,6 +26,7 @@ options:
 
 import logging
 
+from core.constants import CONFIG_NOGUI
 from fpe_headerless import fpe_headerless
 from fpe_windowed import fpe_windowed
 from core.error import FPEError
@@ -73,7 +74,7 @@ def fpe() -> None:
 
         # Run with selected user interface
 
-        if fpe_config.get_config()["nogui"]:
+        if fpe_config.get_config()[CONFIG_NOGUI]:
             fpe_headerless(fpe_engine)
         else:
             fpe_windowed(fpe_engine)

@@ -13,6 +13,7 @@ CONFIG_WATCHERS: Final[str] = "watchers"
 CONFIG_PLUGINS: Final[str] = "plugins"
 CONFIG_FILENAME: Final[str] = "filename"
 CONFIG_DELETESOURCE: Final[str] = "deletesoure"
+CONFIG_NOGUI: Final[str] = "nogui"
 CONFIG_RECURSIVE: Final[str] = "recursive"
 CONFIG_EXITONFAILURE: Final[str] = "exitonfailure"
 CONFIG_MANDATORY_KEYS: Final[Tuple[str, ...]] = (
