@@ -68,7 +68,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
         Args:
             fpe_engine (Engine): FPE Engine.
-            parent (_type_, optional): FPE Window parent. Defaults to None.
+            parent (QtWidget, optional): FPE Window parent. Defaults to None.
         """
 
         super().__init__(parent)

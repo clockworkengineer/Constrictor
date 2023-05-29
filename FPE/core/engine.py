@@ -119,7 +119,7 @@ class Engine:
         return self.__engine_config
 
     def save_config(self) -> None:
-        """Save current configurationaway to JSON file.
+        """Save current configuration away to JSON file.
         """
         # Copy engine config
         config_to_save: ConfigDict = self.__engine_config.copy()
