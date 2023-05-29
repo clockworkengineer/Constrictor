@@ -87,7 +87,7 @@ class Engine:
             bool: true if watcher currently running
         """
 
-        return self.__engine_watchers[watcher_name].running
+        return self.__engine_watchers[watcher_name].is_running
 
     def startup(self) -> None:
         """Create directory watchers from config and startup.

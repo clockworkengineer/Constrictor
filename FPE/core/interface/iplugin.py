@@ -3,9 +3,10 @@
 Protocol class that defines the handler plugin interface.
 
 """
+from typing import Protocol
 
 
-class IPlugin:
+class IPlugin(Protocol):
     """Plugin interface.
     """
 

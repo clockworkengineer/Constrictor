@@ -33,32 +33,32 @@ class TestCoreWatcher:
 
     def test_watcher_initial_state_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
-        assert watcher.running == False
+        assert watcher.is_running == False
 
     def test_watcher_started(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
-        assert watcher.running == True
+        assert watcher.is_running == True
 
     def test_watcher_start_a_running_watcher(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
         watcher.start()
-        assert watcher.running == True
+        assert watcher.is_running == True
 
     def test_watcher_stopping_a_stopped_watcher(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
         watcher.stop()
         watcher.stop()
-        assert watcher.running == False
+        assert watcher.is_running == False
 
     def test_watcher_started_then_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
         time.sleep(1)
         watcher.stop()
-        assert watcher.running == False
+        assert watcher.is_running == False
 
     def test_watcher_started_then_stopped_then_restarted(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
@@ -66,7 +66,7 @@ class TestCoreWatcher:
         time.sleep(1)
         watcher.stop()
         watcher.start()
-        assert watcher.running == True
+        assert watcher.is_running == True
     # Test watcher copying file with deletesource set to false.
     # Test watcher copyinh file with deletesource set to true
     # Test watcher with invalid confg passed in

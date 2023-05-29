@@ -82,7 +82,7 @@ class Watcher:
 
     @staticmethod
     def _create_observer(handler: IHandler) -> Observer:
-        observer : Observer = Observer()
+        observer: Observer = Observer()
         observer.schedule(event_handler=WatcherHandler(
             handler), path=handler.handler_config[CONFIG_SOURCE], recursive=handler.handler_config[CONFIG_RECURSIVE])
         return observer
@@ -126,7 +126,7 @@ class Watcher:
             if watcher_config is None:
                 raise WatcherError("None as config passed to watcher.")
 
-            # Default values for fields
+            # Default values for config keys
 
             if CONFIG_DELETESOURCE not in watcher_config:
                 watcher_config[CONFIG_DELETESOURCE] = True
@@ -150,7 +150,7 @@ class Watcher:
             raise WatcherError(str(error)) from error
 
     @property
-    def running(self) -> bool:
+    def is_running(self) -> bool:
         """Is watcher currently running ?
 
         Returns:
