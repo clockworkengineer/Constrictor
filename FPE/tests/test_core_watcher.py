@@ -1,8 +1,10 @@
 import pytest
 import time
+import pathlib
+import shutil
 
 from tests.common import json_file_source
-from core.constants import CONFIG_WATCHERS
+from core.constants import CONFIG_WATCHERS, CONFIG_SOURCE, CONFIG_DESTINATION
 from core.arguments import Arguments
 from core.config import Config, ConfigDict
 from core.watcher import Watcher, WatcherError
@@ -19,6 +21,8 @@ def reset_factory_and_return_config() -> ConfigDict:
     config = Config(Arguments(
         [json_file_source("test_valid.json")])).get_config()
     yield config[CONFIG_WATCHERS][0]
+    shutil.rmtree(config[CONFIG_WATCHERS][0][CONFIG_SOURCE])
+    shutil.rmtree(config[CONFIG_WATCHERS][0][CONFIG_DESTINATION])
 
 
 class TestCoreWatcher:
@@ -30,6 +34,16 @@ class TestCoreWatcher:
     def test_watcher_with_a_valid_config(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         assert watcher != None
+        
+    def test_watcher_with_a_valid_config_check_source_directory(self, reset_factory_and_return_config):
+        assert pathlib.Path(reset_factory_and_return_config[CONFIG_SOURCE]).exists() == False
+        watcher = Watcher(reset_factory_and_return_config)
+        assert pathlib.Path(reset_factory_and_return_config[CONFIG_SOURCE]).exists() == True
+        
+    def test_watcher_with_a_valid_config_check_desination_directory(self, reset_factory_and_return_config):
+        assert pathlib.Path(reset_factory_and_return_config[CONFIG_DESTINATION]).exists() == False
+        watcher = Watcher(reset_factory_and_return_config)
+        assert pathlib.Path(reset_factory_and_return_config[CONFIG_DESTINATION]).exists() == True
 
     def test_watcher_initial_state_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
@@ -68,5 +82,5 @@ class TestCoreWatcher:
         watcher.start()
         assert watcher.is_running == True
     # Test watcher copying file with deletesource set to false.
-    # Test watcher copyinh file with deletesource set to true
+    # Test watcher copying file with deletesource set to true
     # Test watcher with invalid confg passed in
