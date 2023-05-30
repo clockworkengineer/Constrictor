@@ -81,6 +81,15 @@ class TestCoreWatcher:
         watcher.stop()
         watcher.start()
         assert watcher.is_running == True
+        
+    def test_watcher_copy_a_single_file_from_source_to_destination(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        (pathlib.Path(reset_factory_and_return_config[CONFIG_SOURCE]) / "test.txt").touch()
+        time.sleep(1)
+        watcher.stop()
+        assert (pathlib.Path(reset_factory_and_return_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
+
     # Test watcher copying file with deletesource set to false.
     # Test watcher copying file with deletesource set to true
     # Test watcher with invalid confg passed in
