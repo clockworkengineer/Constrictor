@@ -3,34 +3,27 @@ import pathlib
 import shutil
 import tempfile
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_EXITONFAILURE
+from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_EXITONFAILURE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.error import FPEError
 from builtin.copyfile_handler import CopyFileHandler
 
 
-class Fixture:
-    source_path: pathlib.Path
-    destination_path: pathlib.Path
-    config: ConfigDict = {}
-
-
 @pytest.fixture()
-def copyfile_fixture() -> Fixture:
-    fixture: Fixture = Fixture()
+def copyfile_fixture() -> ConfigDict:
+
+    config: ConfigDict = {CONFIG_NAME: "Copy File 1", CONFIG_TYPE: "CopyFile"}
     with tempfile.TemporaryDirectory() as directory_name:
-        fixture.source_path = pathlib.Path(
-            directory_name) / "watcher" / "source"
-        fixture.destination_path = pathlib.Path(
-            directory_name) / "watcher" / "destination"
-        fixture.config[CONFIG_SOURCE] = str(fixture.source_path)
-        fixture.config[CONFIG_DESTINATION] = str(fixture.destination_path)
-        fixture.config[CONFIG_DELETESOURCE] = False
-        fixture.config[CONFIG_EXITONFAILURE] = True
-    yield fixture
-    shutil.rmtree(fixture.source_path)
-    shutil.rmtree(fixture.destination_path)
+        config[CONFIG_SOURCE] = str(pathlib.Path(
+            directory_name) / "watcher" / "source")
+        config[CONFIG_DESTINATION] = str(pathlib.Path(
+            directory_name) / "watcher" / "destination")
+
+    yield config
+
+    shutil.rmtree(config[CONFIG_SOURCE])
+    shutil.rmtree(config[CONFIG_DESTINATION])
 
 
 class TestBuiltinCopyFileHandler:
@@ -39,37 +32,27 @@ class TestBuiltinCopyFileHandler:
         with pytest.raises(FPEError):
             handdler: IHandler = CopyFileHandler(None)  # type: ignore
 
-    def test_buitin_handler_create_non_existant_source(self, copyfile_fixture: Fixture) -> None:
-        copyfile_fixture.destination_path.mkdir(
+    def test_buitin_handler_create_non_existant_source(self, copyfile_fixture: ConfigDict) -> None:
+        pathlib.Path(copyfile_fixture[CONFIG_DESTINATION]).mkdir(
             parents=True,  exist_ok=True)
-        handler = CopyFileHandler(copyfile_fixture.config)
-        assert copyfile_fixture.source_path.exists()
+        handler = CopyFileHandler(copyfile_fixture)
+        assert pathlib.Path(copyfile_fixture[CONFIG_SOURCE]).exists()
 
-    def test_buitin_handler_create_non_existant_destination(self, copyfile_fixture: Fixture) -> None:
-        copyfile_fixture.source_path.mkdir(
+    def test_buitin_handler_create_non_existant_destination(self, copyfile_fixture: ConfigDict) -> None:
+        pathlib.Path(copyfile_fixture[CONFIG_SOURCE]).mkdir(
             parents=True,  exist_ok=True)
-        handler = CopyFileHandler(copyfile_fixture.config)
-        assert copyfile_fixture.destination_path.exists()
+        handler = CopyFileHandler(copyfile_fixture)
+        assert pathlib.Path(copyfile_fixture[CONFIG_DESTINATION]).exists()
 
-    def test_buitin_handler_copy_a_single_source_to_destination(self, copyfile_fixture: Fixture) -> None:
-        copyfile_fixture.source_path.mkdir(
+    def test_buitin_handler_copy_a_single_source_to_destination(self, copyfile_fixture: ConfigDict) -> None:
+        pathlib.Path(copyfile_fixture[CONFIG_SOURCE]).mkdir(
             parents=True,  exist_ok=True)
-        handler = CopyFileHandler(copyfile_fixture.config)
-        source_file = copyfile_fixture.source_path / "test.txt"
-        destination_file = copyfile_fixture.destination_path / "test.txt"
+        handler = CopyFileHandler(copyfile_fixture)
+        source_file = pathlib.Path(
+            copyfile_fixture[CONFIG_SOURCE]) / "test.txt"
+        destination_file = pathlib.Path(
+            copyfile_fixture[CONFIG_DESTINATION]) / "test.txt"
         source_file.touch()
         handler.process(source_file)
         assert destination_file.exists()
         assert source_file.exists()
-
-    # def test_buitin_handler_copy_a_single_source_file_to_destination_deleting_source(self, setup_source_destination: Fixture) -> None:
-    #     setup_source_destination.source_path.mkdir(
-    #         parents=True,  exist_ok=True)
-    #     setup_source_destination.config[CONFIG_DELETESOURCE] = True
-    #     handler = CopyFileHandler(setup_source_destination.config)
-    #     source_file = setup_source_destination.source_path / "test.txt"
-    #     destination_file = setup_source_destination.destination_path / "test.txt"
-    #     source_file.touch()
-    #     handler.process(source_file)
-    #     assert destination_file.exists()
-    #     assert not source_file.exists()

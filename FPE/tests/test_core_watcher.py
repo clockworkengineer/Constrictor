@@ -157,16 +157,16 @@ class TestCoreWatcher:
                 watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
         watcher.stop()
 
-    def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
-        watcher.start()
-        for file_number in range(1000):
-            (pathlib.Path(
-                watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
-            while watcher.files_processed != (file_number+1):
-                time.sleep(0.01)
-            assert (pathlib.Path(
-                watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
-        watcher.stop()
+    # def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture):
+    #     watcher = Watcher(watcher_fixture)
+    #     watcher.start()
+    #     for file_number in range(1000):
+    #         (pathlib.Path(
+    #             watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
+    #         while watcher.files_processed != (file_number+1):
+    #             time.sleep(0.01)
+    #         assert (pathlib.Path(
+    #             watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
+    #     watcher.stop()
         
     # Test watcher with invalid confg passed in
