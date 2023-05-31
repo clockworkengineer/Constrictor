@@ -60,6 +60,8 @@ class CopyFileHandler(IHandler):
 
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
         Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
+        
+        self.handler_config["processed"] = 0
 
     @staticmethod
     def _copy_file(source_path: pathlib.Path, destination_path: pathlib.Path) -> None:
@@ -94,6 +96,8 @@ class CopyFileHandler(IHandler):
                 self._copy_file(source_path, destination_path)
             elif source_path.is_dir():
                 Handler.create_path(destination_path)
+                
+            self.handler_config["processed"] += 1
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:

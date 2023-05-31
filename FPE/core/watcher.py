@@ -184,3 +184,10 @@ class Watcher:
             self.__observer.join()
             self.__observer = None  # type: ignore
             self.__running = False
+            
+    @property
+    def files_processed(self) -> int:
+        if "processed" in self.__handler.handler_config:
+            return self.__handler.handler_config["processed"]
+        else:
+            return 0

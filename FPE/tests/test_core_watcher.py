@@ -34,16 +34,20 @@ class TestCoreWatcher:
     def test_watcher_with_a_valid_config(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         assert watcher != None
-        
+
     def test_watcher_with_a_valid_config_check_source_directory(self, reset_factory_and_return_config):
-        assert pathlib.Path(reset_factory_and_return_config[CONFIG_SOURCE]).exists() == False
+        assert pathlib.Path(
+            reset_factory_and_return_config[CONFIG_SOURCE]).exists() == False
         watcher = Watcher(reset_factory_and_return_config)
-        assert pathlib.Path(reset_factory_and_return_config[CONFIG_SOURCE]).exists() == True
-        
+        assert pathlib.Path(
+            reset_factory_and_return_config[CONFIG_SOURCE]).exists() == True
+
     def test_watcher_with_a_valid_config_check_desination_directory(self, reset_factory_and_return_config):
-        assert pathlib.Path(reset_factory_and_return_config[CONFIG_DESTINATION]).exists() == False
+        assert pathlib.Path(
+            reset_factory_and_return_config[CONFIG_DESTINATION]).exists() == False
         watcher = Watcher(reset_factory_and_return_config)
-        assert pathlib.Path(reset_factory_and_return_config[CONFIG_DESTINATION]).exists() == True
+        assert pathlib.Path(
+            reset_factory_and_return_config[CONFIG_DESTINATION]).exists() == True
 
     def test_watcher_initial_state_stopped(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
@@ -81,14 +85,17 @@ class TestCoreWatcher:
         watcher.stop()
         watcher.start()
         assert watcher.is_running == True
-        
+
     def test_watcher_copy_a_single_file_from_source_to_destination(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
-        (pathlib.Path(reset_factory_and_return_config[CONFIG_SOURCE]) / "test.txt").touch()
-        time.sleep(1)
+        (pathlib.Path(
+            reset_factory_and_return_config[CONFIG_SOURCE]) / "test.txt").touch()
+        while watcher.files_processed != 1:
+            time.sleep(1)
         watcher.stop()
-        assert (pathlib.Path(reset_factory_and_return_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
+        assert (pathlib.Path(
+            reset_factory_and_return_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
 
     # Test watcher copying file with deletesource set to false.
     # Test watcher copying file with deletesource set to true
