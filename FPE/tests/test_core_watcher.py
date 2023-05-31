@@ -104,7 +104,7 @@ class TestCoreWatcher:
             (pathlib.Path(
                 reset_factory_and_return_config[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
             while watcher.files_processed != (file_number+1):
-                time.sleep(1)
+                time.sleep(0.01)
             assert (pathlib.Path(
                 reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
         watcher.stop()
@@ -116,7 +116,31 @@ class TestCoreWatcher:
             (pathlib.Path(
                 reset_factory_and_return_config[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
             while watcher.files_processed != (file_number+1):
-                time.sleep(1)
+                time.sleep(0.01)
+            assert (pathlib.Path(
+                reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
+        watcher.stop()
+        
+    def test_watcher_copy_onehundred_files_from_source_to_destination(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        for file_number in range(100):
+            (pathlib.Path(
+                reset_factory_and_return_config[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
+            while watcher.files_processed != (file_number+1):
+                time.sleep(0.01)
+            assert (pathlib.Path(
+                reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
+        watcher.stop()
+        
+    def test_watcher_copy_onethousand_files_from_source_to_destination(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        for file_number in range(1000):
+            (pathlib.Path(
+                reset_factory_and_return_config[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
+            while watcher.files_processed != (file_number+1):
+                time.sleep(0.01)
             assert (pathlib.Path(
                 reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
         watcher.stop()
