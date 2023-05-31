@@ -17,11 +17,11 @@ class Fixture:
 
 
 @pytest.fixture()
-def setup_source_destination() -> Fixture:
+def copyfile_fixture() -> Fixture:
     fixture: Fixture = Fixture()
     with tempfile.TemporaryDirectory() as directory_name:
         fixture.source_path = pathlib.Path(
-            directory_name) / "watcher" / CONFIG_SOURCE
+            directory_name) / "watcher" / "source"
         fixture.destination_path = pathlib.Path(
             directory_name) / "watcher" / "destination"
         fixture.config[CONFIG_SOURCE] = str(fixture.source_path)
@@ -39,24 +39,24 @@ class TestBuiltinCopyFileHandler:
         with pytest.raises(FPEError):
             handdler: IHandler = CopyFileHandler(None)  # type: ignore
 
-    def test_buitin_handler_create_non_existant_source(self, setup_source_destination: Fixture) -> None:
-        setup_source_destination.destination_path.mkdir(
+    def test_buitin_handler_create_non_existant_source(self, copyfile_fixture: Fixture) -> None:
+        copyfile_fixture.destination_path.mkdir(
             parents=True,  exist_ok=True)
-        handler = CopyFileHandler(setup_source_destination.config)
-        assert setup_source_destination.source_path.exists()
+        handler = CopyFileHandler(copyfile_fixture.config)
+        assert copyfile_fixture.source_path.exists()
 
-    def test_buitin_handler_create_non_existant_destination(self, setup_source_destination: Fixture) -> None:
-        setup_source_destination.source_path.mkdir(
+    def test_buitin_handler_create_non_existant_destination(self, copyfile_fixture: Fixture) -> None:
+        copyfile_fixture.source_path.mkdir(
             parents=True,  exist_ok=True)
-        handler = CopyFileHandler(setup_source_destination.config)
-        assert setup_source_destination.destination_path.exists()
+        handler = CopyFileHandler(copyfile_fixture.config)
+        assert copyfile_fixture.destination_path.exists()
 
-    def test_buitin_handler_copy_a_single_source_to_destination(self, setup_source_destination: Fixture) -> None:
-        setup_source_destination.source_path.mkdir(
+    def test_buitin_handler_copy_a_single_source_to_destination(self, copyfile_fixture: Fixture) -> None:
+        copyfile_fixture.source_path.mkdir(
             parents=True,  exist_ok=True)
-        handler = CopyFileHandler(setup_source_destination.config)
-        source_file = setup_source_destination.source_path / "test.txt"
-        destination_file = setup_source_destination.destination_path / "test.txt"
+        handler = CopyFileHandler(copyfile_fixture.config)
+        source_file = copyfile_fixture.source_path / "test.txt"
+        destination_file = copyfile_fixture.destination_path / "test.txt"
         source_file.touch()
         handler.process(source_file)
         assert destination_file.exists()
