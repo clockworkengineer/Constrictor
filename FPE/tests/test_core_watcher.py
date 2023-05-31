@@ -97,7 +97,7 @@ class TestCoreWatcher:
         assert (pathlib.Path(
             reset_factory_and_return_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
         
-    def test_watcher_copy_a_ten_files_from_source_to_destination(self, reset_factory_and_return_config):
+    def test_watcher_copy_ten_files_from_source_to_destination(self, reset_factory_and_return_config):
         watcher = Watcher(reset_factory_and_return_config)
         watcher.start()
         for file_number in range(10):
@@ -107,7 +107,18 @@ class TestCoreWatcher:
                 time.sleep(1)
             assert (pathlib.Path(
                 reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
-
+        watcher.stop()
+        
+    def test_watcher_copy_fifty_files_from_source_to_destination(self, reset_factory_and_return_config):
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        for file_number in range(50):
+            (pathlib.Path(
+                reset_factory_and_return_config[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
+            while watcher.files_processed != (file_number+1):
+                time.sleep(1)
+            assert (pathlib.Path(
+                reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
         watcher.stop()
     # Test watcher copying file with deletesource set to false.
     # Test watcher copying file with deletesource set to true
