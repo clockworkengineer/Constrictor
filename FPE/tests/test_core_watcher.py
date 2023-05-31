@@ -34,59 +34,73 @@ def watcher_fixture() -> ConfigDict:
 
 class TestCoreWatcher:
 
+    def __test_file(self, watcher_fixture, count) -> None:
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        for file_number in range(count):
+            (pathlib.Path(
+                watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
+            while watcher.files_processed != (file_number+1):
+                time.sleep(0.01)
+            assert (pathlib.Path(
+                            watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").exists() !=  watcher_fixture[CONFIG_DELETESOURCE]
+            assert (pathlib.Path(
+                watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
+        watcher.stop()
+
     def test_watcher_with_config_of_none(self):
         with pytest.raises(WatcherError):
-            _ = Watcher(None)
+            _=Watcher(None)
 
     def test_watcher_with_a_valid_config(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         assert watcher != None
 
     def test_watcher_with_a_valid_config_check_source_directory(self, watcher_fixture):
         assert pathlib.Path(
             watcher_fixture[CONFIG_SOURCE]).exists() == False
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         assert pathlib.Path(
             watcher_fixture[CONFIG_SOURCE]).exists() == True
 
     def test_watcher_with_a_valid_config_check_desination_directory(self, watcher_fixture):
         assert pathlib.Path(
             watcher_fixture[CONFIG_DESTINATION]).exists() == False
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         assert pathlib.Path(
             watcher_fixture[CONFIG_DESTINATION]).exists() == True
 
     def test_watcher_initial_state_stopped(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         assert watcher.is_running == False
 
     def test_watcher_started(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         watcher.start()
         assert watcher.is_running == True
 
     def test_watcher_start_a_running_watcher(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         watcher.start()
         watcher.start()
         assert watcher.is_running == True
 
     def test_watcher_stopping_a_stopped_watcher(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         watcher.start()
         watcher.stop()
         watcher.stop()
         assert watcher.is_running == False
 
     def test_watcher_started_then_stopped(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         watcher.start()
         time.sleep(1)
         watcher.stop()
         assert watcher.is_running == False
 
     def test_watcher_started_then_stopped_then_restarted(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
+        watcher=Watcher(watcher_fixture)
         watcher.start()
         time.sleep(1)
         watcher.stop()
@@ -94,79 +108,22 @@ class TestCoreWatcher:
         assert watcher.is_running == True
 
     def test_watcher_copy_a_single_file_from_source_to_destination(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
-        watcher.start()
-        (pathlib.Path(
-            watcher_fixture[CONFIG_SOURCE]) / "test.txt").touch()
-        while watcher.files_processed != 1:
-            time.sleep(1)
-        watcher.stop()
-        assert (pathlib.Path(
-            watcher_fixture[CONFIG_SOURCE]) / "test.txt").exists() == False
-        assert (pathlib.Path(
-            watcher_fixture[CONFIG_DESTINATION]) / "test.txt").exists() == True
+        self.__test_file(watcher_fixture, 1)
 
     def test_watcher_copy_a_single_file_from_source_to_destination_with_deletesource_false(self, watcher_fixture):
-        watcher_fixture[CONFIG_DELETESOURCE
-                        ] = False
-        watcher = Watcher(watcher_fixture)
-        watcher.start()
-        (pathlib.Path(
-            watcher_fixture[CONFIG_SOURCE]) / "test.txt").touch()
-        while watcher.files_processed != 1:
-            time.sleep(1)
-        watcher.stop()
-        assert (pathlib.Path(
-            watcher_fixture[CONFIG_SOURCE]) / "test.txt").exists() == True
-        assert (pathlib.Path(
-            watcher_fixture[CONFIG_DESTINATION]) / "test.txt").exists() == True
+        watcher_fixture[CONFIG_DELETESOURCE]=False
+        self.__test_file(watcher_fixture, 1)
 
     def test_watcher_copy_ten_files_from_source_to_destination(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
-        watcher.start()
-        for file_number in range(10):
-            (pathlib.Path(
-                watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
-            while watcher.files_processed != (file_number+1):
-                time.sleep(0.01)
-            assert (pathlib.Path(
-                watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
-        watcher.stop()
+        self.__test_file(watcher_fixture, 10)
 
     def test_watcher_copy_fifty_files_from_source_to_destination(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
-        watcher.start()
-        for file_number in range(50):
-            (pathlib.Path(
-                watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
-            while watcher.files_processed != (file_number+1):
-                time.sleep(0.01)
-            assert (pathlib.Path(
-                watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
-        watcher.stop()
+        self.__test_file(watcher_fixture, 50)
 
     def test_watcher_copy_onehundred_files_from_source_to_destination(self, watcher_fixture):
-        watcher = Watcher(watcher_fixture)
-        watcher.start()
-        for file_number in range(100):
-            (pathlib.Path(
-                watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
-            while watcher.files_processed != (file_number+1):
-                time.sleep(0.01)
-            assert (pathlib.Path(
-                watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
-        watcher.stop()
+        self.__test_file(watcher_fixture, 100)
 
     # def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture):
-    #     watcher = Watcher(watcher_fixture)
-    #     watcher.start()
-    #     for file_number in range(1000):
-    #         (pathlib.Path(
-    #             watcher_fixture[CONFIG_SOURCE]) / f"test{file_number}.txt").touch()
-    #         while watcher.files_processed != (file_number+1):
-    #             time.sleep(0.01)
-    #         assert (pathlib.Path(
-    #             watcher_fixture[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
-    #     watcher.stop()
-        
+    #     self.__test_file(watcher_fixture, 1000)
+
     # Test watcher with invalid confg passed in
