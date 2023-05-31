@@ -4,7 +4,7 @@ import pathlib
 import shutil
 
 from tests.common import json_file_source
-from core.constants import CONFIG_WATCHERS, CONFIG_SOURCE, CONFIG_DESTINATION
+from core.constants import CONFIG_WATCHERS, CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE
 from core.arguments import Arguments
 from core.config import Config, ConfigDict
 from core.watcher import Watcher, WatcherError
@@ -95,6 +95,23 @@ class TestCoreWatcher:
             time.sleep(1)
         watcher.stop()
         assert (pathlib.Path(
+            reset_factory_and_return_config[CONFIG_SOURCE]) / "test.txt").exists() == False
+        assert (pathlib.Path(
+            reset_factory_and_return_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
+        
+    def test_watcher_copy_a_single_file_from_source_to_destination_with_deletesource_false(self, reset_factory_and_return_config):
+        reset_factory_and_return_config[CONFIG_DELETESOURCE
+                                        ]=False
+        watcher = Watcher(reset_factory_and_return_config)
+        watcher.start()
+        (pathlib.Path(
+            reset_factory_and_return_config[CONFIG_SOURCE]) / "test.txt").touch()
+        while watcher.files_processed != 1:
+            time.sleep(1)
+        watcher.stop()
+        assert (pathlib.Path(
+            reset_factory_and_return_config[CONFIG_SOURCE]) / "test.txt").exists() == True
+        assert (pathlib.Path(
             reset_factory_and_return_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
         
     def test_watcher_copy_ten_files_from_source_to_destination(self, reset_factory_and_return_config):
@@ -144,6 +161,4 @@ class TestCoreWatcher:
             assert (pathlib.Path(
                 reset_factory_and_return_config[CONFIG_DESTINATION]) / f"test{file_number}.txt").exists() == True
         watcher.stop()
-    # Test watcher copying file with deletesource set to false.
-    # Test watcher copying file with deletesource set to true
     # Test watcher with invalid confg passed in
