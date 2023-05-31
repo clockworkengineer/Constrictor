@@ -34,7 +34,7 @@ def watcher_fixture() -> ConfigDict:
 
 class TestCoreWatcher:
 
-    def __test_file(self, watcher_fixture, count) -> None:
+    def __copy_count_files(self, watcher_fixture, count) -> None:
         watcher = Watcher(watcher_fixture)
         watcher.start()
         for file_number in range(count):
@@ -108,20 +108,20 @@ class TestCoreWatcher:
         assert watcher.is_running == True
 
     def test_watcher_copy_a_single_file_from_source_to_destination(self, watcher_fixture):
-        self.__test_file(watcher_fixture, 1)
+        self.__copy_count_files(watcher_fixture, 1)
 
     def test_watcher_copy_a_single_file_from_source_to_destination_with_deletesource_false(self, watcher_fixture):
         watcher_fixture[CONFIG_DELETESOURCE]=False
-        self.__test_file(watcher_fixture, 1)
+        self.__copy_count_files(watcher_fixture, 1)
 
     def test_watcher_copy_ten_files_from_source_to_destination(self, watcher_fixture):
-        self.__test_file(watcher_fixture, 10)
+        self.__copy_count_files(watcher_fixture, 10)
 
     def test_watcher_copy_fifty_files_from_source_to_destination(self, watcher_fixture):
-        self.__test_file(watcher_fixture, 50)
+        self.__copy_count_files(watcher_fixture, 50)
 
     def test_watcher_copy_onehundred_files_from_source_to_destination(self, watcher_fixture):
-        self.__test_file(watcher_fixture, 100)
+        self.__copy_count_files(watcher_fixture, 100)
 
     # def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture):
     #     self.__test_file(watcher_fixture, 1000)
