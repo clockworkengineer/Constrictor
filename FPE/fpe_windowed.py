@@ -1,4 +1,4 @@
-"""Run FPE with windows UI.
+"""Run FPE with windowed UI.
 """
 
 import logging
@@ -9,11 +9,11 @@ from ui.fpe_main_window import MainWindow
 from core.engine import Engine
 
 
-def fpe_windowed(fpe_engine: Engine):
-    """_summary_
+def fpe_windowed(fpe_engine: Engine)
+    """Run FPE in QTMainWindow.
 
     Args:
-        fpe_engine (Engine): _description_
+        fpe_engine (Engine): FPE control engine.
     """
     
     logging.info("Running with a user interface.")

@@ -1,4 +1,4 @@
-"""Fun FPE headerless.
+"""Run FPE headerless.
 """
 
 import logging
@@ -8,10 +8,10 @@ from core.engine import Engine
 
 
 def fpe_headerless(fpe_engine: Engine):
-    """_summary_
+    """Run FPE without a user inerface.
 
     Args:
-        fpe_engine (Engine): _description_
+        fpe_engine (Engine): FPE control engine.
     """
     try:
         logging.info("Running with no user interface.")
