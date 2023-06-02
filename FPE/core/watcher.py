@@ -57,7 +57,7 @@ class WatcherHandler(FileSystemEventHandler):
         super().__init__()
         self.watcher_handler = watcher_handler
 
-    def on_created(self, event):
+    def on_created(self, event) -> None:
         """On file created event.
 
         Args:
@@ -69,7 +69,13 @@ class WatcherHandler(FileSystemEventHandler):
         source_path.chmod(source_path.stat().st_mode | 0o664)
         self.watcher_handler.process(source_path)
         if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-            source_path.unlink()
+            failure : bool = True
+            while failure:
+                try:
+                    source_path.unlink()
+                    failure = False
+                except PermissionError:
+                    pass
 
 
 class Watcher:
@@ -184,7 +190,7 @@ class Watcher:
             self.__observer.join()
             self.__observer = None  # type: ignore
             self.__running = False
-            
+
     @property
     def files_processed(self) -> int:
         if "processed" in self.__handler.handler_config:
