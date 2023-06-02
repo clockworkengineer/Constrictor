@@ -19,11 +19,7 @@ def copyfile_fixture() -> ConfigDict:
             directory_name) / "watcher" / "source")
         config[CONFIG_DESTINATION] = str(pathlib.Path(
             directory_name) / "watcher" / "destination")
-
-    yield config
-
-    shutil.rmtree(config[CONFIG_SOURCE])
-    shutil.rmtree(config[CONFIG_DESTINATION])
+        yield config
 
 
 class TestBuiltinCopyFileHandler:
