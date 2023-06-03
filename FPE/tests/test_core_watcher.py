@@ -1,7 +1,6 @@
 import pytest
 import time
 import pathlib
-import shutil
 import tempfile
 
 from core.constants import CONFIG_TYPE, CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_EXITONFAILURE
@@ -22,9 +21,9 @@ def watcher_fixture() -> ConfigDict:
     config: ConfigDict = {CONFIG_NAME: "Copy File 1", CONFIG_TYPE: "CopyFile"}
     with tempfile.TemporaryDirectory() as directory_name:
         config[CONFIG_SOURCE] = str(pathlib.Path(
-            directory_name) / "watcher" / "source")
+            directory_name) / "source")
         config[CONFIG_DESTINATION] = str(pathlib.Path(
-            directory_name) / "watcher" / "destination")
+            directory_name) / "destination")
         yield config
 
 
