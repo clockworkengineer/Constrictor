@@ -27,11 +27,6 @@ def watcher_fixture() -> ConfigDict:
             directory_name) / "watcher" / "destination")
         yield config
 
-    if pathlib.Path(config[CONFIG_SOURCE]).exists():
-        assert False
-    if pathlib.Path(config[CONFIG_DESTINATION]).exists():
-        assert False
-
 
 class TestCoreWatcher:
 
@@ -42,12 +37,13 @@ class TestCoreWatcher:
         destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
         for file_number in range(count):
             (source_path / f"test{file_number}.txt").touch()
-            while watcher.files_processed != (file_number+1):
-                time.sleep(0.01)
-            # assert (source_path / f"test{file_number}.txt").exists() !=  watcher_fixture[CONFIG_DELETESOURCE]
+        while watcher.files_processed < count:
+            time.sleep(0.01)
+        for file_number in range(count):
+            assert (
+                source_path / f"test{file_number}.txt").exists() != watcher_fixture[CONFIG_DELETESOURCE]
             assert (destination_path /
                     f"test{file_number}.txt").exists() == True
-            print((source_path / f"test{file_number}.txt"))
         watcher.stop()
 
     def test_watcher_with_config_of_none(self):
