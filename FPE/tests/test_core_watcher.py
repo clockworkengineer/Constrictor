@@ -40,8 +40,6 @@ class TestCoreWatcher:
         while watcher.files_processed < count:
             time.sleep(0.01)
         for file_number in range(count):
-            assert (
-                source_path / f"test{file_number}.txt").exists() != watcher_fixture[CONFIG_DELETESOURCE]
             assert (destination_path /
                     f"test{file_number}.txt").exists() == True
         watcher.stop()
@@ -112,10 +110,14 @@ class TestCoreWatcher:
 
     def test_watcher_copy_a_single_file_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 1)
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / f"test0.txt").exists() == False
 
     def test_watcher_copy_a_single_file_from_source_to_destination_with_deletesource_false(self, watcher_fixture: ConfigDict):
         watcher_fixture[CONFIG_DELETESOURCE] = False
         self.__copy_count_files(watcher_fixture, 1)
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / f"test0.txt").exists() == True
 
     def test_watcher_copy_ten_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 10)
@@ -128,4 +130,3 @@ class TestCoreWatcher:
 
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 1000)
-
