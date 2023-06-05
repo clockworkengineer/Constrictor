@@ -50,6 +50,11 @@ class TestCoreWatcher:
         with pytest.raises(WatcherError):
             _ = Watcher(None)
 
+    def test_watcher_inlaid_config(self, watcher_fixture: ConfigDict):
+        watcher_fixture.pop(CONFIG_DESTINATION)
+        with pytest.raises(WatcherError):
+            _ = Watcher(watcher_fixture)
+
     def test_watcher_with_a_valid_config(self, watcher_fixture: ConfigDict):
         watcher = Watcher(watcher_fixture)
         assert watcher != None
@@ -124,6 +129,3 @@ class TestCoreWatcher:
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 1000)
 
-        
-    # Test watcher with invalid confg passed in
-    
