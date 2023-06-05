@@ -59,9 +59,9 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         """
 
         watcher_name = self.fpe_running_watchers_list.currentItem().text()
-        self.fpe_engine.delete_watcher(watcher_name)
         self.fpe_running_watchers_list.takeItem(
             self.fpe_running_watchers_list.currentRow())
+        self.fpe_engine.delete_watcher(watcher_name)
 
     def __init__(self, fpe_engine: Engine, parent=None):
         """Main FPE UI window.
