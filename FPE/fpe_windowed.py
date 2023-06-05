@@ -9,7 +9,7 @@ from ui.fpe_main_window import MainWindow
 from core.engine import Engine
 
 
-def fpe_windowed(fpe_engine: Engine)
+def fpe_windowed(fpe_engine: Engine) -> None:
     """Run FPE in QTMainWindow.
 
     Args:
