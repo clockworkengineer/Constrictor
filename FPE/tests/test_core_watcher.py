@@ -120,6 +120,9 @@ class TestCoreWatcher:
     def test_watcher_copy_onehundred_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 100)
 
+    def test_watcher_copy_otenhousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
+        self.__copy_count_files(watcher_fixture, 10000)
+
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 1000)
 

@@ -69,13 +69,13 @@ class WatcherHandler(FileSystemEventHandler):
         source_path.chmod(source_path.stat().st_mode | 0o664)
         self.watcher_handler.process(source_path)
         if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-            failure : bool = True
-            while failure:
-                try:
-                    source_path.unlink()
-                    failure = False
-                except PermissionError:
-                    pass
+            # failure : bool = True
+            # while failure:
+            #     try:
+            source_path.unlink()
+                #     failure = False
+                # except PermissionError:
+                #     pass
 
 
 class Watcher:
