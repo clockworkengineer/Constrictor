@@ -2,6 +2,7 @@ import pytest
 import pathlib
 import tempfile
 
+from tests.common import create_test_file
 from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_EXITONFAILURE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
@@ -42,11 +43,11 @@ class TestBuiltinCopyFileHandler:
         pathlib.Path(copyfile_fixture[CONFIG_SOURCE]).mkdir(
             parents=True,  exist_ok=True)
         handler = CopyFileHandler(copyfile_fixture)
-        source_file = pathlib.Path(
+        source_path = pathlib.Path(
             copyfile_fixture[CONFIG_SOURCE]) / "test.txt"
-        destination_file = pathlib.Path(
+        destination_path = pathlib.Path(
             copyfile_fixture[CONFIG_DESTINATION]) / "test.txt"
-        source_file.touch()
-        handler.process(source_file)
-        assert destination_file.exists()
-        assert source_file.exists()
+        create_test_file(source_path)
+        handler.process(source_path)
+        assert destination_path.exists()
+        assert source_path.exists()

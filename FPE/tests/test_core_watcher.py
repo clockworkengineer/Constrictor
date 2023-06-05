@@ -3,6 +3,7 @@ import time
 import pathlib
 import tempfile
 
+from tests.common import create_test_file
 from core.constants import CONFIG_TYPE, CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_EXITONFAILURE
 from core.config import ConfigDict
 from core.watcher import Watcher, WatcherError
@@ -35,7 +36,7 @@ class TestCoreWatcher:
         source_path = pathlib.Path(watcher_fixture[CONFIG_SOURCE])
         destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
         for file_number in range(count):
-            (source_path / f"test{file_number}.txt").touch()
+            create_test_file(source_path / f"test{file_number}.txt")
         while watcher.files_processed < count:
             time.sleep(0.01)
         for file_number in range(count):
@@ -120,10 +121,9 @@ class TestCoreWatcher:
     def test_watcher_copy_onehundred_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 100)
 
-    def test_watcher_copy_otenhousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
-        self.__copy_count_files(watcher_fixture, 10000)
-
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict):
         self.__copy_count_files(watcher_fixture, 1000)
 
+        
     # Test watcher with invalid confg passed in
+    

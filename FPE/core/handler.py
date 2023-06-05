@@ -77,8 +77,8 @@ class Handler():
         failure: bool = True
         while failure:
             try:
-                with open(source_path, "rb") as source_file:
-                    _ = source_file.read()
+                with open(source_path, "rb") as file_path:
+                    _ = file_path.read()
                 failure = False
             except IOError as error:
                 if error.errno == errno.EACCES:
