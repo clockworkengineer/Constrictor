@@ -2,8 +2,8 @@
 
 Use watchdog package to monitor directories and process each file created using one
 of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
-is not recursive for easons of performance; a watcher thread can accumalate to many polling
-functions for added directories.
+is not recursive for reasons of performance; a watcher thread can accumalate to many polling
+calls for added directories.
 
 """
 
@@ -61,7 +61,7 @@ class WatcherHandler(FileSystemEventHandler):
         """On file created event.
 
         Args:
-            event (Any): Watchdog event.
+            event (Any): Watchdog file created event.
         """
 
         source_path = pathlib.Path(event.src_path)  # type: ignore
@@ -76,43 +76,43 @@ class WatcherHandler(FileSystemEventHandler):
         """On file moved event.
 
         Args:
-            event (_type_): _description_
+            event (Any): Watchdog file moved event.
         
         """
-        pass
+        logging.debug("on_moved %s.", event.src_path)
 
 
     def on_deleted(self, event):
         """On file deleted evenet.
 
         Args:
-            event (_type_): _description_
+            event (Any): Watchdog file deleted event.
         """
-        pass
+        logging.debug("on_deleted %s.", event.src_path)
 
     def on_modified(self, event):
         """On file modified event.
 
         Args:
-            event (_type_): _description_
+            event (Any): Watchdog file modified event.
         """
-        pass
-
+        logging.debug("on_modified %s.", event.src_path)
+            
     def on_closed(self, event):
         """On file opened event.
 
         Args:
-            event (_type_): _description_
+            event (Any): Watchdog file closed event.
         """
-        pass
+        logging.debug("on_closed %s.", event.src_path)
 
     def on_opened(self, event):
         """On file opened event.
 
         Args:
-            event (_type_): _description_
+            event (Any): Watchdog file opened event.s
         """
-        pass
+        logging.debug("on_opened %s.", event.src_path)
 
 class Watcher:
     """Watch for files being copied into a folder and process.
