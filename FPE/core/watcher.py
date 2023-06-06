@@ -70,14 +70,49 @@ class WatcherHandler(FileSystemEventHandler):
         self.watcher_handler.process(source_path)
         if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
             source_path.unlink()
-            # failure : bool = True
-            # while failure:
-            #     try:
-            #         source_path.unlink()
-            #         failure = False
-            #     except PermissionError:
-            #         pass
+ 
 
+    def on_moved(self, event):
+        """On file moved event.
+
+        Args:
+            event (_type_): _description_
+        
+        """
+        pass
+
+
+    def on_deleted(self, event):
+        """On file deleted evenet.
+
+        Args:
+            event (_type_): _description_
+        """
+        pass
+
+    def on_modified(self, event):
+        """On file modified event.
+
+        Args:
+            event (_type_): _description_
+        """
+        pass
+
+    def on_closed(self, event):
+        """On file opened event.
+
+        Args:
+            event (_type_): _description_
+        """
+        pass
+
+    def on_opened(self, event):
+        """On file opened event.
+
+        Args:
+            event (_type_): _description_
+        """
+        pass
 
 class Watcher:
     """Watch for files being copied into a folder and process.
