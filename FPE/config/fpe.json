@@ -8,33 +8,15 @@
             "type": "CopyFile",
             "source": ".\\watcher\\source1\\",
             "destination": ".\\watcher\\destination1\\",
-            "deletesource": true,
-            "exitonfailure": false,
-            "recursive": false
-        },
-        {
-            "name": "File Copier 2",
-            "type": "CopyFile",
-            "source": ".\\watcher\\source2\\",
-            "destination": ".\\watcher\\destination2\\",
-            "deletesource": true,
-            "exitonfailure": false,
-            "recursive": false
-        },
-        {
-            "name": "File Copier 3",
-            "type": "CopyFile",
-            "source": ".\\watcher\\source3\\",
-            "destination": ".\\watcher\\destination3\\",
-            "deletesource": true,
-            "exitonfailure": false,
-            "recursive": false
+            "deletesource": false,
+            "exitonfailure": true,
+            "recursive": true
         }
     ],
     "logging": {
         "filename": ".\\fpe.log",
         "filemode": "a",
-        "level": 20,
+        "level": 10,
         "format": "%(asctime)s:%(message)s"
     }
 }
