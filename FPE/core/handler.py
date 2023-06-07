@@ -14,10 +14,8 @@ from core.config import ConfigDict
 
 class Handler():
     """Directory watcher handler utility static methods.
-
-    Returns:
-        _type_: _description_
     """
+    
     @staticmethod
     def normalize_path(path_to_normalise: str) -> str:
         """Normalise passed in path string.
@@ -50,14 +48,14 @@ class Handler():
             config (ConfigDict): Watcher handler config.
 
         Returns:
-            pathlib.Path: _description_
+            pathlib.Path: Destination file path created from config and source file path.
         """
         return pathlib.Path(
             config[CONFIG_DESTINATION]) / str(source_path)[len(config[CONFIG_SOURCE])+1:]
 
     @staticmethod
     def setup_path(handler_config: ConfigDict, path_type: str) -> None:
-        """_summary_
+        """Setup directory to be used by handler.
 
         Args:
             handler_config (ConfigDict): Watcher handler config.
@@ -69,7 +67,7 @@ class Handler():
 
     @staticmethod
     def wait_for_copy_completion(source_path: pathlib.Path) -> None:
-        """_summary_
+        """Wait for file copy to be completed.
 
         Args:
             source_path (pathlib.Path):  Soure file path.
