@@ -4,7 +4,8 @@ Convert command line arguments into an object that can be accessed by the FPE.
 Performing any validation required on the passed in parameters and generating
 any exceptions for any errors found. This is currently just a JSON configuration
 file that is used to specify any custom plugins and running handler details plus
-a flag that indicates that the FPE will be run with no user interface.
+a flag that indicates that the FPE will be run with no user interface (headless)
+or with a GUI (windowed).
 
 """
 
