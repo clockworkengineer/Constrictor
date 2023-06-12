@@ -130,16 +130,60 @@ class TestCoreWatcher:
 
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict) -> None:
         self.__copy_count_files(watcher_fixture, 1000)
-        
-    def test_watcher_copy_recursive_depth_one(self, watcher_fixture: ConfigDict) -> None:
-        watcher_fixture[CONFIG_RECURSIVE]= True
+
+    def test_watcher_copy_one_file_recursive_depth_one(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
         watcher = Watcher(watcher_fixture)
         watcher.start()
-        source_path = pathlib.Path(watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test.txt"
-        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        source_path = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test.txt"
         create_test_file(source_path)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
         while watcher.files_processed < 2:
             time.sleep(0.01)
+        time.sleep(5)
         watcher.stop()
         assert source_path.exists() == False
-        assert (pathlib.Path(watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test.txt").exists() == True
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test.txt").exists() == True
+        assert watcher.files_processed == 2
+        
+    def test_watcher_copy_one_file_recursive_depth_two(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "dir2" / "test.txt"
+        create_test_file(source_path)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        while watcher.files_processed < 4:
+            time.sleep(0.01)
+        time.sleep(5)
+        watcher.stop()
+        assert source_path.exists() == False
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "dir2" / "test.txt").exists() == True
+        assert watcher.files_processed == 4
+
+    def test_watcher_copy_two_files_recursive_depth_one(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path0 = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test00.txt"
+        create_test_file(source_path0)
+        source_path1 = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test01.txt"
+        create_test_file(source_path1)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        while watcher.files_processed < 3:
+            time.sleep(0.01)
+        time.sleep(5)
+        watcher.stop()
+        assert source_path0.exists() == False
+        assert source_path1.exists() == False
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test00.txt").exists() == True
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test01.txt").exists() == True
+        assert watcher.files_processed == 3
