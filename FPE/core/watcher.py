@@ -67,11 +67,12 @@ class WatcherHandler(FileSystemEventHandler):
         logging.debug("on_created %s.", event.src_path)
 
         source_path = pathlib.Path(event.src_path)  # type: ignore
-        Handler.wait_for_copy_completion(source_path)
-        source_path.chmod(source_path.stat().st_mode | 0o664)
-        self.watcher_handler.process(source_path)
-        if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-            source_path.unlink()
+        if source_path.exists():
+            Handler.wait_for_copy_completion(source_path)
+            source_path.chmod(source_path.stat().st_mode | 0o664)
+            self.watcher_handler.process(source_path)
+            if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
+                source_path.unlink()
 
     def on_moved(self, event):
         """On file moved event.

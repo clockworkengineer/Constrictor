@@ -8,7 +8,7 @@
             "type": "CopyFile",
             "source": ".\\watcher\\source1\\",
             "destination": ".\\watcher\\destination1\\",
-            "deletesource": false,
+            "deletesource": true,
             "exitonfailure": true,
             "recursive": true
         }
