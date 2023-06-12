@@ -8,42 +8,8 @@ from core.constants import CONFIG_TYPE, CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTI
 from core.config import ConfigDict
 from core.watcher import Watcher, WatcherError
 from core.factory import Factory
-from core.interface.ihandler import IHandler
-from core.handler import Handler
 from builtin.copyfile_handler import CopyFileHandler
 from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
-
-
-class TestFileHandler(IHandler):
-
-    def __init__(self, handler_config: ConfigDict) -> None:
-
-        self.handler_config = handler_config.copy()
-
-        Handler.setup_path(self.handler_config, CONFIG_SOURCE)
-        Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
-
-    def process(self, source_path: pathlib.Path) -> None:
-
-        destination_path = Handler.create_local_destination(
-            source_path, self.handler_config)
-
-        self.handler_config["processed"] += 1
-
-
-@pytest.fixture()
-def recursive_watcher_fixture() -> ConfigDict:
-
-    Factory.clear()
-    Factory.register("TestFile", TestFileHandler)
-
-    config: ConfigDict = {CONFIG_NAME: "Copy File 1", CONFIG_TYPE: "TestFile", CONFIG_RECURSIVE: True}
-    with tempfile.TemporaryDirectory() as directory_name:
-        config[CONFIG_SOURCE] = str(pathlib.Path(
-            directory_name) / "source")
-        config[CONFIG_DESTINATION] = str(pathlib.Path(
-            directory_name) / "destination")
-        yield config
 
 
 @pytest.fixture()
@@ -164,3 +130,16 @@ class TestCoreWatcher:
 
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict) -> None:
         self.__copy_count_files(watcher_fixture, 1000)
+        
+    def test_watcher_copy_recursive_depth_one(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE]= True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path = pathlib.Path(watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test.txt"
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        create_test_file(source_path)
+        while watcher.files_processed < 2:
+            time.sleep(0.01)
+        watcher.stop()
+        assert source_path.exists() == False
+        assert (pathlib.Path(watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test.txt").exists() == True
