@@ -134,7 +134,7 @@ class TestCoreWatcher:
     def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_fixture: ConfigDict) -> None:
         self.__copy_count_files(watcher_fixture, 1000)
 
-    def test_watcher_copy_one_file_recursive_depth_one(self, watcher_fixture: ConfigDict) -> None:
+    def test_watcher_copy_one_file_recursive_depth_one_deletesource(self, watcher_fixture: ConfigDict) -> None:
         watcher_fixture[CONFIG_RECURSIVE] = True
         watcher = Watcher(watcher_fixture)
         watcher.start()
@@ -149,7 +149,7 @@ class TestCoreWatcher:
             watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test.txt").exists() == True
         assert watcher.files_processed == 2
         
-    def test_watcher_copy_one_file_recursive_depth_two(self, watcher_fixture: ConfigDict) -> None:
+    def test_watcher_copy_one_file_recursive_depth_two_deletesource(self, watcher_fixture: ConfigDict) -> None:
         watcher_fixture[CONFIG_RECURSIVE] = True
         watcher = Watcher(watcher_fixture)
         watcher.start()
@@ -164,7 +164,7 @@ class TestCoreWatcher:
             watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "dir2" / "test.txt").exists() == True
         assert watcher.files_processed == 3
 
-    def test_watcher_copy_two_files_recursive_depth_one(self, watcher_fixture: ConfigDict) -> None:
+    def test_watcher_copy_two_files_recursive_depth_one_deletesource(self, watcher_fixture: ConfigDict) -> None:
         watcher_fixture[CONFIG_RECURSIVE] = True
         watcher = Watcher(watcher_fixture)
         watcher.start()
