@@ -94,11 +94,12 @@ class CopyFileHandler(IHandler):
 
             if source_path.is_file():
                 self._copy_file(source_path, destination_path)
-            elif source_path.is_dir():
-                Handler.create_path(destination_path)
-                
-            self.handler_config["processed"] += 1
+                self.handler_config["processed"] += 1
 
+            elif source_path.is_dir() and not destination_path.exists():
+                Handler.create_path(destination_path)
+                self.handler_config["processed"] += 1
+                
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:
                 raise CopyFileHandlerError(error) from error
