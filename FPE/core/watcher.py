@@ -47,6 +47,8 @@ class WatcherHandler(FileSystemEventHandler):
     """Watcher handler adapter for watchdog.
     """
 
+    existing_files : set[str] = set()
+    
     def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
 
@@ -64,16 +66,17 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file created event.
         """
 
-        logging.debug("on_created %s.", event.src_path)
-
-        source_path = pathlib.Path(event.src_path)  # type: ignore
-        if source_path.exists():
-            Handler.wait_for_copy_completion(source_path)
-            source_path.chmod(source_path.stat().st_mode | 0o664)
-            self.watcher_handler.process(source_path)
-            if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-                source_path.unlink()
-
+        if event.src_path not in self.existing_files:
+            logging.debug("on_created %s.", event.src_path)
+            source_path = pathlib.Path(event.src_path)  # type: ignore
+            if source_path.exists():
+                Handler.wait_for_copy_completion(source_path)
+                source_path.chmod(source_path.stat().st_mode | 0o664)
+                self.watcher_handler.process(source_path)
+                if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
+                    source_path.unlink()
+                self.existing_files.add(event.src_path)
+        
     def on_moved(self, event):
         """On file moved event.
 
@@ -90,6 +93,7 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file deleted event.
         """
         logging.debug("on_deleted %s.", event.src_path)
+        self.existing_files.remove(event.src_path)
 
     def on_modified(self, event):
         """On file modified event.
