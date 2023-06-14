@@ -30,6 +30,10 @@ def watcher_fixture() -> ConfigDict:
 
 class TestCoreWatcher:
 
+    def __wait_for_processed_files(self, watcher: Watcher, count : int) -> None:
+        while watcher.files_processed < count:
+            time.sleep(0.01)
+        
     def __copy_count_files(self, watcher_fixture, count) -> None:
         watcher = Watcher(watcher_fixture)
         watcher.start()
@@ -37,8 +41,7 @@ class TestCoreWatcher:
         destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
         for file_number in range(count):
             create_test_file(source_path / f"test{file_number}.txt")
-        while watcher.files_processed < count:
-            time.sleep(0.01)
+        self.__wait_for_processed_files(watcher, count)
         for file_number in range(count):
             assert (destination_path /
                     f"test{file_number}.txt").exists() == True
@@ -139,9 +142,7 @@ class TestCoreWatcher:
             watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test.txt"
         create_test_file(source_path)
         destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
-        while watcher.files_processed < 2:
-            time.sleep(0.01)
-        time.sleep(5)
+        self.__wait_for_processed_files(watcher, 2)
         watcher.stop()
         assert source_path.exists() == False
         assert (pathlib.Path(
@@ -156,9 +157,7 @@ class TestCoreWatcher:
             watcher_fixture[CONFIG_SOURCE]) / "dir1" / "dir2" / "test.txt"
         create_test_file(source_path)
         destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
-        while watcher.files_processed < 3:
-            time.sleep(0.01)
-        time.sleep(5)
+        self.__wait_for_processed_files(watcher, 3)
         watcher.stop()
         assert source_path.exists() == False
         assert (pathlib.Path(
@@ -176,9 +175,7 @@ class TestCoreWatcher:
             watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test01.txt"
         create_test_file(source_path1)
         destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
-        while watcher.files_processed < 3:
-            time.sleep(0.01)
-        time.sleep(5)
+        self.__wait_for_processed_files(watcher, 3)
         watcher.stop()
         assert source_path0.exists() == False
         assert source_path1.exists() == False
