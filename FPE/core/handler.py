@@ -4,6 +4,8 @@ Handler utility static methods.
 
 """
 
+
+import os
 import errno
 import pathlib
 import logging
@@ -84,3 +86,9 @@ class Handler():
                         pass
                     else:
                         failure = False
+
+    @staticmethod
+    def remove_source(source_path : pathlib.Path):
+        source_path.unlink()
+        # if len(os.listdir(source_path.parent)) == 0:
+        #     source_path.parent.rmdir()
