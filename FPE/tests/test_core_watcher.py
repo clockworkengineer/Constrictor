@@ -294,3 +294,18 @@ class TestCoreWatcher:
                 watcher_fixture[CONFIG_SOURCE])).exists() == True
         assert source_path0.exists() == False
         assert source_path1.exists() == False
+
+    def test_watcher_deletesource_one_file_root_check(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "test.txt"
+        create_test_file(source_path)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        self.__wait_for_processed_files(watcher,1)
+        watcher.stop()
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE])).exists() == True
+        assert source_path.exists() == False
+

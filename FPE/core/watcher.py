@@ -31,7 +31,7 @@ class WatcherError(FPEError):
             message (str): Exception message.
         """
 
-        self.message = message
+        self.__message = message
 
     def __str__(self) -> str:
         """Return string for exception.
@@ -40,7 +40,7 @@ class WatcherError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("Watcher") + self.message
+        return FPEError.error_prefix("Watcher") + self.__message
 
 
 class WatcherHandler(FileSystemEventHandler):
