@@ -89,6 +89,12 @@ class Handler():
 
     @staticmethod
     def remove_source(root_path: pathlib.Path, source_path : pathlib.Path):
+        """_summary_
+
+        Args:
+            root_path (pathlib.Path): _description_
+            source_path (pathlib.Path): _description_
+        """
         source_path.unlink()
         while source_path.parent != root_path:
             if len(os.listdir(source_path.parent)) == 0:
