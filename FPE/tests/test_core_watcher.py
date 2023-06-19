@@ -238,3 +238,59 @@ class TestCoreWatcher:
         assert (pathlib.Path(
             watcher_fixture[CONFIG_DESTINATION]) / "dir1" / "test01.txt").exists() == True
         assert watcher.files_processed == 3
+
+    def test_watcher_deletesource_source_of_depth_one(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test.txt"
+        create_test_file(source_path)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        self.__wait_for_processed_files(watcher, 2)
+        watcher.stop()
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1").exists() == False
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE])).exists() == True
+        assert source_path.exists() == False
+
+    def test_watcher_deletesource_source_of_depth_two(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "dir2" / "test.txt"
+        create_test_file(source_path)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        self.__wait_for_processed_files(watcher, 3)
+        watcher.stop()
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "dir2").exists() == False
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1").exists() == False
+        assert (pathlib.Path(
+                watcher_fixture[CONFIG_SOURCE])).exists() == True
+        assert source_path.exists() == False
+
+    def test_watcher_deletesource_two_files_source_of_depth_two(self, watcher_fixture: ConfigDict) -> None:
+        watcher_fixture[CONFIG_RECURSIVE] = True
+        watcher = Watcher(watcher_fixture)
+        watcher.start()
+        source_path0 = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "dir2" / "test00.txt"
+        create_test_file(source_path0)
+        source_path1 = pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "test01.txt"
+        create_test_file(source_path1)
+        destination_path = pathlib.Path(watcher_fixture[CONFIG_DESTINATION])
+        self.__wait_for_processed_files(watcher, 3)
+        watcher.stop()
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1" / "dir2").exists() == False
+        assert (pathlib.Path(
+            watcher_fixture[CONFIG_SOURCE]) / "dir1").exists() == False
+        assert (pathlib.Path(
+                watcher_fixture[CONFIG_SOURCE])).exists() == True
+        assert source_path0.exists() == False
+        assert source_path1.exists() == False

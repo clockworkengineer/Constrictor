@@ -74,7 +74,7 @@ class WatcherHandler(FileSystemEventHandler):
                 source_path.chmod(source_path.stat().st_mode | 0o664)
                 self.watcher_handler.process(source_path)
                 if self.watcher_handler.handler_config[CONFIG_DELETESOURCE] and source_path.is_file():
-                    Handler.remove_source(source_path)
+                    Handler.remove_source(pathlib.Path(self.watcher_handler.handler_config[CONFIG_SOURCE]), source_path)
                 self.__existing_files.add(event.src_path)
         
     def on_moved(self, event):

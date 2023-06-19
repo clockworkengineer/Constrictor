@@ -88,7 +88,11 @@ class Handler():
                         failure = False
 
     @staticmethod
-    def remove_source(source_path : pathlib.Path):
+    def remove_source(root_path: pathlib.Path, source_path : pathlib.Path):
         source_path.unlink()
-        # if len(os.listdir(source_path.parent)) == 0:
-        #     source_path.parent.rmdir()
+        while source_path.parent != root_path:
+            if len(os.listdir(source_path.parent)) == 0:
+                source_path.parent.rmdir()
+                source_path = source_path.parent
+                continue
+            break
