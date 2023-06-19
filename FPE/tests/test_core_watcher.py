@@ -109,7 +109,7 @@ class TestCoreWatcher:
         assert (pathlib.Path(
             watcher_config[CONFIG_SOURCE]) / f"test0.txt").exists() == False
 
-    def test_watcher_copy_a_single_file_from_source_to_destination_with_deletesource_false(self, watcher_config: ConfigDict) -> None:
+    def test_watcher_copy_a_single_file_from_source_to_destination_keepsource(self, watcher_config: ConfigDict) -> None:
         watcher_config[CONFIG_DELETESOURCE] = False
         self.__copy_count_files(watcher_config, 1)
         assert (pathlib.Path(
@@ -286,9 +286,21 @@ class TestCoreWatcher:
         source_path = pathlib.Path(
             watcher_config[CONFIG_SOURCE]) / "test.txt"
         create_test_file(source_path)
-        self.__wait_for_processed_files(watcher,1)
+        self.__wait_for_processed_files(watcher, 1)
         watcher.stop()
         assert (pathlib.Path(
             watcher_config[CONFIG_SOURCE])).exists() == True
         assert source_path.exists() == False
 
+    def test_watcher_copy_a_single_readonly_file_from_source_to_destination(self, watcher_config: ConfigDict) -> None:
+        watcher = Watcher(watcher_config)
+        watcher.start()
+        source_path = pathlib.Path(
+            watcher_config[CONFIG_SOURCE]) / "test.txt"
+        create_test_file(source_path, True)
+        self.__wait_for_processed_files(watcher, 1)
+        watcher.stop()
+        assert source_path.exists() == False
+        assert (pathlib.Path(
+            watcher_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
+        assert watcher.files_processed == 1
