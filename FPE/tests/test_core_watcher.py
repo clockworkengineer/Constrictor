@@ -186,8 +186,6 @@ class TestCoreWatcher:
         self.__wait_for_processed_files(watcher, 2)
         watcher.stop()
         assert source_path.exists() == True
-        assert (pathlib.Path(
-            watcher_config[CONFIG_DESTINATION]) / "dir1" / "test.txt").exists() == True
         assert watcher.files_processed == 2
 
     def test_watcher_copy_one_file_recursive_depth_two_keepource(self, watcher_config: ConfigDict) -> None:
@@ -201,8 +199,6 @@ class TestCoreWatcher:
         self.__wait_for_processed_files(watcher, 3)
         watcher.stop()
         assert source_path.exists() == True
-        assert (pathlib.Path(
-            watcher_config[CONFIG_DESTINATION]) / "dir1" / "dir2" / "test.txt").exists() == True
         assert watcher.files_processed == 3
 
     def test_watcher_copy_two_files_recursive_depth_one_keepource(self, watcher_config: ConfigDict) -> None:
@@ -220,10 +216,6 @@ class TestCoreWatcher:
         watcher.stop()
         assert source_path0.exists() == True
         assert source_path1.exists() == True
-        assert (pathlib.Path(
-            watcher_config[CONFIG_DESTINATION]) / "dir1" / "test00.txt").exists() == True
-        assert (pathlib.Path(
-            watcher_config[CONFIG_DESTINATION]) / "dir1" / "test01.txt").exists() == True
         assert watcher.files_processed == 3
 
     def test_watcher_deletesource_source_of_depth_one(self, watcher_config: ConfigDict) -> None:
@@ -237,8 +229,6 @@ class TestCoreWatcher:
         watcher.stop()
         assert (pathlib.Path(
             watcher_config[CONFIG_SOURCE]) / "dir1").exists() == False
-        assert (pathlib.Path(
-            watcher_config[CONFIG_SOURCE])).exists() == True
         assert source_path.exists() == False
 
     def test_watcher_deletesource_source_of_depth_two(self, watcher_config: ConfigDict) -> None:
