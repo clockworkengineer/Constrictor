@@ -78,7 +78,6 @@ class WatcherHandler(FileSystemEventHandler):
             source_path = pathlib.Path(event.src_path)  # type: ignore
             if source_path.exists():
                 Handler.wait_for_copy_completion(source_path)
-                source_path.chmod(source_path.stat().st_mode | 0o664)
                 self.__watcher_handler.process(source_path)
                 if  self.__deletesource and source_path.is_file():
                     Handler.remove_source(self.__root_path, source_path)

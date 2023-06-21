@@ -74,6 +74,7 @@ class Handler():
         Args:
             source_path (pathlib.Path):  Soure file path.
         """
+
         if source_path.is_file():
             failure: bool = True
             while failure:
@@ -86,6 +87,8 @@ class Handler():
                         pass
                     else:
                         failure = False
+                        
+        source_path.chmod(source_path.stat().st_mode | 0o664)
 
     @staticmethod
     def remove_source(root_path: pathlib.Path, source_path : pathlib.Path):
