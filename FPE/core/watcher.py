@@ -12,7 +12,7 @@ import pathlib
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
@@ -47,11 +47,11 @@ class WatcherHandler(FileSystemEventHandler):
     """Watcher handler adapter for watchdog.
     """
 
-    __watcher_handler : IHandler
-    __existing_files : set[str]
-    __root_path : pathlib.Path
-    __deletesource : bool
-    
+    __watcher_handler: IHandler
+    __existing_files: set[str]
+    __root_path: pathlib.Path
+    __deletesource: bool
+
     def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
 
@@ -60,12 +60,15 @@ class WatcherHandler(FileSystemEventHandler):
         """
 
         super().__init__()
+
         self.__watcher_handler = watcher_handler
-        self.__existing_files : set[str] = set()
-        self.__root_path = pathlib.Path(self.__watcher_handler.handler_config[CONFIG_SOURCE])
+        self.__existing_files: set[str] = set()
+        self.__root_path = pathlib.Path(
+            self.__watcher_handler.handler_config[CONFIG_SOURCE])
         self.__deletesource = self.__watcher_handler.handler_config[CONFIG_DELETESOURCE]
-        
-        
+
+        self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] = 0
+
     def on_created(self, event) -> None:
         """On file created event.
 
@@ -79,10 +82,11 @@ class WatcherHandler(FileSystemEventHandler):
             if source_path.exists():
                 Handler.wait_for_copy_completion(source_path)
                 self.__watcher_handler.process(source_path)
-                if  self.__deletesource and source_path.is_file():
+                if self.__deletesource and source_path.is_file():
                     Handler.remove_source(self.__root_path, source_path)
                 self.__existing_files.add(event.src_path)
-        
+                self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
+
     def on_moved(self, event):
         """On file moved event.
 
@@ -241,7 +245,7 @@ class Watcher:
 
     @property
     def files_processed(self) -> int:
-        if "processed" in self.__handler.handler_config:
-            return self.__handler.handler_config["processed"]
+        if CONFIG_FILES_PROCESSED in self.__handler.handler_config:
+            return self.__handler.handler_config[CONFIG_FILES_PROCESSED]
         else:
             return 0

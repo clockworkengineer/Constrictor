@@ -16,6 +16,7 @@ CONFIG_DELETESOURCE: Final[str] = "deletesource"
 CONFIG_NOGUI: Final[str] = "nogui"
 CONFIG_RECURSIVE: Final[str] = "recursive"
 CONFIG_EXITONFAILURE: Final[str] = "exitonfailure"
+CONFIG_FILES_PROCESSED: Final[str] = "processed"
 CONFIG_MANDATORY_KEYS: Final[Tuple[str, ...]] = (
     CONFIG_PLUGINS, CONFIG_WATCHERS)
 CONFIG_WATCHER_MANDATORY_KEYS: Final[Tuple[str, ...]] = (
