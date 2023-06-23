@@ -19,7 +19,7 @@ def watcher_config() -> ConfigDict:
     Factory.register("CopyFile", CopyFileHandler)
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
-    watcher_config = create_watcher_config()
+    watcher_config : ConfigDict = create_watcher_config()
     
     yield watcher_config
     
