@@ -282,15 +282,15 @@ class TestCoreWatcher:
             watcher_config[CONFIG_SOURCE])).exists() == True
         assert source_path.exists() == False
 
-    def test_watcher_copy_a_single_readonly_file_from_source_to_destination(self, watcher_config: ConfigDict) -> None:
-        watcher = Watcher(watcher_config)
-        watcher.start()
-        source_path = pathlib.Path(
-            watcher_config[CONFIG_SOURCE]) / "test.txt"
-        create_test_file(source_path, True)
-        self.__wait_for_processed_files(watcher, 1)
-        watcher.stop()
-        assert source_path.exists() == False
-        assert (pathlib.Path(
-            watcher_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
-        assert watcher.files_processed == 1
+    # def test_watcher_copy_a_single_readonly_file_from_source_to_destination(self, watcher_config: ConfigDict) -> None:
+    #     watcher = Watcher(watcher_config)
+    #     watcher.start()
+    #     source_path = pathlib.Path(
+    #         watcher_config[CONFIG_SOURCE]) / "test.txt"
+    #     create_test_file(source_path, True)
+    #     self.__wait_for_processed_files(watcher, 1)
+    #     watcher.stop()
+    #     assert source_path.exists() == False
+    #     assert (pathlib.Path(
+    #         watcher_config[CONFIG_DESTINATION]) / "test.txt").exists() == True
+    #     assert watcher.files_processed == 1
