@@ -1,4 +1,5 @@
 import pytest
+import shutil
 import time
 import pathlib
 
@@ -18,7 +19,15 @@ def watcher_config() -> ConfigDict:
     Factory.register("CopyFile", CopyFileHandler)
     Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
 
-    yield create_watcher_config()
+    watcher_config = create_watcher_config()
+    
+    yield watcher_config
+    
+    if CONFIG_SOURCE in watcher_config:
+        shutil.rmtree(watcher_config[CONFIG_SOURCE])
+    if CONFIG_DESTINATION in watcher_config:
+        shutil.rmtree(watcher_config[CONFIG_DESTINATION])
+    
 
 
 class TestCoreWatcher:

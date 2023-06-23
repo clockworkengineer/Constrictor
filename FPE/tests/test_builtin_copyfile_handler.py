@@ -1,6 +1,5 @@
 import pytest
 import pathlib
-import tempfile
 
 from tests.common import create_test_file, create_watcher_config
 from core.constants import  CONFIG_SOURCE, CONFIG_DESTINATION
