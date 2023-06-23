@@ -16,7 +16,7 @@ class IHandler(Protocol):
 
     handler_config: ConfigDict  # Handler config dictionary
 
-    def process(self, source_path: pathlib.Path) -> None:
+    def process(self, source_path: pathlib.Path) -> bool:
         """Perform watcher file processing.
 
         Args:

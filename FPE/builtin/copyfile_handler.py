@@ -75,7 +75,7 @@ class CopyFileHandler(IHandler):
         logging.info("Copied file %s to %s.",
                      source_path, destination_path)
 
-    def process(self, source_path: pathlib.Path) -> None:
+    def process(self, source_path: pathlib.Path) -> bool:
         """Copy file from source(watch) directory to destination directory.
 
         Args:
@@ -92,12 +92,16 @@ class CopyFileHandler(IHandler):
 
             if source_path.is_file():
                 self._copy_file(source_path, destination_path)
+                return True
 
             elif source_path.is_dir() and not destination_path.exists():
                 Handler.create_path(destination_path)
+                return True
 
         except (OSError, KeyError, ValueError) as error:
             if self.handler_config['exitonfailure']:
                 raise CopyFileHandlerError(error) from error
             else:
                 logging.info(CopyFileHandlerError(error))
+            
+        return False

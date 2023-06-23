@@ -69,7 +69,7 @@ class SFTPCopyFileHandler(IHandler):
 
         logging.getLogger("paramiko").setLevel(logging.WARNING)
 
-    def process(self,  source_path: pathlib.Path) -> None:
+    def process(self,  source_path: pathlib.Path) -> bool:
         """SFTP Copy file from source(watch) directory to a destination directory on remote server.
 
         Args:
@@ -93,9 +93,14 @@ class SFTPCopyFileHandler(IHandler):
 
             logging.info("Uploaded file %s to %s",
                          source_path, destination_path)
+            
+            return True
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
             if self.handler_config['exitonfailure']:
                 raise SFTPCopyFileHandlerError(str(error)) from error
             else:
                 logging.info(SFTPCopyFileHandlerError(error))
+                return False
+                
+

@@ -81,11 +81,11 @@ class WatcherHandler(FileSystemEventHandler):
             source_path = pathlib.Path(event.src_path)  # type: ignore
             if source_path.exists():
                 Handler.wait_for_copy_completion(source_path)
-                self.__watcher_handler.process(source_path)
-                if self.__deletesource and source_path.is_file():
-                    Handler.remove_source(self.__root_path, source_path)
-                self.__existing_files.add(event.src_path)
-                self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
+                if self.__watcher_handler.process(source_path):
+                    if self.__deletesource and source_path.is_file():
+                        Handler.remove_source(self.__root_path, source_path)
+                    self.__existing_files.add(event.src_path)
+                    self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
 
     def on_moved(self, event):
         """On file moved event.
