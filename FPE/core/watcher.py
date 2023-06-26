@@ -84,8 +84,8 @@ class WatcherHandler(FileSystemEventHandler):
                 if self.__watcher_handler.process(source_path):
                     if source_path.is_file():
                         self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
-                    if self.__deletesource and source_path.is_file():
-                        Handler.remove_source(self.__root_path, source_path)
+                        if self.__deletesource:
+                            Handler.remove_source(self.__root_path, source_path)
                     self.__existing_files.add(event.src_path)
 
 
