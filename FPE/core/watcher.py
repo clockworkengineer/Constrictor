@@ -82,10 +82,9 @@ class WatcherHandler(FileSystemEventHandler):
             if source_path.exists():
                 Handler.wait_for_copy_completion(source_path)
                 if self.__watcher_handler.process(source_path):
-                    if source_path.is_file():
-                        self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
-                        if self.__deletesource:
-                            Handler.remove_source(self.__root_path, source_path)
+                    self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
+                    if self.__deletesource:
+                        Handler.remove_source(self.__root_path, source_path)
                     self.__existing_files.add(event.src_path)
 
 

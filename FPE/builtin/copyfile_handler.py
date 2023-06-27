@@ -70,6 +70,9 @@ class CopyFileHandler(IHandler):
             destination_path (pathlib.Path): Destination file path.
         """
 
+        if not destination_path.parent.exists():
+            Handler.create_path(destination_path)
+
         shutil.copy2(source_path, destination_path)
 
         logging.info("Copied file %s to %s.",
@@ -87,15 +90,9 @@ class CopyFileHandler(IHandler):
 
         try:
 
-            destination_path = Handler.create_local_destination(
-                source_path, self.handler_config)
-
             if source_path.is_file():
-                self._copy_file(source_path, destination_path)
-                return True
-
-            elif source_path.is_dir() and not destination_path.exists():
-                Handler.create_path(destination_path)
+                self._copy_file(source_path, Handler.create_local_destination(
+                    source_path, self.handler_config))
                 return True
 
         except (OSError, KeyError, ValueError) as error:
@@ -103,5 +100,5 @@ class CopyFileHandler(IHandler):
                 raise CopyFileHandlerError(error) from error
             else:
                 logging.info(CopyFileHandlerError(error))
-            
+        
         return False
