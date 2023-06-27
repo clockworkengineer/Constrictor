@@ -17,7 +17,7 @@ from core.config import ConfigDict
 class Handler():
     """Directory watcher handler utility static methods.
     """
-    
+
     @staticmethod
     def normalize_path(path_to_normalise: str) -> str:
         """Normalise passed in path string.
@@ -87,11 +87,11 @@ class Handler():
                         pass
                     else:
                         failure = False
-                        
+
         source_path.chmod(source_path.stat().st_mode | 0o664)
 
     @staticmethod
-    def remove_source(root_path: pathlib.Path, source_path : pathlib.Path):
+    def remove_source(root_path: pathlib.Path, source_path: pathlib.Path):
         """_summary_
 
         Args:
@@ -101,6 +101,8 @@ class Handler():
         source_path.unlink()
         while source_path.parent != root_path:
             if len(os.listdir(source_path.parent)) == 0:
+                source_path.parent.chmod(
+                    source_path.parent.stat().st_mode | 0o664)
                 source_path.parent.rmdir()
                 source_path = source_path.parent
                 continue

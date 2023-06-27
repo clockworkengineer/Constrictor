@@ -71,7 +71,7 @@ class CopyFileHandler(IHandler):
         """
 
         if not destination_path.parent.exists():
-            Handler.create_path(destination_path)
+            Handler.create_path(destination_path.parent)
 
         shutil.copy2(source_path, destination_path)
 
@@ -100,5 +100,5 @@ class CopyFileHandler(IHandler):
                 raise CopyFileHandlerError(error) from error
             else:
                 logging.info(CopyFileHandlerError(error))
-        
+
         return False

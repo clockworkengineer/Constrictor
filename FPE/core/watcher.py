@@ -51,11 +51,11 @@ class WatcherHandler(FileSystemEventHandler):
     """
 
     __watcher_handler: IHandler
-    __existing_files: set[str]
+    # __existing_files: set[str]
     __root_path: pathlib.Path
     __deletesource: bool
-    __handler_queue : Queue
-    __handler_thread : Thread
+    __handler_queue: Queue
+    __handler_thread: Thread
 
     def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
@@ -67,23 +67,23 @@ class WatcherHandler(FileSystemEventHandler):
         super().__init__()
 
         self.__watcher_handler = watcher_handler
-        self.__existing_files: set[str] = set()
+        # self.__existing_files: set[str] = set()
         self.__root_path = pathlib.Path(
             self.__watcher_handler.handler_config[CONFIG_SOURCE])
         self.__deletesource = self.__watcher_handler.handler_config[CONFIG_DELETESOURCE]
 
         self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] = 0
-        
+
         self.__handler_queue = Queue()
         self.__handler_thread = Thread(target=self.__process)
         self.__handler_thread.daemon = True
         self.__handler_thread.start()
-        
+
     def __del__(self):
         self.__handler_thread.join()
-        
+
     def __process(self):
-        
+
         while True:
             time.sleep(0.1)
             try:
@@ -91,18 +91,18 @@ class WatcherHandler(FileSystemEventHandler):
             except Empty:
                 pass
             else:
-                if event.src_path not in self.__existing_files:
-                    logging.debug("on_created %s.", event.src_path)
-                    source_path = pathlib.Path(event.src_path)  # type: ignore
-                    if source_path.exists():
-                        Handler.wait_for_copy_completion(source_path)
-                        if self.__watcher_handler.process(source_path):
-                            self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
-                            if self.__deletesource:
-                                Handler.remove_source(self.__root_path, source_path)
-                            self.__existing_files.add(event.src_path)
-                    
-        
+                # if event.src_path not in self.__existing_files:
+                logging.debug("on_created %s.", event.src_path)
+                source_path = pathlib.Path(event.src_path)  # type: ignore
+                if source_path.exists():
+                    Handler.wait_for_copy_completion(source_path)
+                    if self.__watcher_handler.process(source_path):
+                        self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
+                        if self.__deletesource:
+                            Handler.remove_source(
+                                self.__root_path, source_path)
+                            # self.__existing_files.add(event.src_path)
+
     def on_created(self, event) -> None:
         """On file created event.
 
@@ -110,19 +110,7 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file created event.
         """
 
-        # if event.src_path not in self.__existing_files:
-        #     logging.debug("on_created %s.", event.src_path)
-        #     source_path = pathlib.Path(event.src_path)  # type: ignore
-        #     if source_path.exists():
-        #         Handler.wait_for_copy_completion(source_path)
-        #         if self.__watcher_handler.process(source_path):
-        #             self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
-        #             if self.__deletesource:
-        #                 Handler.remove_source(self.__root_path, source_path)
-        #             self.__existing_files.add(event.src_path)
-        
         self.__handler_queue.put(event)
-
 
     def on_moved(self, event):
         """On file moved event.
@@ -140,7 +128,7 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file deleted event.
         """
         logging.debug("on_deleted %s.", event.src_path)
-        self.__existing_files.remove(event.src_path)
+        # self.__existing_files.remove(event.src_path)
 
     def on_modified(self, event):
         """On file modified event.
