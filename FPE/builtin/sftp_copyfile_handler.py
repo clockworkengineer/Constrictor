@@ -101,6 +101,7 @@ class SFTPCopyFileHandler(IHandler):
                 raise SFTPCopyFileHandlerError(str(error)) from error
             else:
                 logging.info(SFTPCopyFileHandlerError(error))
-                return False
+                
+        return False
                 
 
