@@ -67,7 +67,7 @@ class WatcherHandler(FileSystemEventHandler):
         super().__init__()
 
         self.__watcher_handler = watcher_handler
-        # self.__existing_files: set[str] = set()
+        
         self.__root_path = pathlib.Path(
             self.__watcher_handler.handler_config[CONFIG_SOURCE])
         self.__deletesource = self.__watcher_handler.handler_config[CONFIG_DELETESOURCE]
@@ -91,7 +91,6 @@ class WatcherHandler(FileSystemEventHandler):
             except Empty:
                 pass
             else:
-                # if event.src_path not in self.__existing_files:
                 logging.debug("on_created %s.", event.src_path)
                 source_path = pathlib.Path(event.src_path)  # type: ignore
                 if source_path.exists():
@@ -101,7 +100,6 @@ class WatcherHandler(FileSystemEventHandler):
                         if self.__deletesource:
                             Handler.remove_source(
                                 self.__root_path, source_path)
-                            # self.__existing_files.add(event.src_path)
 
     def on_created(self, event) -> None:
         """On file created event.
@@ -128,7 +126,6 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file deleted event.
         """
         logging.debug("on_deleted %s.", event.src_path)
-        # self.__existing_files.remove(event.src_path)
 
     def on_modified(self, event):
         """On file modified event.
