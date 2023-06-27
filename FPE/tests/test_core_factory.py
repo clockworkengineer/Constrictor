@@ -1,6 +1,6 @@
 import pytest
 
-from tests.common import json_file_source
+from tests.common import json_file_source, remove_source_destination
 from core.constants import CONFIG_WATCHERS
 from core.arguments import Arguments
 from core.config import Config
@@ -63,6 +63,7 @@ class TestCoreFactory:
             [json_file_source("test_googledrive_handler.json")])).get_config()
         with pytest.raises(FactoryError):
             _ = Factory.create(config[CONFIG_WATCHERS][0])
+            remove_source_destination(config[CONFIG_WATCHERS][0])
 
     def test_factory_create_with_a_registered_handler(self, reset_factory) -> None:
         Factory.register("CopyFile", CopyFileHandler)
@@ -70,3 +71,4 @@ class TestCoreFactory:
         config = Config(Arguments(
             [json_file_source("test_valid.json")])).get_config()
         assert Factory.create(config[CONFIG_WATCHERS][0]) != None
+        remove_source_destination(config[CONFIG_WATCHERS][0])

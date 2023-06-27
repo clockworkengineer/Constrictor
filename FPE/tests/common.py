@@ -1,6 +1,7 @@
 import pathlib
 import os
 import tempfile
+import shutil
 
 from core.constants import CONFIG_TYPE, CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION
 from core.handler import Handler
@@ -28,3 +29,9 @@ def create_watcher_config() -> ConfigDict:
         config[CONFIG_DESTINATION] = str(pathlib.Path(
             directory_name) / "destination")
         return config
+    
+def remove_source_destination(watcher_config: ConfigDict) -> None:
+    if CONFIG_SOURCE in watcher_config:
+        shutil.rmtree(watcher_config[CONFIG_SOURCE])
+    if CONFIG_DESTINATION in watcher_config:
+        shutil.rmtree(watcher_config[CONFIG_DESTINATION])

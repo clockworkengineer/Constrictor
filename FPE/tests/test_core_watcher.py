@@ -3,7 +3,7 @@ import shutil
 import time
 import pathlib
 
-from tests.common import create_test_file, create_watcher_config
+from tests.common import create_test_file, create_watcher_config, remove_source_destination
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.config import ConfigDict
 from core.watcher import Watcher, WatcherError
@@ -23,10 +23,7 @@ def watcher_config() -> ConfigDict:
     
     yield watcher_config
     
-    if CONFIG_SOURCE in watcher_config:
-        shutil.rmtree(watcher_config[CONFIG_SOURCE])
-    if CONFIG_DESTINATION in watcher_config:
-        shutil.rmtree(watcher_config[CONFIG_DESTINATION])
+    remove_source_destination(watcher_config)
     
 
 
