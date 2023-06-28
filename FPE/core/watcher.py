@@ -51,7 +51,6 @@ class WatcherHandler(FileSystemEventHandler):
     """
 
     __watcher_handler: IHandler
-    # __existing_files: set[str]
     __root_path: pathlib.Path
     __deletesource: bool
     __handler_queue: Queue
