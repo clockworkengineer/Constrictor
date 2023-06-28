@@ -8,18 +8,12 @@ calls for added directories.
 """
 
 import logging
-import pathlib
-import time
-from threading import Thread
-from queue import Queue, Empty
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
+from core.watcher_handler import WatcherHandler
+from core.constants import  CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
-from core.handler import Handler
 from core.error import FPEError
 
 
@@ -46,134 +40,12 @@ class WatcherError(FPEError):
         return FPEError.error_prefix("Watcher") + self.__message
 
 
-class WatcherHandler(FileSystemEventHandler):
-    """Watcher handler adapter for watchdog.
-    """
-
-    __watcher_handler: IHandler
-    __root_path: pathlib.Path
-    __deletesource: bool
-    __handler_queue: Queue
-    __handler_thread: Thread
-    __handler_observer : Observer
-
-    def _create_observer(
-        self, handler: IHandler) -> Observer:
-        observer: Observer = Observer()
-        observer.schedule(event_handler=self, path=handler.handler_config[CONFIG_SOURCE], recursive=handler.handler_config[CONFIG_RECURSIVE])
-        return observer
-    
-    def __init__(self, watcher_handler: IHandler) -> None:
-        """Initialise watcher handler adapter.
-
-        Args:
-            watcher_handler (IHandler): Watchdog handler.
-        """
-
-        super().__init__()
-
-        self.__watcher_handler = watcher_handler
-        
-        self.__root_path = pathlib.Path(
-            self.__watcher_handler.handler_config[CONFIG_SOURCE])
-        self.__deletesource = self.__watcher_handler.handler_config[CONFIG_DELETESOURCE]
-
-        self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] = 0
-
-        self.__handler_queue = Queue()
-        self.__handler_thread = Thread(target=self.__process)
-        self.__handler_thread.daemon = True
-        self.__handler_thread.start()
-        
-        self.__handler_observer = self._create_observer(self.__watcher_handler)
-        
-
-    def __del__(self):
-        self.__handler_thread.join()
-
-    def __process(self):
-
-        while True:
-            time.sleep(0.1)
-            try:
-                event = self.__handler_queue.get()
-            except Empty:
-                pass
-            else:
-                logging.debug("on_created %s.", event.src_path)
-                source_path = pathlib.Path(event.src_path)  # type: ignore
-                if source_path.exists():
-                    Handler.wait_for_copy_completion(source_path)
-                    if self.__watcher_handler.process(source_path):
-                        self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] += 1
-                        if self.__deletesource:
-                            Handler.remove_source(
-                                self.__root_path, source_path)
-
-    def on_created(self, event) -> None:
-        """On file created event.
-
-        Args:
-            event (Any): Watchdog file created event.
-        """
-
-        self.__handler_queue.put(event)
-
-    def on_moved(self, event):
-        """On file moved event.
-
-        Args:
-            event (Any): Watchdog file moved event.
-
-        """
-        logging.debug("on_moved %s.", event.src_path)
-
-    def on_deleted(self, event):
-        """On file deleted evenet.
-
-        Args:
-            event (Any): Watchdog file deleted event.
-        """
-        logging.debug("on_deleted %s.", event.src_path)
-
-    def on_modified(self, event):
-        """On file modified event.
-
-        Args:
-            event (Any): Watchdog file modified event.
-        """
-        logging.debug("on_modified %s.", event.src_path)
-
-    def on_closed(self, event):
-        """On file opened event.
-
-        Args:
-            event (Any): Watchdog file closed event.
-        """
-        logging.debug("on_closed %s.", event.src_path)
-
-    def on_opened(self, event):
-        """On file opened event.
-
-        Args:
-            event (Any): Watchdog file opened event.s
-        """
-        logging.debug("on_opened %s.", event.src_path)
-        
-    def start(self) -> None:
-        self.__handler_observer.start()
-        
-    def stop(self) -> None:
-        self.__handler_observer.stop()
-        self.__handler_observer.join()
-
-
 class Watcher:
     """Watch for files being copied into a folder and process.
     """
 
     __handler: IHandler
-    __observer: WatcherHandler
+    __watcher_handler: WatcherHandler
     __running: bool
 
     # @staticmethod
@@ -232,11 +104,11 @@ class Watcher:
             self.__handler = Factory.create(watcher_config)
 
             if self.__handler is not None:
-                self.__observer = WatcherHandler(self.__handler)
+                self.__watcher_handler = WatcherHandler(self.__handler)
                 Watcher._display_details(self.__handler.handler_config)
 
             else:
-                self.__observer = None  # type: ignore
+                self.__watcher_handler = None  # type: ignore
 
             self.__running = False
 
@@ -260,11 +132,11 @@ class Watcher:
         if self.__running:
             return
 
-        if self.__observer is None:
-            self.__observer = WatcherHandler(self.__handler)
+        if self.__watcher_handler is None:
+            self.__watcher_handler = WatcherHandler(self.__handler)
 
-        if self.__observer is not None:
-            self.__observer.start()
+        if self.__watcher_handler is not None:
+            self.__watcher_handler.start()
             self.__running = True
         else:
             raise WatcherError("Could not create watchdog observer.")
@@ -273,9 +145,9 @@ class Watcher:
         """Stop watcher.
         """
 
-        if self.__observer is not None:
-            self.__observer.stop()
-            self.__observer = None  # type: ignore
+        if self.__watcher_handler is not None:
+            self.__watcher_handler.stop()
+            self.__watcher_handler = None  # type: ignore
             self.__running = False
 
     @property
