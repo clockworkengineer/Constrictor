@@ -53,9 +53,9 @@ class WatcherHandler(FileSystemEventHandler):
     __watcher_handler: IHandler
     __root_path: pathlib.Path
     __deletesource: bool
-    __handler_queue: Queue
-    __handler_thread: Thread
-    __handler_observer: Observer
+    __queue: Queue
+    __thread: Thread
+    __observer: Observer
 
     def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
@@ -74,24 +74,24 @@ class WatcherHandler(FileSystemEventHandler):
 
         self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] = 0
 
-        self.__handler_queue = Queue()
-        self.__handler_thread = Thread(target=self.__process)
-        self.__handler_thread.daemon = True
-        self.__handler_thread.start()
+        self.__queue = Queue()
+        self.__thread = Thread(target=self.__process)
+        self.__thread.daemon = True
+        self.__thread.start()
 
-        self.__handler_observer = Observer()
-        self.__handler_observer.schedule(
+        self.__observer = Observer()
+        self.__observer.schedule(
             event_handler=self, path=self.__watcher_handler.handler_config[CONFIG_SOURCE], recursive=self.__watcher_handler.handler_config[CONFIG_RECURSIVE])
 
     def __del__(self):
-        self.__handler_thread.join()
+        self.__thread.join()
 
     def __process(self):
 
         while True:
             time.sleep(0.1)
             try:
-                event = self.__handler_queue.get()
+                event = self.__queue.get()
             except Empty:
                 pass
             else:
@@ -112,7 +112,7 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file created event.
         """
 
-        self.__handler_queue.put(event)
+        self.__queue.put(event)
 
     def on_moved(self, event):
         """On file moved event.
@@ -158,10 +158,10 @@ class WatcherHandler(FileSystemEventHandler):
     def start(self) -> None:
         """Start watchdog observer watching.
         """
-        self.__handler_observer.start()
+        self.__observer.start()
 
     def stop(self) -> None:
         """Stop watchdog observer from watching.
         """
-        self.__handler_observer.stop()
-        self.__handler_observer.join()
+        self.__observer.stop()
+        self.__observer.join()

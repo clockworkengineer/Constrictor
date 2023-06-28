@@ -10,7 +10,7 @@ calls for added directories.
 import logging
 
 from core.watcher_handler import WatcherHandler
-from core.constants import  CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
+from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
@@ -47,11 +47,6 @@ class Watcher:
     __handler: IHandler
     __watcher_handler: WatcherHandler
     __running: bool
-
-    # @staticmethod
-    # def _create_observer(handler: IHandler) -> WatcherHandler:
-    #     observer: Observer = WatcherHandler(handler)
-    #     return observer
 
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
