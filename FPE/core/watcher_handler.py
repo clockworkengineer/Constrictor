@@ -17,8 +17,6 @@ from watchdog.observers import Observer
 
 from core.constants import CONFIG_SOURCE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
-from core.config import ConfigDict
-from core.factory import Factory
 from core.handler import Handler
 from core.error import FPEError
 
