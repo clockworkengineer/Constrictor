@@ -55,7 +55,14 @@ class WatcherHandler(FileSystemEventHandler):
     __deletesource: bool
     __handler_queue: Queue
     __handler_thread: Thread
+    __handler_observer : Observer
 
+    def _create_observer(
+        self, handler: IHandler) -> Observer:
+        observer: Observer = Observer()
+        observer.schedule(event_handler=self, path=handler.handler_config[CONFIG_SOURCE], recursive=handler.handler_config[CONFIG_RECURSIVE])
+        return observer
+    
     def __init__(self, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
 
@@ -77,6 +84,9 @@ class WatcherHandler(FileSystemEventHandler):
         self.__handler_thread = Thread(target=self.__process)
         self.__handler_thread.daemon = True
         self.__handler_thread.start()
+        
+        self.__handler_observer = self._create_observer(self.__watcher_handler)
+        
 
     def __del__(self):
         self.__handler_thread.join()
@@ -149,6 +159,13 @@ class WatcherHandler(FileSystemEventHandler):
             event (Any): Watchdog file opened event.s
         """
         logging.debug("on_opened %s.", event.src_path)
+        
+    def start(self) -> None:
+        self.__handler_observer.start()
+        
+    def stop(self) -> None:
+        self.__handler_observer.stop()
+        self.__handler_observer.join()
 
 
 class Watcher:
@@ -156,15 +173,13 @@ class Watcher:
     """
 
     __handler: IHandler
-    __observer: Observer
+    __observer: WatcherHandler
     __running: bool
 
-    @staticmethod
-    def _create_observer(handler: IHandler) -> Observer:
-        observer: Observer = Observer()
-        observer.schedule(event_handler=WatcherHandler(
-            handler), path=handler.handler_config[CONFIG_SOURCE], recursive=handler.handler_config[CONFIG_RECURSIVE])
-        return observer
+    # @staticmethod
+    # def _create_observer(handler: IHandler) -> WatcherHandler:
+    #     observer: Observer = WatcherHandler(handler)
+    #     return observer
 
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
@@ -217,7 +232,7 @@ class Watcher:
             self.__handler = Factory.create(watcher_config)
 
             if self.__handler is not None:
-                self.__observer = Watcher._create_observer(self.__handler)
+                self.__observer = WatcherHandler(self.__handler)
                 Watcher._display_details(self.__handler.handler_config)
 
             else:
@@ -246,7 +261,7 @@ class Watcher:
             return
 
         if self.__observer is None:
-            self.__observer = Watcher._create_observer(self.__handler)
+            self.__observer = WatcherHandler(self.__handler)
 
         if self.__observer is not None:
             self.__observer.start()
@@ -260,7 +275,6 @@ class Watcher:
 
         if self.__observer is not None:
             self.__observer.stop()
-            self.__observer.join()
             self.__observer = None  # type: ignore
             self.__running = False
 
