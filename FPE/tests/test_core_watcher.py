@@ -264,7 +264,7 @@ class TestCoreWatcher:
         source_path1 = pathlib.Path(
             watcher_config[CONFIG_SOURCE]) / "dir1" / "test01.txt"
         create_test_file(source_path1)
-        self.__wait_for_processed_files(watcher, 1)
+        self.__wait_for_processed_files(watcher, 2)
         watcher.stop()
         assert (pathlib.Path(
             watcher_config[CONFIG_SOURCE]) / "dir1" / "dir2").exists() == False
