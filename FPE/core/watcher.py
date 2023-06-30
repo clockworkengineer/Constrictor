@@ -1,9 +1,7 @@
 """FPE directory/file watcher.
 
-Use watchdog package to monitor directories and process each file created using one
-of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
-is not recursive for reasons of performance; a watcher thread can accumalate to many polling
-calls for added directories.
+High level file/directory watcher control logic that uses an observer abtraction to generate
+file creation events; the default abstraction using the watchdog library. 
 
 """
 
@@ -72,7 +70,7 @@ class Watcher:
             raise WatcherError(str(error)) from error
 
     def __init__(self, watcher_config: ConfigDict) -> None:
-        """Initialise file watcher handler.
+        """Initialise file/directory watcher.
 
         Args:
             watcher_config (ConfigDict): Watcher config
@@ -135,7 +133,7 @@ class Watcher:
             self.__observer.start()
             self.__running = True
         else:
-            raise WatcherError("Could not create watchdog observer.")
+            raise WatcherError("Could not create observer.")
 
     def stop(self) -> None:
         """Stop watcher.
