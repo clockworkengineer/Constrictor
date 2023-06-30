@@ -81,8 +81,6 @@ class WatcherHandler(FileSystemEventHandler):
         self.__observer.schedule(
             event_handler=self, path=self.__watcher_handler.handler_config[CONFIG_SOURCE], recursive=self.__watcher_handler.handler_config[CONFIG_RECURSIVE])
 
-    def __del__(self):
-        self.__thread.join()
 
     def __process(self):
 
