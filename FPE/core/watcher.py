@@ -9,9 +9,10 @@ calls for added directories.
 
 import logging
 
-from core.watcher_handler import WatcherHandler
+from core.observers.watchdog_observer import WatchdogObserver
 from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
+from core.interface.iobserver import IObserver
 from core.config import ConfigDict
 from core.factory import Factory
 from core.error import FPEError
@@ -45,7 +46,7 @@ class Watcher:
     """
 
     __handler: IHandler
-    __watcher_handler: WatcherHandler
+    __observer: IObserver
     __running: bool
 
     @staticmethod
@@ -99,11 +100,11 @@ class Watcher:
             self.__handler = Factory.create(watcher_config)
 
             if self.__handler is not None:
-                self.__watcher_handler = WatcherHandler(self.__handler)
+                self.__observer = WatchdogObserver(self.__handler)
                 Watcher._display_details(self.__handler.handler_config)
 
             else:
-                self.__watcher_handler = None  # type: ignore
+                self.__observer = None  # type: ignore
 
             self.__running = False
 
@@ -127,11 +128,11 @@ class Watcher:
         if self.__running:
             return
 
-        if self.__watcher_handler is None:
-            self.__watcher_handler = WatcherHandler(self.__handler)
+        if self.__observer is None:
+            self.__observer = WatchdogObserver(self.__handler)
 
-        if self.__watcher_handler is not None:
-            self.__watcher_handler.start()
+        if self.__observer is not None:
+            self.__observer.start()
             self.__running = True
         else:
             raise WatcherError("Could not create watchdog observer.")
@@ -140,9 +141,9 @@ class Watcher:
         """Stop watcher.
         """
 
-        if self.__watcher_handler is not None:
-            self.__watcher_handler.stop()
-            self.__watcher_handler = None  # type: ignore
+        if self.__observer is not None:
+            self.__observer.stop()
+            self.__observer = None  # type: ignore
             self.__running = False
 
     @property

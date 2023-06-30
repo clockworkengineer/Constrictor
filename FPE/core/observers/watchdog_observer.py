@@ -1,4 +1,4 @@
-"""FPE directory/file watcher handler.
+"""FPE directory/file watcher observer.
 
 Use watchdog package to monitor directories and process each file created using one
 of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
@@ -17,11 +17,12 @@ from watchdog.observers import Observer
 
 from core.constants import CONFIG_SOURCE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
+from core.interface.iobserver import IObserver
 from core.handler import Handler
 from core.error import FPEError
 
 
-class WatcherHandlerError(FPEError):
+class WatchdogObserverError(FPEError):
     """An error occurred in directory/file watcher.
     """
 
@@ -41,10 +42,10 @@ class WatcherHandlerError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("WatcherHandler") + self.__message
+        return FPEError.error_prefix("WatchdogObserver") + self.__message
 
 
-class WatcherHandler(FileSystemEventHandler):
+class WatchdogObserver(FileSystemEventHandler, IObserver):
     """Watcher handler adapter for watchdog.
     """
 
@@ -80,7 +81,6 @@ class WatcherHandler(FileSystemEventHandler):
         self.__observer = Observer()
         self.__observer.schedule(
             event_handler=self, path=self.__watcher_handler.handler_config[CONFIG_SOURCE], recursive=self.__watcher_handler.handler_config[CONFIG_RECURSIVE])
-
 
     def __process(self):
 
