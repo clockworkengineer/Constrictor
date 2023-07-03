@@ -93,7 +93,7 @@ class SFTPCopyFileHandler(IHandler):
 
             logging.info("Uploaded file %s to %s",
                          source_path, destination_path)
-            
+
             return True
 
         except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
@@ -101,7 +101,5 @@ class SFTPCopyFileHandler(IHandler):
                 raise SFTPCopyFileHandlerError(str(error)) from error
             else:
                 logging.info(SFTPCopyFileHandlerError(error))
-                
-        return False
-                
 
+        return False

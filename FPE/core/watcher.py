@@ -1,6 +1,6 @@
 """FPE directory/file watcher.
 
-High level file/directory watcher control logic that uses an observer abtraction to generate
+High level directory/file watcher control logic that uses an observer abtraction to generate
 file creation events; the default abstraction using the watchdog library. 
 
 """
@@ -70,7 +70,7 @@ class Watcher:
             raise WatcherError(str(error)) from error
 
     def __init__(self, watcher_config: ConfigDict) -> None:
-        """Initialise file/directory watcher.
+        """Initialise directory/file watcher.
 
         Args:
             watcher_config (ConfigDict): Watcher config

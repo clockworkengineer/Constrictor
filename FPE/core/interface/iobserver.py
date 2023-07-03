@@ -1,6 +1,6 @@
 """FPE File observer interface.
 
-Protocol class that defines the file/directory observer interface.
+Protocol class that defines the directory/file observer interface.
 
 """
 
