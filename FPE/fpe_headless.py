@@ -1,4 +1,4 @@
-"""Run FPE headerless.
+"""Run FPE headless.
 """
 
 import logging
@@ -7,7 +7,7 @@ import time
 from core.engine import Engine
 
 
-def fpe_headerless(fpe_engine: Engine) -> None:
+def fpe_headless(fpe_engine: Engine) -> None:
     """Run FPE without a user inerface.
 
     Args:

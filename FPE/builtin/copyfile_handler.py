@@ -61,23 +61,6 @@ class CopyFileHandler(IHandler):
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
         Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
 
-    @staticmethod
-    def _copy_file(source_path: pathlib.Path, destination_path: pathlib.Path) -> None:
-        """Copy source path to destination path.
-
-        Args:
-            source_path (pathlib.Path): Source file path.
-            destination_path (pathlib.Path): Destination file path.
-        """
-
-        if not destination_path.parent.exists():
-            Handler.create_path(destination_path.parent)
-
-        shutil.copy2(source_path, destination_path)
-
-        logging.info("Copied file %s to %s.",
-                     source_path, destination_path)
-
     def process(self, source_path: pathlib.Path) -> bool:
         """Copy file from source(watch) directory to destination directory.
 
@@ -91,8 +74,18 @@ class CopyFileHandler(IHandler):
         try:
 
             if source_path.is_file():
-                self._copy_file(source_path, Handler.create_local_destination(
-                    source_path, self.handler_config))
+
+                destination_path: pathlib.Path = Handler.create_local_destination(
+                    source_path, self.handler_config)
+
+                if not destination_path.parent.exists():
+                    Handler.create_path(destination_path.parent)
+
+                shutil.copy2(source_path, destination_path)
+
+                logging.info("Copied file %s to %s.",
+                             source_path, destination_path)
+
                 return True
 
         except (OSError, KeyError, ValueError) as error:
