@@ -1,10 +1,10 @@
-"""FPE SFTPCopyFile builtin handler.
+"""FPE FTPCopyFile builtin handler.
 """
 
 
 import pathlib
 import logging
-import pysftp
+from ftplib import FTP
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.interface.ihandler import IHandler
@@ -13,12 +13,12 @@ from core.handler import Handler
 from core.error import FPEError
 
 
-class SFTPCopyFileHandlerError(FPEError):
-    """An error occurred in the SFTPCopyFile handler.
+class FTPCopyFileHandlerError(FPEError):
+    """An error occurred in the FTPCopyFile handler.
     """
 
     def __init__(self, message) -> None:
-        """SFTPCopyFile handler error.
+        """FTPCopyFile handler error.
 
         Args:
             message (str): Exception message.
@@ -27,10 +27,10 @@ class SFTPCopyFileHandlerError(FPEError):
         super().__init__(self.message)
 
     def __str__(self) -> str:
-        return "SFTPCopyFileHandler Error: " + self.message
+        return "FTPCopyFileHandler Error: " + self.message
 
 
-class SFTPCopyFileHandler(IHandler):
+class FTPCopyFileHandler(IHandler):
     """SFTP Copy file/directories.
 
     SFTP Copy files created in watch folder to destination folder on remote SSH server.
@@ -54,11 +54,11 @@ class SFTPCopyFileHandler(IHandler):
             handler_config (ConfigDict): Handler configuration.
 
         Raises:
-            SFTPCopyFileHandlerError: None passed as handler configuration.
+            FTPCopyFileHandlerError: None passed as handler configuration.
         """
 
         if handler_config is None:
-            raise SFTPCopyFileHandlerError("None passed as handler config.")
+            raise FTPCopyFileHandlerError("None passed as handler config.")
 
         self.handler_config = handler_config.copy()
 
@@ -76,7 +76,7 @@ class SFTPCopyFileHandler(IHandler):
             source_path (pathlib.Path): Source file path.
 
         Raises:
-            SFTPCopyFileHandlerError: Ann error occured while tryinhg to transfer file to FTP server.
+            FTPCopyFileHandlerError: Ann error occured while tryinhg to transfer file to FTP server.
         """
 
         try:
@@ -84,22 +84,29 @@ class SFTPCopyFileHandler(IHandler):
             destination_path: pathlib.Path = Handler.create_local_destination(
                 source_path, self.handler_config)
 
-            with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
-                                   password=self.handler_config["password"]) as sftp:
+            # with pysftp.Connection(self.handler_config["server"], username=self.handler_config["user"],
+            #                        password=self.handler_config["password"]) as sftp:
+            #     if source_path.is_file():
+            #         sftp.put(source_path, destination_path)
+            #     else:
+            #         sftp.makedirs(destination_path)
+            
+            with FTP(host=self.handler_config["server"], user=self.handler_config["user"], passwd=self.handler_config["password"]) as ftp:
                 if source_path.is_file():
-                    sftp.put(source_path, destination_path)
-                else:
-                    sftp.makedirs(destination_path)
+                    with open(source_path, 'rb') as file:
+                        ftp.storbinary(f'STOR {source_path.name}', file)
+            #     else:
+            #         sftp.makedirs(destination_path)
 
             logging.info("Uploaded file %s to %s",
                          source_path, destination_path)
 
             return True
 
-        except (pysftp.ConnectionException, pysftp.AuthenticationException) as error:
+        except (Exception) as error:
             if self.handler_config['exitonfailure']:
-                raise SFTPCopyFileHandlerError(str(error)) from error
+                raise FTPCopyFileHandlerError(str(error)) from error
             else:
-                logging.info(SFTPCopyFileHandlerError(error))
+                logging.info(FTPCopyFileHandlerError(error))
 
         return False

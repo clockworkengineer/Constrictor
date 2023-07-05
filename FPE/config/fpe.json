@@ -11,6 +11,18 @@
             "deletesource": true,
             "exitonfailure": true,
             "recursive": true
+        },
+        {
+            "name": "File Copier 2",
+            "type": "FTPCopyFile",
+            "source": ".\\watcher\\source1\\",
+            "destination": ".\\watcher\\destination1\\",
+            "deletesource": true,
+            "exitonfailure": true,
+            "recursive": false,
+            "server": "192.168.1.150",
+            "user": "pi",
+            "password": "samvimes2064"
         }
     ],
     "logging": {

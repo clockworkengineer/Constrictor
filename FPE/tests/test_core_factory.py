@@ -6,7 +6,7 @@ from core.arguments import Arguments
 from core.config import Config
 from core.factory import Factory, FactoryError
 from builtin.copyfile_handler import CopyFileHandler
-from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
+from builtin.ftp_copyfile_handler import FTPCopyFileHandler
 
 
 @pytest.fixture()
@@ -51,14 +51,14 @@ class TestCoreFactory:
 
     def test_factory_register_more_than_one_handler(self, reset_factory) -> None:
         Factory.register("CopyFile", CopyFileHandler)
-        Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
+        Factory.register("FTPCopyFile", FTPCopyFileHandler)
         assert "CopyFile" in Factory.handler_function_list()
-        assert "SFTPCopyFile" in Factory.handler_function_list()
+        assert "FTPCopyFile" in Factory.handler_function_list()
         assert len(Factory.handler_function_list()) == 2
 
     def test_factory_create_with_a_handler_that_is_not_registered(self, reset_factory) -> None:
         Factory.register("CopyFile", CopyFileHandler)
-        Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
+        Factory.register("FTPCopyFile", FTPCopyFileHandler)
         config = Config(Arguments(
             [json_file_source("test_googledrive_handler.json")])).get_config()
         with pytest.raises(FactoryError):
@@ -67,7 +67,7 @@ class TestCoreFactory:
 
     def test_factory_create_with_a_registered_handler(self, reset_factory) -> None:
         Factory.register("CopyFile", CopyFileHandler)
-        Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
+        Factory.register("FTPCopyFile", FTPCopyFileHandler)
         config = Config(Arguments(
             [json_file_source("test_valid.json")])).get_config()
         assert Factory.create(config[CONFIG_WATCHERS][0]) != None

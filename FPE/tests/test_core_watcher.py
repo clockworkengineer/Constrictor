@@ -9,7 +9,7 @@ from core.config import ConfigDict
 from core.watcher import Watcher, WatcherError
 from core.factory import Factory
 from builtin.copyfile_handler import CopyFileHandler
-from builtin.sftp_copyfile_handler import SFTPCopyFileHandler
+from builtin.ftp_copyfile_handler import FTPCopyFileHandler
 
 
 @pytest.fixture()
@@ -17,14 +17,13 @@ def watcher_config() -> ConfigDict:
 
     Factory.clear()
     Factory.register("CopyFile", CopyFileHandler)
-    Factory.register("SFTPCopyFile", SFTPCopyFileHandler)
+    Factory.register("FTPCopyFile", FTPCopyFileHandler)
 
-    watcher_config : ConfigDict = create_watcher_config()
-    
+    watcher_config: ConfigDict = create_watcher_config()
+
     yield watcher_config
-    
+
     remove_source_destination(watcher_config)
-    
 
 
 class TestCoreWatcher:
