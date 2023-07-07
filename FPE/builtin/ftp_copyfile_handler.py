@@ -81,27 +81,18 @@ class FTPCopyFileHandler(IHandler):
 
         try:
 
-            destination_path: pathlib.Path = Handler.create_local_destination(
-                source_path, self.handler_config)
-
-            # with pyFTP.Connection(self.handler_config["server"], username=self.handler_config["user"],
-            #                        password=self.handler_config["password"]) as FTP:
-            #     if source_path.is_file():
-            #         FTP.put(source_path, destination_path)
-            #     else:
-            #         FTP.makedirs(destination_path)
             
             with FTP(host=self.handler_config["server"], user=self.handler_config["user"], passwd=self.handler_config["password"]) as ftp:
                 if source_path.is_file():
                     with open(source_path, 'rb') as file:
                         ftp.storbinary(f'STOR {source_path.name}', file)
-            #     else:
-            #         FTP.makedirs(destination_path)
 
-            logging.info("Uploaded file %s to %s",
-                         source_path, destination_path)
+                    logging.info("Uploaded file %s to server %s",
+                                source_path, self.handler_config["server"])
+                    
+                    return True
 
-            return True
+            return False
 
         except (Exception) as error:
             if self.handler_config['exitonfailure']:
