@@ -64,10 +64,6 @@ class FTPCopyFileHandler(IHandler):
 
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
 
-        self.handler_config[CONFIG_DESTINATION] = Handler.normalize_path(
-            self.handler_config[CONFIG_DESTINATION])
-
-        logging.getLogger("paramiko").setLevel(logging.WARNING)
 
     def process(self,  source_path: pathlib.Path) -> bool:
         """FTP Copy file from source(watch) directory to a destination directory on remote server.

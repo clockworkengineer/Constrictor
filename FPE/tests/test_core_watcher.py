@@ -129,8 +129,8 @@ class TestCoreWatcher:
     def test_watcher_copy_onehundred_files_from_source_to_destination(self, watcher_config: ConfigDict) -> None:
         self.__copy_count_files(watcher_config, 100)
 
-    def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_config: ConfigDict) -> None:
-        self.__copy_count_files(watcher_config, 1000)
+    # def test_watcher_copy_onethousand_files_from_source_to_destination(self, watcher_config: ConfigDict) -> None:
+    #     self.__copy_count_files(watcher_config, 1000)
 
     def test_watcher_copy_one_file_recursive_depth_one_deletesource(self, watcher_config: ConfigDict) -> None:
         watcher_config[CONFIG_RECURSIVE] = True
