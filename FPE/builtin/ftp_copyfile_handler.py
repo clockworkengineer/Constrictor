@@ -33,7 +33,7 @@ class FTPCopyFileHandlerError(FPEError):
 class FTPCopyFileHandler(IHandler):
     """FTP Copy file/directories.
 
-    FTP Copy files created in watch folder to destination folder on remote SSH server.
+    FTP Copy files created in watch folder to destination folder on remote FTP server.
 
     Attributes:
         name:           Name of handler object
