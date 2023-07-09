@@ -64,7 +64,6 @@ class FTPCopyFileHandler(IHandler):
 
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
 
-
     def process(self,  source_path: pathlib.Path) -> bool:
         """FTP Copy file from source(watch) directory to a destination directory on remote server.
 
@@ -77,15 +76,14 @@ class FTPCopyFileHandler(IHandler):
 
         try:
 
-            
             with FTP(host=self.handler_config["server"], user=self.handler_config["user"], passwd=self.handler_config["password"]) as ftp:
                 if source_path.is_file():
                     with open(source_path, 'rb') as file:
                         ftp.storbinary(f'STOR {source_path.name}', file)
 
                     logging.info("Uploaded file %s to server %s",
-                                source_path, self.handler_config["server"])
-                    
+                                 source_path, self.handler_config["server"])
+
                     return True
 
             return False

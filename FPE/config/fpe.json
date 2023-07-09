@@ -15,9 +15,9 @@
         {
             "name": "File Copier 2",
             "type": "FTPCopyFile",
-            "source": ".\\watcher\\source1\\",
-            "destination": ".\\watcher\\destination1\\",
-            "deletesource": true,
+            "source": ".\\watcher\\source2\\",
+            "destination": ".\\watcher\\destination2\\",
+            "deletesource": false,
             "exitonfailure": true,
             "recursive": false,
             "server": "192.168.1.150",
