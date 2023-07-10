@@ -8,10 +8,10 @@ This is a Python  variant of the JavaScript/Node file processing engine. It uses
 
 Current built in file handlers:
 
-- Copy files
+- Copy files.
+- FTP copy files to an FTP server.
 - Import CSV file to MySQL database table (missing for moment).
 - Import CSV file to SQLite database table (missing for moment).
-- FTP copy files to an FTP server.
 
 		usage: fpe.py [-h] [--nogui] file
 
