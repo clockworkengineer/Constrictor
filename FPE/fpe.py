@@ -10,7 +10,7 @@ Current built in file handler types:
 1) Copy files/directory
 2) Import CSV file to MySQL database table (missing for moment).
 3) Import CSV file to SQLite database table (missing for moment).
-4) SFTP copy files/directory to an SSH server (missing for moment).
+4) FTP copy files/directory to an FTP server.
 
 usage: fpe.py [-h] [--nogui] file
 

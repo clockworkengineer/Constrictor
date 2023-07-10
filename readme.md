@@ -11,7 +11,7 @@ Current built in file handlers:
 - Copy files
 - Import CSV file to MySQL database table (missing for moment).
 - Import CSV file to SQLite database table (missing for moment).
-- SFTP copy files to an SSH server.
+- FTP copy files to an FTP server.
 
 		usage: fpe.py [-h] [--nogui] file
 
