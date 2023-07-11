@@ -16,13 +16,13 @@
             "name": "File Copier 2",
             "type": "FTPCopyFile",
             "source": ".\\watcher\\source2\\",
-            "destination": ".\\watcher\\destination2\\",
+            "destination": "Downloads",
             "deletesource": false,
             "exitonfailure": true,
             "recursive": false,
             "server": "192.168.1.150",
             "user": "pi",
-            "password": ""
+            "password": "samvimes2064"
         }
     ],
     "logging": {

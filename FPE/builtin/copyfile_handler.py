@@ -5,7 +5,7 @@ import pathlib
 import shutil
 import logging
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -58,8 +58,8 @@ class CopyFileHandler(IHandler):
 
         self.handler_config = handler_config.copy()
 
-        Handler.setup_path(self.handler_config, CONFIG_SOURCE)
-        Handler.setup_path(self.handler_config, CONFIG_DESTINATION)
+        Handler.setup_path(handler_config, CONFIG_SOURCE)
+        Handler.setup_path(handler_config, CONFIG_DESTINATION)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Copy file from source(watch) directory to destination directory.
@@ -89,7 +89,7 @@ class CopyFileHandler(IHandler):
                 return True
 
         except (OSError, KeyError, ValueError) as error:
-            if self.handler_config['exitonfailure']:
+            if self.handler_config[CONFIG_EXITONFAILURE]:
                 raise CopyFileHandlerError(error) from error
             else:
                 logging.info(CopyFileHandlerError(error))
