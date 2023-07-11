@@ -2,11 +2,12 @@
 """
 
 
+import os
 import pathlib
 import logging
-from ftplib import FTP
+from ftplib import FTP, all_errors
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -47,6 +48,12 @@ class FTPCopyFileHandler(IHandler):
 
     """
 
+    server: str = ""
+    user: str = ""
+    password: str = ""
+    desination: str = ""
+    exitonfailure :  bool = False
+
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise handler attributes.
 
@@ -60,9 +67,28 @@ class FTPCopyFileHandler(IHandler):
         if handler_config is None:
             raise FTPCopyFileHandlerError("None passed as handler config.")
 
-        self.handler_config = handler_config.copy()
+        Handler.setup_path(handler_config, CONFIG_SOURCE)
 
-        Handler.setup_path(self.handler_config, CONFIG_SOURCE)
+        self.destination = handler_config[CONFIG_DESTINATION]
+        self.server = handler_config[CONFIG_SERVER]
+        self.user = handler_config[CONFIG_USER]
+        self.password = handler_config[CONFIG_PASSWORD]
+        self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+
+    def __cwd_destination(self, ftp: FTP, destination: str) -> None:
+        """_summary_
+
+        Args:
+            ftp (FTP): _description_
+            destination (str): _description_
+        """
+        
+        for directory in destination.split(os.sep):
+            try:
+                ftp.cwd(directory)
+            except (all_errors):
+                ftp.mkd(directory)
+                ftp.cwd(directory)
 
     def process(self,  source_path: pathlib.Path) -> bool:
         """FTP Copy file from source(watch) directory to a destination directory on remote server.
@@ -76,20 +102,24 @@ class FTPCopyFileHandler(IHandler):
 
         try:
 
-            with FTP(host=self.handler_config["server"], user=self.handler_config["user"], passwd=self.handler_config["password"]) as ftp:
+            with FTP(host=self.server, user=self.user, passwd=self.password) as ftp:
+
+                if self.desination != "":
+                    self.__cwd_destination(ftp, self.destination)
+
                 if source_path.is_file():
                     with open(source_path, 'rb') as file:
                         ftp.storbinary(f'STOR {source_path.name}', file)
 
                     logging.info("Uploaded file %s to server %s",
-                                 source_path, self.handler_config["server"])
+                                 source_path, self.server)
 
                     return True
 
             return False
 
-        except (Exception) as error:
-            if self.handler_config['exitonfailure']:
+        except (all_errors) as error:
+            if self.exitonfailure:
                 raise FTPCopyFileHandlerError(str(error)) from error
             else:
                 logging.info(FTPCopyFileHandlerError(error))
