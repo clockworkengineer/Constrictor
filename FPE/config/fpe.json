@@ -22,7 +22,7 @@
             "recursive": false,
             "server": "192.168.1.150",
             "user": "pi",
-            "password": "samvimes2064"
+            "password": ""
         }
     ],
     "logging": {
