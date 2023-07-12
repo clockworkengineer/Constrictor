@@ -1,6 +1,6 @@
 """FPE directory/file watcher.
 
-High level directory/file watcher control logic that uses an observer abtraction to generate
+High level directory/file watcher control logic that uses an observer abstraction to generate
 file creation events; the default abstraction using the watchdog library. 
 
 """
@@ -8,7 +8,8 @@ file creation events; the default abstraction using the watchdog library.
 import logging
 
 from core.observers.watchdog_observer import WatchdogObserver
-from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
+from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, \
+    CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
 from core.config import ConfigDict
@@ -55,7 +56,7 @@ class Watcher:
             handler_config (ConfigDict): Handler config.
 
         Raises:
-            WatcherError: An error has occured whilst running the watcher.
+            WatcherError: An error has occurred whilst running the watcher.
         """
 
         try:
@@ -76,7 +77,7 @@ class Watcher:
             watcher_config (ConfigDict): Watcher config
 
         Raises:
-            WatcherError: A watcher error has occured.
+            WatcherError: A watcher error has occurred.
         """
 
         try:

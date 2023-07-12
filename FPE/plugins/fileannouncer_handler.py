@@ -22,11 +22,13 @@ class FileAnnouncerHandler(IHandler):
         
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
 
-    def process(self,  source_path: pathlib.Path) -> None:
+    def process(self,  source_path: pathlib.Path) -> bool:
         """Print out name of any file copied into watch folder.
         """
         try:
             logging.info("File %s.", source_path)
+
+            return True
 
         except OSError as error:
             logging.error("Error in handler %s : %s",

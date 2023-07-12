@@ -26,7 +26,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         else:
             self.fpe_running_watcher_start_stop_button.setText("Start")
 
-    def __rowChanged(self, row: int) -> None:
+    def __row_changed(self, row: int) -> None:
         """Set UI for watcher selected from list.
 
         Args:
@@ -77,7 +77,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.fpe_engine = fpe_engine
 
         self.fpe_running_watchers_list.currentRowChanged.connect(
-            self.__rowChanged)
+            self.__row_changed)
 
         self.fpe_running_watcher_start_stop_button.clicked.connect(
             self.__start_stop_watcher)

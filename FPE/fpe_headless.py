@@ -8,7 +8,7 @@ from core.engine import Engine
 
 
 def fpe_headless(fpe_engine: Engine) -> None:
-    """Run FPE without a user inerface.
+    """Run FPE without a user interface.
 
     Args:
         fpe_engine (Engine): FPE control engine.

@@ -3,6 +3,7 @@
 
 from core.constants import APP_NAME
 
+
 class FPEError(Exception):
     """An error occurred in the FPE.
     """

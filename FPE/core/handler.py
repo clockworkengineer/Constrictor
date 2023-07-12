@@ -14,7 +14,7 @@ from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.config import ConfigDict
 
 
-class Handler():
+class Handler:
     """Directory watcher handler utility static methods.
     """
 
@@ -43,10 +43,10 @@ class Handler():
 
     @staticmethod
     def create_local_destination(source_path: pathlib.Path, config: ConfigDict) -> pathlib.Path:
-        """Create local desination for source file.
+        """Create local destination for source file.
 
         Args:
-            source_path (pathlib.Path): Soure file path.
+            source_path (pathlib.Path): Source file path.
             config (ConfigDict): Watcher handler config.
 
         Returns:
@@ -72,7 +72,7 @@ class Handler():
         """Wait for file copy to be completed.
 
         Args:
-            source_path (pathlib.Path):  Soure file path.
+            source_path (pathlib.Path):  Source file path.
         """
 
         if source_path.is_file():

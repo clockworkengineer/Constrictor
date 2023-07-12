@@ -9,7 +9,8 @@ import json
 import logging
 from typing import Any
 
-from core.constants import CONFIG_WATCHERS, CONFIG_NOGUI, CONFIG_FILENAME, CONFIG_MANDATORY_KEYS, CONFIG_WATCHER_MANDATORY_KEYS
+from core.constants import CONFIG_WATCHERS, CONFIG_NOGUI, CONFIG_FILENAME, CONFIG_MANDATORY_KEYS, \
+    CONFIG_WATCHER_MANDATORY_KEYS
 from core.error import FPEError
 from core.arguments import Arguments
 
@@ -38,7 +39,7 @@ class ConfigError(FPEError):
 
 
 class Config:
-    """ Load JSON configuraion into a dictionary and validate it.
+    """ Load JSON configuration into a dictionary and validate it.
     """
 
     def __init__(self, arguments: Arguments) -> None:

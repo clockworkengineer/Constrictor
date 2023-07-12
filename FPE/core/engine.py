@@ -123,7 +123,7 @@ class Engine:
         """
         # Copy engine config
         config_to_save: ConfigDict = self.__engine_config.copy()
-        # Remove uneeded kays
+        # Remove unneeded keys
         config_to_save.pop(CONFIG_FILENAME)
         config_to_save.pop(CONFIG_NOGUI)
         # Write JSON configuration

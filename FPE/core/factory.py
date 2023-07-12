@@ -51,13 +51,13 @@ class Factory:
             handler_fn (Callable[..., Handler]): Watch handler.
 
         Raises:
-            FactoryError: An error occured whilst tryinhg to use watcher factory.
+            FactoryError: An error occurred whilst trying to use watcher factory.
         """
 
         if handler_type == "":
             raise FactoryError("Invalid handler type (\"\").")
 
-        if handler_fn == None:
+        if handler_fn is None:
             raise FactoryError("None not allowed for handler function.")
 
         Factory.__handler_creation_funcs[handler_type] = handler_fn
@@ -70,11 +70,11 @@ class Factory:
             handler_type (str): Watch handler type.
 
         Raises:
-            FactoryError: An error occured whilst tryinhg to use watcher factory.
+            FactoryError: An error occurred whilst trying to use watcher factory.
         """
         if handler_type not in Factory.__handler_creation_funcs:
             raise FactoryError(
-                "Cannot unregiester handler not in factory.")
+                "Cannot unregister handler not in factory.")
 
         Factory.__handler_creation_funcs.pop(handler_type, None)
 
@@ -86,7 +86,7 @@ class Factory:
             handler_config (ConfigDict): Watcher handler config
 
         Raises:
-            FactoryError: An error occured whilst tryinhg to use watcher factory.
+            FactoryError: An error occurred whilst trying to use watcher factory.
 
         Returns:
             Handler: Watch handler.
