@@ -75,8 +75,8 @@ class CopyFileHandler(IHandler):
 
             if source_path.is_file():
 
-                destination_path: pathlib.Path = Handler.create_local_destination(
-                    source_path, self.handler_config)
+                destination_path: pathlib.Path = pathlib.Path(
+                    self.handler_config[CONFIG_DESTINATION]) / Handler.create_relative_source(str(source_path), self.handler_config[CONFIG_SOURCE])
 
                 if not destination_path.parent.exists():
                     Handler.create_path(destination_path.parent)

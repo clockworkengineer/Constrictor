@@ -42,18 +42,18 @@ class Handler:
             logging.info("Created directory %s.", directory_path)
 
     @staticmethod
-    def create_local_destination(source_path: pathlib.Path, config: ConfigDict) -> pathlib.Path:
-        """Create local destination for source file.
+    def create_relative_source(source_path: str, source_root :str) ->str:
+        """_summary_
 
         Args:
-            source_path (pathlib.Path): Source file path.
-            config (ConfigDict): Watcher handler config.
+            source_path (str): _description_
+            source_root (str): _description_
 
         Returns:
-            pathlib.Path: Destination file path created from config and source file path.
+            str: _description_
         """
-        return pathlib.Path(
-            config[CONFIG_DESTINATION]) / str(source_path)[len(config[CONFIG_SOURCE])+1:]
+        return str(source_path)[len(source_root)+1:]
+    
 
     @staticmethod
     def setup_path(handler_config: ConfigDict, path_type: str) -> None:

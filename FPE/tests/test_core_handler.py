@@ -16,7 +16,7 @@ class TestCoreHandler:
     def test_core_handler_create_path(self) -> None:
         with tempfile.TemporaryDirectory() as directory_name:
             temporary_directory_path: pathlib.Path = pathlib.Path(
-                directory_name)  / "source"
+                directory_name) / "source"
             assert not temporary_directory_path.exists()
             Handler.create_path(temporary_directory_path)
             assert temporary_directory_path.exists()
@@ -31,8 +31,9 @@ class TestCoreHandler:
         source_file_path: pathlib.Path = source_path / "dir1" / "dir2" / "source.txt"
         config[CONFIG_SOURCE] = str(source_path)
         config[CONFIG_DESTINATION] = str(destination_path)
-        assert Handler.create_local_destination(
-            source_file_path, config) == destination_path / "dir1" / "dir2" / "source.txt"
+        assert pathlib.Path(
+            config[CONFIG_DESTINATION]) / Handler.create_relative_source(
+            source_file_path, config[CONFIG_SOURCE]) == destination_path / "dir1" / "dir2" / "source.txt"
 
     def test_core_handler_setup_path_doesnt_exist(self) -> None:
         config: ConfigDict = {}
