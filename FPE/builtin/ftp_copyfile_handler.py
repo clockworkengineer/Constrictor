@@ -53,6 +53,7 @@ class FTPCopyFileHandler(IHandler):
     password: str = ""
     desination: str = ""
     exitonfailure :  bool = False
+    handler_config : ConfigDict = {}
 
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise handler attributes.
@@ -67,6 +68,8 @@ class FTPCopyFileHandler(IHandler):
         if handler_config is None:
             raise FTPCopyFileHandlerError("None passed as handler config.")
 
+        self.handler_config = handler_config.copy()
+        
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
         self.destination = handler_config[CONFIG_DESTINATION]
