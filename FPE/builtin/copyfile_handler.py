@@ -43,6 +43,10 @@ class CopyFileHandler(IHandler):
 
     """
 
+    source: str = ""
+    desination: str = ""
+    exitonfailure:  bool = False
+    
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise copy file handler.
 
@@ -58,6 +62,10 @@ class CopyFileHandler(IHandler):
 
         self.handler_config = handler_config.copy()
 
+        self.source = handler_config[CONFIG_SOURCE]
+        self.destination = handler_config[CONFIG_DESTINATION]
+        self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+        
         Handler.setup_path(handler_config, CONFIG_SOURCE)
         Handler.setup_path(handler_config, CONFIG_DESTINATION)
 

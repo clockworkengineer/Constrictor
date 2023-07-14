@@ -3,7 +3,7 @@ import os
 import tempfile
 import shutil
 
-from core.constants import CONFIG_TYPE, CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION
+from core.constants import CONFIG_TYPE, CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE
 from core.handler import Handler
 from core.config import ConfigDict
 
@@ -22,7 +22,7 @@ def create_test_file(source_path: pathlib.Path, read_only: bool = False) -> None
 
 
 def create_watcher_config() -> ConfigDict:
-    config: ConfigDict = {CONFIG_NAME: "Copy File", CONFIG_TYPE: "CopyFile"}
+    config: ConfigDict = {CONFIG_NAME: "Copy File", CONFIG_TYPE: "CopyFile", CONFIG_EXITONFAILURE :  True}
     with tempfile.TemporaryDirectory() as directory_name:
         config[CONFIG_SOURCE] = str(pathlib.Path(
             directory_name) / "source")
