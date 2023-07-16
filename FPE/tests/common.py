@@ -31,7 +31,7 @@ def create_watcher_config() -> ConfigDict:
         return config
     
 def remove_source_destination(watcher_config: ConfigDict) -> None:
-    if CONFIG_SOURCE in watcher_config:
+    if CONFIG_SOURCE in watcher_config and pathlib.Path(watcher_config[CONFIG_SOURCE]).exists():
         shutil.rmtree(watcher_config[CONFIG_SOURCE])
-    if CONFIG_DESTINATION in watcher_config:
+    if CONFIG_DESTINATION in watcher_config and pathlib.Path(watcher_config[CONFIG_DESTINATION]).exists():
         shutil.rmtree(watcher_config[CONFIG_DESTINATION])
