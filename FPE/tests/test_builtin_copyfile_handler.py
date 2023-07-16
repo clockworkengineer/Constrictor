@@ -2,7 +2,7 @@ import pytest
 import pathlib
 import shutil
 
-from tests.common import create_test_file, create_watcher_config
+from tests.common import create_test_file, create_watcher_config, remove_source_destination
 from core.constants import  CONFIG_SOURCE, CONFIG_DESTINATION
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
@@ -16,10 +16,9 @@ def copyfile_config() -> ConfigDict:
     
     yield watcher_config
     
-    if CONFIG_SOURCE in watcher_config:
-        shutil.rmtree(watcher_config[CONFIG_SOURCE])
-    if CONFIG_DESTINATION in watcher_config:
-        shutil.rmtree(watcher_config[CONFIG_DESTINATION])
+    remove_source_destination(watcher_config)
+    
+
 
 
 class TestBuiltinCopyFileHandler:

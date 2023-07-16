@@ -5,7 +5,7 @@ import pathlib
 import shutil
 import logging
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -61,6 +61,7 @@ class CopyFileHandler(IHandler):
         self.source = handler_config[CONFIG_SOURCE]
         self.destination = handler_config[CONFIG_DESTINATION]
         self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+        self.deletesource = handler_config[CONFIG_DELETESOURCE]
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
         Handler.setup_path(handler_config, CONFIG_DESTINATION)

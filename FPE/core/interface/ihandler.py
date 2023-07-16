@@ -18,6 +18,7 @@ class IHandler(Protocol):
     source : str
     destination : str
     exitonfailure: bool
+    deletesource: bool
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Perform watcher file processing.

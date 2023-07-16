@@ -7,7 +7,7 @@ import pathlib
 import logging
 from ftplib import FTP, all_errors
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, CONFIG_DELETESOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -72,6 +72,7 @@ class FTPCopyFileHandler(IHandler):
         self.source = handler_config[CONFIG_SOURCE]
         self.destination = handler_config[CONFIG_DESTINATION]
         self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+        self.deletesource = handler_config[CONFIG_DELETESOURCE]
         
         self.server = handler_config[CONFIG_SERVER]
         self.user = handler_config[CONFIG_USER]
