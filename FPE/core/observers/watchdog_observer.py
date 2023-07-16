@@ -15,7 +15,7 @@ from queue import Queue, Empty
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_SOURCE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
+from core.constants import CONFIG_DELETESOURCE, CONFIG_RECURSIVE, CONFIG_FILES_PROCESSED
 from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
 from core.handler import Handler
@@ -68,7 +68,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         self.__watcher_handler = watcher_handler
 
         self.__root_path = pathlib.Path(
-            self.__watcher_handler.handler_config[CONFIG_SOURCE])
+            self.__watcher_handler.source)
         self.__deletesource = self.__watcher_handler.handler_config[CONFIG_DELETESOURCE]
 
         self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] = 0
@@ -80,7 +80,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__observer = Observer()
         self.__observer.schedule(
-            event_handler=self, path=self.__watcher_handler.handler_config[CONFIG_SOURCE], recursive=self.__watcher_handler.handler_config[CONFIG_RECURSIVE])
+            event_handler=self, path=self.__watcher_handler.source, recursive=self.__watcher_handler.handler_config[CONFIG_RECURSIVE])
 
     def __process(self):
 

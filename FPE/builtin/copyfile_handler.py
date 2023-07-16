@@ -43,10 +43,6 @@ class CopyFileHandler(IHandler):
 
     """
 
-    # source: str = ""
-    # desination: str = ""
-    # exitonfailure:  bool = False
-    
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise copy file handler.
 
@@ -62,10 +58,10 @@ class CopyFileHandler(IHandler):
 
         self.handler_config = handler_config.copy()
 
-        self.__source = handler_config[CONFIG_SOURCE]
-        self.__destination = handler_config[CONFIG_DESTINATION]
-        self.__exitonfailure = handler_config[CONFIG_EXITONFAILURE]
-        
+        self.source = handler_config[CONFIG_SOURCE]
+        self.destination = handler_config[CONFIG_DESTINATION]
+        self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+
         Handler.setup_path(handler_config, CONFIG_SOURCE)
         Handler.setup_path(handler_config, CONFIG_DESTINATION)
 
@@ -84,7 +80,7 @@ class CopyFileHandler(IHandler):
             if source_path.is_file():
 
                 destination_path: pathlib.Path = pathlib.Path(
-                    self.handler_config[CONFIG_DESTINATION]) / Handler.create_relative_source(str(source_path), self.handler_config[CONFIG_SOURCE])
+                    self.destination) / Handler.create_relative_source(str(source_path), self.source)
 
                 if not destination_path.parent.exists():
                     Handler.create_path(destination_path.parent)
@@ -97,7 +93,7 @@ class CopyFileHandler(IHandler):
                 return True
 
         except (OSError, KeyError, ValueError) as error:
-            if self.handler_config[CONFIG_EXITONFAILURE]:
+            if self.exitonfailure:
                 raise CopyFileHandlerError(error) from error
             else:
                 logging.info(CopyFileHandlerError(error))
