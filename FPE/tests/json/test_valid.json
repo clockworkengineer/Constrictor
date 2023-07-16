@@ -9,7 +9,8 @@
             "source": "./watcher/source",
             "destination": "./watcher/destination/",
             "exitonfailure": false,
-            "deletesource": true
+            "deletesource": true,
+            "recursive" : false
         }
     ],
     "logging": {

@@ -7,7 +7,7 @@ import pathlib
 import logging
 from ftplib import FTP, all_errors
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, CONFIG_DELETESOURCE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -39,12 +39,12 @@ class FTPCopyFileHandler(IHandler):
     Attributes:
         name:           Name of handler object
         source:         Folder to watch for files
-        server:         FTP Server
-        user:           FTP Server username
-        password:       FTP Server user password
         destination:    Destination for copy
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
+        server:         FTP Server
+        user:           FTP Server username
+        password:       FTP Server user password
 
     """
 
@@ -73,14 +73,13 @@ class FTPCopyFileHandler(IHandler):
         self.destination = handler_config[CONFIG_DESTINATION]
         self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
         self.deletesource = handler_config[CONFIG_DELETESOURCE]
-        
+        self.recursive = handler_config[CONFIG_RECURSIVE]
+
         self.server = handler_config[CONFIG_SERVER]
         self.user = handler_config[CONFIG_USER]
         self.password = handler_config[CONFIG_PASSWORD]
 
-        
         Handler.setup_path(handler_config, CONFIG_SOURCE)
-
 
     def __cwd_destination(self, ftp: FTP, destination: str) -> None:
         """_summary_

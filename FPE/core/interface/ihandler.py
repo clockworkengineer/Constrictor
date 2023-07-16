@@ -15,8 +15,9 @@ class IHandler(Protocol):
     """
 
     handler_config: ConfigDict  # Handler config dictionary
-    source : str
-    destination : str
+    source: str
+    destination: str
+    recursive: str
     exitonfailure: bool
     deletesource: bool
 
@@ -27,7 +28,3 @@ class IHandler(Protocol):
             source_path (pathlib.Path): Source fiel path.
         """
         ...
-        
-    
-        
-    
