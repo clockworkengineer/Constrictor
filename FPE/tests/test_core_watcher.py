@@ -49,7 +49,7 @@ class TestCoreWatcher:
         with pytest.raises(WatcherError):
             _ = Watcher(None)  # type: ignore
 
-    def test_watcher_inlaid_config(self, watcher_config: ConfigDict) -> None:
+    def test_watcher_invalid_config(self, watcher_config: ConfigDict) -> None:
         watcher_config.pop(CONFIG_DESTINATION)
         with pytest.raises(WatcherError):
             _ = Watcher(watcher_config)
