@@ -69,7 +69,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__root_path = pathlib.Path(
             self.__watcher_handler.source)
-        self.__deletesource = self.__watcher_handler.handler_config[CONFIG_DELETESOURCE]
+        self.__deletesource = self.__watcher_handler.deletesource
 
         self.__watcher_handler.handler_config[CONFIG_FILES_PROCESSED] = 0
 
@@ -80,7 +80,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__observer = Observer()
         self.__observer.schedule(
-            event_handler=self, path=self.__watcher_handler.source, recursive=self.__watcher_handler.handler_config[CONFIG_RECURSIVE])
+            event_handler=self, path=self.__watcher_handler.source, recursive=self.__watcher_handler.recursive)
 
     def __process(self):
 
