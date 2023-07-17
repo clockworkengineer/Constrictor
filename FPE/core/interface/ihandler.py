@@ -20,6 +20,7 @@ class IHandler(Protocol):
     recursive: str
     exitonfailure: bool
     deletesource: bool
+    files_processed : int
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Perform watcher file processing.
