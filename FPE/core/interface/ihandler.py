@@ -14,12 +14,12 @@ class IHandler(Protocol):
     """Interface for watcher file handler.
     """
 
-    source: str
-    destination: str
-    recursive: str
-    exitonfailure: bool
-    deletesource: bool
-    files_processed : int
+    source: str = ""
+    destination: str = ""
+    recursive: bool = False
+    exitonfailure: bool = False
+    deletesource: bool = True
+    files_processed : int = 0
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Perform watcher file processing.
