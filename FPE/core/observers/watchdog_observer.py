@@ -51,7 +51,6 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
     __watcher_handler: IHandler
     __root_path: pathlib.Path
-    __deletesource: bool
     __queue: Queue
     __thread: Thread
     __observer: Observer
@@ -69,9 +68,6 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__root_path = pathlib.Path(
             self.__watcher_handler.source)
-        self.__deletesource = self.__watcher_handler.deletesource
-
-        self.__watcher_handler.files_processed= 0
 
         self.__queue = Queue()
         self.__thread = Thread(target=self.__process)
@@ -97,7 +93,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
                     Handler.wait_for_copy_completion(source_path)
                     if self.__watcher_handler.process(source_path):
                         self.__watcher_handler.files_processed+= 1
-                        if self.__deletesource:
+                        if self.__watcher_handler.deletesource:
                             Handler.remove_source(
                                 self.__root_path, source_path)
 
