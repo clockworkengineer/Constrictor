@@ -56,8 +56,6 @@ class CopyFileHandler(IHandler):
         if handler_config is None:
             raise CopyFileHandlerError("None passed as handler config.")
 
-        self.handler_config = handler_config.copy()
-
         self.source = handler_config[CONFIG_SOURCE]
         self.destination = handler_config[CONFIG_DESTINATION]
         self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]

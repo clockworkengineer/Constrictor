@@ -14,7 +14,6 @@ class IHandler(Protocol):
     """Interface for watcher file handler.
     """
 
-    handler_config: ConfigDict  # Handler config dictionary
     source: str
     destination: str
     recursive: str

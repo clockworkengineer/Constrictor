@@ -99,7 +99,7 @@ class Watcher:
 
             if self.__handler is not None:
                 self.__observer = WatchdogObserver(self.__handler)
-                Watcher._display_details(self.__handler.handler_config)
+                Watcher._display_details(watcher_config)
 
             else:
                 self.__observer = None  # type: ignore
