@@ -19,7 +19,7 @@ class FileAnnouncerHandler(IHandler):
         """Copy handler config and setup source directory.
         """
         self.handler_config = handler_config.copy()
-        
+
         Handler.setup_path(self.handler_config, CONFIG_SOURCE)
 
     def process(self,  source_path: pathlib.Path) -> bool:

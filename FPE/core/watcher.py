@@ -8,7 +8,8 @@ file creation events; the default abstraction using the watchdog library.
 import logging
 
 from core.observers.watchdog_observer import WatchdogObserver
-from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE,\
+    CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
 from core.config import ConfigDict
@@ -146,4 +147,9 @@ class Watcher:
 
     @property
     def files_processed(self) -> int:
+        """_summary_
+
+        Returns:
+            int: _description_
+        """
         return self.__handler.files_processed

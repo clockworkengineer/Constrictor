@@ -41,7 +41,7 @@ class Handler:
             logging.info("Created directory %s.", directory_path)
 
     @staticmethod
-    def create_relative_source(source_path: str, source_root :str) ->str:
+    def create_relative_source(source_path: str, source_root: str) -> str:
         """_summary_
 
         Args:
@@ -52,7 +52,6 @@ class Handler:
             str: _description_
         """
         return str(source_path)[len(source_root)+1:]
-    
 
     @staticmethod
     def setup_path(handler_config: ConfigDict, path_type: str) -> None:

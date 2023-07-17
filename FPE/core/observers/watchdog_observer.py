@@ -75,7 +75,8 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__observer = Observer()
         self.__observer.schedule(
-            event_handler=self, path=self.__watcher_handler.source, recursive=self.__watcher_handler.recursive)
+            event_handler=self, path=self.__watcher_handler.source,
+            recursive=self.__watcher_handler.recursive)
 
     def __process(self):
 

@@ -109,7 +109,7 @@ class FTPCopyFileHandler(IHandler):
         for directory in destination.split(os.sep):
             try:
                 ftp.cwd(directory)
-            except (all_errors):
+            except all_errors:
                 ftp.mkd(directory)
                 ftp.cwd(directory)
 

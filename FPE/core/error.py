@@ -10,4 +10,12 @@ class FPEError(Exception):
 
     @staticmethod
     def error_prefix(component: str) -> str:
+        """_summary_
+
+        Args:
+            component (str): _description_
+
+        Returns:
+            str: _description_
+        """
         return APP_NAME+component+": "
