@@ -5,7 +5,8 @@ import pathlib
 import shutil
 import logging
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, \
+    CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -81,7 +82,8 @@ class CopyFileHandler(IHandler):
             if source_path.is_file():
 
                 destination_path: pathlib.Path = pathlib.Path(
-                    self.destination) / Handler.create_relative_source(str(source_path), self.source)
+                    self.destination) / Handler.create_relative_source(str(source_path),
+                                                                       self.source)
 
                 if not destination_path.parent.exists():
                     Handler.create_path(destination_path.parent)
