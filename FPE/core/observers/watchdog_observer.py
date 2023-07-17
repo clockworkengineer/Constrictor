@@ -15,7 +15,6 @@ from queue import Queue, Empty
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from core.constants import CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
 from core.handler import Handler
@@ -92,7 +91,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
                 if source_path.exists():
                     Handler.wait_for_copy_completion(source_path)
                     if self.__watcher_handler.process(source_path):
-                        self.__watcher_handler.files_processed+= 1
+                        self.__watcher_handler.files_processed += 1
                         if self.__watcher_handler.deletesource:
                             Handler.remove_source(
                                 self.__root_path, source_path)
