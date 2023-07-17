@@ -67,7 +67,7 @@ class Watcher:
                     logging.info("%s = %s", option, handler_config[option])
 
         except IOError as error:
-            raise WatcherError(str(error)) from error
+            raise WatcherError(error) from error
 
     def __init__(self, watcher_config: ConfigDict) -> None:
         """Initialise directory/file watcher.
@@ -107,7 +107,7 @@ class Watcher:
             self.__running = False
 
         except (KeyError, ValueError) as error:
-            raise WatcherError(str(error)) from error
+            raise WatcherError(error) from error
 
     @property
     def is_running(self) -> bool:
@@ -147,4 +147,3 @@ class Watcher:
     @property
     def files_processed(self) -> int:
         return self.__handler.files_processed
-

@@ -62,7 +62,7 @@ class Config:
             # Save away config file name
             self.config[CONFIG_FILENAME] = arguments.file
         except json.JSONDecodeError as error:
-            raise ConfigError(str(error)) from error
+            raise ConfigError(error) from error
 
     def validate(self) -> None:
         """Validate config file.

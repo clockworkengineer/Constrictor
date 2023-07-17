@@ -6,8 +6,11 @@ import os
 import pathlib
 import logging
 from ftplib import FTP, all_errors
+from decouple import config
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION, \
+    CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, \
+    CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -42,6 +45,7 @@ class FTPCopyFileHandler(IHandler):
         destination:    Destination for copy
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
+        recursive:      Boolean == true recursively generate events in source tree 
         server:         FTP Server
         user:           FTP Server username
         password:       FTP Server user password
@@ -51,7 +55,24 @@ class FTPCopyFileHandler(IHandler):
     server: str = ""
     user: str = ""
     password: str = ""
-    
+
+    def __get_config(self, handler_config: ConfigDict, attribute: str) -> any:
+        """_summary_
+
+        Args:
+            handler_config (ConfigDict): _description_
+            attribute (str): _description_
+
+        Returns:
+            any: _description_
+        """
+        if handler_config[attribute] != "":
+            return handler_config[attribute]
+
+        value = config(handler_config[CONFIG_NAME]+" "+attribute)
+
+        return value
+
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise handler attributes.   
 
@@ -71,9 +92,9 @@ class FTPCopyFileHandler(IHandler):
         self.deletesource = handler_config[CONFIG_DELETESOURCE]
         self.recursive = handler_config[CONFIG_RECURSIVE]
 
-        self.server = handler_config[CONFIG_SERVER]
-        self.user = handler_config[CONFIG_USER]
-        self.password = handler_config[CONFIG_PASSWORD]
+        self.server = self.__get_config(handler_config, CONFIG_SERVER)
+        self.user = self.__get_config(handler_config, CONFIG_USER)
+        self.password = self.__get_config(handler_config, CONFIG_PASSWORD)
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
@@ -122,7 +143,7 @@ class FTPCopyFileHandler(IHandler):
 
         except (all_errors) as error:
             if self.exitonfailure:
-                raise FTPCopyFileHandlerError(str(error)) from error
+                raise FTPCopyFileHandlerError(error) from error
             else:
                 logging.info(FTPCopyFileHandlerError(error))
 

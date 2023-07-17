@@ -4,3 +4,4 @@
 **/__pycache__
 **/watcher
 fpe.log
+FPE/.env

@@ -40,6 +40,7 @@ class CopyFileHandler(IHandler):
         destination:    Destination for file copy
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
+        recursive:      Boolean == true recursively generate events in source tree 
 
     """
 
