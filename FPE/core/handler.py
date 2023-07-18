@@ -9,7 +9,9 @@ import os
 import errno
 import pathlib
 import logging
+from decouple import config
 
+from core.constants import CONFIG_NAME
 from core.config import ConfigDict
 
 
@@ -105,3 +107,21 @@ class Handler:
                 source_path = source_path.parent
                 continue
             break
+
+    @staticmethod
+    def get_config(handler_config: ConfigDict, attribute: str) -> any:
+        """_summary_
+
+        Args:
+            handler_config (ConfigDict): _description_
+            attribute (str): _description_
+
+        Returns:
+            any: _description_
+        """
+        if handler_config[attribute] != "":
+            return handler_config[attribute]
+
+        value = config(handler_config[CONFIG_NAME]+" "+attribute)
+
+        return value

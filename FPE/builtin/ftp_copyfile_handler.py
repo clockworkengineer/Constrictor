@@ -1,14 +1,12 @@
-"""FPE FTPCopyFile builtin handler.
+"""FPE FTP CopyFile built-in handler.
 """
-
 
 import os
 import pathlib
 import logging
 from ftplib import FTP, all_errors
-from decouple import config
 
-from core.constants import CONFIG_NAME, CONFIG_SOURCE, CONFIG_DESTINATION, \
+from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, \
     CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, \
     CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
@@ -42,7 +40,7 @@ class FTPCopyFileHandler(IHandler):
     Attributes:
         name:           Name of handler object
         source:         Folder to watch for files
-        destination:    Destination for copy
+        destination:    Destination for copy on remote FTP server
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
         recursive:      Boolean == true recursively generate events in source tree 
@@ -55,23 +53,6 @@ class FTPCopyFileHandler(IHandler):
     server: str = ""
     user: str = ""
     password: str = ""
-
-    def __get_config(self, handler_config: ConfigDict, attribute: str) -> any:
-        """_summary_
-
-        Args:
-            handler_config (ConfigDict): _description_
-            attribute (str): _description_
-
-        Returns:
-            any: _description_
-        """
-        if handler_config[attribute] != "":
-            return handler_config[attribute]
-
-        value = config(handler_config[CONFIG_NAME]+" "+attribute)
-
-        return value
 
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise handler attributes.   
@@ -92,18 +73,18 @@ class FTPCopyFileHandler(IHandler):
         self.deletesource = handler_config[CONFIG_DELETESOURCE]
         self.recursive = handler_config[CONFIG_RECURSIVE]
 
-        self.server = self.__get_config(handler_config, CONFIG_SERVER)
-        self.user = self.__get_config(handler_config, CONFIG_USER)
-        self.password = self.__get_config(handler_config, CONFIG_PASSWORD)
+        self.server = Handler.get_config(handler_config, CONFIG_SERVER)
+        self.user = Handler.get_config(handler_config, CONFIG_USER)
+        self.password = Handler.get_config(handler_config, CONFIG_PASSWORD)
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
     def __cwd_destination(self, ftp: FTP, destination: str) -> None:
-        """_summary_
+        """Change current working directory to destination on FTP server.
 
         Args:
-            ftp (FTP): _description_
-            destination (str): _description_
+            ftp (FTP): FTP server object.
+            destination (str): Destination path.
         """
 
         for directory in destination.split(os.sep):
