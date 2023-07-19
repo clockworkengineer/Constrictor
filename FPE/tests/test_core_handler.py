@@ -36,8 +36,7 @@ class TestCoreHandler:
             source_file_path, config[CONFIG_SOURCE]) == destination_path / "dir1" / "dir2" / "source.txt"
 
     def test_core_handler_setup_path_doesnt_exist(self) -> None:
-        config: ConfigDict = {}
-        config[CONFIG_SOURCE] = "./watcher/source"
+        config: ConfigDict = {CONFIG_SOURCE: "./watcher/source"}
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         if source_path.exists():
             source_path.rmdir()
@@ -46,8 +45,7 @@ class TestCoreHandler:
         source_path.rmdir()
 
     def test_core_handler_setup_path_does_exist(self) -> None:
-        config: ConfigDict = {}
-        config[CONFIG_SOURCE] = "./watcher/source"
+        config: ConfigDict = {CONFIG_SOURCE: "./watcher/source"}
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         source_path.mkdir(parents=True, exist_ok=True)
         assert source_path.exists()
@@ -56,8 +54,7 @@ class TestCoreHandler:
         source_path.rmdir()
 
     def test_core_handler_setup_path_with_invalid_config_key(self) -> None:
-        config: ConfigDict = {}
-        config[CONFIG_SOURCE] = "./watcher/source"
+        config: ConfigDict = {CONFIG_SOURCE: "./watcher/source"}
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         with pytest.raises(KeyError):
             Handler.setup_path(config, CONFIG_DESTINATION)
