@@ -44,14 +44,14 @@ class Handler:
 
     @staticmethod
     def create_relative_source(source_path: str, source_root: str) -> str:
-        """_summary_
+        """Create source path relative to the source root.
 
         Args:
-            source_path (str): _description_
-            source_root (str): _description_
+            source_path (str): Source path.
+            source_root (str): Source root.
 
         Returns:
-            str: _description_
+            str: Relative source path.
         """
         return str(source_path)[len(source_root)+1:]
 
@@ -92,11 +92,11 @@ class Handler:
 
     @staticmethod
     def remove_source(root_path: pathlib.Path, source_path: pathlib.Path):
-        """_summary_
+        """Remove source file plus any empty directories its deletion creates.
 
         Args:
-            root_path (pathlib.Path): _description_
-            source_path (pathlib.Path): _description_
+            root_path (pathlib.Path): Root path.
+            source_path (pathlib.Path): Source file path.
         """
         source_path.unlink()
         while source_path.parent != root_path:
@@ -110,14 +110,15 @@ class Handler:
 
     @staticmethod
     def get_config(handler_config: ConfigDict, attribute: str) -> any:
-        """_summary_
+        """Get an attribute from config otherwise if it is "" get from
+        environment variable config["name"] + attribute.
 
         Args:
-            handler_config (ConfigDict): _description_
-            attribute (str): _description_
+            handler_config (ConfigDict): handler config.
+            attribute (str): Attribute name.
 
         Returns:
-            any: _description_
+            any: Return attribute.
         """
         if handler_config[attribute] != "":
             return handler_config[attribute]

@@ -4,8 +4,8 @@
 import logging
 import sys
 from PyQt6.QtWidgets import QApplication
-from ui.fpe_main_window import MainWindow
 
+from ui.fpe_main_window import MainWindow
 from core.engine import Engine
 
 

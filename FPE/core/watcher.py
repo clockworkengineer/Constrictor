@@ -147,9 +147,9 @@ class Watcher:
 
     @property
     def files_processed(self) -> int:
-        """_summary_
+        """Return the number of files processed.
 
         Returns:
-            int: _description_
+            int: Number of files processed by handler.
         """
         return self.__handler.files_processed

@@ -31,9 +31,9 @@ from core.config import Config
 from core.arguments import Arguments
 from core.engine import Engine
 from core.constants import CONFIG_NOGUI
+
 from fpe_headless import fpe_headless
 from fpe_windowed import fpe_windowed
-
 
 
 __author__ = "Rob Tizzard"

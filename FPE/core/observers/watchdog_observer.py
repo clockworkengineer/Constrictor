@@ -87,7 +87,6 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
             except Empty:
                 pass
             else:
-                logging.debug("on_created %s.", event.src_path)
                 source_path = pathlib.Path(event.src_path)  # type: ignore
                 if source_path.exists():
                     Handler.wait_for_copy_completion(source_path)
@@ -104,6 +103,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
             event (Any): Watchdog file created event.
         """
 
+        logging.debug("on_created %s.", event.src_path)
         self.__queue.put(event)
 
     def on_moved(self, event):

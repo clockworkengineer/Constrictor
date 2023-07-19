@@ -1,6 +1,9 @@
-import pytest
+"""Test Core Handler Class.
+"""
+
 import tempfile
 import pathlib
+import pytest
 
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
 from core.config import ConfigDict
@@ -55,6 +58,5 @@ class TestCoreHandler:
 
     def test_core_handler_setup_path_with_invalid_config_key(self) -> None:
         config: ConfigDict = {CONFIG_SOURCE: "./watcher/source"}
-        source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         with pytest.raises(KeyError):
             Handler.setup_path(config, CONFIG_DESTINATION)

@@ -10,12 +10,12 @@ class FPEError(Exception):
 
     @staticmethod
     def error_prefix(component: str) -> str:
-        """_summary_
+        """Prefix application name and component to passed in string.
 
         Args:
-            component (str): _description_
+            component (str): Component name
 
         Returns:
-            str: _description_
+            str: String with application name plus component.
         """
         return APP_NAME+component+": "

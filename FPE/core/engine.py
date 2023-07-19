@@ -31,8 +31,8 @@ class Engine:
 
         # Load builtin and plugin handlers.
 
-        for handler_name in fpe_handler_list.keys():
-            Factory.register(handler_name, fpe_handler_list[handler_name])
+        for handler_name, handler in fpe_handler_list.items():
+            Factory.register(handler_name, handler)
 
         PluginLoader.load(self.__engine_config['plugins'])
 
@@ -96,15 +96,15 @@ class Engine:
         for watcher_config in self.__engine_config[CONFIG_WATCHERS]:
             self.create_watcher(watcher_config)
 
-        for watcher_name in self.__engine_watchers.keys():
+        for watcher_name, _ in self.__engine_watchers.items():
             self.start_watcher(watcher_name)
 
     def shutdown(self) -> None:
         """Shutdown watchers created by engine.
         """
-        for watcher_name in self.__engine_watchers.keys():
+        for watcher_name, watcher in self.__engine_watchers.items():
             self.stop_watcher(watcher_name)
-            self.__engine_watchers[watcher_name].stop()
+            watcher.stop()
 
         self.__engine_watchers.clear()
 
