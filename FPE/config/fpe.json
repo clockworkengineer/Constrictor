@@ -10,14 +10,14 @@
             "destination": ".\\watcher\\destination1\\",
             "deletesource": true,
             "exitonfailure": true,
-            "recursive": true
+            "recursive": false
         },
         {
             "name": "File Copier 2",
             "type": "FTPCopyFile",
             "source": ".\\watcher\\source2\\",
             "destination": "Downloads",
-            "deletesource": false,
+            "deletesource": true,
             "exitonfailure": true,
             "recursive": false,
             "server": "",
