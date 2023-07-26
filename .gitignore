@@ -5,3 +5,4 @@
 **/watcher
 fpe.log
 FPE/.env
+FPE/sqlite

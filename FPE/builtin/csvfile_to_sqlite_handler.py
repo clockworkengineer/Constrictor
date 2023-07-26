@@ -11,6 +11,7 @@ from core.constants import CONFIG_SOURCE, CONFIG_EXITONFAILURE, \
     CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
+from core.handler import Handler
 from core.error import FPEError
 
 
@@ -80,7 +81,7 @@ class CSVFileToSQLiteHandlerError(FPEError):
         return "CSVFileToSQLiteHandler Error: " + self.message
 
 
-class CSVFileToSQLite(IHandler):
+class CSVFileToSQLiteHandler(IHandler):
     """Import CSV file to SQLite database.
 
     Read in CSV file and insert/update rows within a given SQLite database/table.
@@ -110,7 +111,7 @@ class CSVFileToSQLite(IHandler):
         if handler_config is None:
             raise CSVFileToSQLiteHandlerError("None passed as handler config.")
 
-        self.watch_folder = handler_config[CONFIG_SOURCE]
+        self.source = handler_config[CONFIG_SOURCE]
         self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
         self.recursive = handler_config[CONFIG_RECURSIVE]
         self.delete_source = handler_config[CONFIG_DELETESOURCE]
@@ -120,6 +121,8 @@ class CSVFileToSQLite(IHandler):
         self.database_file = handler_config["databasefile"]
 
         self.param_style = "named"
+        
+        Handler.setup_path(handler_config, CONFIG_SOURCE)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database.

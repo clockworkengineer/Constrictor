@@ -23,6 +23,17 @@
             "server": "",
             "user": "",
             "password": ""
+        },
+        {
+            "name": "File Copier 3",
+            "type": "CSVFileToSQLite",
+            "source": ".\\watcher\\source3\\",
+            "deletesource": true,
+            "exitonfailure": true,
+            "recursive": false,
+            "databasefile": "C:\\Projects\\Constrictor\\FPE\\sqlite\\users",
+            "key": "id",
+            "table": "details"
         }
     ],
     "logging": {
