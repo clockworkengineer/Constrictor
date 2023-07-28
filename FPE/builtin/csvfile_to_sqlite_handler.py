@@ -90,11 +90,11 @@ class CSVFileToSQLiteHandler(IHandler):
 
     Attributes:
         handler_name : Name of handler object
-        watch_folder:  Folder to watch for files
+        source:        Folder to watch for files
         database_file: SQLite database file name
         table_name:    SQLite table name
         key_name:      Table column key used in updates
-        recursive:     Boole == true perform recursive file watch
+        recursive:     Boolean == true perform recursive file watch
         delete_source: Boolean == true delete source file on success
     """
 
