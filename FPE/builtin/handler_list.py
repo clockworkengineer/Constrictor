@@ -7,6 +7,11 @@ from core.interface.ihandler import IHandler
 from builtin.copyfile_handler import CopyFileHandler
 from builtin.ftp_copyfile_handler import FTPCopyFileHandler
 from builtin.csvfile_to_sqlite_handler import CSVFileToSQLiteHandler
+from builtin.csvfile_to_sql_handler import CSVFileToSQLHandler
 
 fpe_handler_list: dict[str, Callable[..., IHandler]] = {
-    "CopyFile": CopyFileHandler, "FTPCopyFile": FTPCopyFileHandler, "CSVFileToSQLite": CSVFileToSQLiteHandler}
+    "CopyFile": CopyFileHandler,
+    "FTPCopyFile": FTPCopyFileHandler,
+    "CSVFileToSQLite": CSVFileToSQLiteHandler,
+    "CSVFileToSQL": CSVFileToSQLHandler
+}
