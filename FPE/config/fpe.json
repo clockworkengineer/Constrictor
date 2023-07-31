@@ -4,7 +4,7 @@
     ],
     "watchers": [
         {
-            "name": "File Copier 1",
+            "name": "Directory Watcher 1",
             "type": "CopyFile",
             "source": ".\\watcher\\source1\\",
             "destination": ".\\watcher\\destination1\\",
@@ -13,7 +13,7 @@
             "recursive": false
         },
         {
-            "name": "File Copier 2",
+            "name": "Directory Watcher 2",
             "type": "FTPCopyFile",
             "source": ".\\watcher\\source2\\",
             "destination": "Downloads",
@@ -25,7 +25,7 @@
             "password": ""
         },
         {
-            "name": "File Copier 3",
+            "name": "Directory Watcher 3",
             "type": "CSVFileToSQLite",
             "source": ".\\watcher\\source3\\",
             "deletesource": true,
