@@ -90,16 +90,17 @@ class CSVFileToSQLHandler(IHandler):
     updated.
 
     Attributes:
-        handler_name : Name of handler object
-        watch_folder:  Folder to watch for files
+        name :         Name of handler object
+        source:        Directory to watch for files
+        recursive:     Boolean == true perform recursive file watch
+        delete_source: Boolean == true delete source file on success
         server:        MySQL database server
         user_name:     MySQL username
         user_password: MySQL user password
         database_name: MySQL database name
         table_name:    MySQL table name
         key_name:      Table column key used in updates
-        recursive:     Boole == true perform recursive file watch
-        delete_source: Boolean == true delete source file on success
+        
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:

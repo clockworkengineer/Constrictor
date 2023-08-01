@@ -65,11 +65,11 @@ def generate_sql(param_style, table_name, key_name, row_fields) -> str:
 
 
 class CSVFileToSQLiteHandlerError(FPEError):
-    """An error occurred in the FTPCopyFile handler.
+    """An error occurred in the CSVFileToSQLite handler.
     """
 
     def __init__(self, message) -> None:
-        """FTPCopyFile handler error.
+        """CSVFileToSQLite handler error.
 
         Args:
             message (str): Exception message.
@@ -91,11 +91,12 @@ class CSVFileToSQLiteHandler(IHandler):
     Attributes:
         handler_name : Name of handler object
         source:        Folder to watch for files
+        recursive:     Boolean == true perform recursive file watch
+        delete_source: Boolean == true delete source file on success
         database_file: SQLite database file name
         table_name:    SQLite table name
         key_name:      Table column key used in updates
-        recursive:     Boolean == true perform recursive file watch
-        delete_source: Boolean == true delete source file on success
+
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:
@@ -105,7 +106,7 @@ class CSVFileToSQLiteHandler(IHandler):
             handler_config (ConfigDict): Handler configuration.
 
         Raises:
-            FTPCopyFileHandlerError: None passed as handler configuration.
+           CSVFileToSQLiteHandlerError: None passed as handler configuration.
         """
 
         if handler_config is None:
