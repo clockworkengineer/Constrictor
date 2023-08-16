@@ -25,6 +25,8 @@ def generate_sql(param_style, table_name, key_name, row_fields) -> str:
     """Generate SQL for update/insert row of fields.
     """
 
+    sql: str = ""
+
     try:
 
         # Set up placeholder for param_style supported
@@ -50,11 +52,18 @@ def generate_sql(param_style, table_name, key_name, row_fields) -> str:
 
         else:
 
-            fields = ",".join(row_fields)
+            fields = ""
+            for field in row_fields:
+                fields += "`"
+                fields += field
+                fields += "`,"
+
+            fields = fields[:-1]
+
             values = ((placeholder + ",") *
                       (len(row_fields))).format(*row_fields)[:-1]
 
-            sql = f"INSERT INTO {table_name} ({fields}) VALUES ({values})"
+            sql = f"INSERT INTO `{table_name}` ({fields}) VALUES ({values})"
 
     except ValueError as error:
         logging.error(error)
@@ -100,7 +109,7 @@ class CSVFileToSQLHandler(IHandler):
         database_name: MySQL database name
         table_name:    MySQL table name
         key_name:      Table column key used in updates
-        
+
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:
@@ -125,10 +134,10 @@ class CSVFileToSQLHandler(IHandler):
         self.server = Handler.get_config(handler_config, "server")
         self.user_name = Handler.get_config(handler_config, "user")
         self.user_password = Handler.get_config(handler_config, "password")
-        self.database_name =  Handler.get_config(handler_config, "database")
-        self.table_name =  Handler.get_config(handler_config, "table")
-        self.key_name =  Handler.get_config(handler_config, "key")
-        
+        self.database_name = Handler.get_config(handler_config, "database")
+        self.table_name = Handler.get_config(handler_config, "table")
+        self.key_name = Handler.get_config(handler_config, "key")
+
         self.param_style = "pyformat"
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
@@ -139,8 +148,11 @@ class CSVFileToSQLHandler(IHandler):
 
         try:
 
-            database = mysql.connector.connect(self.server, self.user_name,
-                                               self.user_password, self.database_name)
+            database = mysql.connector.connect(host=self.server,
+                                               user=self.user_name,
+                                               passwd=self.user_password,
+                                               database=self.database_name,
+                                               port=32768)
             cursor = database.cursor()
 
             logging.info("Importing CSV file %s to table %s.",
@@ -149,22 +161,17 @@ class CSVFileToSQLHandler(IHandler):
             with open(source_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
+
                 sql = generate_sql(self.param_style, self.table_name, self.key_name,
                                    csv_reader.fieldnames)
 
-                for row in csv_reader:
-
-                    try:
-
-                        with database:
-                            cursor.execute(sql, row)
-
-                    except (mysql.connector.Error, mysql.connector.Warning) as error:
-                        logging.error("%s\n%s", sql, error)
+                for csv_row in csv_reader:
+                    cursor.execute(sql, csv_row)
 
         except Exception as error:
             logging.error("Error in handler %s: %s", self.name, error)
             database = None
+            return False
 
         else:
             logging.info("Finished Importing file %s to table %s.",
@@ -173,4 +180,7 @@ class CSVFileToSQLHandler(IHandler):
                 os.remove(source_path)
 
         if database:
+            database.commit()
             database.close()
+
+            return True
