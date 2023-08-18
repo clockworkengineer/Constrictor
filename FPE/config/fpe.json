@@ -43,6 +43,7 @@
             "exitonfailure": true,
             "recursive": false,
             "server": "",
+            "port": "",
             "user": "",
             "password": "",
             "database": "mysql",

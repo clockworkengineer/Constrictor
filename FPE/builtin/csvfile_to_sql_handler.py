@@ -132,6 +132,7 @@ class CSVFileToSQLHandler(IHandler):
         self.delete_source = handler_config[CONFIG_DELETESOURCE]
 
         self.server = Handler.get_config(handler_config, "server")
+        self.port = Handler.get_config(handler_config, "port")
         self.user_name = Handler.get_config(handler_config, "user")
         self.user_password = Handler.get_config(handler_config, "password")
         self.database_name = Handler.get_config(handler_config, "database")
@@ -151,10 +152,11 @@ class CSVFileToSQLHandler(IHandler):
         try:
 
             database = mysql.connector.connect(host=self.server,
+                                               port=self.port,
                                                user=self.user_name,
                                                passwd=self.user_password,
-                                               database=self.database_name,
-                                               port=32768)
+                                               database=self.database_name)
+            
             cursor = database.cursor()
 
             logging.info("Importing CSV file %s to table %s.",
