@@ -122,13 +122,15 @@ class CSVFileToSQLiteHandler(IHandler):
         self.database_file = handler_config["databasefile"]
 
         self.param_style = "named"
-        
+
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database.
         """
 
+        success : bool = True
+        
         try:
 
             if not os.path.exists(self.database_file):
@@ -149,25 +151,22 @@ class CSVFileToSQLiteHandler(IHandler):
                                    csv_reader.fieldnames)
 
                 for row in csv_reader:
+                    cursor.execute(sql, row)
 
-                    try:
-
-                        with database:
-                            cursor.execute(sql, row)
-
-                    except (sqlite3.Error, sqlite3.Warning) as error:
-                        logging.error("%s\n%s", sql, error)
-
-        except (IOError) as error:
+        except (IOError, sqlite3.Error, sqlite3.Warning) as error:
             if self.exitonfailure:
                 raise CSVFileToSQLiteHandlerError(error) from error
             else:
                 logging.info(CSVFileToSQLiteHandlerError(error))
             database = None
+            success = False
 
-        else:
+        finally:
             logging.info("Finished Importing file %s to table %s.",
                          source_path, self.table_name)
 
-        if database:
-            database.close()
+            if database:
+                database.commit()
+                database.close()
+                
+        return success

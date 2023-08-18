@@ -146,6 +146,8 @@ class CSVFileToSQLHandler(IHandler):
         """Import CSV file to SQLite database.
         """
 
+        success: bool = True
+
         try:
 
             database = mysql.connector.connect(host=self.server,
@@ -168,19 +170,20 @@ class CSVFileToSQLHandler(IHandler):
                 for csv_row in csv_reader:
                     cursor.execute(sql, csv_row)
 
-        except Exception as error:
-            logging.error("Error in handler %s: %s", self.name, error)
+        except mysql.connector.Error as error:
+            if self.exitonfailure:
+                raise CSVFileToSQLHandlerError(error) from error
+            else:
+                logging.info(CSVFileToSQLHandlerError(error))
             database = None
-            return False
+            success = False
 
-        else:
+        finally:
             logging.info("Finished Importing file %s to table %s.",
                          source_path, self.table_name)
-            if self.delete_source:
-                os.remove(source_path)
 
-        if database:
-            database.commit()
-            database.close()
+            if database:
+                database.commit()
+                database.close()
 
-            return True
+        return success
