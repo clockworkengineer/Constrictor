@@ -40,14 +40,14 @@
             "type": "CSVFileToSQL",
             "source": ".\\watcher\\source4\\",
             "deletesource": true,
-            "exitonfailure": true,
+            "exitonfailure": false,
             "recursive": false,
             "server": "",
             "port": "",
             "user": "",
             "password": "",
             "database": "mysql",
-            "key": "id",
+            "key": "",
             "table": "details"
         }
     ],

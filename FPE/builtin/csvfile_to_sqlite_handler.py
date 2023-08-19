@@ -146,18 +146,19 @@ class CSVFileToSQLiteHandler(IHandler):
             with open(source_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
+                
                 sql = generate_sql(self.param_style, self.table_name,
                                    self.key_name,
                                    csv_reader.fieldnames)
 
-                for row in csv_reader:
-                    cursor.execute(sql, row)
+                for csv_row in csv_reader:
+                    cursor.execute(sql, csv_row)
 
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
             if self.exitonfailure:
                 raise CSVFileToSQLiteHandlerError(error) from error
             else:
-                logging.info(CSVFileToSQLiteHandlerError(error))
+                logging.info(CSVFileToSQLiteHandlerError(error.msg))
             database = None
             success = False
 

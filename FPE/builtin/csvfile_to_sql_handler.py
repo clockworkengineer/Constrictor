@@ -156,7 +156,7 @@ class CSVFileToSQLHandler(IHandler):
                                                user=self.user_name,
                                                passwd=self.user_password,
                                                database=self.database_name)
-            
+
             cursor = database.cursor()
 
             logging.info("Importing CSV file %s to table %s.",
@@ -176,7 +176,7 @@ class CSVFileToSQLHandler(IHandler):
             if self.exitonfailure:
                 raise CSVFileToSQLHandlerError(error) from error
             else:
-                logging.info(CSVFileToSQLHandlerError(error))
+                logging.info(CSVFileToSQLHandlerError(error.msg))
             database = None
             success = False
 
