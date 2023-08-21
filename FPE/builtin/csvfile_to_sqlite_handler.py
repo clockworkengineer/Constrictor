@@ -7,61 +7,13 @@ import csv
 import sqlite3
 import pathlib
 
+from builtin.common import sql
 from core.constants import CONFIG_SOURCE, CONFIG_EXITONFAILURE, \
     CONFIG_DELETESOURCE, CONFIG_RECURSIVE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
 from core.error import FPEError
-
-
-################################
-# Common handler functionality #
-################################
-
-
-def generate_sql(param_style, table_name, key_name, row_fields) -> str:
-    """Generate SQL for update/insert row of fields.
-    """
-
-    try:
-
-        # Set up placeholder for param_style supported
-
-        if param_style == "pyformat":
-            placeholder = "%({})s"
-        elif param_style == "named":
-            placeholder = ":{}"
-        else:
-            logging.error("Unsupported paramstyle %s.", param_style)
-            placeholder = ""
-
-        # Key provided then doing update
-
-        if key_name != "":
-
-            fields = (("{} = " + placeholder + ",") *
-                      len(row_fields)).format(*sorted(row_fields + row_fields))[:-1]
-
-            sql = ("UPDATE {} SET {} WHERE {} = " + placeholder).format(table_name,
-                                                                        fields, key_name, key_name)
-        # Doing an insert of a new record
-
-        else:
-
-            fields = ",".join(row_fields)
-            values = ((placeholder + ",") *
-                      (len(row_fields))).format(*row_fields)[:-1]
-
-            sql = f"INSERT INTO {table_name} ({fields}) VALUES ({values})"
-
-    except ValueError as error:
-        logging.error(error)
-        sql = None
-
-    logging.debug(sql)
-
-    return sql
 
 
 class CSVFileToSQLiteHandlerError(FPEError):
@@ -129,8 +81,8 @@ class CSVFileToSQLiteHandler(IHandler):
         """Import CSV file to SQLite database.
         """
 
-        success : bool = True
-        
+        success: bool = True
+
         try:
 
             if not os.path.exists(self.database_file):
@@ -146,13 +98,13 @@ class CSVFileToSQLiteHandler(IHandler):
             with open(source_path, "r", encoding="utf-8") as file_handle:
 
                 csv_reader = csv.DictReader(file_handle)
-                
-                sql = generate_sql(self.param_style, self.table_name,
-                                   self.key_name,
-                                   csv_reader.fieldnames)
+
+                sql_query = sql.generate(self.param_style, self.table_name,
+                                         self.key_name,
+                                         csv_reader.fieldnames)
 
                 for csv_row in csv_reader:
-                    cursor.execute(sql, csv_row)
+                    cursor.execute(sql_query, csv_row)
 
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
             if self.exitonfailure:
@@ -169,5 +121,5 @@ class CSVFileToSQLiteHandler(IHandler):
             if database:
                 database.commit()
                 database.close()
-                
+
         return success
