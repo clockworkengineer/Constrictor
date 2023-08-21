@@ -72,7 +72,7 @@ class CSVFileToSQLHandler(IHandler):
 
         self.name = handler_config[CONFIG_NAME]
         self.source = handler_config[CONFIG_SOURCE]
-        self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
         self.recursive = handler_config[CONFIG_RECURSIVE]
         self.delete_source = handler_config[CONFIG_DELETESOURCE]
 
@@ -83,8 +83,6 @@ class CSVFileToSQLHandler(IHandler):
         self.database_name = Handler.get_config(handler_config, "database")
         self.table_name = Handler.get_config(handler_config, "table")
         self.key_name = Handler.get_config(handler_config, "key")
-
-        self.param_style = "pyformat"
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
@@ -112,17 +110,18 @@ class CSVFileToSQLHandler(IHandler):
                 csv_reader = csv.DictReader(file_handle)
 
                 sql_query = sql.generate(
-                    self.param_style,
+                    "%({})s",
                     self.table_name,
                     self.key_name,
                     csv_reader.fieldnames,
                 )
 
-                for csv_row in csv_reader:
-                    cursor.execute(sql_query, csv_row)
+                if sql_query != "":
+                    for csv_row in csv_reader:
+                        cursor.execute(sql_query, csv_row)
 
         except mysql.connector.Error as error:
-            if self.exitonfailure:
+            if self.exit_on_failure:
                 raise CSVFileToSQLHandlerError(error) from error
             else:
                 logging.info(CSVFileToSQLHandlerError(error.msg))

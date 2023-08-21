@@ -68,15 +68,13 @@ class CSVFileToSQLiteHandler(IHandler):
             raise CSVFileToSQLiteHandlerError("None passed as handler config.")
 
         self.source = handler_config[CONFIG_SOURCE]
-        self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
         self.recursive = handler_config[CONFIG_RECURSIVE]
         self.delete_source = handler_config[CONFIG_DELETESOURCE]
 
         self.table_name = handler_config["table"]
         self.key_name = handler_config["key"]
         self.database_file = handler_config["databasefile"]
-
-        self.param_style = "named"
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
@@ -101,17 +99,15 @@ class CSVFileToSQLiteHandler(IHandler):
                 csv_reader = csv.DictReader(file_handle)
 
                 sql_query = sql.generate(
-                    self.param_style,
-                    self.table_name,
-                    self.key_name,
-                    csv_reader.fieldnames,
+                    ":{}", self.table_name, self.key_name, csv_reader.fieldnames
                 )
 
-                for csv_row in csv_reader:
-                    cursor.execute(sql_query, csv_row)
+                if sql_query != "":
+                    for csv_row in csv_reader:
+                        cursor.execute(sql_query, csv_row)
 
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
-            if self.exitonfailure:
+            if self.exit_on_failure:
                 raise CSVFileToSQLiteHandlerError(str(error)) from error
             else:
                 logging.info(CSVFileToSQLiteHandlerError(str(error)))

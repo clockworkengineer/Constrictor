@@ -4,42 +4,40 @@
 import logging
 
 
-def generate(param_style, table_name, key_name, row_fields) -> str:
+def generate(param_style: str, table_name: str, key_name: str, row_fields: [str]) -> str:
     """Generate SQL for update/insert row of fields.
+
+    Args:
+        param_style (str): _description_
+        table_name (str): _description_
+        key_name (str): _description_
+        row_fields (str): _description_
+
+    Returns:
+        str: _description_
     """
 
     sql: str = ""
 
     try:
-
-        # Set up placeholder for param_style supported
-
-        if param_style == "pyformat":
-            placeholder = "%({})s"
-        elif param_style == "named":
-            placeholder = ":{}"
-        else:
-            logging.error("Unsupported paramstyle %s.", param_style)
-            placeholder = ""
-
         # Key provided then doing update
 
         if key_name != "":
+            fields = (("{} = " + param_style + ",") * len(row_fields)).format(
+                *sorted(row_fields + row_fields)
+            )[:-1]
 
-            fields = (("{} = " + placeholder + ",") *
-                      len(row_fields)).format(*sorted(row_fields + row_fields))[:-1]
-
-            sql = f"UPDATE {table_name} SET {fields} WHERE {key_name} =" + \
-                placeholder.format(key_name)
+            sql = (
+                f"UPDATE {table_name} SET {fields} WHERE {key_name} ="
+                + param_style.format(key_name)
+            )
 
         # Doing an insert of a new record
 
         else:
-
             fields = ",".join(row_fields)
 
-            values = ((placeholder + ",") *
-                      (len(row_fields))).format(*row_fields)[:-1]
+            values = ((param_style + ",") * (len(row_fields))).format(*row_fields)[:-1]
 
             sql = f"INSERT INTO `{table_name}` ({fields}) VALUES ({values})"
 

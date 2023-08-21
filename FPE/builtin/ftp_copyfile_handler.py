@@ -6,9 +6,16 @@ import pathlib
 import logging
 from ftplib import FTP, all_errors
 
-from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION, \
-    CONFIG_EXITONFAILURE, CONFIG_SERVER, CONFIG_USER, CONFIG_PASSWORD, \
-    CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import (
+    CONFIG_SOURCE,
+    CONFIG_DESTINATION,
+    CONFIG_EXITONFAILURE,
+    CONFIG_SERVER,
+    CONFIG_USER,
+    CONFIG_PASSWORD,
+    CONFIG_DELETESOURCE,
+    CONFIG_RECURSIVE,
+)
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -16,8 +23,7 @@ from core.error import FPEError
 
 
 class FTPCopyFileHandlerError(FPEError):
-    """An error occurred in the FTPCopyFile handler.
-    """
+    """An error occurred in the FTPCopyFile handler."""
 
     def __init__(self, message) -> None:
         """FTPCopyFile handler error.
@@ -43,7 +49,7 @@ class FTPCopyFileHandler(IHandler):
         destination:    Destination for copy on remote FTP server
         deletesource:   Boolean == true delete source file on success
         exitonfailure:  Boolean == true exit handler on failure; generating an exception
-        recursive:      Boolean == true recursively generate events in source tree 
+        recursive:      Boolean == true recursively generate events in source tree
         server:         FTP Server
         user:           FTP Server username
         password:       FTP Server user password
@@ -55,7 +61,7 @@ class FTPCopyFileHandler(IHandler):
     password: str = ""
 
     def __init__(self, handler_config: ConfigDict) -> None:
-        """Initialise handler attributes.   
+        """Initialise handler attributes.
 
         Args:
             handler_config (ConfigDict): Handler configuration.
@@ -69,7 +75,7 @@ class FTPCopyFileHandler(IHandler):
 
         self.source = handler_config[CONFIG_SOURCE]
         self.destination = handler_config[CONFIG_DESTINATION]
-        self.exitonfailure = handler_config[CONFIG_EXITONFAILURE]
+        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
         self.deletesource = handler_config[CONFIG_DELETESOURCE]
         self.recursive = handler_config[CONFIG_RECURSIVE]
 
@@ -94,7 +100,7 @@ class FTPCopyFileHandler(IHandler):
                 ftp.mkd(directory)
                 ftp.cwd(directory)
 
-    def process(self,  source_path: pathlib.Path) -> bool:
+    def process(self, source_path: pathlib.Path) -> bool:
         """FTP Copy file from source(watch) directory to a destination directory on remote server.
 
         Args:
@@ -105,25 +111,24 @@ class FTPCopyFileHandler(IHandler):
         """
 
         try:
-
             with FTP(host=self.server, user=self.user, passwd=self.password) as ftp:
-
                 if self.destination != "":
                     self.__cwd_destination(ftp, self.destination)
 
                 if source_path.is_file():
-                    with open(source_path, 'rb') as file:
-                        ftp.storbinary(f'STOR {source_path.name}', file)
+                    with open(source_path, "rb") as file:
+                        ftp.storbinary(f"STOR {source_path.name}", file)
 
-                    logging.info("Uploaded file %s to server %s",
-                                 source_path, self.server)
+                    logging.info(
+                        "Uploaded file %s to server %s", source_path, self.server
+                    )
 
                     return True
 
             return False
 
-        except (all_errors) as error:
-            if self.exitonfailure:
+        except all_errors as error:
+            if self.exit_on_failure:
                 raise FTPCopyFileHandlerError(error) from error
             else:
                 logging.info(FTPCopyFileHandlerError(error))
