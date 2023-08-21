@@ -45,7 +45,7 @@ def generate(param_style, table_name, key_name, row_fields) -> str:
 
     except ValueError as error:
         logging.error(error)
-        sql = None
+        sql = ""
 
     logging.debug(sql)
 
