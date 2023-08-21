@@ -52,13 +52,7 @@ def generate_sql(param_style, table_name, key_name, row_fields) -> str:
 
         else:
 
-            fields = ""
-            for field in row_fields:
-                fields += "`"
-                fields += field
-                fields += "`,"
-
-            fields = fields[:-1]
+            fields = ",".join(row_fields)
 
             values = ((placeholder + ",") *
                       (len(row_fields))).format(*row_fields)[:-1]
