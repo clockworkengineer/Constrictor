@@ -29,9 +29,9 @@
             "type": "CSVFileToSQLite",
             "source": ".\\watcher\\source3\\",
             "deletesource": true,
-            "exitonfailure": true,
+            "exitonfailure": false,
             "recursive": false,
-            "databasefile": "C:\\Projects\\Constrictor\\FPE\\sqlite\\users",
+            "databasefile": "C:\\Projects\\Constrictor\\FPE\\sqlite\\users.sqlite",
             "key": "id",
             "table": "details"
         },
@@ -47,7 +47,7 @@
             "user": "",
             "password": "",
             "database": "mysql",
-            "key": "",
+            "key": "id",
             "table": "details"
         }
     ],

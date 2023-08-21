@@ -29,8 +29,9 @@ def generate(param_style, table_name, key_name, row_fields) -> str:
             fields = (("{} = " + placeholder + ",") *
                       len(row_fields)).format(*sorted(row_fields + row_fields))[:-1]
 
-            sql = ("UPDATE {} SET {} WHERE {} = " + placeholder).format(table_name,
-                                                                        fields, key_name, key_name)
+            sql = f"UPDATE {table_name} SET {fields} WHERE {key_name} =" + \
+                placeholder.format(key_name)
+
         # Doing an insert of a new record
 
         else:

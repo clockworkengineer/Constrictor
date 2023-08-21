@@ -8,8 +8,12 @@ import sqlite3
 import pathlib
 
 from builtin.common import sql
-from core.constants import CONFIG_SOURCE, CONFIG_EXITONFAILURE, \
-    CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import (
+    CONFIG_SOURCE,
+    CONFIG_EXITONFAILURE,
+    CONFIG_DELETESOURCE,
+    CONFIG_RECURSIVE,
+)
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -17,8 +21,7 @@ from core.error import FPEError
 
 
 class CSVFileToSQLiteHandlerError(FPEError):
-    """An error occurred in the CSVFileToSQLite handler.
-    """
+    """An error occurred in the CSVFileToSQLite handler."""
 
     def __init__(self, message) -> None:
         """CSVFileToSQLite handler error.
@@ -52,7 +55,7 @@ class CSVFileToSQLiteHandler(IHandler):
     """
 
     def __init__(self, handler_config: ConfigDict) -> None:
-        """Initialise handler attributes.   
+        """Initialise handler attributes.
 
         Args:
             handler_config (ConfigDict): Handler configuration.
@@ -78,13 +81,11 @@ class CSVFileToSQLiteHandler(IHandler):
         Handler.setup_path(handler_config, CONFIG_SOURCE)
 
     def process(self, source_path: pathlib.Path) -> bool:
-        """Import CSV file to SQLite database.
-        """
+        """Import CSV file to SQLite database."""
 
         success: bool = True
 
         try:
-
             if not os.path.exists(self.database_file):
                 raise IOError("Database file does not exist.")
 
@@ -92,31 +93,35 @@ class CSVFileToSQLiteHandler(IHandler):
 
             cursor = database.cursor()
 
-            logging.info("Importing CSV file %s to table %s.",
-                         source_path, self.table_name)
+            logging.info(
+                "Importing CSV file %s to table %s.", source_path, self.table_name
+            )
 
             with open(source_path, "r", encoding="utf-8") as file_handle:
-
                 csv_reader = csv.DictReader(file_handle)
 
-                sql_query = sql.generate(self.param_style, self.table_name,
-                                         self.key_name,
-                                         csv_reader.fieldnames)
+                sql_query = sql.generate(
+                    self.param_style,
+                    self.table_name,
+                    self.key_name,
+                    csv_reader.fieldnames,
+                )
 
                 for csv_row in csv_reader:
                     cursor.execute(sql_query, csv_row)
 
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
             if self.exitonfailure:
-                raise CSVFileToSQLiteHandlerError(error) from error
+                raise CSVFileToSQLiteHandlerError(str(error)) from error
             else:
-                logging.info(CSVFileToSQLiteHandlerError(error.msg))
+                logging.info(CSVFileToSQLiteHandlerError(str(error)))
             database = None
             success = False
 
         finally:
-            logging.info("Finished Importing file %s to table %s.",
-                         source_path, self.table_name)
+            logging.info(
+                "Finished Importing file %s to table %s.", source_path, self.table_name
+            )
 
             if database:
                 database.commit()
