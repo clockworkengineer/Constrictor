@@ -9,12 +9,9 @@ from ftplib import FTP, all_errors
 from core.constants import (
     CONFIG_SOURCE,
     CONFIG_DESTINATION,
-    CONFIG_EXITONFAILURE,
     CONFIG_SERVER,
     CONFIG_USER,
     CONFIG_PASSWORD,
-    CONFIG_DELETESOURCE,
-    CONFIG_RECURSIVE,
 )
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
@@ -73,11 +70,9 @@ class FTPCopyFileHandler(IHandler):
         if handler_config is None:
             raise FTPCopyFileHandlerError("None passed as handler config.")
 
-        self.source = handler_config[CONFIG_SOURCE]
+        self.set_mandatory_config(handler_config)
+
         self.destination = handler_config[CONFIG_DESTINATION]
-        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
-        self.deletesource = handler_config[CONFIG_DELETESOURCE]
-        self.recursive = handler_config[CONFIG_RECURSIVE]
 
         self.server = Handler.get_config(handler_config, CONFIG_SERVER)
         self.user = Handler.get_config(handler_config, CONFIG_USER)

@@ -7,10 +7,7 @@ import logging
 
 from core.constants import (
     CONFIG_SOURCE,
-    CONFIG_DESTINATION,
-    CONFIG_EXITONFAILURE,
-    CONFIG_DELETESOURCE,
-    CONFIG_RECURSIVE,
+    CONFIG_DESTINATION
 )
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
@@ -62,11 +59,9 @@ class CopyFileHandler(IHandler):
         if handler_config is None:
             raise CopyFileHandlerError("None passed as handler config.")
 
-        self.source = handler_config[CONFIG_SOURCE]
+        self.set_mandatory_config(handler_config)
+
         self.destination = handler_config[CONFIG_DESTINATION]
-        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
-        self.deletesource = handler_config[CONFIG_DELETESOURCE]
-        self.recursive = handler_config[CONFIG_RECURSIVE]
 
         Handler.setup_path(handler_config, CONFIG_SOURCE)
         Handler.setup_path(handler_config, CONFIG_DESTINATION)

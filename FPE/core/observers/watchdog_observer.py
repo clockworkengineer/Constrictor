@@ -22,8 +22,7 @@ from core.error import FPEError
 
 
 class WatchdogObserverError(FPEError):
-    """An error occurred in directory/file watcher.
-    """
+    """An error occurred in directory/file watcher."""
 
     def __init__(self, message: str) -> None:
         """Create watcher exception.
@@ -45,8 +44,7 @@ class WatchdogObserverError(FPEError):
 
 
 class WatchdogObserver(FileSystemEventHandler, IObserver):
-    """Watcher handler adapter for watchdog.
-    """
+    """Watcher handler adapter for watchdog."""
 
     __watcher_handler: IHandler
     __root_path: pathlib.Path
@@ -65,8 +63,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__watcher_handler = watcher_handler
 
-        self.__root_path = pathlib.Path(
-            self.__watcher_handler.source)
+        self.__root_path = pathlib.Path(self.__watcher_handler.source)
 
         self.__queue = Queue()
         self.__thread = Thread(target=self.__process)
@@ -75,11 +72,12 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__observer = Observer()
         self.__observer.schedule(
-            event_handler=self, path=self.__watcher_handler.source,
-            recursive=self.__watcher_handler.recursive)
+            event_handler=self,
+            path=self.__watcher_handler.source,
+            recursive=self.__watcher_handler.recursive,
+        )
 
     def __process(self):
-
         while True:
             time.sleep(0.1)
             try:
@@ -92,9 +90,8 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
                     Handler.wait_for_copy_completion(source_path)
                     if self.__watcher_handler.process(source_path):
                         self.__watcher_handler.files_processed += 1
-                        if self.__watcher_handler.deletesource:
-                            Handler.remove_source(
-                                self.__root_path, source_path)
+                        if self.__watcher_handler.delete_source:
+                            Handler.remove_source(self.__root_path, source_path)
 
     def on_created(self, event) -> None:
         """On file created event.
@@ -148,12 +145,10 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         logging.debug("on_opened %s.", event.src_path)
 
     def start(self) -> None:
-        """Start watchdog observer watching.
-        """
+        """Start watchdog observer watching."""
         self.__observer.start()
 
     def stop(self) -> None:
-        """Stop watchdog observer from watching.
-        """
+        """Stop watchdog observer from watching."""
         self.__observer.stop()
         self.__observer.join()

@@ -7,13 +7,7 @@ import pathlib
 import mysql.connector
 
 from builtin.common import sql
-from core.constants import (
-    CONFIG_NAME,
-    CONFIG_SOURCE,
-    CONFIG_EXITONFAILURE,
-    CONFIG_DELETESOURCE,
-    CONFIG_RECURSIVE,
-)
+from core.constants import CONFIG_SOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -70,11 +64,7 @@ class CSVFileToSQLHandler(IHandler):
         if handler_config is None:
             raise CSVFileToSQLHandlerError("None passed as handler config.")
 
-        self.name = handler_config[CONFIG_NAME]
-        self.source = handler_config[CONFIG_SOURCE]
-        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
-        self.recursive = handler_config[CONFIG_RECURSIVE]
-        self.delete_source = handler_config[CONFIG_DELETESOURCE]
+        self.set_mandatory_config(handler_config)
 
         self.server = Handler.get_config(handler_config, "server")
         self.port = Handler.get_config(handler_config, "port")

@@ -8,12 +8,7 @@ import sqlite3
 import pathlib
 
 from builtin.common import sql
-from core.constants import (
-    CONFIG_SOURCE,
-    CONFIG_EXITONFAILURE,
-    CONFIG_DELETESOURCE,
-    CONFIG_RECURSIVE,
-)
+from core.constants import CONFIG_SOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -67,10 +62,7 @@ class CSVFileToSQLiteHandler(IHandler):
         if handler_config is None:
             raise CSVFileToSQLiteHandlerError("None passed as handler config.")
 
-        self.source = handler_config[CONFIG_SOURCE]
-        self.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
-        self.recursive = handler_config[CONFIG_RECURSIVE]
-        self.delete_source = handler_config[CONFIG_DELETESOURCE]
+        self.set_mandatory_config(handler_config)
 
         self.table_name = handler_config["table"]
         self.key_name = handler_config["key"]

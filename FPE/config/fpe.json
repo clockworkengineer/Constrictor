@@ -47,7 +47,7 @@
             "user": "",
             "password": "",
             "database": "mysql",
-            "key": "id",
+            "key": "",
             "table": "details"
         }
     ],
