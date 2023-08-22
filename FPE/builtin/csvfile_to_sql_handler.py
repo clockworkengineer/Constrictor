@@ -47,7 +47,8 @@ class CSVFileToSQLHandler(IHandler):
         name :         Name of handler object
         source:        Directory to watch for files
         recursive:     Boolean == true perform recursive file watch
-        delete_source: Boolean == true delete source file on success
+        deletesource:  Boolean == true delete source file on success
+        exitonfailure: Boolean == true exit handler on failure; generating an exception
         server:        MySQL database server
         user_name:     MySQL username
         user_password: MySQL user password
