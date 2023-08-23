@@ -34,12 +34,12 @@ class CopyFileHandler(IHandler):
     Copy files created in watch folder to destination folder.
 
     Handler(Watcher) config values:
-        name:           Name of handler object
-        source:         Folder to watch for files
-        destination:    Destination for file copy
-        deletesource:   Boolean == true delete source file on success
-        exitonfailure:  Boolean == true exit handler on failure; generating an exception
-        recursive:      Boolean == true recursively generate events in source tree
+        name:            Name of handler object
+        source:          Folder to watch for files
+        destination:     Destination for file copy
+        delete_source:   Boolean == true delete source file on success
+        exit_on_failure: Boolean == true exit handler on failure; generating an exception
+        recursive:       Boolean == true recursively generate events in source tree
 
     """
 

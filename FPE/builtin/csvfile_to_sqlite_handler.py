@@ -38,14 +38,15 @@ class CSVFileToSQLiteHandler(IHandler):
     updated.
 
     Attributes:
-        handler_name : Name of handler object
-        source:        Folder to watch for files
-        recursive:     Boolean == true perform recursive file watch
-        deletesource:  Boolean == true delete source file on success
-        exitonfailure: Boolean == true exit handler on failure; generating an exception
-        database_file: SQLite database file name
-        table_name:    SQLite table name
-        key_name:      Table column key used in updates
+        name:            Name of handler object
+        source:          Folder to watch for files
+        destination:     Destination for file copy
+        delete_source:   Boolean == true delete source file on success
+        exit_on_failure: Boolean == true exit handler on failure; generating an exception
+        recursive:       Boolean == true recursively generate events in source tree
+        database_file:   SQLite database file name
+        table_name:      SQLite table name
+        key_name:        Table column key used in updates
 
     """
 
