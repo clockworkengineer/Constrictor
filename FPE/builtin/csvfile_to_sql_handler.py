@@ -1,4 +1,4 @@
-""" Built-in watcher file handlers.
+""" FPE CSV file to SQL built-in handler.
 """
 
 import logging

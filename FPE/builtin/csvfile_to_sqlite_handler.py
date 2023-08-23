@@ -1,4 +1,4 @@
-""" Built-in watcher file handlers.
+""" FPE CSV file to SQLite built-in handler.
 """
 
 import os
