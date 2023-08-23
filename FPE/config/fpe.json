@@ -49,6 +49,14 @@
             "database": "mysql",
             "key": "",
             "table": "details"
+        },
+        {
+            "name": "Directory Watcher 5",
+            "type": "FileAnnouncer",
+            "source": ".\\watcher\\source5\\",
+            "deletesource": true,
+            "exitonfailure": false,
+            "recursive": false
         }
     ],
     "logging": {

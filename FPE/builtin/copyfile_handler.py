@@ -6,7 +6,6 @@ import shutil
 import logging
 
 from core.constants import (
-    CONFIG_SOURCE,
     CONFIG_DESTINATION
 )
 from core.interface.ihandler import IHandler
@@ -59,12 +58,12 @@ class CopyFileHandler(IHandler):
         if handler_config is None:
             raise CopyFileHandlerError("None passed as handler config.")
 
-        self.set_mandatory_config(handler_config)
+        Handler.set_mandatory_config(self,handler_config)
 
         self.destination = handler_config[CONFIG_DESTINATION]
 
-        Handler.setup_path(handler_config, CONFIG_SOURCE)
-        Handler.setup_path(handler_config, CONFIG_DESTINATION)
+        Handler.setup_path(self.source)
+        Handler.setup_path(self.destination)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Copy file from source(watch) directory to destination directory.

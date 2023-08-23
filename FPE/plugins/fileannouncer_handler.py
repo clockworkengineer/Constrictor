@@ -4,7 +4,6 @@
 import pathlib
 import logging
 
-from core.constants import CONFIG_SOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
@@ -17,9 +16,9 @@ class FileAnnouncerHandler(IHandler):
     def __init__(self, handler_config: ConfigDict) -> None:
         """Copy handler config and setup source directory."""
 
-        self.set_mandatory_config(handler_config)
+        Handler.set_mandatory_config(self, handler_config)
 
-        Handler.setup_path(handler_config, CONFIG_SOURCE)
+        Handler.setup_path(self.source)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Print out name of any file copied into watch folder."""

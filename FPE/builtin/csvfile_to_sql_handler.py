@@ -7,7 +7,6 @@ import pathlib
 import mysql.connector
 
 from builtin.common import sql
-from core.constants import CONFIG_SOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -65,7 +64,7 @@ class CSVFileToSQLHandler(IHandler):
         if handler_config is None:
             raise CSVFileToSQLHandlerError("None passed as handler config.")
 
-        self.set_mandatory_config(handler_config)
+        Handler.set_mandatory_config(self, handler_config)
 
         self.server = Handler.get_config(handler_config, "server")
         self.port = Handler.get_config(handler_config, "port")
@@ -75,7 +74,7 @@ class CSVFileToSQLHandler(IHandler):
         self.table_name = Handler.get_config(handler_config, "table")
         self.key_name = Handler.get_config(handler_config, "key")
 
-        Handler.setup_path(handler_config, CONFIG_SOURCE)
+        Handler.setup_path(self.source)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database."""

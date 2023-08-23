@@ -8,7 +8,6 @@ import sqlite3
 import pathlib
 
 from builtin.common import sql
-from core.constants import CONFIG_SOURCE
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -63,13 +62,13 @@ class CSVFileToSQLiteHandler(IHandler):
         if handler_config is None:
             raise CSVFileToSQLiteHandlerError("None passed as handler config.")
 
-        self.set_mandatory_config(handler_config)
+        Handler.set_mandatory_config(self, handler_config)
 
         self.table_name = handler_config["table"]
         self.key_name = handler_config["key"]
         self.database_file = handler_config["databasefile"]
 
-        Handler.setup_path(handler_config, CONFIG_SOURCE)
+        Handler.setup_path(self.source)
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database."""

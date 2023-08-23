@@ -7,7 +7,6 @@ import logging
 from ftplib import FTP, all_errors
 
 from core.constants import (
-    CONFIG_SOURCE,
     CONFIG_DESTINATION,
     CONFIG_SERVER,
     CONFIG_USER,
@@ -70,7 +69,7 @@ class FTPCopyFileHandler(IHandler):
         if handler_config is None:
             raise FTPCopyFileHandlerError("None passed as handler config.")
 
-        self.set_mandatory_config(handler_config)
+        Handler.set_mandatory_config(self,handler_config)
 
         self.destination = handler_config[CONFIG_DESTINATION]
 
@@ -78,7 +77,7 @@ class FTPCopyFileHandler(IHandler):
         self.user = Handler.get_config(handler_config, CONFIG_USER)
         self.password = Handler.get_config(handler_config, CONFIG_PASSWORD)
 
-        Handler.setup_path(handler_config, CONFIG_SOURCE)
+        Handler.setup_path(self.source)
 
     def __cwd_destination(self, ftp: FTP, destination: str) -> None:
         """Change current working directory to destination on FTP server.

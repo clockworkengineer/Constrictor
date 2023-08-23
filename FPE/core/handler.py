@@ -11,13 +11,19 @@ import pathlib
 import logging
 from decouple import config
 
-from core.constants import CONFIG_NAME
+from core.constants import (
+    CONFIG_NAME,
+    CONFIG_SOURCE,
+    CONFIG_EXITONFAILURE,
+    CONFIG_DELETESOURCE,
+    CONFIG_RECURSIVE,
+)
 from core.config import ConfigDict
+from core.interface.ihandler import IHandler
 
 
 class Handler:
-    """Directory watcher handler utility static methods.
-    """
+    """Directory watcher handler utility static methods."""
 
     @staticmethod
     def normalize_path(path_to_normalise: str) -> str:
@@ -39,7 +45,7 @@ class Handler:
             directory_path (pathlib.Path): Directory path.
         """
         if not directory_path.exists():
-            directory_path.mkdir(parents=True,  exist_ok=True)
+            directory_path.mkdir(parents=True, exist_ok=True)
             logging.info("Created directory %s.", directory_path)
 
     @staticmethod
@@ -53,19 +59,18 @@ class Handler:
         Returns:
             str: Relative source path.
         """
-        return str(source_path)[len(source_root)+1:]
+        return str(source_path)[len(source_root) + 1 :]
 
     @staticmethod
-    def setup_path(handler_config: ConfigDict, path_type: str) -> None:
+    def setup_path(directory_path: str) -> None:
         """Setup directory to be used by handler.
 
         Args:
             handler_config (ConfigDict): Watcher handler config.
             path_type (str): Watcher handler type.
         """
-        handler_config[path_type] = Handler.normalize_path(
-            handler_config[path_type])
-        Handler.create_path(pathlib.Path(handler_config[path_type]))
+        directory_path = Handler.normalize_path(directory_path)
+        Handler.create_path(pathlib.Path(directory_path))
 
     @staticmethod
     def wait_for_copy_completion(source_path: pathlib.Path) -> None:
@@ -101,8 +106,7 @@ class Handler:
         source_path.unlink()
         while source_path.parent != root_path:
             if len(os.listdir(source_path.parent)) == 0:
-                source_path.parent.chmod(
-                    source_path.parent.stat().st_mode | 0o664)
+                source_path.parent.chmod(source_path.parent.stat().st_mode | 0o664)
                 source_path.parent.rmdir()
                 source_path = source_path.parent
                 continue
@@ -123,6 +127,19 @@ class Handler:
         if handler_config[attribute] != "":
             return handler_config[attribute]
 
-        value = config(handler_config[CONFIG_NAME]+" "+attribute)
+        value = config(handler_config[CONFIG_NAME] + " " + attribute)
 
         return value
+
+    @staticmethod
+    def set_mandatory_config(ihandler: IHandler, handler_config: ConfigDict) -> None:
+        """_summary_
+
+        Args:
+            handler_config (ConfigDict): _description_
+        """
+        ihandler.name = handler_config[CONFIG_NAME]
+        ihandler.source = handler_config[CONFIG_SOURCE]
+        ihandler.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
+        ihandler.recursive = handler_config[CONFIG_RECURSIVE]
+        ihandler.delete_source = handler_config[CONFIG_DELETESOURCE]
