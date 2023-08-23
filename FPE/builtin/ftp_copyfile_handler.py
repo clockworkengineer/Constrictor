@@ -69,15 +69,13 @@ class FTPCopyFileHandler(IHandler):
         if handler_config is None:
             raise FTPCopyFileHandlerError("None passed as handler config.")
 
-        Handler.set_mandatory_config(self,handler_config)
+        Handler.set_mandatory_config(self, handler_config)
 
         self.destination = handler_config[CONFIG_DESTINATION]
 
         self.server = Handler.get_config(handler_config, CONFIG_SERVER)
         self.user = Handler.get_config(handler_config, CONFIG_USER)
         self.password = Handler.get_config(handler_config, CONFIG_PASSWORD)
-
-        Handler.setup_path(self.source)
 
     def __cwd_destination(self, ftp: FTP, destination: str) -> None:
         """Change current working directory to destination on FTP server.

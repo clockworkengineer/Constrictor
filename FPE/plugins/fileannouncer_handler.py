@@ -18,8 +18,6 @@ class FileAnnouncerHandler(IHandler):
 
         Handler.set_mandatory_config(self, handler_config)
 
-        Handler.setup_path(self.source)
-
     def process(self, source_path: pathlib.Path) -> bool:
         """Print out name of any file copied into watch folder."""
 

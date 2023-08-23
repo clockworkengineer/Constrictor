@@ -5,9 +5,7 @@ import pathlib
 import shutil
 import logging
 
-from core.constants import (
-    CONFIG_DESTINATION
-)
+from core.constants import CONFIG_DESTINATION
 from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.handler import Handler
@@ -58,11 +56,10 @@ class CopyFileHandler(IHandler):
         if handler_config is None:
             raise CopyFileHandlerError("None passed as handler config.")
 
-        Handler.set_mandatory_config(self,handler_config)
+        Handler.set_mandatory_config(self, handler_config)
 
         self.destination = handler_config[CONFIG_DESTINATION]
 
-        Handler.setup_path(self.source)
         Handler.setup_path(self.destination)
 
     def process(self, source_path: pathlib.Path) -> bool:

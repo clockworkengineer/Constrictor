@@ -143,3 +143,5 @@ class Handler:
         ihandler.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
         ihandler.recursive = handler_config[CONFIG_RECURSIVE]
         ihandler.delete_source = handler_config[CONFIG_DELETESOURCE]
+        
+        Handler.setup_path(ihandler.source)
