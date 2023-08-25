@@ -1,7 +1,6 @@
 """ FPE CSV file to SQLite built-in handler.
 """
 
-import os
 import logging
 import csv
 import sqlite3
@@ -74,7 +73,7 @@ class CSVFileToSQLiteHandler(IHandler):
         success: bool = True
 
         try:
-            if not os.path.exists(self.database_file):
+            if not pathlib.Path(self.database_file).exists():
                 raise IOError("Database file does not exist.")
 
             database = sqlite3.connect(self.database_file)
