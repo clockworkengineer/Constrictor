@@ -144,6 +144,11 @@ class Watcher:
             self.__observer.stop()
             self.__observer = None  # type: ignore
             self.__running = False
+            
+    def status(self) -> str:
+        """Return current watcher handler status.
+        """
+        return self.__handler.status()
 
     @property
     def files_processed(self) -> int:

@@ -30,6 +30,15 @@ class FileAnnouncerHandler(IHandler):
 
         return True
 
+    def status(self) -> str:
+        """Return current handler status string
+
+        Returns:
+            str: Handler status string.
+        """
+
+        return "FileAnnouncerHandler\n"
+
 
 def register() -> None:
     """Register plugin as a watcher handler."""

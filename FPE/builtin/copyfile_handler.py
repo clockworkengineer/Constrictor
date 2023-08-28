@@ -94,3 +94,13 @@ class CopyFileHandler(IHandler):
                 logging.info(CopyFileHandlerError(error))
 
         return False
+
+
+    def status(self) -> str:
+        """Return current handler status string
+
+        Returns:
+            str: Handler status string.
+        """
+        
+        return "CopyFileHandler\n"

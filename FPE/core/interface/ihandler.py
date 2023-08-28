@@ -24,3 +24,10 @@ class IHandler(Protocol):
         Args:
             source_path (pathlib.Path): Source fiel path.
         """
+
+    def status(self) -> str:
+        """Return current handler status string
+
+        Returns:
+            str: Handler status string.
+        """

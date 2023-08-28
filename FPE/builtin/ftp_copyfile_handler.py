@@ -126,3 +126,12 @@ class FTPCopyFileHandler(IHandler):
                 logging.info(FTPCopyFileHandlerError(error))
 
         return False
+
+    def status(self) -> str:
+        """Return current handler status string
+
+        Returns:
+            str: Handler status string.
+        """
+
+        return "FTPCopyFileHandler\n"

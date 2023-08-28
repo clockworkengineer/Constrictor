@@ -117,6 +117,18 @@ class Engine:
         """Return engine configuration.
         """
         return self.__engine_config
+    
+    def return_watcher(self, watcher_name: str) -> Watcher:
+        """Is a named watcher running ?
+
+        Args:
+            watcher_name (str):  Watcher name.
+
+        Returns:
+            bool: true if watcher currently running
+        """
+
+        return self.__engine_watchers[watcher_name]
 
     def save_config(self) -> None:
         """Save current configuration away to JSON file.
