@@ -134,4 +134,4 @@ class FTPCopyFileHandler(IHandler):
             str: Handler status string.
         """
 
-        return "FTPCopyFileHandler\n"
+        return "Files processed = " + str(self.files_processed) + "\n"

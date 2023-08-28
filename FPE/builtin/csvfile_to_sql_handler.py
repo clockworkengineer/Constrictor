@@ -126,7 +126,6 @@ class CSVFileToSQLHandler(IHandler):
                 database.close()
 
         return success
-    
 
     def status(self) -> str:
         """Return current handler status string
@@ -134,5 +133,5 @@ class CSVFileToSQLHandler(IHandler):
         Returns:
             str: Handler status string.
         """
-        
-        return "CSVFileToSQLHandler\n"
+
+        return "Files processed = " + str(self.files_processed) + "\n"

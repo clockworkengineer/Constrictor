@@ -95,12 +95,11 @@ class CopyFileHandler(IHandler):
 
         return False
 
-
     def status(self) -> str:
         """Return current handler status string
 
         Returns:
             str: Handler status string.
         """
-        
-        return "CopyFileHandler\n"
+
+        return "Files processed = " + str(self.files_processed) + "\n"

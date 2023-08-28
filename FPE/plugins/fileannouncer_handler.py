@@ -37,7 +37,7 @@ class FileAnnouncerHandler(IHandler):
             str: Handler status string.
         """
 
-        return "FileAnnouncerHandler\n"
+        return "Files processed = " + str(self.files_processed) + "\n"
 
 
 def register() -> None:
