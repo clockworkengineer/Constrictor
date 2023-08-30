@@ -49,9 +49,7 @@ class CopyFileHandler(IHandler):
 
         Handler.set_mandatory_config(self, handler_config)
 
-        self.destination = handler_config[CONFIG_DESTINATION]
-
-        self.destination = Handler.setup_path(self.destination)
+        self.destination = Handler.setup_path(handler_config[CONFIG_DESTINATION])
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Copy file from source(watch) directory to destination directory.
