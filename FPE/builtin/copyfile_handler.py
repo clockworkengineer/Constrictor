@@ -15,15 +15,6 @@ from core.error import FPEError
 class CopyFileHandlerError(FPEError):
     """An error occurred in the CopyFile handler."""
 
-    def __init__(self, message) -> None:
-        """CopyFileHandler error.
-
-        Args:
-            message (str): Exception message.
-        """
-        self.message = message
-        super().__init__(self.message)
-
     def __str__(self) -> str:
         return "CopyFileHandler Error: " + self.message
 

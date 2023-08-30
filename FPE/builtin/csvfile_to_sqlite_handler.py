@@ -16,15 +16,6 @@ from core.error import FPEError
 class CSVFileToSQLiteHandlerError(FPEError):
     """An error occurred in the CSVFileToSQLite handler."""
 
-    def __init__(self, message) -> None:
-        """CSVFileToSQLite handler error.
-
-        Args:
-            message (str): Exception message.
-        """
-        self.message = message
-        super().__init__(self.message)
-
     def __str__(self) -> str:
         return "CSVFileToSQLiteHandler Error: " + self.message
 

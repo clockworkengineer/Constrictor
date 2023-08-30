@@ -14,16 +14,7 @@ from core.error import FPEError
 
 
 class FactoryError(FPEError):
-    """An error occurred in the watcher handler factory.
-    """
-
-    def __init__(self, message: str) -> None:
-        """Create factory exception.
-
-        Args:
-            message (str): Exception message.
-        """
-        self.message = message
+    """An error occurred in the watcher handler factory."""
 
     def __str__(self) -> str:
         """Return string for exception.
@@ -35,8 +26,7 @@ class FactoryError(FPEError):
 
 
 class Factory:
-    """Factory to create watcher handlers.
-    """
+    """Factory to create watcher handlers."""
 
     # Watcher handler creation function dictionary
 
@@ -55,7 +45,7 @@ class Factory:
         """
 
         if handler_type == "":
-            raise FactoryError("Invalid handler type (\"\").")
+            raise FactoryError('Invalid handler type ("").')
 
         if handler_fn is None:
             raise FactoryError("None not allowed for handler function.")
@@ -73,8 +63,7 @@ class Factory:
             FactoryError: An error occurred whilst trying to use watcher factory.
         """
         if handler_type not in Factory.__handler_creation_funcs:
-            raise FactoryError(
-                "Cannot unregister handler not in factory.")
+            raise FactoryError("Cannot unregister handler not in factory.")
 
         Factory.__handler_creation_funcs.pop(handler_type, None)
 
@@ -93,15 +82,13 @@ class Factory:
         """
 
         if len(Factory.__handler_creation_funcs) == 0:
-            raise FactoryError(
-                "Factory does not contain any registered handlers.")
+            raise FactoryError("Factory does not contain any registered handlers.")
 
         handler_type = handler_config[CONFIG_TYPE]
         try:
             creator_func = Factory.__handler_creation_funcs[handler_type]
         except KeyError as error:
-            raise FactoryError(
-                f"Unknown handler type '{handler_type}'.") from error
+            raise FactoryError(f"Unknown handler type '{handler_type}'.") from error
 
         return creator_func(handler_config)
 
@@ -116,6 +103,5 @@ class Factory:
 
     @staticmethod
     def clear() -> None:
-        """Clear watch handler type list.
-        """
+        """Clear watch handler type list."""
         Factory.__handler_creation_funcs.clear()

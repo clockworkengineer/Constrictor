@@ -9,8 +9,13 @@ import json
 import logging
 from typing import Any
 
-from core.constants import CONFIG_WATCHERS, CONFIG_NOGUI, CONFIG_FILENAME, CONFIG_MANDATORY_KEYS, \
-    CONFIG_WATCHER_MANDATORY_KEYS
+from core.constants import (
+    CONFIG_WATCHERS,
+    CONFIG_NOGUI,
+    CONFIG_FILENAME,
+    CONFIG_MANDATORY_KEYS,
+    CONFIG_WATCHER_MANDATORY_KEYS,
+)
 from core.error import FPEError
 from core.arguments import Arguments
 
@@ -18,16 +23,7 @@ ConfigDict = dict[str, Any]
 
 
 class ConfigError(FPEError):
-    """An error occurred whilst processing FPE configuration file.
-    """
-
-    def __init__(self, message: str) -> None:
-        """Create config exception.
-
-        Args:
-            message (str): Exception message.
-        """
-        self.message = message
+    """An error occurred whilst processing FPE configuration file."""
 
     def __str__(self) -> str:
         """Return string for exception.
@@ -39,8 +35,7 @@ class ConfigError(FPEError):
 
 
 class Config:
-    """ Load JSON configuration into a dictionary and validate it.
-    """
+    """Load JSON configuration into a dictionary and validate it."""
 
     def __init__(self, arguments: Arguments) -> None:
         """Load JSON configuration file to be processed.
@@ -65,8 +60,7 @@ class Config:
             raise ConfigError(error) from error
 
     def validate(self) -> None:
-        """Validate config file.
-        """
+        """Validate config file."""
 
         # Must contain 'plugins' and 'watchers' key entries
 
@@ -82,13 +76,14 @@ class Config:
                     raise ConfigError(f"Missing config '{key}' key")
 
     def set_logging(self) -> None:
-        """Set type of logging to be used.
-        """
+        """Set type of logging to be used."""
 
         # Default logging parameters
 
-        logging_params: dict[str, Any] = {"level": logging.INFO,
-                                          "format": "%(asctime)s:%(message)s"}
+        logging_params: dict[str, Any] = {
+            "level": logging.INFO,
+            "format": "%(asctime)s:%(message)s",
+        }
 
         # Read in any logging options, merge with default
 

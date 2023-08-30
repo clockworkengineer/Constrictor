@@ -8,6 +8,15 @@ class FPEError(Exception):
     """An error occurred in the FPE.
     """
 
+    def __init__(self, message) -> None:
+        """CopyFileHandler error.
+
+        Args:
+            message (str): Exception message.
+        """
+        
+        self.message = message
+        
     @staticmethod
     def error_prefix(component: str) -> str:
         """Prefix application name and component to passed in string.

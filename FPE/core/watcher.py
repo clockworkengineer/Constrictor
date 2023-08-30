@@ -8,8 +8,13 @@ file creation events; the default abstraction using the watchdog library.
 import logging
 
 from core.observers.watchdog_observer import WatchdogObserver
-from core.constants import CONFIG_NAME, CONFIG_TYPE, CONFIG_EXITONFAILURE,\
-    CONFIG_DELETESOURCE, CONFIG_RECURSIVE
+from core.constants import (
+    CONFIG_NAME,
+    CONFIG_TYPE,
+    CONFIG_EXITONFAILURE,
+    CONFIG_DELETESOURCE,
+    CONFIG_RECURSIVE,
+)
 from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
 from core.config import ConfigDict
@@ -18,17 +23,7 @@ from core.error import FPEError
 
 
 class WatcherError(FPEError):
-    """An error occurred in directory/file watcher.
-    """
-
-    def __init__(self, message: str) -> None:
-        """Create watcher exception.
-
-        Args:
-            message (str): Exception message.
-        """
-
-        self.__message = message
+    """An error occurred in directory/file watcher."""
 
     def __str__(self) -> str:
         """Return string for exception.
@@ -37,12 +32,11 @@ class WatcherError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("Watcher") + self.__message
+        return FPEError.error_prefix("Watcher") + self.message
 
 
 class Watcher:
-    """Watch for files being copied into a folder and process.
-    """
+    """Watch for files being copied into a folder and process."""
 
     __handler: IHandler
     __observer: IObserver
@@ -62,7 +56,10 @@ class Watcher:
         try:
             logging.info("*" * 80)
             logging.info(
-                "%s Handler [%s] running...", handler_config['name'], handler_config['type'])
+                "%s Handler [%s] running...",
+                handler_config["name"],
+                handler_config["type"],
+            )
             for option in handler_config.keys():
                 if option != CONFIG_NAME and option != CONFIG_TYPE:
                     logging.info("%s = %s", option, handler_config[option])
@@ -81,7 +78,6 @@ class Watcher:
         """
 
         try:
-
             # None not a valid config
 
             if watcher_config is None:
@@ -121,8 +117,7 @@ class Watcher:
         return self.__running
 
     def start(self) -> None:
-        """Start watcher.
-        """
+        """Start watcher."""
 
         if self.__running:
             return
@@ -137,17 +132,15 @@ class Watcher:
             raise WatcherError("Could not create observer.")
 
     def stop(self) -> None:
-        """Stop watcher.
-        """
+        """Stop watcher."""
 
         if self.__observer is not None:
             self.__observer.stop()
             self.__observer = None  # type: ignore
             self.__running = False
-            
+
     def status(self) -> str:
-        """Return current watcher handler status.
-        """
+        """Return current watcher handler status."""
         return self.__handler.status()
 
     @property

@@ -24,15 +24,6 @@ from core.error import FPEError
 class WatchdogObserverError(FPEError):
     """An error occurred in directory/file watcher."""
 
-    def __init__(self, message: str) -> None:
-        """Create watcher exception.
-
-        Args:
-            message (str): Exception message.
-        """
-
-        self.__message = message
-
     def __str__(self) -> str:
         """Return string for exception.
 
@@ -40,7 +31,7 @@ class WatchdogObserverError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("WatchdogObserver") + self.__message
+        return FPEError.error_prefix("WatchdogObserver") + self.message
 
 
 class WatchdogObserver(FileSystemEventHandler, IObserver):

@@ -21,15 +21,6 @@ from core.error import FPEError
 class FTPCopyFileHandlerError(FPEError):
     """An error occurred in the FTPCopyFile handler."""
 
-    def __init__(self, message) -> None:
-        """FTPCopyFile handler error.
-
-        Args:
-            message (str): Exception message.
-        """
-        self.message = message
-        super().__init__(self.message)
-
     def __str__(self) -> str:
         return "FTPCopyFileHandler Error: " + self.message
 

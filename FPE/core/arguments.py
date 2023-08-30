@@ -16,16 +16,7 @@ from core.error import FPEError
 
 
 class ArgumentsError(FPEError):
-    """An error occurred in the program command line arguments.
-    """
-
-    def __init__(self, message: str) -> None:
-        """Create argument exception.
-
-        Args:
-            message (str): Exception message.
-        """
-        self.message = message
+    """An error occurred in the program command line arguments."""
 
     def __str__(self) -> str:
         """Return string for exception.
@@ -37,12 +28,11 @@ class ArgumentsError(FPEError):
 
 
 class Arguments:
-    """Extract arguments from command line and create arguments object.
-    """
+    """Extract arguments from command line and create arguments object."""
 
     # Parsed argument attributes
 
-    file: str   # Configuration file name
+    file: str  # Configuration file name
 
     def __init__(self, argv=None) -> None:
         """Load and parse command line into arguments object.
@@ -57,9 +47,11 @@ class Arguments:
         # Extract and parse arguments
 
         parser = argparse.ArgumentParser(
-            description="Process files copied into watch folder with a custom handler(s).")
-        parser.add_argument('--nogui', action='store_true',
-                            help="run FPE with no user interface")
+            description="Process files copied into watch folder with a custom handler(s)."
+        )
+        parser.add_argument(
+            "--nogui", action="store_true", help="run FPE with no user interface"
+        )
         parser.add_argument("file", help="JSON configuration file")
 
         arguments = parser.parse_args(argv)
