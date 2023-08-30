@@ -6,7 +6,6 @@ from PyQt6.QtWidgets import QMainWindow
 
 from ui.QtMainWindow_ui import Ui_fpe_main_window
 from core.engine import Engine
-from core.watcher import Watcher
 from core.constants import CONFIG_WATCHERS
 
 
@@ -15,10 +14,8 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
     def __display_config(self, row: int):
         watcher_config: str = self.fpe_engine.running_config()[CONFIG_WATCHERS][row]
-        watcher: Watcher = self.fpe_engine.return_watcher(watcher_config["name"])
         self.fpe_watcher_config_textedit.setPlainText(
-            "Watcher Config:\n" + json.dumps(watcher_config, indent=1) + "\n"
-            "Watcher Status:\n" + watcher.status()
+            json.dumps(watcher_config, indent=1)
         )
 
     def __set_start_stop_button_title(self, watcher_name: str) -> None:

@@ -62,7 +62,7 @@ class Handler:
         return str(source_path)[len(source_root) + 1 :]
 
     @staticmethod
-    def setup_path(directory_path: str) -> None:
+    def setup_path(directory_path: str) -> str:
         """Setup directory to be used by handler.
 
         Args:
@@ -71,6 +71,8 @@ class Handler:
         """
         directory_path = Handler.normalize_path(directory_path)
         Handler.create_path(pathlib.Path(directory_path))
+        
+        return directory_path
 
     @staticmethod
     def wait_for_copy_completion(source_path: pathlib.Path) -> None:
@@ -144,4 +146,4 @@ class Handler:
         ihandler.recursive = handler_config[CONFIG_RECURSIVE]
         ihandler.delete_source = handler_config[CONFIG_DELETESOURCE]
         
-        Handler.setup_path(ihandler.source)
+        ihandler.source = Handler.setup_path(ihandler.source)

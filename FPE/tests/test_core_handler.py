@@ -43,7 +43,7 @@ class TestCoreHandler:
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         if source_path.exists():
             source_path.rmdir()
-        Handler.setup_path(config[CONFIG_SOURCE])
+        _ = Handler.setup_path(config[CONFIG_SOURCE])
         assert source_path.exists()
         source_path.rmdir()
 
@@ -52,11 +52,11 @@ class TestCoreHandler:
         source_path: pathlib.Path = pathlib.Path(config[CONFIG_SOURCE])
         source_path.mkdir(parents=True, exist_ok=True)
         assert source_path.exists()
-        Handler.setup_path(config[CONFIG_SOURCE])
+        _ =Handler.setup_path(config[CONFIG_SOURCE])
         assert source_path.exists()
         source_path.rmdir()
 
     def test_core_handler_setup_path_with_invalid_config_key(self) -> None:
         config: ConfigDict = {CONFIG_SOURCE: "./watcher/source"}
         with pytest.raises(KeyError):
-            Handler.setup_path(config[CONFIG_DESTINATION])
+            _ = Handler.setup_path(config[CONFIG_DESTINATION])
