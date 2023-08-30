@@ -102,4 +102,4 @@ class CopyFileHandler(IHandler):
             str: Handler status string.
         """
 
-        return "Files processed = " + str(self.files_processed) + "\n"
+        return f"Files processed = {self.files_processed}\nSource  {self.source} \n"
