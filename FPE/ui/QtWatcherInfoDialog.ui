@@ -34,10 +34,18 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QPlainTextEdit" name="watcher_info_config_textedit"/>
+     <widget class="QPlainTextEdit" name="watcher_info_config_textedit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QPlainTextEdit" name="watcher_info_status_textedit"/>
+     <widget class="QPlainTextEdit" name="watcher_info_status_textedit">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item row="4" column="1">
      <widget class="QPushButton" name="watcher_info_refresh_button">

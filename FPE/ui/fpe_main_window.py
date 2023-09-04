@@ -1,13 +1,11 @@
 """FPE Qt based windows UI.
 """
 
-import json
-from PyQt6.QtWidgets import QMainWindow, QDialog
+from PyQt6.QtWidgets import QMainWindow
 
 from ui.QtMainWindow_ui import Ui_fpe_main_window
-from ui.QtWatcherInfoDialog_ui import Ui_QtWatcherInfoDialog
+from ui.fpe_watcher_info_dialog import WatcherInfoDialog
 from core.engine import Engine
-from core.constants import CONFIG_WATCHERS, CONFIG_NAME
 
 
 class MainWindow(QMainWindow, Ui_fpe_main_window):
@@ -16,7 +14,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
     def __display_info_dialog(self):
         info_dialog = WatcherInfoDialog(self.current_row, self.fpe_engine, self)
         info_dialog.show()
-        info_dialog.exec()
+        # info_dialog.exec()
 
     def __set_start_stop_button_title(self, watcher_name: str) -> None:
         """Set Start/Stop button depending on watchers running state.
@@ -66,7 +64,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         )
         self.fpe_engine.delete_watcher(watcher_name)
 
-    def __init__(self, fpe_engine: Engine, parent=None):
+    def __init__(self, fpe_engine: Engine, parent=None)-> None:
         """Main FPE UI window.
 
         Args:
@@ -95,27 +93,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
         self.fpe_running_watchers_list.addItems(fpe_engine.running_watchers_list())
 
-        self.fpe_running_watchers_list.setCurrentRow(0)
-
         self.current_row = 0
+        self.fpe_running_watchers_list.setCurrentRow(self.current_row)
 
-
-class WatcherInfoDialog(QDialog, Ui_QtWatcherInfoDialog):
-    """_summary_
-
-    Args:
-        QDialog (_type_): _description_
-        Ui_QtWatcherInfoDialog (_type_): _description_
-    """
-
-    def __init__(self, row: int, fpe_engine: Engine, parent=None):
-        super().__init__(parent)
-        self.setupUi(self)
-        self.setWindowTitle("Watcher Info")
-        self.watcher_info_config_textedit.setReadOnly(True)
-        self.watcher_info_status_textedit.setReadOnly(True)
-        watcher_config: str = fpe_engine.running_config()[CONFIG_WATCHERS][row]
-        self.watcher_info_config_textedit.setPlainText(json.dumps(watcher_config, indent=1))
-        self.watcher_info_status_textedit.setPlainText(
-            fpe_engine.return_watcher(watcher_config[CONFIG_NAME]).status()
-        )
+        
