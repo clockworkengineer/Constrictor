@@ -2,21 +2,21 @@
 """
 
 import json
-from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow, QDialog
 
 from ui.QtMainWindow_ui import Ui_fpe_main_window
+from ui.QtWatcherInfoDialog_ui import Ui_QtWatcherInfoDialog
 from core.engine import Engine
-from core.constants import CONFIG_WATCHERS
+from core.constants import CONFIG_WATCHERS, CONFIG_NAME
 
 
 class MainWindow(QMainWindow, Ui_fpe_main_window):
     """Main user interface window."""
 
-    def __display_config(self, row: int):
-        watcher_config: str = self.fpe_engine.running_config()[CONFIG_WATCHERS][row]
-        self.fpe_watcher_config_textedit.setPlainText(
-            json.dumps(watcher_config, indent=1)
-        )
+    def __display_info_dialog(self):
+        info_dialog = WatcherInfoDialog(self.current_row, self.fpe_engine, self)
+        info_dialog.show()
+        info_dialog.exec()
 
     def __set_start_stop_button_title(self, watcher_name: str) -> None:
         """Set Start/Stop button depending on watchers running state.
@@ -38,7 +38,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         """
 
         if row != -1:
-            self.__display_config(row)
+            self.current_row = row
             self.__set_start_stop_button_title(
                 watcher_name=self.fpe_running_watchers_list.currentItem().text()
             )
@@ -87,12 +87,35 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
         self.fpe_running_watcher_delete_button.clicked.connect(self.__delete_watcher)
 
+        self.fpe_running_watcher_info_button.clicked.connect(self.__display_info_dialog)
+
         self.fpe_running_watcher_save_button.clicked.connect(
             self.fpe_engine.save_config
         )
 
-        self.fpe_watcher_config_textedit.setReadOnly(True)
-
         self.fpe_running_watchers_list.addItems(fpe_engine.running_watchers_list())
 
         self.fpe_running_watchers_list.setCurrentRow(0)
+
+        self.current_row = 0
+
+
+class WatcherInfoDialog(QDialog, Ui_QtWatcherInfoDialog):
+    """_summary_
+
+    Args:
+        QDialog (_type_): _description_
+        Ui_QtWatcherInfoDialog (_type_): _description_
+    """
+
+    def __init__(self, row: int, fpe_engine: Engine, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.setWindowTitle("Watcher Info")
+        self.watcher_info_config.setReadOnly(True)
+        self.watcher_info_status.setReadOnly(True)
+        watcher_config: str = fpe_engine.running_config()[CONFIG_WATCHERS][row]
+        self.watcher_info_config.setPlainText(json.dumps(watcher_config, indent=1))
+        self.watcher_info_status.setPlainText(
+            fpe_engine.return_watcher(watcher_config[CONFIG_NAME]).status()
+        )
