@@ -112,10 +112,10 @@ class WatcherInfoDialog(QDialog, Ui_QtWatcherInfoDialog):
         super().__init__(parent)
         self.setupUi(self)
         self.setWindowTitle("Watcher Info")
-        self.watcher_info_config.setReadOnly(True)
-        self.watcher_info_status.setReadOnly(True)
+        self.watcher_info_config_textedit.setReadOnly(True)
+        self.watcher_info_status_textedit.setReadOnly(True)
         watcher_config: str = fpe_engine.running_config()[CONFIG_WATCHERS][row]
-        self.watcher_info_config.setPlainText(json.dumps(watcher_config, indent=1))
-        self.watcher_info_status.setPlainText(
+        self.watcher_info_config_textedit.setPlainText(json.dumps(watcher_config, indent=1))
+        self.watcher_info_status_textedit.setPlainText(
             fpe_engine.return_watcher(watcher_config[CONFIG_NAME]).status()
         )

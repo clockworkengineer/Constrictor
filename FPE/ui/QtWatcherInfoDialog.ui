@@ -23,7 +23,7 @@
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QFrame" name="frame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -33,24 +33,40 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QPlainTextEdit" name="watcher_info_config"/>
-    </item>
     <item row="1" column="1">
-     <widget class="QPlainTextEdit" name="watcher_info_status"/>
+     <widget class="QPlainTextEdit" name="watcher_info_config_textedit"/>
+    </item>
+    <item row="3" column="1">
+     <widget class="QPlainTextEdit" name="watcher_info_status_textedit"/>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="watcher_info_refresh_button">
+      <property name="text">
+       <string>Refresh</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLabel" name="watcher_info_config_label">
+      <property name="text">
+       <string>Config:</string>
+      </property>
+     </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QLabel" name="watcher_info_status_label">
       <property name="text">
-       <string>PushButton</string>
+       <string>Status:</string>
       </property>
      </widget>
     </item>
    </layout>
-   <zorder>watcher_info_status</zorder>
+   <zorder>watcher_info_status_textedit</zorder>
    <zorder>frame</zorder>
-   <zorder>watcher_info_config</zorder>
-   <zorder>pushButton</zorder>
+   <zorder>watcher_info_config_textedit</zorder>
+   <zorder>watcher_info_refresh_button</zorder>
+   <zorder>watcher_info_config_label</zorder>
+   <zorder>watcher_info_status_label</zorder>
   </widget>
  </widget>
  <resources/>
