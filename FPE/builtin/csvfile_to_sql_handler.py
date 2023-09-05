@@ -100,6 +100,7 @@ class CSVFileToSQLHandler(IHandler):
                         cursor.execute(sql_query, csv_row)
 
         except mysql.connector.Error as error:
+            self.errors += 1
             if self.exit_on_failure:
                 raise CSVFileToSQLHandlerError(error) from error
             else:
@@ -125,4 +126,4 @@ class CSVFileToSQLHandler(IHandler):
             str: Handler status string.
         """
 
-        return f"Files processed = {self.files_processed}\nSource = {self.source}\n"
+        return Handler.status(self)

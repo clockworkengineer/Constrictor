@@ -87,6 +87,7 @@ class CSVFileToSQLiteHandler(IHandler):
                         cursor.execute(sql_query, csv_row)
 
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
+            self.errors += 1
             if self.exit_on_failure:
                 raise CSVFileToSQLiteHandlerError(str(error)) from error
             else:
@@ -112,4 +113,4 @@ class CSVFileToSQLiteHandler(IHandler):
             str: Handler status string.
         """
 
-        return f"Files processed = {self.files_processed}\nSource = {self.source}\n"
+        return Handler.status(self)

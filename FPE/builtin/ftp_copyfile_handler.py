@@ -112,6 +112,7 @@ class FTPCopyFileHandler(IHandler):
 
         except all_errors as error:
             if self.exit_on_failure:
+                self.errors += 1
                 raise FTPCopyFileHandlerError(error) from error
             else:
                 logging.info(FTPCopyFileHandlerError(error))
@@ -125,4 +126,4 @@ class FTPCopyFileHandler(IHandler):
             str: Handler status string.
         """
 
-        return f"Files processed = {self.files_processed}\nSource = {self.source}\n"
+        return Handler.status(self)

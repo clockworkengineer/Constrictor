@@ -77,6 +77,7 @@ class CopyFileHandler(IHandler):
                 return True
 
         except (OSError, KeyError, ValueError) as error:
+            self.errors += 1
             if self.exit_on_failure:
                 raise CopyFileHandlerError(error) from error
             else:
@@ -91,4 +92,4 @@ class CopyFileHandler(IHandler):
             str: Handler status string.
         """
 
-        return f"Files processed = {self.files_processed}\nSource = {self.source}\n"
+        return Handler.status(self)

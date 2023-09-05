@@ -26,6 +26,7 @@ class FileAnnouncerHandler(IHandler):
 
         except OSError as error:
             logging.error("Error in handler %s : %s", self.name, error)
+            self.errors += 1
             return False
 
         return True
@@ -37,7 +38,7 @@ class FileAnnouncerHandler(IHandler):
             str: Handler status string.
         """
 
-        return f"Files processed = {self.files_processed}\nSource = {self.source}\n"
+        return Handler.status(self)
 
 
 def register() -> None:

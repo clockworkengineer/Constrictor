@@ -71,7 +71,7 @@ class Handler:
         """
         directory_path = Handler.normalize_path(directory_path)
         Handler.create_path(pathlib.Path(directory_path))
-        
+
         return directory_path
 
     @staticmethod
@@ -145,5 +145,17 @@ class Handler:
         ihandler.exit_on_failure = handler_config[CONFIG_EXITONFAILURE]
         ihandler.recursive = handler_config[CONFIG_RECURSIVE]
         ihandler.delete_source = handler_config[CONFIG_DELETESOURCE]
-        
+
         ihandler.source = Handler.setup_path(ihandler.source)
+
+    @staticmethod
+    def status(handler: IHandler) -> str:
+        """_summary_
+
+        Args:
+            handler (IHandler): _description_
+
+        Returns:
+            str: _description_
+        """
+        return f"Errors = {handler.errors}\nFiles processed = {handler.files_processed}\nSource = {handler.source}\n"
