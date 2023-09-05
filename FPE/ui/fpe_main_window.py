@@ -41,7 +41,6 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
                 watcher_name=self.fpe_running_watchers_list.currentItem().text()
             )
         else:
-            self.fpe_watcher_config_textedit.setPlainText("")
             self.fpe_running_watcher_start_stop_button.setEnabled(False)
             self.fpe_running_watcher_delete_button.setEnabled(False)
 
