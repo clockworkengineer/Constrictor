@@ -5,7 +5,6 @@ from core.arguments import Arguments, ArgumentsError
 
 
 class TestCoreArguments:
-
     def test_arguments_with_existing_json_file(self) -> None:
         config_file = json_file_source("test_valid.json")
         arg = Arguments([config_file])

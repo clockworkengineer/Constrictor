@@ -7,9 +7,7 @@ from typing import Protocol
 
 
 class IPlugin(Protocol):
-    """Plugin interface.
-    """
+    """Plugin interface."""
 
     def register(self) -> None:
-        """Register the necessary items in the watcher handler factory.
-        """
+        """Register the necessary items in the watcher handler factory."""

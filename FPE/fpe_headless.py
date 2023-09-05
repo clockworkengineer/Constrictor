@@ -6,8 +6,7 @@ import time
 
 
 def fpe_headless() -> None:
-    """Run FPE without a user interface.
-    """
+    """Run FPE without a user interface."""
     try:
         logging.info("Running with no user interface.")
         while True:

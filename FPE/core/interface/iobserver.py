@@ -8,13 +8,10 @@ from typing import Protocol
 
 
 class IObserver(Protocol):
-    """Interface for watcher file handler.
-    """
+    """Interface for watcher file handler."""
 
     def start(self) -> None:
-        """Start observer.
-        """
+        """Start observer."""
 
     def stop(self) -> None:
-        """Stop observer.
-        """
+        """Stop observer."""

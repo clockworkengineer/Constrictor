@@ -20,7 +20,9 @@ CONFIG_NOGUI: Final[str] = "nogui"
 CONFIG_RECURSIVE: Final[str] = "recursive"
 CONFIG_EXITONFAILURE: Final[str] = "exitonfailure"
 CONFIG_FILES_PROCESSED: Final[str] = "processed"
-CONFIG_MANDATORY_KEYS: Final[Tuple[str, ...]] = (
-    CONFIG_PLUGINS, CONFIG_WATCHERS)
+CONFIG_MANDATORY_KEYS: Final[Tuple[str, ...]] = (CONFIG_PLUGINS, CONFIG_WATCHERS)
 CONFIG_WATCHER_MANDATORY_KEYS: Final[Tuple[str, ...]] = (
-    CONFIG_NAME, CONFIG_TYPE, CONFIG_SOURCE)
+    CONFIG_NAME,
+    CONFIG_TYPE,
+    CONFIG_SOURCE,
+)

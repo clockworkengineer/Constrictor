@@ -11,7 +11,6 @@ def reset_factory():
 
 
 class TestCorePlugin:
-
     def test_plugin_load_with_none(self, reset_factory) -> None:
         with pytest.raises(PluginLoaderError):
             PluginLoader.load(None)  # type: ignore

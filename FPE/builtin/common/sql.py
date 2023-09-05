@@ -4,7 +4,9 @@
 import logging
 
 
-def generate(param_style: str, table_name: str, key_name: str, row_fields: [str]) -> str:
+def generate(
+    param_style: str, table_name: str, key_name: str, row_fields: [str]
+) -> str:
     """Generate SQL for update/insert row of fields.
 
     Args:

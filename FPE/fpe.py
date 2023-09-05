@@ -52,11 +52,9 @@ __status__ = "Pre-Alpha"
 
 
 def fpe() -> None:
-    """Main program entry point.
-    """
+    """Main program entry point."""
 
     try:
-
         # Load configuration file, validate and set logging.
 
         fpe_config: Config = Config(Arguments())

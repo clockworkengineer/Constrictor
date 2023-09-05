@@ -13,5 +13,5 @@ fpe_handler_list: dict[str, Callable[..., IHandler]] = {
     "CopyFile": CopyFileHandler,
     "FTPCopyFile": FTPCopyFileHandler,
     "CSVFileToSQLite": CSVFileToSQLiteHandler,
-    "CSVFileToSQL": CSVFileToSQLHandler
+    "CSVFileToSQL": CSVFileToSQLHandler,
 }

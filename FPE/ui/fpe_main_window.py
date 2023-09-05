@@ -63,7 +63,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         )
         self.fpe_engine.delete_watcher(watcher_name)
 
-    def __init__(self, fpe_engine: Engine, parent=None)-> None:
+    def __init__(self, fpe_engine: Engine, parent=None) -> None:
         """Main FPE UI window.
 
         Args:
@@ -94,5 +94,3 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
         self.current_row = 0
         self.fpe_running_watchers_list.setCurrentRow(self.current_row)
-
-        
