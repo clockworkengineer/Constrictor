@@ -14,7 +14,6 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
     def __display_info_dialog(self):
         info_dialog = WatcherInfoDialog(self.current_row, self.fpe_engine, self)
         info_dialog.show()
-        # info_dialog.exec()
 
     def __set_start_stop_button_title(self, watcher_name: str) -> None:
         """Set Start/Stop button depending on watchers running state.
