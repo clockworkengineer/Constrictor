@@ -57,7 +57,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
 
         self.__queue = Queue()
-        self.__thread = Thread(target=self.__process)
+        self.__thread = Thread(target=self.__process, name=watcher_handler.name)
         self.__thread.daemon = True
         self.__thread.start()
 
