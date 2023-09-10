@@ -8,6 +8,7 @@ calls for added directories.
 """
 
 import logging
+from typing import Callable
 import pathlib
 import time
 from threading import Thread
@@ -42,8 +43,9 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
     __queue: Queue
     __thread: Thread
     __observer: Observer
-
-    def __init__(self, watcher_handler: IHandler) -> None:
+    __engine_watcher_failure_callback: Callable[..., None] = None
+    
+    def __init__(self, watcher_handler: IHandler, failure_callback_fn: Callable[..., None]= None) -> None:
         """Initialise watcher handler adapter.
 
         Args:
@@ -52,6 +54,8 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         super().__init__()
 
+        self.__engine_watcher_failure_callback =  failure_callback_fn
+            
         self.__watcher_handler = watcher_handler
 
         self.__root_path = pathlib.Path(self.__watcher_handler.source)

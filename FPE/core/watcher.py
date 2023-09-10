@@ -6,6 +6,7 @@ file creation events; the default abstraction using the watchdog library.
 """
 
 import logging
+from typing import Callable
 
 from core.observers.watchdog_observer import WatchdogObserver
 from core.constants import (
@@ -41,7 +42,8 @@ class Watcher:
     __handler: IHandler
     __observer: IObserver
     __running: bool
-
+    __engine_watcher_failure_callback: Callable[..., None] = None
+    
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
         """Display watcher handler details and parameters.
@@ -67,7 +69,7 @@ class Watcher:
         except IOError as error:
             raise WatcherError(error) from error
 
-    def __init__(self, watcher_config: ConfigDict) -> None:
+    def __init__(self, watcher_config: ConfigDict, failure_callback_fn: Callable[..., None]= None) -> None:
         """Initialise directory/file watcher.
 
         Args:
@@ -102,6 +104,8 @@ class Watcher:
                 self.__observer = None  # type: ignore
 
             self.__running = False
+            
+            self.__engine_watcher_failure_callback =  failure_callback_fn
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
@@ -123,7 +127,7 @@ class Watcher:
             return
 
         if self.__observer is None:
-            self.__observer = WatchdogObserver(self.__handler)
+            self.__observer = WatchdogObserver(self.__handler, self.__engine_watcher_failure_callback)
 
         if self.__observer is not None:
             self.__observer.start()
