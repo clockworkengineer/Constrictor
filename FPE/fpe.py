@@ -65,11 +65,7 @@ def fpe() -> None:
 
         fpe_engine: Engine = Engine(fpe_config.get_config())
 
-        # Create and startup watchers
-
-        fpe_engine.startup()
-
-        logging.info("File Processing Engine Started.")
+        logging.info("File Processing Engine Starteding ...")
 
         # Run with selected user interface
 

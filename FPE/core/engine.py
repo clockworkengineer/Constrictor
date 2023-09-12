@@ -1,6 +1,7 @@
 """FPE controller engine.
 """
 
+import logging
 import json
 from typing import Callable
 
@@ -97,6 +98,8 @@ class Engine:
 
         for watcher_name, _ in self.__engine_watchers.items():
             self.start_watcher(watcher_name)
+            
+        logging.info("File Processing Engine started.")
 
     def shutdown(self) -> None:
         """Shutdown watchers created by engine."""

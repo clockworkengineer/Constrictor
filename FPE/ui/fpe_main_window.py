@@ -74,6 +74,8 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.setupUi(self)
 
         self.fpe_engine = fpe_engine
+        
+        self.fpe_engine.startup()
 
         self.fpe_running_watchers_list.currentRowChanged.connect(self.__row_changed)
 
@@ -93,3 +95,5 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
         self.current_row = 0
         self.fpe_running_watchers_list.setCurrentRow(self.current_row)
+        
+        
