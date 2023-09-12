@@ -4,8 +4,10 @@
 import logging
 import time
 
+from core.engine import Engine
 
-def fpe_headless() -> None:
+
+def fpe_headless(fpe_engine: Engine) -> None:
     """Run FPE without a user interface."""
     try:
         logging.info("Running with no user interface.")

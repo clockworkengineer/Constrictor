@@ -74,7 +74,7 @@ def fpe() -> None:
         # Run with selected user interface
 
         if fpe_config.get_config()[CONFIG_NOGUI]:
-            fpe_headless()
+            fpe_headless(fpe_engine)
         else:
             fpe_windowed(fpe_engine)
 

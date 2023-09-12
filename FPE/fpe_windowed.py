@@ -16,7 +16,7 @@ def fpe_windowed(fpe_engine: Engine) -> None:
         fpe_engine (Engine): FPE control engine.
     """
 
-    logging.info("Running with a user interface.")
+    logging.info("Running with a windowed user interface.")
     qt_app = QApplication(sys.argv)
     fpe_gui = MainWindow(fpe_engine)
     fpe_gui.show()
