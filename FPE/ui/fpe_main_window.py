@@ -64,7 +64,6 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
 
     def __watcher_failure_callback(self, watcher_name: str) -> None:
         self.fpe_engine.stop_watcher(watcher_name)
-        # self.__set_start_stop_button_title(watcher_name)
 
     def __init__(self, fpe_engine: Engine, parent=None) -> None:
         """Main FPE UI window.

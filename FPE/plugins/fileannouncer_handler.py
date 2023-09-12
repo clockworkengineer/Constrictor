@@ -8,6 +8,14 @@ from core.interface.ihandler import IHandler
 from core.config import ConfigDict
 from core.factory import Factory
 from core.handler import Handler
+from core.error import FPEError
+
+
+class FileAnnouncerError(FPEError):
+    """An error occurred in the File Announcer handler."""
+
+    def __str__(self) -> str:
+        return "CopyFileHandler Error: " + self.message
 
 
 class FileAnnouncerHandler(IHandler):
@@ -25,7 +33,7 @@ class FileAnnouncerHandler(IHandler):
             logging.info("File %s.", source_path)
 
         except OSError as error:
-            logging.error("Error in handler %s : %s", self.name, error)
+            logging.info(FileAnnouncerError(error))
             self.errors += 1
             return False
 
