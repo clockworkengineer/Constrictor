@@ -11,7 +11,7 @@ from core.handler import Handler
 from core.error import FPEError
 
 
-class FileAnnouncerError(FPEError):
+class FileAnnouncerHandlerError(FPEError):
     """An error occurred in the File Announcer handler."""
 
     def __str__(self) -> str:
@@ -33,7 +33,7 @@ class FileAnnouncerHandler(IHandler):
             logging.info("File %s.", source_path)
 
         except OSError as error:
-            logging.info(FileAnnouncerError(error))
+            logging.info(FileAnnouncerHandlerError(error))
             self.errors += 1
             return False
 
