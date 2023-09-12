@@ -88,10 +88,7 @@ class CSVFileToSQLiteHandler(IHandler):
 
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
             self.errors += 1
-            if self.exit_on_failure:
-                raise CSVFileToSQLiteHandlerError(str(error)) from error
-            else:
-                logging.info(CSVFileToSQLiteHandlerError(str(error)))
+            logging.info(CSVFileToSQLiteHandlerError(str(error)))
             database = None
             success = False
 

@@ -44,8 +44,10 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
     __thread: Thread
     __observer: Observer
     __engine_watcher_failure_callback: Callable[..., None] = None
-    
-    def __init__(self, watcher_handler: IHandler, failure_callback_fn: Callable[..., None]= None) -> None:
+
+    def __init__(
+        self, watcher_handler: IHandler, failure_callback_fn: Callable[..., None] = None
+    ) -> None:
         """Initialise watcher handler adapter.
 
         Args:
@@ -54,8 +56,8 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         super().__init__()
 
-        self.__engine_watcher_failure_callback =  failure_callback_fn
-            
+        self.__engine_watcher_failure_callback = failure_callback_fn
+
         self.__watcher_handler = watcher_handler
 
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
@@ -87,6 +89,13 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
                         self.__watcher_handler.files_processed += 1
                         if self.__watcher_handler.delete_source:
                             Handler.remove_source(self.__root_path, source_path)
+                    else:
+                        if self.__engine_watcher_failure_callback is not None:
+                            self.__engine_watcher_failure_callback(
+                                self.__watcher_handler.name
+                            )
+                        if self.__watcher_handler.exit_on_failure:
+                            return
 
     def on_created(self, event) -> None:
         """On file created event.

@@ -78,10 +78,7 @@ class CopyFileHandler(IHandler):
 
         except (OSError, KeyError, ValueError) as error:
             self.errors += 1
-            if self.exit_on_failure:
-                raise CopyFileHandlerError(error) from error
-            else:
-                logging.info(CopyFileHandlerError(error))
+            logging.info(CopyFileHandlerError(error))
 
         return False
 

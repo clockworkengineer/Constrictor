@@ -111,11 +111,8 @@ class FTPCopyFileHandler(IHandler):
             return False
 
         except all_errors as error:
-            if self.exit_on_failure:
-                self.errors += 1
-                raise FTPCopyFileHandlerError(error) from error
-            else:
-                logging.info(FTPCopyFileHandlerError(error))
+            self.errors += 1
+            logging.info(FTPCopyFileHandlerError(error))
 
         return False
 

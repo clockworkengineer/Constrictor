@@ -1,6 +1,5 @@
 import pytest
 import pathlib
-import shutil
 
 from tests.common import (
     create_test_file,

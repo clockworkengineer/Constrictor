@@ -44,7 +44,9 @@ class Engine:
         Args:
             watcher_config (ConfigDict): Watcher configuration.
         """
-        current_watcher = Watcher(watcher_config, self.__engine_watcher_failure_callback)
+        current_watcher = Watcher(
+            watcher_config, self.__engine_watcher_failure_callback
+        )
         if current_watcher is not None:
             self.__engine_watchers[watcher_config[CONFIG_NAME]] = current_watcher
 
@@ -98,7 +100,7 @@ class Engine:
 
         for watcher_name, _ in self.__engine_watchers.items():
             self.start_watcher(watcher_name)
-            
+
         logging.info("File Processing Engine started.")
 
     def shutdown(self) -> None:
