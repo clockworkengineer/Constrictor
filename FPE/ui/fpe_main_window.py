@@ -63,7 +63,15 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
         self.fpe_engine.delete_watcher(watcher_name)
 
     def __watcher_failure_callback(self, watcher_name: str) -> None:
-        self.fpe_engine.stop_watcher(watcher_name)
+        """_summary_
+
+        Args:
+            watcher_name (str): _description_
+        """
+        if self.fpe_engine.is_watcher_running(watcher_name):
+            self.fpe_engine.stop_watcher(watcher_name)
+            if watcher_name == self.fpe_running_watchers_list.currentItem().text():
+                self.fpe_running_watcher_start_stop_button.setText("Start")
 
     def __init__(self, fpe_engine: Engine, parent=None) -> None:
         """Main FPE UI window.

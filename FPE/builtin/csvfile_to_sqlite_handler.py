@@ -17,7 +17,7 @@ class CSVFileToSQLiteHandlerError(FPEError):
     """An error occurred in the CSVFileToSQLite handler."""
 
     def __str__(self) -> str:
-        return "CSVFileToSQLiteHandler Error: " + self.message
+        return "CSVFileToSQLiteHandler Error: "  + str(self.message)
 
 
 class CSVFileToSQLiteHandler(IHandler):

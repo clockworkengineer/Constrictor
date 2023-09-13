@@ -1,5 +1,6 @@
 """FPE base error.
 """
+from typing import Any
 
 from core.constants import APP_NAME
 
@@ -7,7 +8,7 @@ from core.constants import APP_NAME
 class FPEError(Exception):
     """An error occurred in the FPE."""
 
-    def __init__(self, message) -> None:
+    def __init__(self, message: Any) -> None:
         """CopyFileHandler error.
 
         Args:

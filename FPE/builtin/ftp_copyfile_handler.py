@@ -22,7 +22,7 @@ class FTPCopyFileHandlerError(FPEError):
     """An error occurred in the FTPCopyFile handler."""
 
     def __str__(self) -> str:
-        return "FTPCopyFileHandler Error: " + self.message
+        return "FTPCopyFileHandler Error: " + str(self.message)
 
 
 class FTPCopyFileHandler(IHandler):
