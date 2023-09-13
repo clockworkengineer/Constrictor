@@ -16,7 +16,7 @@ class PluginLoaderError(FPEError):
         Returns:
             str: Exception string.
         """
-        return FPEError.error_prefix("Plugin") + self.message
+        return FPEError.error_prefix("Plugin") + self.error
 
 
 class PluginLoader:

@@ -16,7 +16,7 @@ class CopyFileHandlerError(FPEError):
     """An error occurred in the CopyFile handler."""
 
     def __str__(self) -> str:
-        return "CopyFileHandler Error: " + str(self.message)
+        return "CopyFileHandler Error: " + str(self.error)
 
 
 class CopyFileHandler(IHandler):

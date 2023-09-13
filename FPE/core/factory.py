@@ -22,7 +22,7 @@ class FactoryError(FPEError):
         Returns:
             str: Exception string.
         """
-        return FPEError.error_prefix("Factory") + self.message
+        return FPEError.error_prefix("Factory") + self.error
 
 
 class Factory:

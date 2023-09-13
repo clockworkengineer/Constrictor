@@ -15,7 +15,7 @@ class FileAnnouncerHandlerError(FPEError):
     """An error occurred in the File Announcer handler."""
 
     def __str__(self) -> str:
-        return "CopyFileHandler Error: " + str(self.message)
+        return "CopyFileHandler Error: " + str(self.error)
 
 
 class FileAnnouncerHandler(IHandler):

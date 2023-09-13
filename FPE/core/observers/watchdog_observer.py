@@ -32,7 +32,7 @@ class WatchdogObserverError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("WatchdogObserver") + self.message
+        return FPEError.error_prefix("WatchdogObserver") + self.error
 
 
 class WatchdogObserver(FileSystemEventHandler, IObserver):
@@ -90,12 +90,12 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
                         if self.__watcher_handler.delete_source:
                             Handler.remove_source(self.__root_path, source_path)
                     else:
-                        if self.__engine_watcher_failure_callback is not None:
-                            self.__engine_watcher_failure_callback(
-                                self.__watcher_handler.name
-                            )
                         if self.__watcher_handler.exit_on_failure:
-                            return
+                            if self.__engine_watcher_failure_callback is not None:
+                                self.__engine_watcher_failure_callback(
+                                    self.__watcher_handler.name
+                                )
+                                return
 
     def on_created(self, event) -> None:
         """On file created event.

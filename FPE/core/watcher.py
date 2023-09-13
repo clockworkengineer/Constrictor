@@ -33,7 +33,7 @@ class WatcherError(FPEError):
             str: Exception string.
         """
 
-        return FPEError.error_prefix("Watcher") + self.message
+        return FPEError.error_prefix("Watcher") + self.error
 
 
 class Watcher:

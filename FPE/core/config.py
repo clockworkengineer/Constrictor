@@ -31,7 +31,7 @@ class ConfigError(FPEError):
         Returns:
             str: Exception string.
         """
-        return FPEError.error_prefix("Config") + self.message
+        return FPEError.error_prefix("Config") + self.error
 
 
 class Config:

@@ -24,7 +24,7 @@ class ArgumentsError(FPEError):
         Returns:
             str: Exception string.
         """
-        return FPEError.error_prefix("Arguments") + self.message
+        return FPEError.error_prefix("Arguments") + self.error
 
 
 class Arguments:

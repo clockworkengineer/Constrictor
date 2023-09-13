@@ -8,13 +8,13 @@ from core.constants import APP_NAME
 class FPEError(Exception):
     """An error occurred in the FPE."""
 
-    def __init__(self, message: Any) -> None:
+    def __init__(self, error: Any) -> None:
         """CopyFileHandler error.
 
         Args:
             message (str): Exception message.
         """
-        self.message = message
+        self.error = error
 
     @staticmethod
     def error_prefix(component: str) -> str:

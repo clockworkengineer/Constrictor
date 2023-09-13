@@ -1,68 +1,68 @@
 {
- "plugins": [
-  "plugins.fileannouncer_handler"
- ],
- "watchers": [
-  {
-   "name": "Directory Watcher 1",
-   "type": "CopyFile",
-   "source": ".\\watcher\\source1\\",
-   "destination": ".\\watcher\\destination1\\",
-   "deletesource": true,
-   "exitonfailure": true,
-   "recursive": false
-  },
-  {
-   "name": "Directory Watcher 2",
-   "type": "FTPCopyFile",
-   "source": ".\\watcher\\source2\\",
-   "destination": "Downloads",
-   "deletesource": true,
-   "exitonfailure": true,
-   "recursive": false,
-   "server": "",
-   "user": "",
-   "password": ""
-  },
-  {
-   "name": "Directory Watcher 3",
-   "type": "CSVFileToSQLite",
-   "source": ".\\watcher\\source3\\",
-   "deletesource": true,
-   "exitonfailure": false,
-   "recursive": false,
-   "databasefile": "C:\\Projects\\Constrictor\\FPE\\sqlite\\users.sqlite",
-   "key": "id",
-   "table": "details"
-  },
-  {
-   "name": "Directory Watcher 4",
-   "type": "CSVFileToSQL",
-   "source": ".\\watcher\\source4\\",
-   "deletesource": true,
-   "exitonfailure": false,
-   "recursive": false,
-   "server": "",
-   "port": "",
-   "user": "",
-   "password": "",
-   "database": "mysql",
-   "key": "",
-   "table": "details"
-  },
-  {
-   "name": "Directory Watcher 5",
-   "type": "FileAnnouncer",
-   "source": ".\\watcher\\source5\\",
-   "deletesource": true,
-   "exitonfailure": false,
-   "recursive": false
-  }
- ],
- "logging": {
-  "filename": ".\\fpe.log",
-  "filemode": "a",
-  "level": 10,
-  "format": "%(asctime)s:%(message)s"
- }
+    "plugins": [
+        "plugins.fileannouncer_handler"
+    ],
+    "watchers": [
+        {
+            "name": "Directory Watcher 1",
+            "type": "CopyFile",
+            "source": ".\\watcher\\source1\\",
+            "destination": ".\\watcher\\destination1\\",
+            "deletesource": true,
+            "exitonfailure": true,
+            "recursive": false
+        },
+        {
+            "name": "Directory Watcher 2",
+            "type": "FTPCopyFile",
+            "source": ".\\watcher\\source2\\",
+            "destination": "Downloads",
+            "deletesource": true,
+            "exitonfailure": true,
+            "recursive": false,
+            "server": "",
+            "user": "",
+            "password": ""
+        },
+        {
+            "name": "Directory Watcher 3",
+            "type": "CSVFileToSQLite",
+            "source": ".\\watcher\\source3\\",
+            "deletesource": true,
+            "exitonfailure": false,
+            "recursive": false,
+            "databasefile": "C:\\Projects\\Constrictor\\FPE\\sqlite\\users.sqlite",
+            "key": "id",
+            "table": "details"
+        },
+        {
+            "name": "Directory Watcher 4",
+            "type": "CSVFileToSQL",
+            "source": ".\\watcher\\source4\\",
+            "deletesource": true,
+            "exitonfailure": false,
+            "recursive": false,
+            "server": "",
+            "port": "",
+            "user": "",
+            "password": "",
+            "database": "mysql",
+            "key": "",
+            "table": "details"
+        },
+        {
+            "name": "Directory Watcher 5",
+            "type": "FileAnnouncer",
+            "source": ".\\watcher\\source5\\",
+            "deletesource": true,
+            "exitonfailure": false,
+            "recursive": false
+        }
+    ],
+    "logging": {
+        "filename": ".\\fpe.log",
+        "filemode": "a",
+        "level": 10,
+        "format": "%(asctime)s:%(message)s"
+    }
 }
