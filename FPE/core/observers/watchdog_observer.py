@@ -63,7 +63,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
 
         self.__queue = Queue()
-        self.__thread = Thread(target=self.__process, name=watcher_handler.name)
+        self.__thread = Thread(target=self.__event_queue_thread, name=watcher_handler.name)
         self.__thread.daemon = True
         self.__thread.start()
 
@@ -74,7 +74,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
             recursive=self.__watcher_handler.recursive,
         )
 
-    def __process(self):
+    def __event_queue_thread(self):
         while True:
             time.sleep(0.1)
             try:
@@ -106,47 +106,6 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         logging.debug("on_created %s.", event.src_path)
         self.__queue.put(event)
-
-    def on_moved(self, event):
-        """On file moved event.
-
-        Args:
-            event (Any): Watchdog file moved event.
-
-        """
-        logging.debug("on_moved %s.", event.src_path)
-
-    def on_deleted(self, event):
-        """On file deleted evenet.
-
-        Args:
-            event (Any): Watchdog file deleted event.
-        """
-        logging.debug("on_deleted %s.", event.src_path)
-
-    def on_modified(self, event):
-        """On file modified event.
-
-        Args:
-            event (Any): Watchdog file modified event.
-        """
-        logging.debug("on_modified %s.", event.src_path)
-
-    def on_closed(self, event):
-        """On file opened event.
-
-        Args:
-            event (Any): Watchdog file closed event.
-        """
-        logging.debug("on_closed %s.", event.src_path)
-
-    def on_opened(self, event):
-        """On file opened event.
-
-        Args:
-            event (Any): Watchdog file opened event.s
-        """
-        logging.debug("on_opened %s.", event.src_path)
 
     def start(self) -> None:
         """Start watchdog observer watching."""
