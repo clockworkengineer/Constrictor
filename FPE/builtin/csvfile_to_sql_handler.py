@@ -68,8 +68,6 @@ class CSVFileToSQLHandler(IHandler):
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database."""
 
-        success: bool = True
-
         try:
             database = mysql.connector.connect(
                 host=self.server,
@@ -98,23 +96,21 @@ class CSVFileToSQLHandler(IHandler):
                 if sql_query != "":
                     for csv_row in csv_reader:
                         cursor.execute(sql_query, csv_row)
+                        
+            database.commit()
+            database.close()
+            
+            logging.info(
+                "Finished Importing file %s to table %s.", source_path, self.table_name
+            )
+                
+            return True
 
         except mysql.connector.Error as error:
             self.errors += 1
             logging.info(CSVFileToSQLHandlerError(error.msg))
-            database = None
-            success = False
-
-        finally:
-            logging.info(
-                "Finished Importing file %s to table %s.", source_path, self.table_name
-            )
-
-            if database:
-                database.commit()
-                database.close()
-
-        return success
+ 
+        return False
 
     def status(self) -> str:
         """Return current handler status string
