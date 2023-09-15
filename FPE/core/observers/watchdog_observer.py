@@ -63,7 +63,9 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
 
         self.__queue = Queue()
-        self.__thread = Thread(target=self.__event_queue_thread, name=watcher_handler.name)
+        self.__thread = Thread(
+            target=self.__event_queue_thread, name=watcher_handler.name
+        )
         self.__thread.daemon = True
         self.__thread.start()
 
@@ -74,28 +76,42 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
             recursive=self.__watcher_handler.recursive,
         )
 
+    def __handle_event(self, source_path: pathlib.Path) -> bool:
+        """_summary_
+
+        Args:
+            source_path (pathlib.Path): _description_
+
+        Returns:
+            bool: _description_
+        """
+        if source_path.exists():
+            Handler.wait_for_copy_completion(source_path)
+            if self.__watcher_handler.process(source_path):
+                self.__watcher_handler.files_processed += 1
+                if self.__watcher_handler.delete_source:
+                    Handler.remove_source(self.__root_path, source_path)
+            else:
+                if self.__watcher_handler.exit_on_failure:
+                    if self.__engine_watcher_failure_callback is not None:
+                        self.__engine_watcher_failure_callback(
+                            self.__watcher_handler.name
+                        )
+                    return False
+        return True
+
     def __event_queue_thread(self):
-        while True:
+        """_summary_
+        """
+        handle_events: bool = True
+        while handle_events:
             time.sleep(0.1)
             try:
                 event = self.__queue.get()
             except Empty:
                 pass
             else:
-                source_path = pathlib.Path(event.src_path)  # type: ignore
-                if source_path.exists():
-                    Handler.wait_for_copy_completion(source_path)
-                    if self.__watcher_handler.process(source_path):
-                        self.__watcher_handler.files_processed += 1
-                        if self.__watcher_handler.delete_source:
-                            Handler.remove_source(self.__root_path, source_path)
-                    else:
-                        if self.__watcher_handler.exit_on_failure:
-                            if self.__engine_watcher_failure_callback is not None:
-                                self.__engine_watcher_failure_callback(
-                                    self.__watcher_handler.name
-                                )
-                            return
+                handle_events = self.__handle_event(pathlib.Path(event.src_path))
 
     def on_created(self, event) -> None:
         """On file created event.

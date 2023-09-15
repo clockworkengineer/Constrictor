@@ -61,8 +61,6 @@ class CSVFileToSQLiteHandler(IHandler):
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database."""
 
-        success: bool = True
-
         try:
             if not pathlib.Path(self.database_file).exists():
                 raise IOError("Database file does not exist.")
@@ -85,23 +83,21 @@ class CSVFileToSQLiteHandler(IHandler):
                 if sql_query != "":
                     for csv_row in csv_reader:
                         cursor.execute(sql_query, csv_row)
-                        
+
             database.commit()
             database.close()
-                        
+
             logging.info(
                 "Finished Importing file %s to table %s.", source_path, self.table_name
             )
 
             return True
-        
+
         except (IOError, sqlite3.Error, sqlite3.Warning) as error:
             self.errors += 1
             logging.info(CSVFileToSQLiteHandlerError(str(error)))
 
-
         return False
-
 
     def status(self) -> str:
         """Return current handler status string

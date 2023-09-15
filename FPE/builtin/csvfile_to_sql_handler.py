@@ -96,20 +96,20 @@ class CSVFileToSQLHandler(IHandler):
                 if sql_query != "":
                     for csv_row in csv_reader:
                         cursor.execute(sql_query, csv_row)
-                        
+
             database.commit()
             database.close()
-            
+
             logging.info(
                 "Finished Importing file %s to table %s.", source_path, self.table_name
             )
-                
+
             return True
 
         except mysql.connector.Error as error:
             self.errors += 1
             logging.info(CSVFileToSQLHandlerError(error.msg))
- 
+
         return False
 
     def status(self) -> str:
