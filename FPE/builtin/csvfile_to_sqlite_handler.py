@@ -85,23 +85,23 @@ class CSVFileToSQLiteHandler(IHandler):
                 if sql_query != "":
                     for csv_row in csv_reader:
                         cursor.execute(sql_query, csv_row)
-
-        except (IOError, sqlite3.Error, sqlite3.Warning) as error:
-            self.errors += 1
-            logging.info(CSVFileToSQLiteHandlerError(str(error)))
-            database = None
-            success = False
-
-        finally:
+                        
+            database.commit()
+            database.close()
+                        
             logging.info(
                 "Finished Importing file %s to table %s.", source_path, self.table_name
             )
 
-            if database:
-                database.commit()
-                database.close()
+            return True
+        
+        except (IOError, sqlite3.Error, sqlite3.Warning) as error:
+            self.errors += 1
+            logging.info(CSVFileToSQLiteHandlerError(str(error)))
 
-        return success
+
+        return False
+
 
     def status(self) -> str:
         """Return current handler status string
