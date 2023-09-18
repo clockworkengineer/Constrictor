@@ -1,4 +1,4 @@
-"""FPE FTP CopyFile built-in handler.
+"""FPE FTP copy file built-in handler.
 """
 
 import os

@@ -1,4 +1,4 @@
-"""FPE CopyFile built-in handler.
+"""FPE copy file built-in handler.
 """
 
 import pathlib

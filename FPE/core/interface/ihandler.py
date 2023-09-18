@@ -1,4 +1,4 @@
-"""FPE File handler interface.
+"""FPE file handler interface.
 
 Protocol class that defines the file handler interface.
 

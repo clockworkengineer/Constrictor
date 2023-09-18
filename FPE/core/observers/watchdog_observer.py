@@ -40,9 +40,9 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
     __watcher_handler: IHandler
     __root_path: pathlib.Path
-    __queue: Queue
-    __thread: Thread
-    __observer: Observer
+    __file_queue: Queue
+    __handle_events_thread: Thread
+    __watchdog_observer: Observer
     __engine_watcher_failure_callback: Callable[..., None] = None
 
     def __init__(
@@ -51,7 +51,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         """Initialise watcher handler adapter.
 
         Args:
-            watcher_handler (IHandler): Watchdog handler.
+            watcher_handler (IHandler): Watcher handler.
         """
 
         super().__init__()
@@ -62,28 +62,28 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
 
-        self.__queue = Queue()
-        self.__thread = Thread(
-            target=self.__event_queue_thread, name=watcher_handler.name
+        self.__file_queue = Queue()
+        self.__handle_events_thread = Thread(
+            target=self.__process_event_queue, name=watcher_handler.name
         )
-        self.__thread.daemon = True
-        self.__thread.start()
+        self.__handle_events_thread.daemon = True
+        self.__handle_events_thread.start()
 
-        self.__observer = Observer()
-        self.__observer.schedule(
+        self.__watchdog_observer = Observer()
+        self.__watchdog_observer.schedule(
             event_handler=self,
             path=self.__watcher_handler.source,
             recursive=self.__watcher_handler.recursive,
         )
 
     def __handle_event(self, source_path: pathlib.Path) -> bool:
-        """_summary_
+        """Handle file event.
 
         Args:
-            source_path (pathlib.Path): _description_
+            source_path (pathlib.Path): Source path to file.
 
         Returns:
-            bool: _description_
+            bool: Return true if processed successfully.
         """
         if source_path.exists():
             Handler.wait_for_copy_completion(source_path)
@@ -100,14 +100,14 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
                     return False
         return True
 
-    def __event_queue_thread(self):
-        """_summary_
+    def __process_event_queue(self):
+        """ Read event queue and process each file recieved.
         """
         handle_events: bool = True
         while handle_events:
             time.sleep(0.1)
             try:
-                event = self.__queue.get()
+                event = self.__file_queue.get()
             except Empty:
                 pass
             else:
@@ -121,13 +121,13 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
         """
 
         logging.debug("on_created %s.", event.src_path)
-        self.__queue.put(event)
+        self.__file_queue.put(event)
 
     def start(self) -> None:
         """Start watchdog observer watching."""
-        self.__observer.start()
+        self.__watchdog_observer.start()
 
     def stop(self) -> None:
         """Stop watchdog observer from watching."""
-        self.__observer.stop()
-        self.__observer.join()
+        self.__watchdog_observer.stop()
+        self.__watchdog_observer.join()

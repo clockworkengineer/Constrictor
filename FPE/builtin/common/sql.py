@@ -1,4 +1,4 @@
-"""  Generate SQL query string.
+"""  Generate SQL query string to insert/update a database table row.
 """
 
 import logging
@@ -10,13 +10,13 @@ def generate(
     """Generate SQL for update/insert row of fields.
 
     Args:
-        param_style (str): _description_
-        table_name (str): _description_
-        key_name (str): _description_
-        row_fields (str): _description_
+        param_style (str):  Parameter substitionn style.
+        table_name (str):   Database table name.
+        key_name (str):     Primary key name.
+        row_fields ([str]): Field name list.
 
     Returns:
-        str: _description_
+        str: Return SQL query to insert/update a database row.
     """
 
     sql: str = ""

@@ -1,4 +1,4 @@
-"""FPE Plugin interface.
+"""FPE plug-in interface.
 
 Protocol class that defines the handler plugin interface.
 
@@ -7,7 +7,7 @@ from typing import Protocol
 
 
 class IPlugin(Protocol):
-    """Plugin interface."""
+    """Plug-in interface."""
 
     def register(self) -> None:
         """Register the necessary items in the watcher handler factory."""

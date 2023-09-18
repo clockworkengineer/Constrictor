@@ -1,4 +1,4 @@
-"""FPE File observer interface.
+"""FPE file observer interface.
 
 Protocol class that defines the directory/file observer interface.
 
