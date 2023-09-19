@@ -6,6 +6,7 @@ file creation events; the default abstraction using the watchdog library.
 """
 
 import logging
+from queue import Queue
 from typing import Callable
 
 from core.observers.watchdog_observer import WatchdogObserver
@@ -18,7 +19,9 @@ from core.constants import (
 )
 from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
+from core.interface.iconsumer import IConsumer
 from core.config import ConfigDict
+from core.consumer import Consumer
 from core.factory import Factory
 from core.error import FPEError
 
@@ -41,6 +44,8 @@ class Watcher:
 
     __handler: IHandler
     __observer: IObserver
+    __consumer: IConsumer
+    __file_queue: Queue
     __running: bool
     __engine_watcher_failure_callback: Callable[..., None] = None
 
@@ -100,16 +105,21 @@ class Watcher:
 
             self.__handler = Factory.create(watcher_config)
 
+            self.__engine_watcher_failure_callback = failure_callback_fn
             if self.__handler is not None:
-                self.__observer = WatchdogObserver(self.__handler, failure_callback_fn)
+                self.__file_queue = Queue()
+                self.__observer = WatchdogObserver(self.__file_queue, self.__handler)
+                self.__consumer = Consumer(
+                    self.__file_queue,
+                    self.__handler,
+                    self.__engine_watcher_failure_callback,
+                )
                 Watcher._display_details(watcher_config)
 
             else:
                 self.__observer = None  # type: ignore
 
             self.__running = False
-
-            self.__engine_watcher_failure_callback = failure_callback_fn
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error
@@ -131,12 +141,16 @@ class Watcher:
             return
 
         if self.__observer is None:
-            self.__observer = WatchdogObserver(
-                self.__handler, self.__engine_watcher_failure_callback
+            self.__observer = WatchdogObserver(self.__file_queue, self.__handler)
+            self.__consumer = Consumer(
+                self.__file_queue,
+                self.__handler,
+                self.__engine_watcher_failure_callback,
             )
 
         if self.__observer is not None:
             self.__observer.start()
+            self.__consumer.start()
             self.__running = True
         else:
             raise WatcherError("Could not create observer.")
@@ -147,6 +161,8 @@ class Watcher:
         if self.__observer is not None:
             self.__observer.stop()
             self.__observer = None  # type: ignore
+            self.__consumer.stop()
+            self.__consumer = None  # type: ignore
             self.__running = False
 
     def status(self) -> str:
