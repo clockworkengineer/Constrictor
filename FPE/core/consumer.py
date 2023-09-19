@@ -40,6 +40,7 @@ class Consumer(IConsumer):
     __root_path: pathlib.Path
     __file_queue: Queue
     __handle_events_thread: Thread
+    __running: bool
     __engine_watcher_failure_callback: Callable[..., None] = None
 
     def __init__(
@@ -86,17 +87,19 @@ class Consumer(IConsumer):
     def __process_event_queue(self) -> None:
         """Read event queue and process each file recieved."""
         handle_events: bool = True
-        while handle_events:
+        while handle_events and self.__running:
             time.sleep(0.1)
             try:
                 event = self.__file_queue.get()
             except Empty:
                 pass
             else:
-                handle_events = self.__handle_event(pathlib.Path(event.src_path))
+                if self.__running:
+                    handle_events = self.__handle_event(pathlib.Path(event.src_path))
 
     def start(self) -> None:
         """_summary_"""
+        self.__running = True
         self.__handle_events_thread = Thread(
             target=self.__process_event_queue, name=self.__watcher_handler.name
         )
@@ -105,4 +108,8 @@ class Consumer(IConsumer):
 
     def stop(self) -> None:
         """_summary_"""
-        self.__handle_events_thread = None
+        self.__running = False
+        self.__file_queue.put(None)
+        self.__handle_events_thread.join()
+        while not self.__file_queue.empty():
+            _ = self.__file_queue.get()
