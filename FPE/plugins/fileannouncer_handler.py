@@ -15,14 +15,14 @@ class FileAnnouncerHandlerError(FPEError):
     """An error occurred in the File Announcer handler."""
 
     def __str__(self) -> str:
-        return "CopyFileHandler Error: " + str(self.error)
+        return "FileAnnouncer Error: " + str(self.error)
 
 
 class FileAnnouncerHandler(IHandler):
     """File Announcer"""
 
     def __init__(self, handler_config: ConfigDict) -> None:
-        """Copy handler config and setup source directory."""
+        """File announcer handler config and setup source directory."""
 
         Handler.set_mandatory_config(self, handler_config)
 
