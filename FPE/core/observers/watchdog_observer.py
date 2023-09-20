@@ -1,9 +1,9 @@
 """FPE directory/file watcher observer.
 
-Use watchdog package to monitor directories and process each file created using one
-of the built-in handlers or through a custom plugin handler.Note: At present the monitoring
-is not recursive for reasons of performance; a watcher thread can accumalate to many polling
-calls for added directories.
+Use watchdog package to monitor directories and add any created files to the file queue 
+that is to processed by a consumer thread.Note: At present the monitoring is not recursive 
+for reasons of performance; a watcher thread can accumalate to many polling calls for added
+directories.
 
 """
 
@@ -37,7 +37,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
     __file_queue: Queue
     __watchdog_observer: Observer
 
-    def __init__(self, event_queue: Queue, watcher_handler: IHandler) -> None:
+    def __init__(self, file_queue: Queue, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
 
         Args:
@@ -48,7 +48,7 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         self.__watcher_handler = watcher_handler
 
-        self.__file_queue = event_queue
+        self.__file_queue = file_queue
 
         self.__watchdog_observer = Observer()
         self.__watchdog_observer.schedule(

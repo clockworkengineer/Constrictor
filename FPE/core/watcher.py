@@ -7,7 +7,7 @@ file creation events; the default abstraction using the watchdog library.
 
 import logging
 from queue import Queue
-from typing import Callable
+
 
 from core.observers.watchdog_observer import WatchdogObserver
 from core.constants import (
@@ -21,7 +21,7 @@ from core.interface.ihandler import IHandler
 from core.interface.iobserver import IObserver
 from core.interface.iconsumer import IConsumer
 from core.config import ConfigDict
-from core.consumer import Consumer
+from core.consumer import Consumer, FailureCallBackFunction
 from core.factory import Factory
 from core.error import FPEError
 
@@ -47,7 +47,7 @@ class Watcher:
     __consumer: IConsumer
     __file_queue: Queue
     __running: bool
-    __engine_watcher_failure_callback: Callable[..., None] = None
+    __engine_watcher_failure_callback: FailureCallBackFunction = None
 
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
@@ -77,7 +77,7 @@ class Watcher:
     def __init__(
         self,
         watcher_config: ConfigDict,
-        failure_callback_fn: Callable[..., None] = None,
+        failure_callback_fn: FailureCallBackFunction = None,
     ) -> None:
         """Initialise directory/file watcher.
 

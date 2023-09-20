@@ -135,10 +135,10 @@ class Handler:
 
     @staticmethod
     def set_mandatory_config(ihandler: IHandler, handler_config: ConfigDict) -> None:
-        """_summary_
+        """Setup mandatory handler object attributes.
 
         Args:
-            handler_config (ConfigDict): _description_
+            handler_config (ConfigDict): Handler config.
         """
         ihandler.name = handler_config[CONFIG_NAME]
         ihandler.source = handler_config[CONFIG_SOURCE]
@@ -150,12 +150,12 @@ class Handler:
 
     @staticmethod
     def status(handler: IHandler) -> str:
-        """_summary_
+        """Return string and current handler status.
 
         Args:
-            handler (IHandler): _description_
+            handler (IHandler): Handler
 
         Returns:
-            str: _description_
+            str: Status string.
         """
         return f"Errors = {handler.errors}\nFiles processed = {handler.files_processed}\nSource = {handler.source}\n"

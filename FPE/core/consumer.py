@@ -1,4 +1,6 @@
-"""FPE consumer event processing thread.
+"""FPE consumer file processing thread. Create a thread to process each file queued
+   by an observer and process it using a custom processing handler passed in on creation.
+   
 """
 
 from typing import Callable
@@ -12,9 +14,11 @@ from core.interface.ihandler import IHandler
 from core.interface.iconsumer import IConsumer
 from core.error import FPEError
 
+FailureCallBackFunction = Callable[..., None]
+
 
 class ConsumerError(FPEError):
-    """An error occurred in directory/file watcher."""
+    """An error occurred in consumer file processing."""
 
     def __str__(self) -> str:
         """Return string for exception.
@@ -27,27 +31,20 @@ class ConsumerError(FPEError):
 
 
 class Consumer(IConsumer):
-    """_summary_
-
-    Args:
-        IConsumer (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
+    """Consumer file queue processor."""
 
     __watcher_handler: IHandler
     __root_path: pathlib.Path
     __file_queue: Queue
     __handle_events_thread: Thread
     __running: bool
-    __engine_watcher_failure_callback: Callable[..., None] = None
+    __engine_watcher_failure_callback: FailureCallBackFunction = None
 
     def __init__(
         self,
-        event_queue: Queue,
+        file_queue: Queue,
         watcher_handler: IHandler,
-        failure_callback_fn: Callable[..., None] = None,
+        failure_callback_fn: FailureCallBackFunction = None,
     ) -> None:
         """Initialise consumer event processing thread.
 
@@ -58,7 +55,7 @@ class Consumer(IConsumer):
         self.__engine_watcher_failure_callback = failure_callback_fn
         self.__watcher_handler = watcher_handler
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
-        self.__file_queue = event_queue
+        self.__file_queue = file_queue
 
     def __handle_event(self, source_path: pathlib.Path) -> bool:
         """Handle file event.
@@ -84,8 +81,8 @@ class Consumer(IConsumer):
                     return False
         return True
 
-    def __process_event_queue(self) -> None:
-        """Read event queue and process each file recieved."""
+    def __process_file_queue(self) -> None:
+        """Read file queue and process each file recieved."""
         handle_events: bool = True
         while handle_events and self.__running:
             time.sleep(0.1)
@@ -98,16 +95,16 @@ class Consumer(IConsumer):
                     handle_events = self.__handle_event(pathlib.Path(event.src_path))
 
     def start(self) -> None:
-        """_summary_"""
+        """Create consumer thread and start event loop running."""
         self.__running = True
         self.__handle_events_thread = Thread(
-            target=self.__process_event_queue, name=self.__watcher_handler.name
+            target=self.__process_file_queue, name=self.__watcher_handler.name
         )
         self.__handle_events_thread.daemon = True
         self.__handle_events_thread.start()
 
     def stop(self) -> None:
-        """_summary_"""
+        """Set not running flag, punt out no event to qeueue and wait for thread to end."""
         self.__running = False
         self.__file_queue.put(None)
         self.__handle_events_thread.join()

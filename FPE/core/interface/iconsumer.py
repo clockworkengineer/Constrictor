@@ -1,6 +1,6 @@
-"""FPE file consumer interface.
+"""FPE file watcher consumer interface.
 
-Protocol class that defines the directory/file consumer interface.
+Protocol class that defines the watcher consumer interface.
 
 """
 
@@ -8,7 +8,7 @@ from typing import Protocol
 
 
 class IConsumer(Protocol):
-    """Interface for watcher file consumer."""
+    """Interface for watcher consumer."""
 
     def start(self) -> None:
         """Start consumer."""

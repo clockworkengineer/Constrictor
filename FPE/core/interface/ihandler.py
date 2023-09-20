@@ -1,6 +1,6 @@
-"""FPE file handler interface.
+"""FPE file watcher handler interface.
 
-Protocol class that defines the file handler interface.
+Protocol class that defines the watcher file handler interface.
 
 """
 
@@ -23,7 +23,7 @@ class IHandler(Protocol):
         """Perform watcher file processing.
 
         Args:
-            source_path (pathlib.Path): Source fiel path.
+            source_path (pathlib.Path): Source file path.
         """
 
     def status(self) -> str:

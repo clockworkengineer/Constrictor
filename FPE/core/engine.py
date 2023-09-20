@@ -3,10 +3,10 @@
 
 import logging
 import json
-from typing import Callable
 
 from builtin.handler_list import fpe_handler_list
 from core.constants import CONFIG_NAME, CONFIG_WATCHERS, CONFIG_FILENAME, CONFIG_NOGUI
+from core.consumer import FailureCallBackFunction
 from core.config import ConfigDict
 from core.factory import Factory
 from core.watcher import Watcher
@@ -14,11 +14,11 @@ from core.plugin import PluginLoader
 
 
 class Engine:
-    """Control class for the FPE used to create, control and delete directory watchers."""
+    """Control class for the FPE used to create, control and delete directory/file watchers."""
 
     __engine_config: ConfigDict = {}
     __engine_watchers: dict[str, Watcher] = {}
-    __engine_watcher_failure_callback: Callable[..., None] = None
+    __engine_watcher_failure_callback: FailureCallBackFunction = None
 
     def __init__(self, engine_config: ConfigDict) -> None:
         """Create FPE engine.
@@ -39,7 +39,7 @@ class Engine:
         PluginLoader.load(self.__engine_config["plugins"])
 
     def create_watcher(self, watcher_config: ConfigDict) -> None:
-        """Create a directory watcher.
+        """Create a directory/file watcher.
 
         Args:
             watcher_config (ConfigDict): Watcher configuration.
@@ -51,7 +51,7 @@ class Engine:
             self.__engine_watchers[watcher_config[CONFIG_NAME]] = current_watcher
 
     def delete_watcher(self, watcher_name: str) -> None:
-        """Delete directory watcher.
+        """Delete directory/file watcher.
 
         Args:
             watcher_name (str): Watcher name.
@@ -65,7 +65,7 @@ class Engine:
                 break
 
     def start_watcher(self, watcher_name: str) -> None:
-        """Start directory watcher.
+        """Start directory/file watcher.
 
         Args:
             watcher_name (str): Watcher name.
@@ -73,7 +73,7 @@ class Engine:
         self.__engine_watchers[watcher_name].start()
 
     def stop_watcher(self, watcher_name: str) -> None:
-        """Stop directory watcher.
+        """Stop directory/file watcher.
 
         Args:
             watcher_name (str): Watcher name.
@@ -93,7 +93,7 @@ class Engine:
         return self.__engine_watchers[watcher_name].is_running
 
     def startup(self) -> None:
-        """Create directory watchers from config and startup."""
+        """Create directory/file watchers from config and startup."""
 
         for watcher_config in self.__engine_config[CONFIG_WATCHERS]:
             self.create_watcher(watcher_config)
@@ -144,10 +144,12 @@ class Engine:
         ) as json_file:
             json_file.write(json.dumps(config_to_save, indent=1))
 
-    def set_failure_callback(self, failure_callback_fn: Callable[..., None]) -> None:
-        """_summary_
+    def set_failure_callback(
+        self, failure_callback_fn: FailureCallBackFunction
+    ) -> None:
+        """Set handler failure callback function.
 
         Args:
-            failure_callback_fn (Callable[..., None]): _description_
+            failure_callback_fn (FailureCallBackFunction): Handler callback function.
         """
         self.__engine_watcher_failure_callback = failure_callback_fn

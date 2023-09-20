@@ -1,6 +1,6 @@
 """FPE plug-in interface.
 
-Protocol class that defines the handler plugin interface.
+Protocol class that defines the file watcher handler plugin interface.
 
 """
 from typing import Protocol

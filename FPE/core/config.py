@@ -73,7 +73,7 @@ class Config:
         for watcher_config in self.config[CONFIG_WATCHERS]:
             for key in CONFIG_WATCHER_MANDATORY_KEYS:
                 if key not in watcher_config:
-                    raise ConfigError(f"Missing config '{key}' key")
+                    raise ConfigError(f"Missing watcher '{key}' key")
 
     def set_logging(self) -> None:
         """Set type of logging to be used."""
