@@ -68,7 +68,8 @@ class FTPCopyFileHandler(IHandler):
         self.user = Handler.get_config(handler_config, CONFIG_USER)
         self.password = Handler.get_config(handler_config, CONFIG_PASSWORD)
 
-    def __cwd_destination(self, ftp: FTP, destination: str) -> None:
+    @staticmethod
+    def __cwd_destination(ftp: FTP, destination: str) -> None:
         """Change current working directory to destination on FTP server.
 
         Args:
@@ -90,7 +91,7 @@ class FTPCopyFileHandler(IHandler):
             source_path (pathlib.Path): Source file path.
 
         Raises:
-            FTPCopyFileHandlerError: Ann error occured while tryinhg to transfer file to FTP server.
+            FTPCopyFileHandlerError: Ann error occurred while trying to transfer file to FTP server.
         """
 
         try:

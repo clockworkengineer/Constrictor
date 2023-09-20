@@ -82,7 +82,7 @@ class Consumer(IConsumer):
         return True
 
     def __process_file_queue(self) -> None:
-        """Read file queue and process each file recieved."""
+        """Read file queue and process each file received."""
         handle_events: bool = True
         while handle_events and self.__running:
             time.sleep(0.1)
@@ -104,7 +104,7 @@ class Consumer(IConsumer):
         self.__handle_events_thread.start()
 
     def stop(self) -> None:
-        """Set not running flag, punt out no event to qeueue and wait for thread to end."""
+        """Set not running flag, punt out no event to queue and wait for thread to end."""
         self.__running = False
         self.__file_queue.put(None)
         self.__handle_events_thread.join()

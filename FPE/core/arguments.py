@@ -39,7 +39,7 @@ class Arguments:
         """Load and parse command line into arguments object.
 
         Args:
-            argv (list[Any], optional): Command line aruments. Defaults to None.
+            argv (list[Any], optional): Command line arguments. Defaults to None.
 
         Raises:
             ArgumentsError: A command line arguments error occurred.

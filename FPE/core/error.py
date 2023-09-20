@@ -12,7 +12,7 @@ class FPEError(Exception):
         """CopyFileHandler error.
 
         Args:
-            message (str): Exception message.
+            error (Any): Exception.
         """
         self.error = error
 

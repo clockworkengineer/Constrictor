@@ -59,15 +59,14 @@ class Handler:
         Returns:
             str: Relative source path.
         """
-        return str(source_path)[len(source_root) + 1 :]
+        return str(source_path)[len(source_root) + 1:]
 
     @staticmethod
     def setup_path(directory_path: str) -> str:
         """Setup directory to be used by handler.
 
         Args:
-            handler_config (ConfigDict): Watcher handler config.
-            path_type (str): Watcher handler type.
+            directory_path (str): Watcher handler type.
         """
         directory_path = Handler.normalize_path(directory_path)
         Handler.create_path(pathlib.Path(directory_path))
@@ -138,6 +137,7 @@ class Handler:
         """Setup mandatory handler object attributes.
 
         Args:
+            ihandler (IHandler): Handler object.
             handler_config (ConfigDict): Handler config.
         """
         ihandler.name = handler_config[CONFIG_NAME]

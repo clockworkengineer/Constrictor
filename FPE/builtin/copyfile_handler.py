@@ -58,7 +58,7 @@ class CopyFileHandler(IHandler):
             source_path (pathlib.Path): Source file path.
 
         Raises:
-            CopyFileHandlerError: An error occured during file copy.
+            CopyFileHandlerError: An error occurred during file copy.
         """
 
         try:
