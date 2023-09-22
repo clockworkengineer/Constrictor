@@ -47,6 +47,6 @@ def generate(
         logging.error(error)
         sql = ""
 
-    logging.debug(sql)
+    logging.info(sql)
 
     return sql
