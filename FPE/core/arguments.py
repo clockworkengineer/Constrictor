@@ -33,7 +33,7 @@ class Arguments:
     # Parsed argument attributes
 
     file: str   # Configuration file name
-    nogui: bool # Running with GUI flag 
+    nogui: bool # Running with no GUI flag 
 
     def __init__(self, argv=None) -> None:
         """Load and parse command line into arguments object.
