@@ -49,7 +49,9 @@ class Consumer(IConsumer):
         """Initialise consumer event processing thread.
 
         Args:
+            file_queue (Queue): File queue.
             watcher_handler (IHandler): Watcher handler.
+            failure_callback_fn (FailureCallBackFunction, optional): Watcher handler failure callback. Defaults to None.
         """
 
         self.__engine_watcher_failure_callback = failure_callback_fn

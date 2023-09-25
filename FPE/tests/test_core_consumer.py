@@ -10,5 +10,6 @@ class TestCoreConsumer:
 # test for start when in initial state
 # test for start stop
 # test for start start
-# test for stop stop
+# test for start stop stop
 # test for stop when not started
+# test for failure calback called
