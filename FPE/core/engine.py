@@ -150,6 +150,6 @@ class Engine:
         """Set handler failure callback function.
 
         Args:
-            failure_callback_fn (FailureCallBackFunction): Handler callback function.
+            failure_callback_fn (FailureCallBackFunction): Handler failure callback function.
         """
         self.__engine_watcher_failure_callback = failure_callback_fn
