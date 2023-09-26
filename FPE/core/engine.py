@@ -18,7 +18,7 @@ class Engine:
 
     __engine_config: ConfigDict = {}
     __engine_watchers: dict[str, Watcher] = {}
-    __engine_watcher_failure_callback: FailureCallBackFunction = None
+    __engine_watcher_failure_callback: FailureCallBackFunction
 
     def __init__(self, engine_config: ConfigDict) -> None:
         """Create FPE engine.
