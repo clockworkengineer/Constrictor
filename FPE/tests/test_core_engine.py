@@ -13,3 +13,5 @@ class TestCoreEngine:
 # Test to delete a watcher
 # Test to start a watcher
 # Test to stop a watcher
+# Test to start non-existant watcher
+# Test to stop non-existant watcher 
