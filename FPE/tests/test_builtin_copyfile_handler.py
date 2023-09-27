@@ -1,5 +1,8 @@
-import pytest
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import pathlib
+import pytest
 
 from tests.common import (
     create_test_file,
@@ -25,7 +28,7 @@ def copyfile_config() -> ConfigDict:
 class TestBuiltinCopyFileHandler:
     def test_builtin_copyfile_handler_pass_none_as_config(self) -> None:
         with pytest.raises(FPEError):
-            handdler: IHandler = CopyFileHandler(None)  # type: ignore
+            _: IHandler = CopyFileHandler(None)  # type: ignore
 
     def test_buitin_handler_create_non_existant_source(
         self, copyfile_config: ConfigDict
@@ -33,14 +36,14 @@ class TestBuiltinCopyFileHandler:
         pathlib.Path(copyfile_config[CONFIG_DESTINATION]).mkdir(
             parents=True, exist_ok=True
         )
-        handler = CopyFileHandler(copyfile_config)
+        _: IHandler = CopyFileHandler(copyfile_config)
         assert pathlib.Path(copyfile_config[CONFIG_SOURCE]).exists()
 
     def test_buitin_handler_create_non_existant_destination(
         self, copyfile_config: ConfigDict
     ) -> None:
         pathlib.Path(copyfile_config[CONFIG_SOURCE]).mkdir(parents=True, exist_ok=True)
-        handler = CopyFileHandler(copyfile_config)
+        _: IHandler = CopyFileHandler(copyfile_config)
         assert pathlib.Path(copyfile_config[CONFIG_DESTINATION]).exists()
 
     def test_buitin_handler_copy_a_single_source_to_destination(

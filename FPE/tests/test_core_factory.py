@@ -1,3 +1,6 @@
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import pytest
 
 from tests.common import json_file_source, remove_source_destination
@@ -10,7 +13,7 @@ from builtin.ftp_copyfile_handler import FTPCopyFileHandler
 
 
 @pytest.fixture()
-def reset_factory():
+def reset_factory() -> None:
     Factory.clear()
     yield
 
@@ -72,5 +75,5 @@ class TestCoreFactory:
         Factory.register("CopyFile", CopyFileHandler)
         Factory.register("FTPCopyFile", FTPCopyFileHandler)
         config = Config(Arguments([json_file_source("test_valid.json")])).get_config()
-        assert Factory.create(config[CONFIG_WATCHERS][0]) != None
+        assert Factory.create(config[CONFIG_WATCHERS][0]) is not None
         remove_source_destination(config[CONFIG_WATCHERS][0])

@@ -1,3 +1,6 @@
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import pytest
 
 from tests.common import json_file_source
@@ -14,7 +17,7 @@ class TestCoreConfig:
 
     def test_config_with_invalid_json_file(self) -> None:
         with pytest.raises(ConfigError):
-            config = Config(Arguments([json_file_source("test_invalid.json")]))
+            _ = Config(Arguments([json_file_source("test_invalid.json")]))
 
     def test_config_with_no_plugin_key(self) -> None:
         with pytest.raises(ConfigError):

@@ -1,3 +1,6 @@
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import pytest
 
 
@@ -14,4 +17,4 @@ class TestCoreEngine:
 # Test to start a watcher
 # Test to stop a watcher
 # Test to start non-existant watcher
-# Test to stop non-existant watcher 
+# Test to stop non-existant watcher

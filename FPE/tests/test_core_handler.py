@@ -1,5 +1,6 @@
-"""Test Core Handler Class.
-"""
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 
 import tempfile
 import pathlib

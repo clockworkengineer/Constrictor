@@ -1,7 +1,12 @@
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import pytest
+
 
 class TestCoreConsumer:
     pass
+
 
 # test for valid creation.
 # test for invalid queue

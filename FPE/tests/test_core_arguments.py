@@ -1,3 +1,6 @@
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import pytest
 
 from tests.common import json_file_source

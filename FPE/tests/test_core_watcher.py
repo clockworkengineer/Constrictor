@@ -1,7 +1,10 @@
-import pytest
-import shutil
+"""TEST"""
+# pylint: disable=missing-function-docstring, missing-class-docstring
+
 import time
 import pathlib
+import pytest
+
 
 from tests.common import (
     create_test_file,
