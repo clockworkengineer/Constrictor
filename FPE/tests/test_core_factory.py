@@ -1,5 +1,5 @@
 """TEST"""
-# pylint: disable=missing-function-docstring, missing-class-docstring
+# pylint: disable=missing-function-docstring, missing-class-docstring, unused-argument
 
 import pytest
 
@@ -12,8 +12,8 @@ from builtin.copyfile_handler import CopyFileHandler
 from builtin.ftp_copyfile_handler import FTPCopyFileHandler
 
 
-@pytest.fixture()
-def reset_factory() -> None:
+@pytest.fixture(name="reset_factory")
+def fixture_reset_factory() -> None:
     Factory.clear()
     yield
 

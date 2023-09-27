@@ -46,7 +46,7 @@ def create_test_file(source_path: pathlib.Path, read_only: bool = False) -> None
         source_path.chmod(0o444)
 
 
-def create_watcher_config() -> ConfigDict:
+def create_copyfile_config() -> ConfigDict:
     """_summary_
 
     Returns:

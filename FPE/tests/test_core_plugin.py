@@ -1,5 +1,5 @@
 """TEST"""
-# pylint: disable=missing-function-docstring, missing-class-docstring
+# pylint: disable=missing-function-docstring, missing-class-docstring, unused-argument
 
 import pytest
 
@@ -7,8 +7,8 @@ from core.factory import Factory
 from core.plugin import PluginLoader, PluginLoaderError
 
 
-@pytest.fixture()
-def reset_factory() -> None:
+@pytest.fixture(name="reset_factory")
+def fixture_reset_factory() -> None:
     Factory.clear()
     yield
 

@@ -1,12 +1,12 @@
 """TEST"""
-# pylint: disable=missing-function-docstring, missing-class-docstring
+# pylint: disable=missing-function-docstring, missing-class-docstring, unused-argument
 
 import pathlib
 import pytest
 
 from tests.common import (
     create_test_file,
-    create_watcher_config,
+    create_copyfile_config,
     remove_source_destination,
 )
 from core.constants import CONFIG_SOURCE, CONFIG_DESTINATION
@@ -16,13 +16,13 @@ from core.error import FPEError
 from builtin.copyfile_handler import CopyFileHandler
 
 
-@pytest.fixture()
-def copyfile_config() -> ConfigDict:
-    watcher_config: ConfigDict = create_watcher_config()
+@pytest.fixture(name="generate_copyfile_config")
+def fixture_generate_copyfile_config() -> ConfigDict:
+    copyfile_config: ConfigDict = create_copyfile_config()
 
-    yield watcher_config
+    yield copyfile_config
 
-    remove_source_destination(watcher_config)
+    remove_source_destination(copyfile_config)
 
 
 class TestBuiltinCopyFileHandler:
@@ -31,29 +31,33 @@ class TestBuiltinCopyFileHandler:
             _: IHandler = CopyFileHandler(None)  # type: ignore
 
     def test_buitin_handler_create_non_existant_source(
-        self, copyfile_config: ConfigDict
+        self, generate_copyfile_config: ConfigDict
     ) -> None:
-        pathlib.Path(copyfile_config[CONFIG_DESTINATION]).mkdir(
+        pathlib.Path(generate_copyfile_config[CONFIG_DESTINATION]).mkdir(
             parents=True, exist_ok=True
         )
-        _: IHandler = CopyFileHandler(copyfile_config)
-        assert pathlib.Path(copyfile_config[CONFIG_SOURCE]).exists()
+        _: IHandler = CopyFileHandler(generate_copyfile_config)
+        assert pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]).exists()
 
     def test_buitin_handler_create_non_existant_destination(
-        self, copyfile_config: ConfigDict
+        self, generate_copyfile_config: ConfigDict
     ) -> None:
-        pathlib.Path(copyfile_config[CONFIG_SOURCE]).mkdir(parents=True, exist_ok=True)
-        _: IHandler = CopyFileHandler(copyfile_config)
-        assert pathlib.Path(copyfile_config[CONFIG_DESTINATION]).exists()
+        pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]).mkdir(
+            parents=True, exist_ok=True
+        )
+        _: IHandler = CopyFileHandler(generate_copyfile_config)
+        assert pathlib.Path(generate_copyfile_config[CONFIG_DESTINATION]).exists()
 
     def test_buitin_handler_copy_a_single_source_to_destination(
-        self, copyfile_config: ConfigDict
+        self, generate_copyfile_config: ConfigDict
     ) -> None:
-        pathlib.Path(copyfile_config[CONFIG_SOURCE]).mkdir(parents=True, exist_ok=True)
-        handler = CopyFileHandler(copyfile_config)
-        source_path = pathlib.Path(copyfile_config[CONFIG_SOURCE]) / "test.txt"
+        pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]).mkdir(
+            parents=True, exist_ok=True
+        )
+        handler = CopyFileHandler(generate_copyfile_config)
+        source_path = pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]) / "test.txt"
         destination_path = (
-            pathlib.Path(copyfile_config[CONFIG_DESTINATION]) / "test.txt"
+            pathlib.Path(generate_copyfile_config[CONFIG_DESTINATION]) / "test.txt"
         )
         create_test_file(source_path)
         handler.process(source_path)
