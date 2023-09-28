@@ -1,6 +1,7 @@
 """TEST"""
 # pylint: disable=missing-function-docstring, missing-class-docstring, unused-argument
 
+import pathlib
 from queue import Queue
 import pytest
 
@@ -15,6 +16,12 @@ def failure_callback(self) -> None:
 class DummyHandler(IHandler):
     def __init__(self) -> None:
         super().__init__()
+
+    def process(self, source_path: pathlib.Path) -> bool:
+        pass
+
+    def status(self) -> str:
+        return ""
 
 
 class TestCoreConsumer:
