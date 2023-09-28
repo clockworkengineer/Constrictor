@@ -56,13 +56,13 @@ class Consumer(IConsumer):
 
         if file_queue is None:
             raise ConsumerError("File queue cannot be None.")
-        
+
         if watcher_handler is None:
             raise ConsumerError("Watcher handler cannot be None.")
-        
+
         if failure_callback_fn is None:
             raise ConsumerError("Failure callback  cannot be None.")
-        
+
         self.__engine_watcher_failure_callback = failure_callback_fn
         self.__watcher_handler = watcher_handler
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
@@ -107,6 +107,8 @@ class Consumer(IConsumer):
 
     def start(self) -> None:
         """Create consumer thread and start event loop running."""
+        if self.__running:
+            return
         self.__running = True
         self.__handle_events_thread = Thread(
             target=self.__process_file_queue, name=self.__watcher_handler.name
@@ -116,12 +118,14 @@ class Consumer(IConsumer):
 
     def stop(self) -> None:
         """Set not running flag, punt out no event to queue and wait for thread to end."""
+        if self.__running is False:
+            return
         self.__running = False
         self.__file_queue.put(None)
         self.__handle_events_thread.join()
         while not self.__file_queue.empty():
             _ = self.__file_queue.get()
-            
+
     def is_running(self) -> bool:
         """Is the consumer thread running ?
 

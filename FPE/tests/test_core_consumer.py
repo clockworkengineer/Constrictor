@@ -25,8 +25,6 @@ class DummyHandler(IHandler):
 
 
 class TestCoreConsumer:
-    # test for valid creation.
-
     def test_consumer_with_valid_parameters(self) -> None:
         queue: Queue = Queue()
         ihandler: IHandler = DummyHandler()
@@ -35,8 +33,6 @@ class TestCoreConsumer:
         assert consumer is not None
         assert consumer.is_running() is False
 
-    # test for invalid queue
-
     def test_consumer_with_invalid_qeue(self) -> None:
         queue: Queue = None
         ihandler: IHandler = DummyHandler()
@@ -44,15 +40,12 @@ class TestCoreConsumer:
         with pytest.raises(ConsumerError):
             _: Consumer = Consumer(queue, ihandler, failure_callback)
 
-    # test for invalid ihandler
     def test_consumer_with_invalid_handler(self) -> None:
         queue: Queue = Queue()
         ihandler: IHandler = None
 
         with pytest.raises(ConsumerError):
             _: Consumer = Consumer(queue, ihandler, failure_callback)
-
-    # test for invalid failure function
 
     def test_consumer_with_invalid_failure_callback(self) -> None:
         queue: Queue = Queue()
@@ -61,10 +54,52 @@ class TestCoreConsumer:
         with pytest.raises(ConsumerError):
             _: Consumer = Consumer(queue, ihandler, None)
 
+    def test_consumer_with_start(self) -> None:
+        queue: Queue = Queue()
+        ihandler: IHandler = DummyHandler()
+        consumer: Consumer = Consumer(queue, ihandler, failure_callback)
 
-# test for start when in initial state
-# test for start stop
-# test for start start
-# test for start stop stop
-# test for stop when not started
+        consumer.start()
+        assert consumer.is_running() is True
+
+    def test_consumer_with_start_then_stop(self) -> None:
+        queue: Queue = Queue()
+        ihandler: IHandler = DummyHandler()
+        consumer: Consumer = Consumer(queue, ihandler, failure_callback)
+
+        consumer.start()
+        consumer.stop()
+        assert consumer.is_running() is False
+
+    def test_consumer_with_start_then_start(self) -> None:
+        queue: Queue = Queue()
+        ihandler: IHandler = DummyHandler()
+        consumer: Consumer = Consumer(queue, ihandler, failure_callback)
+
+        consumer.start()
+        consumer.start()
+
+        assert consumer.is_running() is True
+
+    def test_consumer_with_start_then_stop_then_stop(self) -> None:
+        queue: Queue = Queue()
+        ihandler: IHandler = DummyHandler()
+        consumer: Consumer = Consumer(queue, ihandler, failure_callback)
+
+        consumer.start()
+        consumer.stop()
+        consumer.stop()
+
+        assert consumer.is_running() is False
+
+    def test_consumer_with_stop_when_notstarted(self) -> None:
+        queue: Queue = Queue()
+        ihandler: IHandler = DummyHandler()
+        consumer: Consumer = Consumer(queue, ihandler, failure_callback)
+
+        consumer.stop()
+
+        assert consumer.is_running() is False
+
+
 # test for failure calback called
