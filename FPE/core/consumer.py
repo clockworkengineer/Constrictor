@@ -37,7 +37,7 @@ class Consumer(IConsumer):
     __root_path: pathlib.Path
     __file_queue: Queue
     __handle_events_thread: Thread
-    __running: bool
+    __running: bool = False
     __engine_watcher_failure_callback: FailureCallBackFunction = None
 
     def __init__(
@@ -54,6 +54,15 @@ class Consumer(IConsumer):
             failure_callback_fn (FailureCallBackFunction, optional): Watcher handler failure callback. Defaults to None.
         """
 
+        if file_queue is None:
+            raise ConsumerError("File queue cannot be None.")
+        
+        if watcher_handler is None:
+            raise ConsumerError("Watcher handler cannot be None.")
+        
+        if failure_callback_fn is None:
+            raise ConsumerError("Failure callback  cannot be None.")
+        
         self.__engine_watcher_failure_callback = failure_callback_fn
         self.__watcher_handler = watcher_handler
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
@@ -112,3 +121,11 @@ class Consumer(IConsumer):
         self.__handle_events_thread.join()
         while not self.__file_queue.empty():
             _ = self.__file_queue.get()
+            
+    def is_running(self) -> bool:
+        """Is the consumer thread running ?
+
+        Returns:
+            bool: == true then consumer thread running
+        """
+        return self.__running

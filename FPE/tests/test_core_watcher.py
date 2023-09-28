@@ -38,12 +38,15 @@ def fixture_generate_config() -> ConfigDict:
 
 
 class TestCoreWatcher:
+    def __failure_callback(self):
+        pass
+    
     def __wait_for_processed_files(self, watcher: Watcher, count: int) -> None:
         while watcher.files_processed < count:
             time.sleep(0.01)
 
     def __copy_count_files(self, watcher_config: ConfigDict, count) -> None:
-        watcher = Watcher(watcher_config)
+        watcher = Watcher(watcher_config, self.__failure_callback)
         watcher.start()
         source_path = pathlib.Path(watcher_config[CONFIG_SOURCE])
         destination_path = pathlib.Path(watcher_config[CONFIG_DESTINATION])
@@ -64,34 +67,34 @@ class TestCoreWatcher:
             _ = Watcher(generate_config)
 
     def test_watcher_with_a_valid_config(self, generate_config: ConfigDict) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         assert watcher is not None
 
     def test_watcher_with_a_valid_config_check_source_directory(
         self, generate_config: ConfigDict
     ) -> None:
         assert pathlib.Path(generate_config[CONFIG_SOURCE]).exists() is False
-        _ = Watcher(generate_config)
+        _ = Watcher(generate_config,  self.__failure_callback)
         assert pathlib.Path(generate_config[CONFIG_SOURCE]).exists() is True
 
     def test_watcher_with_a_valid_config_check_desination_directory(
         self, generate_config: ConfigDict
     ) -> None:
         assert pathlib.Path(generate_config[CONFIG_DESTINATION]).exists() is False
-        _ = Watcher(generate_config)
+        _ = Watcher(generate_config,  self.__failure_callback)
         assert pathlib.Path(generate_config[CONFIG_DESTINATION]).exists() is True
 
     def test_watcher_initial_state_stopped(self, generate_config: ConfigDict) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         assert watcher.is_running is False
 
     def test_watcher_started(self, generate_config: ConfigDict):
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         assert watcher.is_running is True
 
     def test_watcher_start_a_running_watcher(self, generate_config: ConfigDict) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         watcher.start()
         assert watcher.is_running is True
@@ -99,14 +102,14 @@ class TestCoreWatcher:
     def test_watcher_stopping_a_stopped_watcher(
         self, generate_config: ConfigDict
     ) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         watcher.stop()
         watcher.stop()
         assert watcher.is_running is False
 
     def test_watcher_started_then_stopped(self, generate_config: ConfigDict) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         time.sleep(1)
         watcher.stop()
@@ -115,7 +118,7 @@ class TestCoreWatcher:
     def test_watcher_started_then_stopped_then_restarted(
         self, generate_config: ConfigDict
     ) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         time.sleep(1)
         watcher.stop()
@@ -163,7 +166,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "test.txt"
         create_test_file(source_path)
@@ -179,7 +182,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = (
             pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "dir2" / "test.txt"
@@ -200,7 +203,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path0 = (
             pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "test00.txt"
@@ -227,7 +230,7 @@ class TestCoreWatcher:
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
         generate_config[CONFIG_DELETESOURCE] = False
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "test.txt"
         create_test_file(source_path)
@@ -241,7 +244,7 @@ class TestCoreWatcher:
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
         generate_config[CONFIG_DELETESOURCE] = False
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = (
             pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "dir2" / "test.txt"
@@ -257,7 +260,7 @@ class TestCoreWatcher:
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
         generate_config[CONFIG_DELETESOURCE] = False
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path0 = (
             pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "test00.txt"
@@ -277,7 +280,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "test.txt"
         create_test_file(source_path)
@@ -290,7 +293,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = (
             pathlib.Path(generate_config[CONFIG_SOURCE]) / "dir1" / "dir2" / "test.txt"
@@ -309,7 +312,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path0 = (
             pathlib.Path(generate_config[CONFIG_SOURCE])
@@ -336,7 +339,7 @@ class TestCoreWatcher:
         self, generate_config: ConfigDict
     ) -> None:
         generate_config[CONFIG_RECURSIVE] = True
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = pathlib.Path(generate_config[CONFIG_SOURCE]) / "test.txt"
         create_test_file(source_path)
@@ -348,7 +351,7 @@ class TestCoreWatcher:
     def test_watcher_copy_a_single_readonly_file_from_source_to_destination(
         self, generate_config: ConfigDict
     ) -> None:
-        watcher = Watcher(generate_config)
+        watcher = Watcher(generate_config, self.__failure_callback)
         watcher.start()
         source_path = pathlib.Path(generate_config[CONFIG_SOURCE]) / "test.txt"
         create_test_file(source_path, True)

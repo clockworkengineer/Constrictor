@@ -59,7 +59,7 @@ class Handler:
         Returns:
             str: Relative source path.
         """
-        return str(source_path)[len(source_root) + 1:]
+        return str(source_path)[len(source_root) + 1 :]
 
     @staticmethod
     def setup_path(directory_path: str) -> str:
