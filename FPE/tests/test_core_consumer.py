@@ -9,6 +9,11 @@ from core.consumer import Consumer, ConsumerError
 from core.interface.ihandler import IHandler
 
 
+class Event:
+    def __init__(self, src_path: str) -> None:
+        self.src_path = src_path
+
+
 def failure_callback(self) -> None:
     pass
 
@@ -18,7 +23,10 @@ class DummyHandler(IHandler):
         super().__init__()
 
     def process(self, source_path: pathlib.Path) -> bool:
-        pass
+        if str(source_path) is not "":
+            return True
+        else:
+            return False
 
     def status(self) -> str:
         return ""
@@ -101,5 +109,15 @@ class TestCoreConsumer:
 
         assert consumer.is_running() is False
 
+    # test for failure calback called
 
-# test for failure calback called
+    # def test_consumer_when_a_processing_error_occures(self) -> None:
+    #     queue: Queue = Queue()
+    #     ihandler: IHandler = DummyHandler()
+    #     consumer: Consumer = Consumer(queue, ihandler, failure_callback)
+
+    #     consumer.start()
+
+    #     queue.put(Event("/"))
+    #     while queue.empty() is not True:
+    #         pass
