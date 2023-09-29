@@ -20,7 +20,7 @@ def failure_callback(self) -> None:
 
 class DummyHandler(IHandler):
     def __init__(self) -> None:
-        super().__init__()
+        pass
 
     def process(self, source_path: pathlib.Path) -> bool:
         if str(source_path) is not "":
