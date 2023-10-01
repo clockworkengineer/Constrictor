@@ -38,13 +38,13 @@ class Consumer(IConsumer):
     __file_queue: Queue
     __handle_events_thread: Thread
     __running: bool = False
-    __engine_watcher_failure_callback: FailureCallBackFunction = None
+    __engine_watcher_failure_callback: FailureCallBackFunction
 
     def __init__(
         self,
         file_queue: Queue,
         watcher_handler: IHandler,
-        failure_callback_fn: FailureCallBackFunction = None,
+        failure_callback_fn: FailureCallBackFunction
     ) -> None:
         """Initialise consumer event processing thread.
 
