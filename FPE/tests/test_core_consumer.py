@@ -9,13 +9,13 @@ from core.consumer import Consumer, ConsumerError
 from core.interface.ihandler import IHandler
 
 
+def failure_callback() -> None:
+    pass
+
+
 class Event:
     def __init__(self, src_path: str) -> None:
         self.src_path = src_path
-
-
-def failure_callback(self) -> None:
-    pass
 
 
 class TestConsumerHandler(IHandler):
@@ -42,7 +42,7 @@ class TestCoreConsumer:
         assert consumer.is_running() is False
 
     def test_consumer_with_invalid_qeue(self) -> None:
-        queue: Queue = None
+        queue: Queue = None  # type: ignore
         ihandler: IHandler = TestConsumerHandler()
 
         with pytest.raises(ConsumerError):
@@ -50,7 +50,7 @@ class TestCoreConsumer:
 
     def test_consumer_with_invalid_handler(self) -> None:
         queue: Queue = Queue()
-        ihandler: IHandler = None
+        ihandler: IHandler = None  # type: ignore
 
         with pytest.raises(ConsumerError):
             _: Consumer = Consumer(queue, ihandler, failure_callback)
@@ -60,7 +60,7 @@ class TestCoreConsumer:
         ihandler: IHandler = TestConsumerHandler()
 
         with pytest.raises(ConsumerError):
-            _: Consumer = Consumer(queue, ihandler, None)
+            _: Consumer = Consumer(queue, ihandler, None)  # type: ignore
 
     def test_consumer_with_start(self) -> None:
         queue: Queue = Queue()
