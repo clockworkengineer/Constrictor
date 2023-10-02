@@ -44,7 +44,7 @@ class Consumer(IConsumer):
         self,
         file_queue: Queue,
         watcher_handler: IHandler,
-        failure_callback_fn: FailureCallBackFunction
+        failure_callback_fn: FailureCallBackFunction,
     ) -> None:
         """Initialise consumer event processing thread.
 
@@ -77,20 +77,17 @@ class Consumer(IConsumer):
         Returns:
             bool: Return true if processed successfully.
         """
+        processing_success: bool = True
         if source_path.exists():
             Handler.wait_for_copy_completion(source_path)
             if self.__watcher_handler.process(source_path):
                 self.__watcher_handler.files_processed += 1
                 if self.__watcher_handler.delete_source:
                     Handler.remove_source(self.__root_path, source_path)
-            else:
-                if self.__watcher_handler.exit_on_failure:
-                    if self.__engine_watcher_failure_callback is not None:
-                        self.__engine_watcher_failure_callback(
-                            self.__watcher_handler.name
-                        )
-                    return False
-        return True
+            elif self.__watcher_handler.exit_on_failure:
+                self.__engine_watcher_failure_callback(self.__watcher_handler.name)
+                processing_success = False
+        return processing_success
 
     def __process_file_queue(self) -> None:
         """Read file queue and process each file received."""
