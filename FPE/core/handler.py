@@ -81,7 +81,7 @@ class Handler:
             source_path (pathlib.Path):  Source file path.
         """
 
-        if source_path.is_file():
+        if source_path.is_file() and source_path.exists():
             failure: bool = True
             while failure:
                 try:
@@ -94,7 +94,7 @@ class Handler:
                     else:
                         failure = False
 
-        source_path.chmod(source_path.stat().st_mode | 0o664)
+            source_path.chmod(source_path.stat().st_mode | 0o664)
 
     @staticmethod
     def remove_source(root_path: pathlib.Path, source_path: pathlib.Path):
@@ -104,14 +104,15 @@ class Handler:
             root_path (pathlib.Path): Root path.
             source_path (pathlib.Path): Source file path.
         """
-        source_path.unlink()
-        while source_path.parent != root_path:
-            if len(os.listdir(source_path.parent)) == 0:
-                source_path.parent.chmod(source_path.parent.stat().st_mode | 0o664)
-                source_path.parent.rmdir()
-                source_path = source_path.parent
-                continue
-            break
+        if source_path.is_file() and source_path.exists():
+            source_path.unlink()
+            while source_path.parent != root_path:
+                if len(os.listdir(source_path.parent)) == 0:
+                    source_path.parent.chmod(source_path.parent.stat().st_mode | 0o664)
+                    source_path.parent.rmdir()
+                    source_path = source_path.parent
+                    continue
+                break
 
     @staticmethod
     def get_config(handler_config: ConfigDict, attribute: str) -> any:
