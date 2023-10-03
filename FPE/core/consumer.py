@@ -87,6 +87,7 @@ class Consumer(IConsumer):
             elif self.__watcher_handler.exit_on_failure:
                 self.__engine_watcher_failure_callback(self.__watcher_handler.name)
                 processing_success = False
+                self.__running = False
         return processing_success
 
     def __process_file_queue(self) -> None:

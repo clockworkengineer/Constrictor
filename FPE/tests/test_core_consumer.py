@@ -3,13 +3,17 @@
 
 import pathlib
 from queue import Queue
+import time
 import pytest
 
 from core.consumer import Consumer, ConsumerError
 from core.interface.ihandler import IHandler
 
 
-def failure_callback() -> None:
+failure_called: bool = False
+
+
+def failure_callback(watcher_name: str) -> None:
     pass
 
 
@@ -20,10 +24,10 @@ class Event:
 
 class TestConsumerHandler(IHandler):
     def __init__(self) -> None:
-        pass
+        self.exit_on_failure = True
 
     def process(self, source_path: pathlib.Path) -> bool:
-        if str(source_path) is not "":
+        if str(source_path) != ".":
             return True
         else:
             return False
@@ -113,11 +117,14 @@ class TestCoreConsumer:
 
     # def test_consumer_when_a_processing_error_occures(self) -> None:
     #     queue: Queue = Queue()
-    #     ihandler: IHandler = DummyHandler()
+    #     ihandler: IHandler = TestConsumerHandler()
     #     consumer: Consumer = Consumer(queue, ihandler, failure_callback)
 
     #     consumer.start()
 
-    #     queue.put(Event("/"))
-    #     while queue.empty() is not True:
-    #         pass
+    #     queue.put(Event("."))
+
+    #     while consumer.is_running():
+    #         time.sleep(0.1)
+
+    #     assert failure_called
