@@ -1,5 +1,5 @@
 """TEST"""
-# pylint: disable=missing-function-docstring, missing-class-docstring, unused-argument
+# pylint: disable=missing-function-docstring, missing-class-docstring, unused-argument, global-statement
 
 import pathlib
 from queue import Queue
@@ -14,7 +14,8 @@ failure_called: bool = False
 
 
 def failure_callback(watcher_name: str) -> None:
-    pass
+    global failure_called
+    failure_called = True
 
 
 class Event:
@@ -113,18 +114,15 @@ class TestCoreConsumer:
 
         assert consumer.is_running() is False
 
-    # test for failure calback called
+    def test_consumer_when_a_processing_error_occurs(self) -> None:
+        queue: Queue = Queue()
+        ihandler: IHandler = TestConsumerHandler()
+        consumer: Consumer = Consumer(queue, ihandler, failure_callback)
 
-    # def test_consumer_when_a_processing_error_occures(self) -> None:
-    #     queue: Queue = Queue()
-    #     ihandler: IHandler = TestConsumerHandler()
-    #     consumer: Consumer = Consumer(queue, ihandler, failure_callback)
+        consumer.start()
 
-    #     consumer.start()
+        queue.put(Event("."))  # Trigger failure
+        while consumer.is_running() and ihandler.files_processed != 1:
+            time.sleep(0.1)
 
-    #     queue.put(Event("."))
-
-    #     while consumer.is_running():
-    #         time.sleep(0.1)
-
-    #     assert failure_called
+        assert failure_called
