@@ -26,4 +26,4 @@ class FPEError(Exception):
         Returns:
             str: String with application name plus component.
         """
-        return APP_NAME + component + ": "
+        return APP_NAME + " " + component + ": "

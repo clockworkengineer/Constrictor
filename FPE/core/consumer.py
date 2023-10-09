@@ -61,7 +61,7 @@ class Consumer(IConsumer):
             raise ConsumerError("Watcher handler cannot be None.")
 
         if failure_callback_fn is None:
-            raise ConsumerError("Failure callback  cannot be None.")
+            raise ConsumerError("Failure callback cannot be None.")
 
         self.__engine_watcher_failure_callback = failure_callback_fn
         self.__watcher_handler = watcher_handler

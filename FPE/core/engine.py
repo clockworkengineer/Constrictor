@@ -6,6 +6,7 @@ import json
 
 from builtin.handler_list import fpe_handler_list
 from core.constants import CONFIG_NAME, CONFIG_WATCHERS, CONFIG_FILENAME, CONFIG_NOGUI
+from core.error import FPEError
 from core.consumer import FailureCallBackFunction
 from core.config import ConfigDict
 from core.factory import Factory
@@ -13,12 +14,26 @@ from core.watcher import Watcher
 from core.plugin import PluginLoader
 
 
+class EngineError(FPEError):
+    """An error occurred in Engine file processing."""
+
+    def __str__(self) -> str:
+        """Return string for exception.
+
+        Returns:
+            str: Exception string.
+        """
+
+        return FPEError.error_prefix("Engine") + str(self.error)
+
+
 class Engine:
     """Control class for the FPE used to create, control and delete directory/file watchers."""
 
     __engine_config: ConfigDict = {}
     __engine_watchers: dict[str, Watcher] = {}
-    __engine_watcher_failure_callback: FailureCallBackFunction
+    __engine_watcher_failure_callback: FailureCallBackFunction =  None
+    __engine_running: bool = False
 
     def __init__(self, engine_config: ConfigDict) -> None:
         """Create FPE engine.
@@ -26,6 +41,9 @@ class Engine:
         Args:
             engine_config (ConfigDict): FPE configuration.
         """
+
+        if engine_config is None:
+            raise EngineError("Engine config cannot be None.")
 
         # Make a copy of config for engine
 
@@ -101,6 +119,8 @@ class Engine:
         for watcher_name, _ in self.__engine_watchers.items():
             self.start_watcher(watcher_name)
 
+        self.__engine_running = True
+
         logging.info("File Processing Engine started.")
 
     def shutdown(self) -> None:
@@ -110,6 +130,12 @@ class Engine:
             watcher.stop()
 
         self.__engine_watchers.clear()
+        self.__engine_running = False
+
+    @property
+    def is_running(self) -> bool:
+        """Return true if engine running."""
+        return self.__engine_running
 
     def running_watchers_list(self) -> list[str]:
         """Return list of current watcher names."""
