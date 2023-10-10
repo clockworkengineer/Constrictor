@@ -5,22 +5,22 @@ import pytest
 
 from tests.common import json_file_source
 
+from core.constants import CONFIG_WATCHERS, CONFIG_PLUGINS
 from core.arguments import Arguments
 from core.config import Config
 from core.consumer import ConsumerError
 from core.engine import Engine, EngineError
+from core.plugin import PluginLoaderError
+
 
 def failure_callback(watcher_name: str) -> None:
     pass
-    
-class TestCoreEngine:
-    # Test pass None as engine config
 
+
+class TestCoreEngine:
     def test_core_engine_pass_none_as_engine_config(self) -> None:
         with pytest.raises(EngineError):
             _: Engine = Engine(None)  # type: ignore
-
-    # Test valid engine config loads ok
 
     def test_core_engine_with_valid_config_file(self) -> None:
         engine_config = Config(
@@ -30,7 +30,9 @@ class TestCoreEngine:
         assert engine is not None
         assert engine.is_running is False
 
-    def test_core_engine_with_valid_config_file_startup_with_no_failure_callback(self) -> None:
+    def test_core_engine_with_valid_config_file_startup_with_no_failure_callback(
+        self,
+    ) -> None:
         engine_config = Config(
             Arguments([json_file_source("test_valid.json")])
         ).get_config()
@@ -38,7 +40,9 @@ class TestCoreEngine:
         with pytest.raises(ConsumerError):
             engine.startup()
 
-    def test_core_engine_with_valid_config_file_startup_with_failure_callback(self) -> None:
+    def test_core_engine_with_valid_config_file_startup_with_failure_callback(
+        self,
+    ) -> None:
         engine_config = Config(
             Arguments([json_file_source("test_valid.json")])
         ).get_config()
@@ -47,8 +51,25 @@ class TestCoreEngine:
         engine.startup()
         assert engine.is_running
 
-# Test no handlers in config works ok
-# Test empty plugins works ok
+    def test_core_engine_with_no_watchers_in_config(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine_config[CONFIG_WATCHERS] = []
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.startup()
+        assert engine.is_running
+
+    def test_core_engine_with_no_plugins_in_config(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine_config[CONFIG_PLUGINS] = []
+        with pytest.raises(PluginLoaderError):
+            _: Engine = Engine(engine_config)
+
+
 # Test to create a watcher
 # Test to delete a watcher
 # Test to create watcher that exists
