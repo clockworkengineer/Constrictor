@@ -51,6 +51,8 @@ class TestCoreEngine:
 # Test empty plugins works ok
 # Test to create a watcher
 # Test to delete a watcher
+# Test to create watcher that exists
+# Test to delete watcher that does not exist
 # Test to start a watcher
 # Test to stop a watcher
 # Test to start non-existant watcher
