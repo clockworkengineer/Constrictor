@@ -5,7 +5,7 @@ import pytest
 
 from tests.common import json_file_source
 
-from core.constants import CONFIG_WATCHERS, CONFIG_PLUGINS
+from core.constants import CONFIG_WATCHERS, CONFIG_PLUGINS, CONFIG_NAME
 from core.arguments import Arguments
 from core.config import Config
 from core.consumer import ConsumerError
@@ -76,12 +76,21 @@ class TestCoreEngine:
         ).get_config()
         engine: Engine = Engine(engine_config)
         engine.set_failure_callback(failure_callback)
-        engine.create_watcher("")
-        # engine.startup()
-        # assert engine.is_running
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        assert len(engine.running_watchers_list()) == 1
+
+    # Test to delete a watcher
+    def test_core_engine_delete_a_watcher(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        engine.delete_watcher(engine_config[CONFIG_WATCHERS][0][CONFIG_NAME])
+        assert len(engine.running_watchers_list()) == 0
 
 
-# Test to delete a watcher
 # Test to create watcher that does not exists
 # Test to delete watcher that does not exist
 # Test to start a watcher

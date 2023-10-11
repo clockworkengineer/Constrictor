@@ -158,7 +158,7 @@ class Watcher:
     def stop(self) -> None:
         """Stop watcher."""
 
-        if self.__observer is not None:
+        if self.__running:
             self.__observer.stop()
             self.__observer = None  # type: ignore
             self.__consumer.stop()
