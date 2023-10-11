@@ -92,7 +92,10 @@ class Engine:
         Args:
             watcher_name (str): Watcher name.
         """
-        self.__engine_watchers[watcher_name].start()
+        try:
+            self.__engine_watchers[watcher_name].start()
+        except KeyError:
+            raise EngineError("Watcher name could not be found.")
 
     def stop_watcher(self, watcher_name: str) -> None:
         """Stop directory/file watcher.
@@ -100,7 +103,10 @@ class Engine:
         Args:
             watcher_name (str): Watcher name.
         """
-        self.__engine_watchers[watcher_name].stop()
+        try:
+            self.__engine_watchers[watcher_name].stop()
+        except KeyError:
+            raise EngineError("Watcher name could not be found.")
 
     def is_watcher_running(self, watcher_name: str) -> bool:
         """Is a named watcher running ?
@@ -111,9 +117,11 @@ class Engine:
         Returns:
             bool: true if watcher currently running
         """
-
-        return self.__engine_watchers[watcher_name].is_running
-
+        try:
+            return self.__engine_watchers[watcher_name].is_running
+        except KeyError:
+            raise EngineError("Watcher name could not be found.")
+        
     def startup(self) -> None:
         """Create directory/file watchers from config and startup."""
 
@@ -159,7 +167,10 @@ class Engine:
             bool: true if watcher currently running
         """
 
-        return self.__engine_watchers[watcher_name]
+        try:
+            return self.__engine_watchers[watcher_name]
+        except KeyError:
+            raise EngineError("Watcher name could not be found.")
 
     def save_config(self) -> None:
         """Save current configuration away to JSON file."""
