@@ -102,8 +102,6 @@ class TestCoreEngine:
                 engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
             assert len(engine.running_watchers_list()) == 0
         
-
-
     def test_core_engine_delete_a_non_existant_watcher(self) -> None:
         engine_config = Config(
             Arguments([json_file_source("test_valid.json")])
@@ -115,7 +113,27 @@ class TestCoreEngine:
         with pytest.raises(EngineError):
             engine.delete_watcher("Not there")
         assert len(engine.running_watchers_list()) == 1
+        
 # Test to start a watcher
+
+    def test_core_engine_create_and_start_a__watcher(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        engine.start_watcher(engine_config[CONFIG_WATCHERS][0][CONFIG_NAME])
+        assert engine.is_watcher_running(engine_config[CONFIG_WATCHERS][0][CONFIG_NAME])
 # Test to stop a watcher
+    def test_core_engine_create_and_start_a__watcher(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        engine.start_watcher(engine_config[CONFIG_WATCHERS][0][CONFIG_NAME])
+        assert engine.is_watcher_running(engine_config[CONFIG_WATCHERS][0][CONFIG_NAME])
 # Test to start non-existant watcher
 # Test to stop non-existant watcher
