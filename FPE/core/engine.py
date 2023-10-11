@@ -74,13 +74,17 @@ class Engine:
         Args:
             watcher_name (str): Watcher name.
         """
-        self.__engine_watchers[watcher_name].stop()
-        self.__engine_watchers.pop(watcher_name)
+        
+        try:
+            self.__engine_watchers[watcher_name].stop()
+            self.__engine_watchers.pop(watcher_name)
 
-        for watcher_config in self.__engine_config[CONFIG_WATCHERS]:
-            if watcher_config[CONFIG_NAME] == watcher_name:
-                self.__engine_config[CONFIG_WATCHERS].remove(watcher_config)
-                break
+            for watcher_config in self.__engine_config[CONFIG_WATCHERS]:
+                if watcher_config[CONFIG_NAME] == watcher_name:
+                    self.__engine_config[CONFIG_WATCHERS].remove(watcher_config)
+                    break
+        except KeyError:
+            raise EngineError("Watcher name could not be found.")
 
     def start_watcher(self, watcher_name: str) -> None:
         """Start directory/file watcher.

@@ -1,0 +1,20 @@
+{
+    "plugins": [
+        "plugins.fileannouncer_handler"
+    ],
+    "watchers": [
+        {
+            "name": "File Copier",
+            "type": "CopyFil",
+            "source": "./watcher/source",
+            "destination": "./watcher/destination/",
+            "exitonfailure": false,
+            "deletesource": true,
+            "recursive" : false
+        }
+    ],
+    "logging": {
+        "level": 20,
+        "format": "%(asctime)s:%(message)s"
+    }
+}

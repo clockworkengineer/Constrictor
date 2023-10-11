@@ -10,6 +10,7 @@ from core.arguments import Arguments
 from core.config import Config
 from core.consumer import ConsumerError
 from core.engine import Engine, EngineError
+from core.factory import FactoryError
 from core.plugin import PluginLoaderError
 
 
@@ -91,8 +92,31 @@ class TestCoreEngine:
         assert len(engine.running_watchers_list()) == 0
 
 
-# Test to create watcher that does not exists
+    def test_core_engine_create_a_watcher_with_ivlaid_type(self) -> None:
+            engine_config = Config(
+                Arguments([json_file_source("test_invalid_watcher_type.json")])
+            ).get_config()
+            engine: Engine = Engine(engine_config)
+            engine.set_failure_callback(failure_callback)  
+            with pytest.raises(FactoryError):
+                engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+            assert len(engine.running_watchers_list()) == 0
+            
+            
 # Test to delete watcher that does not exist
+
+
+    def test_core_engine_delete_a_non_existant_watcher(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        assert len(engine.running_watchers_list()) == 1 
+        with pytest.raises(EngineError):
+            engine.delete_watcher("Not there")
+        assert len(engine.running_watchers_list()) == 1
 # Test to start a watcher
 # Test to stop a watcher
 # Test to start non-existant watcher
