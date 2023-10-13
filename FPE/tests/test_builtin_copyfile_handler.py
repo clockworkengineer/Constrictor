@@ -30,7 +30,7 @@ class TestBuiltinCopyFileHandler:
         with pytest.raises(FPEError):
             _: IHandler = CopyFileHandler(None)  # type: ignore
 
-    def test_buitin_handler_create_non_existant_source(
+    def test_builtin_handler_create_non_existant_source(
         self, generate_copyfile_config: ConfigDict
     ) -> None:
         pathlib.Path(generate_copyfile_config[CONFIG_DESTINATION]).mkdir(
@@ -39,7 +39,7 @@ class TestBuiltinCopyFileHandler:
         _: IHandler = CopyFileHandler(generate_copyfile_config)
         assert pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]).exists()
 
-    def test_buitin_handler_create_non_existant_destination(
+    def test_builtin_handler_create_non_existant_destination(
         self, generate_copyfile_config: ConfigDict
     ) -> None:
         pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]).mkdir(
@@ -48,7 +48,7 @@ class TestBuiltinCopyFileHandler:
         _: IHandler = CopyFileHandler(generate_copyfile_config)
         assert pathlib.Path(generate_copyfile_config[CONFIG_DESTINATION]).exists()
 
-    def test_buitin_handler_copy_a_single_source_to_destination(
+    def test_builtin_handler_copy_a_single_source_to_destination(
         self, generate_copyfile_config: ConfigDict
     ) -> None:
         pathlib.Path(generate_copyfile_config[CONFIG_SOURCE]).mkdir(
