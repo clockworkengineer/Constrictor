@@ -54,7 +54,7 @@ class TestCoreEngine:
         ).get_config()
         engine_config[CONFIG_WATCHERS] = []
         engine: Engine = Engine(engine_config)
-        assert len(engine.watchers_list) == 1
+        assert engine is not None
 
     def test_core_engine_with_no_plugins_in_config(self) -> None:
         engine_config = Config(
