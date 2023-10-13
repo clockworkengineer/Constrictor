@@ -38,7 +38,7 @@ class Consumer(IConsumer):
     __file_queue: Queue
     __handle_events_thread: Thread
     __running: bool = False
-    __engine_watcher_failure_callback: FailureCallBackFunction
+    __watcher_failure_callback: FailureCallBackFunction
 
     def __init__(
         self,
@@ -63,7 +63,7 @@ class Consumer(IConsumer):
         if failure_callback_fn is None:
             raise ConsumerError("Failure callback cannot be None.")
 
-        self.__engine_watcher_failure_callback = failure_callback_fn
+        self.__watcher_failure_callback = failure_callback_fn
         self.__watcher_handler = watcher_handler
         self.__root_path = pathlib.Path(self.__watcher_handler.source)
         self.__file_queue = file_queue
@@ -85,7 +85,7 @@ class Consumer(IConsumer):
                 if self.__watcher_handler.delete_source:
                     Handler.remove_source(self.__root_path, source_path)
             elif self.__watcher_handler.exit_on_failure:
-                self.__engine_watcher_failure_callback(self.__watcher_handler.name)
+                self.__watcher_failure_callback(self.__watcher_handler.name)
                 processing_success = False
                 self.__running = False
         return processing_success

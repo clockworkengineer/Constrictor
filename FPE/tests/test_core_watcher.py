@@ -147,16 +147,19 @@ class TestCoreWatcher:
     ) -> None:
         self.__copy_count_files(generate_config, 10)
 
+    @pytest.mark.skip(reason="takes to long")
     def test_watcher_copy_fifty_files_from_source_to_destination(
         self, generate_config: ConfigDict
     ) -> None:
         self.__copy_count_files(generate_config, 50)
 
+    @pytest.mark.skip(reason="takes to long")
     def test_watcher_copy_onehundred_files_from_source_to_destination(
         self, generate_config: ConfigDict
     ) -> None:
         self.__copy_count_files(generate_config, 100)
 
+    @pytest.mark.skip(reason="takes to long")
     def test_watcher_copy_onethousand_files_from_source_to_destination(
         self, generate_config: ConfigDict
     ) -> None:

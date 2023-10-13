@@ -47,7 +47,7 @@ class Watcher:
     __consumer: IConsumer
     __file_queue: Queue
     __running: bool
-    __engine_watcher_failure_callback: FailureCallBackFunction = None
+    __watcher_failure_callback: FailureCallBackFunction = None
 
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
@@ -105,14 +105,14 @@ class Watcher:
 
             self.__handler = Factory.create(watcher_config)
 
-            self.__engine_watcher_failure_callback = failure_callback_fn
+            self.__watcher_failure_callback = failure_callback_fn
             if self.__handler is not None:
                 self.__file_queue = Queue()
                 self.__observer = WatchdogObserver(self.__file_queue, self.__handler)
                 self.__consumer = Consumer(
                     self.__file_queue,
                     self.__handler,
-                    self.__engine_watcher_failure_callback,
+                    self.__watcher_failure_callback,
                 )
                 Watcher._display_details(watcher_config)
 
@@ -145,7 +145,7 @@ class Watcher:
             self.__consumer = Consumer(
                 self.__file_queue,
                 self.__handler,
-                self.__engine_watcher_failure_callback,
+                self.__watcher_failure_callback,
             )
 
         if self.__observer is not None:
