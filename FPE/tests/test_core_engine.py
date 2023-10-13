@@ -137,6 +137,25 @@ class TestCoreEngine:
             is False
         )
 
+    def test_core_engine_start_noexistant_watcher(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        with pytest.raises(EngineError):
+            engine.start_watcher("Not There")
 
-# Test to start non-existant watcher
-# Test to stop non-existant watcher
+
+    def test_core_engine_stop_noexistant_watcher(self) -> None:
+        engine_config = Config(
+            Arguments([json_file_source("test_valid.json")])
+        ).get_config()
+        engine: Engine = Engine(engine_config)
+        engine.set_failure_callback(failure_callback)
+        engine.create_watcher(engine_config[CONFIG_WATCHERS][0])
+        engine.start_watcher(engine_config[CONFIG_WATCHERS][0][CONFIG_NAME])
+        with pytest.raises(EngineError):
+            engine.stop_watcher("Not There")
+  
