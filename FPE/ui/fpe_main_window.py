@@ -104,7 +104,7 @@ class MainWindow(QMainWindow, Ui_fpe_main_window):
             self.fpe_engine.save_config
         )
 
-        self.fpe_running_watchers_list.addItems(fpe_engine.running_watchers_list())
+        self.fpe_running_watchers_list.addItems(fpe_engine.watchers_list())
 
         self.current_row = 0
         self.fpe_running_watchers_list.setCurrentRow(self.current_row)

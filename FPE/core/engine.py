@@ -32,7 +32,7 @@ class Engine:
 
     __config: ConfigDict = {}
     __watchers: dict[str, Watcher] = {}
-    __watcher_failure_callback: FailureCallBackFunction =  None
+    __watcher_failure_callback: FailureCallBackFunction = None
     __running: bool = False
 
     def __init__(self, engine_config: ConfigDict) -> None:
@@ -62,9 +62,7 @@ class Engine:
         Args:
             watcher_config (ConfigDict): Watcher configuration.
         """
-        current_watcher = Watcher(
-            watcher_config, self.__watcher_failure_callback
-        )
+        current_watcher = Watcher(watcher_config, self.__watcher_failure_callback)
         if current_watcher is not None:
             self.__watchers[watcher_config[CONFIG_NAME]] = current_watcher
 
@@ -74,7 +72,7 @@ class Engine:
         Args:
             watcher_name (str): Watcher name.
         """
-        
+
         try:
             self.__watchers[watcher_name].stop()
             self.__watchers.pop(watcher_name)
@@ -121,7 +119,7 @@ class Engine:
             return self.__watchers[watcher_name].is_running
         except KeyError as error:
             raise EngineError("Watcher name could not be found.") from error
-        
+
     def startup(self) -> None:
         """Create directory/file watchers from config and startup."""
 
@@ -149,10 +147,12 @@ class Engine:
         """Return true if engine running."""
         return self.__running
 
-    def running_watchers_list(self) -> list[str]:
+    @property
+    def watchers_list(self) -> list[str]:
         """Return list of current watcher names."""
         return list(self.__watchers.keys())
 
+    @property
     def running_config(self) -> ConfigDict:
         """Return engine configuration."""
         return self.__config
@@ -180,9 +180,7 @@ class Engine:
         config_to_save.pop(CONFIG_FILENAME)
         config_to_save.pop(CONFIG_NOGUI)
         # Write JSON configuration
-        with open(
-            self.__config[CONFIG_FILENAME], "w", encoding="utf-8"
-        ) as json_file:
+        with open(self.__config[CONFIG_FILENAME], "w", encoding="utf-8") as json_file:
             json_file.write(json.dumps(config_to_save, indent=1))
 
     def set_failure_callback(

@@ -45,7 +45,7 @@ class WatcherInfoDialog(QDialog, Ui_QtWatcherInfoDialog):
 
         self.setWindowTitle("Watcher Info")
 
-        self.__watcher_config = fpe_engine.running_config()[CONFIG_WATCHERS][row]
+        self.__watcher_config = fpe_engine.running_config[CONFIG_WATCHERS][row]
         self.__fpe_engine = fpe_engine
 
         self.setWindowTitle("Watcher Info (" + self.__watcher_config["name"] + ")")
