@@ -43,10 +43,6 @@ class FTPCopyFileHandler(IHandler):
 
     """
 
-    server: str = ""
-    user: str = ""
-    password: str = ""
-
     def __init__(self, handler_config: ConfigDict) -> None:
         """Initialise handler attributes.
 
@@ -64,9 +60,9 @@ class FTPCopyFileHandler(IHandler):
 
         self.destination = handler_config[CONFIG_DESTINATION]
 
-        self.server = Handler.get_config(handler_config, CONFIG_SERVER)
-        self.user = Handler.get_config(handler_config, CONFIG_USER)
-        self.password = Handler.get_config(handler_config, CONFIG_PASSWORD)
+        self.server: str = Handler.get_config(handler_config, CONFIG_SERVER)
+        self.user: str = Handler.get_config(handler_config, CONFIG_USER)
+        self.password: str = Handler.get_config(handler_config, CONFIG_PASSWORD)
 
     @staticmethod
     def __cwd_destination(ftp: FTP, destination: str) -> None:

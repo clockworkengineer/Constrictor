@@ -57,13 +57,13 @@ class CSVFileToSQLHandler(IHandler):
 
         Handler.set_mandatory_config(self, handler_config)
 
-        self.server = Handler.get_config(handler_config, "server")
-        self.port = Handler.get_config(handler_config, "port")
-        self.user_name = Handler.get_config(handler_config, "user")
-        self.user_password = Handler.get_config(handler_config, "password")
-        self.database_name = Handler.get_config(handler_config, "database")
-        self.table_name = Handler.get_config(handler_config, "table")
-        self.key_name = Handler.get_config(handler_config, "key")
+        self.server: str = Handler.get_config(handler_config, "server")
+        self.port: str = Handler.get_config(handler_config, "port")
+        self.user_name: str = Handler.get_config(handler_config, "user")
+        self.user_password: str = Handler.get_config(handler_config, "password")
+        self.database_name: str = Handler.get_config(handler_config, "database")
+        self.table_name: str = Handler.get_config(handler_config, "table")
+        self.key_name: str = Handler.get_config(handler_config, "key")
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database."""

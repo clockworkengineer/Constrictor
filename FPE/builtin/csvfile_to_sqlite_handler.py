@@ -54,9 +54,9 @@ class CSVFileToSQLiteHandler(IHandler):
 
         Handler.set_mandatory_config(self, handler_config)
 
-        self.table_name = handler_config["table"]
-        self.key_name = handler_config["key"]
-        self.database_file = handler_config["databasefile"]
+        self.table_name: str  = handler_config["table"]
+        self.key_name: str  = handler_config["key"]
+        self.database_file: str  = handler_config["databasefile"]
 
     def process(self, source_path: pathlib.Path) -> bool:
         """Import CSV file to SQLite database."""
