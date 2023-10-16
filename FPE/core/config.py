@@ -50,12 +50,12 @@ class Config:
         try:
             # Load config file
             with open(arguments.file, "r", encoding="utf-8") as json_file:
-                self.config = json.load(json_file)
+                self.__config = json.load(json_file)
             # Set UI flag (JSON file setting overrides any command line option)
-            if CONFIG_NOGUI not in self.config:
-                self.config[CONFIG_NOGUI] = arguments.nogui
+            if CONFIG_NOGUI not in self.__config:
+                self.__config[CONFIG_NOGUI] = arguments.nogui
             # Save away config file name
-            self.config[CONFIG_FILENAME] = arguments.file
+            self.__config[CONFIG_FILENAME] = arguments.file
         except json.JSONDecodeError as error:
             raise ConfigError(error) from error
 
@@ -65,12 +65,12 @@ class Config:
         # Must contain 'plugins' and 'watchers' key entries
 
         for key in CONFIG_MANDATORY_KEYS:
-            if key not in self.config:
+            if key not in self.__config:
                 raise ConfigError(f"Missing config '{key}' key")
 
         # Each watcher entry must have a 'name', 'type' and 'source' keys
 
-        for watcher_config in self.config[CONFIG_WATCHERS]:
+        for watcher_config in self.__config[CONFIG_WATCHERS]:
             for key in CONFIG_WATCHER_MANDATORY_KEYS:
                 if key not in watcher_config:
                     raise ConfigError(f"Missing watcher '{key}' key")
@@ -87,19 +87,20 @@ class Config:
 
         # Read in any logging options, merge with default
 
-        if "logging" in self.config:
-            logging_params.update(self.config["logging"])
+        if "logging" in self.__config:
+            logging_params.update(self.__config["logging"])
             # If level passed in then convert to int.
             if logging_params["level"] is not int:
                 logging_params["level"] = int(logging_params["level"])
 
         logging.basicConfig(**logging_params)  # Set logging options
 
-    def get_config(self) -> ConfigDict:
+    @property
+    def config(self) -> ConfigDict:
         """Return config dictionary.
 
         Returns:
             ConfigDict: Config dictionary.
         """
 
-        return self.config
+        return self.__config

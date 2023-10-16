@@ -29,7 +29,7 @@ class WatcherInfoDialog(QDialog, Ui_QtWatcherInfoDialog):
         self.watcher_info_status_textedit.setPlainText(
             self.__fpe_engine.return_watcher(
                 self.__watcher_config[CONFIG_NAME]
-            ).status()
+            ).status
         )
 
     def __init__(self, row: int, fpe_engine: Engine, parent=None) -> None:

@@ -162,6 +162,7 @@ class Watcher:
             self.__consumer = None  # type: ignore
             self.__running = False
 
+    @property
     def status(self) -> str:
         """Return current watcher handler status."""
         return self.__handler.status()

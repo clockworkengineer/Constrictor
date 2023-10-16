@@ -63,13 +63,13 @@ def fpe() -> None:
 
         #  Create engine
 
-        fpe_engine: Engine = Engine(fpe_config.get_config())
+        fpe_engine: Engine = Engine(fpe_config.config)
 
         logging.info("File Processing Engine Starting ...")
 
         # Run with selected user interface
 
-        if fpe_config.get_config()[CONFIG_NOGUI]:
+        if fpe_config.config[CONFIG_NOGUI]:
             fpe_headless(fpe_engine)
         else:
             fpe_windowed(fpe_engine)

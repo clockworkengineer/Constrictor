@@ -119,6 +119,7 @@ class Consumer(IConsumer):
         while not self.__file_queue.empty():
             _ = self.__file_queue.get()
 
+    @property
     def is_running(self) -> bool:
         """Is the consumer thread running ?
 

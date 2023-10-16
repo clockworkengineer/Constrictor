@@ -19,7 +19,7 @@ def failure_callback(watcher_name: str) -> None:
 
 
 def create_engine(config_file: str) -> Engine:
-    engine_config = Config(Arguments([json_file_source(config_file)])).get_config()
+    engine_config = Config(Arguments([json_file_source(config_file)])).config
     return Engine(engine_config)
 
 
@@ -49,17 +49,13 @@ class TestCoreEngine:
         assert engine.is_running
 
     def test_core_engine_with_no_watchers_in_config(self) -> None:
-        engine_config = Config(
-            Arguments([json_file_source("test_valid.json")])
-        ).get_config()
+        engine_config = Config(Arguments([json_file_source("test_valid.json")])).config
         engine_config[CONFIG_WATCHERS] = []
         engine: Engine = Engine(engine_config)
         assert engine is not None
 
     def test_core_engine_with_no_plugins_in_config(self) -> None:
-        engine_config = Config(
-            Arguments([json_file_source("test_valid.json")])
-        ).get_config()
+        engine_config = Config(Arguments([json_file_source("test_valid.json")])).config
         engine_config[CONFIG_PLUGINS] = []
         with pytest.raises(PluginLoaderError):
             _: Engine = Engine(engine_config)

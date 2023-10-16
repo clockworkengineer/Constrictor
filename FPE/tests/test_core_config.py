@@ -12,7 +12,7 @@ from core.config import Config, ConfigError
 
 class TestCoreConfig:
     def test_config_with_valid_json_file(self) -> None:
-        config = Config(Arguments([json_file_source("test_valid.json")])).get_config()
+        config = Config(Arguments([json_file_source("test_valid.json")])).config
         assert config[CONFIG_PLUGINS][0] == "plugins.fileannouncer_handler"
         assert config[CONFIG_WATCHERS][0][CONFIG_TYPE] == "CopyFile"
 
