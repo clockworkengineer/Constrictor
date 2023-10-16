@@ -59,5 +59,16 @@ class Arguments:
 
         # Pass back valid attributes
 
-        self.nogui : str = arguments.nogui
-        self.file: bool = arguments.file
+        self.__nogui: bool = arguments.nogui
+        self.__file: str = arguments.file
+        
+    @property
+    def nogui(self) -> bool:
+        """Run with no GUI."""
+        return self.__nogui
+    
+    @property
+    def file(self) -> str:
+        """Configuration file."""
+        return self.__file
+    
