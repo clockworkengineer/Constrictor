@@ -33,13 +33,6 @@ class ConsumerError(FPEError):
 class Consumer(IConsumer):
     """Consumer file queue processor."""
 
-    __watcher_handler: IHandler
-    __root_path: pathlib.Path
-    __file_queue: Queue
-    __handle_events_thread: Thread
-    __running: bool = False
-    __watcher_failure_callback: FailureCallBackFunction
-
     def __init__(
         self,
         file_queue: Queue,
@@ -63,10 +56,12 @@ class Consumer(IConsumer):
         if failure_callback_fn is None:
             raise ConsumerError("Failure callback cannot be None.")
 
-        self.__watcher_failure_callback = failure_callback_fn
-        self.__watcher_handler = watcher_handler
-        self.__root_path = pathlib.Path(self.__watcher_handler.source)
-        self.__file_queue = file_queue
+        self.__watcher_failure_callback: FailureCallBackFunction = failure_callback_fn
+        self.__watcher_handler: IHandler = watcher_handler
+        self.__root_path: pathlib.Path = pathlib.Path(self.__watcher_handler.source)
+        self.__file_queue: Queue = file_queue
+        self.__handle_events_thread: Thread = None
+        self.__running: bool = False
 
     def __handle_event(self, source_path: pathlib.Path) -> bool:
         """Handle file event.

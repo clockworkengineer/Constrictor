@@ -14,7 +14,7 @@ class FPEError(Exception):
         Args:
             error (Any): Exception.
         """
-        self.error = error
+        self.error: Any = error
 
     @staticmethod
     def error_prefix(component: str) -> str:

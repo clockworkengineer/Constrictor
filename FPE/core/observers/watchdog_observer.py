@@ -34,9 +34,6 @@ class WatchdogObserverError(FPEError):
 class WatchdogObserver(FileSystemEventHandler, IObserver):
     """Watcher handler adapter for watchdog."""
 
-    __file_queue: Queue
-    __watchdog_observer: Observer
-
     def __init__(self, file_queue: Queue, watcher_handler: IHandler) -> None:
         """Initialise watcher handler adapter.
 
@@ -46,11 +43,9 @@ class WatchdogObserver(FileSystemEventHandler, IObserver):
 
         super().__init__()
 
-        self.__watcher_handler = watcher_handler
-
-        self.__file_queue = file_queue
-
-        self.__watchdog_observer = Observer()
+        self.__watcher_handler: IHandler = watcher_handler
+        self.__file_queue: Queue = file_queue
+        self.__watchdog_observer: Observer = Observer()
         self.__watchdog_observer.schedule(
             event_handler=self,
             path=self.__watcher_handler.source,

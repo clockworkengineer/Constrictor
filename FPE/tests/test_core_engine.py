@@ -68,7 +68,7 @@ class TestCoreEngine:
         engine: Engine = create_engine("test_valid.json")
         watcher_config = engine.running_config[CONFIG_WATCHERS][0]
         engine.set_failure_callback(failure_callback)
-        # assert len(engine.running_watchers_list()) == 0 FAILS NO IDEA WHY ATM
+        assert len(engine.watchers_list) == 0
         engine.create_watcher(watcher_config)
         assert len(engine.watchers_list) == 1
 

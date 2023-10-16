@@ -30,11 +30,6 @@ class ArgumentsError(FPEError):
 class Arguments:
     """Extract arguments from command line and create arguments object."""
 
-    # Parsed argument attributes
-
-    file: str  # Configuration file name
-    nogui: bool  # Running with no GUI flag
-
     def __init__(self, argv=None) -> None:
         """Load and parse command line into arguments object.
 
@@ -64,5 +59,5 @@ class Arguments:
 
         # Pass back valid attributes
 
-        self.nogui = arguments.nogui
-        self.file = arguments.file
+        self.nogui : str = arguments.nogui
+        self.file: bool = arguments.file

@@ -42,13 +42,6 @@ class WatcherError(FPEError):
 class Watcher:
     """Watch for files being copied into a folder and process."""
 
-    __handler: IHandler
-    __observer: IObserver
-    __consumer: IConsumer
-    __file_queue: Queue
-    __running: bool
-    __watcher_failure_callback: FailureCallBackFunction = None
-
     @staticmethod
     def _display_details(handler_config: ConfigDict) -> None:
         """Display watcher handler details and parameters.
@@ -103,13 +96,17 @@ class Watcher:
             if CONFIG_RECURSIVE not in watcher_config:
                 watcher_config[CONFIG_RECURSIVE] = False
 
-            self.__handler = Factory.create(watcher_config)
+            self.__handler: IHandler = Factory.create(watcher_config)
 
-            self.__watcher_failure_callback = failure_callback_fn
+            self.__watcher_failure_callback: FailureCallBackFunction = (
+                failure_callback_fn
+            )
             if self.__handler is not None:
-                self.__file_queue = Queue()
-                self.__observer = WatchdogObserver(self.__file_queue, self.__handler)
-                self.__consumer = Consumer(
+                self.__file_queue: Queue = Queue()
+                self.__observer: IObserver = WatchdogObserver(
+                    self.__file_queue, self.__handler
+                )
+                self.__consumer: IConsumer = Consumer(
                     self.__file_queue,
                     self.__handler,
                     self.__watcher_failure_callback,
@@ -119,7 +116,7 @@ class Watcher:
             else:
                 self.__observer = None  # type: ignore
 
-            self.__running = False
+            self.__running: bool = False
 
         except (KeyError, ValueError) as error:
             raise WatcherError(error) from error

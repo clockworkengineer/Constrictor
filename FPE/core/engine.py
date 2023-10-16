@@ -30,11 +30,6 @@ class EngineError(FPEError):
 class Engine:
     """Control class for the FPE used to create, control and delete directory/file watchers."""
 
-    __config: ConfigDict = {}
-    __watchers: dict[str, Watcher] = {}
-    __watcher_failure_callback: FailureCallBackFunction = None
-    __running: bool = False
-
     def __init__(self, engine_config: ConfigDict) -> None:
         """Create FPE engine.
 
@@ -47,7 +42,7 @@ class Engine:
 
         # Make a copy of config for engine
 
-        self.__config = engine_config.copy()
+        self.__config: ConfigDict = engine_config.copy()
 
         # Load builtin and plugin handlers.
 
@@ -55,6 +50,10 @@ class Engine:
             Factory.register(handler_name, handler)
 
         PluginLoader.load(self.__config["plugins"])
+
+        self.__watchers: dict[str, Watcher] = {}
+        self.__watcher_failure_callback: FailureCallBackFunction = None
+        self.__running: bool = False
 
     def create_watcher(self, watcher_config: ConfigDict) -> None:
         """Create a directory/file watcher.
